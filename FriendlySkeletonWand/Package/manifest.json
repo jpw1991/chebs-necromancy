@@ -1,8 +1,8 @@
 ﻿{
-  "name": "JotunnModStub",
-  "description": "",
-  "version_number": "0.0.1",
-  "website_url": "",
+  "name": "FriendlySkeletonWand",
+  "description": "Adds a wand that can be used to craft friendly skeletons to guard your base with.",
+  "version_number": "0.0.10",
+  "website_url": "chebgonaz.pythonanywhere.com",
   "dependencies": [
     "ValheimModding-Jotunn-2.7.9",
   ]
