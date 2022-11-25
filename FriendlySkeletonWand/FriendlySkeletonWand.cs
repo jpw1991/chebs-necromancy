@@ -24,7 +24,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "0.0.8";
+        public const string PluginVersion = "0.0.9";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
@@ -51,7 +51,6 @@ namespace FriendlySkeletonWand
 
             CreateConfigValues();
             AddInputs();
-            AddLocalizations();
             AddNecromancy();
 
             PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
@@ -113,7 +112,7 @@ namespace FriendlySkeletonWand
                 Name = "FriendlySkeletonWandSpecialAttack",
                 Config = FriendlySkeletonWandSpecialConfig,        // Keyboard input
                 GamepadConfig = FriendlySkeletonWandGamepadConfig, // Gamepad input
-                HintToken = "$friendlyskeletonwand_beevil",        // Displayed KeyHint
+                HintToken = "$friendlyskeletonwand_create",        // Displayed KeyHint
                 BlockOtherInputs = true   // Blocks all other input for this Key / Button
             };
             InputManager.Instance.AddButton(PluginGUID, FriendlySkeletonWandSpecialButton);
@@ -154,32 +153,6 @@ namespace FriendlySkeletonWand
                 }
             };
             KeyHintManager.Instance.AddKeyHint(KHC);
-        }
-
-        // Adds hardcoded localizations
-        private void AddLocalizations()
-        {
-            // Create a custom Localization instance and add it to the Manager
-            Localization = new CustomLocalization();
-            LocalizationManager.Instance.AddLocalization(Localization);
-
-
-            // Add translations for the custom item in AddClonedItems
-            Localization.AddTranslation("English", new Dictionary<string, string>
-            {
-                {"item_friendlyskeletonwand", "Friendly Skeleton Wand"},
-                {"item_friendlyskeletonwand_desc", "Spawn friendly skeleton minions."},
-                {"friendlyskeletonwand_shwing", "Woooosh"},
-                {"friendlyskeletonwand_scroll", "*scroll*"},
-                {"friendlyskeletonwand_beevil", "Be evil"},
-                {"friendlyskeletonwand_effectname", "Evil"},
-                {"friendlyskeletonwand_effectstart", "You feel evil"},
-                {"friendlyskeletonwand_effectstop", "You feel nice again"},
-                {"friendlyskeletonwand_notenoughbones", "You need more bone fragments"},
-                {"friendlyskeletonwand_necromancy", "Necromancy"},
-                {"friendlyskeletonwand_necromancy_desc", "The art of creating Undead to serve you."},
-            });
-
         }
 
         public static void SpawnFriendlySkeleton(Player player, int amount = 1)
