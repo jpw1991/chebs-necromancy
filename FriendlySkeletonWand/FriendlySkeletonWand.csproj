@@ -51,10 +51,6 @@
     <Reference Include="assembly_valheim">
       <HintPath>libs\assembly_valheim.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx, Version=5.4.19.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\BepInEx.dll</HintPath>
-    </Reference>
     <Reference Include="Jotunn, Version=2.7.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JotunnLib.2.7.9\lib\net462\Jotunn.dll</HintPath>
     </Reference>

@@ -61,10 +61,11 @@ if($Target.Equals("Release")) {
 
     Write-Host "$PackagePath\$TargetAssembly"
     New-Item -Type Directory -Path "$PackagePath\plugins" -Force
-    Copy-Item -Path "$TargetPath\$TargetAssembly" -Destination "$PackagePath\plugins\$TargetAssembly" -Force
+    New-Item -Type Directory -Path "$PackagePath\plugins\FriendlySkeletonWand" -Force
+    Copy-Item -Path "$TargetPath\$TargetAssembly" -Destination "$PackagePath\plugins\FriendlySkeletonWand\$TargetAssembly" -Force
     Copy-Item -Path "$ProjectPath\README.md" -Destination "$PackagePath\README.md" -Force
-    New-Item -Type Directory -Path "$PackagePath\plugins\Assets" -Force
-    Copy-Item -Path "$ProjectPath\Assets\*" -Destination "$PackagePath\plugins\Assets" -Force -Recurse
+    New-Item -Type Directory -Path "$PackagePath\plugins\FriendlySkeletonWand\Assets" -Force
+    Copy-Item -Path "$ProjectPath\Assets\*" -Destination "$PackagePath\plugins\FriendlySkeletonWand\Assets" -Force -Recurse
     Compress-Archive -Path "$PackagePath\*" -DestinationPath "$TargetPath\$TargetAssembly.zip" -Force
 }
 

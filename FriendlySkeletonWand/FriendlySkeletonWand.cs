@@ -24,7 +24,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "0.0.10";
+        public const string PluginVersion = "1.0.0";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
