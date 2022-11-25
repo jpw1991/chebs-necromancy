@@ -20,9 +20,9 @@ namespace FriendlySkeletonWand
     //[NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class FriendlySkeletonWand : BaseUnityPlugin
     {
-        public const string PluginGUID = "com.jotunn.FriendlySkeletonWand";
+        public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "0.0.5";
+        public const string PluginVersion = "0.0.6";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
