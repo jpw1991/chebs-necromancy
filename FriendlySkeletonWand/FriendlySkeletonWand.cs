@@ -6,9 +6,11 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,19 +24,25 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "0.0.6";
+        public const string PluginVersion = "0.0.8";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
+        private Skills.SkillType necromancySkillType;
+        private const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private ConfigEntry<KeyCode> FriendlySkeletonWandSpecialConfig;
         private ConfigEntry<InputManager.GamepadButton> FriendlySkeletonWandGamepadConfig;
         private ButtonConfig FriendlySkeletonWandSpecialButton;
 
+        public const int boneFragmentsRequired = 3;
+
         // Use this class to add your own localization to the game
         // https://valheim-modding.github.io/Jotunn/tutorials/localization.html
         //public static CustomLocalization Localization = LocalizationManager.Instance.GetLocalization();
         private CustomLocalization Localization;
+
+        private float nextSummon = 0;
 
         private void Awake()
         {
@@ -44,6 +52,7 @@ namespace FriendlySkeletonWand
             CreateConfigValues();
             AddInputs();
             AddLocalizations();
+            AddNecromancy();
 
             PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
         }
@@ -74,13 +83,24 @@ namespace FriendlySkeletonWand
                 if (FriendlySkeletonWandSpecialButton != null && MessageHud.instance != null &&
                     Player.m_localPlayer != null)// && Player.m_localPlayer.IsItemEquiped(friendlySkeletonWand.ItemDrop.m_itemData)) //Player.m_localPlayer.m_visEquipment.m_rightItem == CustomItemName)
                 {
-                    if (ZInput.GetButton(FriendlySkeletonWandSpecialButton.Name))// && MessageHud.instance.que //MessageHud.instance.m_msgQeue.Count == 0)
+                    if (ZInput.GetButton(FriendlySkeletonWandSpecialButton.Name) && Time.time > nextSummon)// && MessageHud.instance.que //MessageHud.instance.m_msgQeue.Count == 0)
                     {
                         SpawnFriendlySkeleton(Player.m_localPlayer);
-                        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_beevilmessage");
+                        nextSummon = Time.time + .5f;
                     }
                 }
             }
+        }
+
+        private void AddNecromancy()
+        {
+            SkillConfig skill = new SkillConfig();
+            skill.Name = "$friendlyskeletonwand_necromancy";
+            skill.Description = "$friendlyskeletonwand_necromancy_desc";
+            skill.IconPath = "FriendlySkeletonWand/Assets/necromancy_icon.png";
+            skill.Identifier = necromancySkillIdentifier;
+
+            necromancySkillType = SkillManager.Instance.AddSkill(skill);
         }
 
         private void AddInputs()
@@ -106,8 +126,7 @@ namespace FriendlySkeletonWand
             friendlySkeletonWandConfig.Name = "$item_friendlyskeletonwand";
             friendlySkeletonWandConfig.Description = "$item_friendlyskeletonwand_desc";
             friendlySkeletonWandConfig.CraftingStation = "piece_workbench";
-            friendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Stone", 1));
-            //FriendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Wood", 1));
+            friendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Wood", 5));
 
             friendlySkeletonWand = new CustomItem("FriendlySkeletonWand", "Club", friendlySkeletonWandConfig);
             ItemManager.Instance.AddItem(friendlySkeletonWand);
@@ -148,17 +167,53 @@ namespace FriendlySkeletonWand
             // Add translations for the custom item in AddClonedItems
             Localization.AddTranslation("English", new Dictionary<string, string>
             {
-                {"item_friendlyskeletonwand", "Friendly Skeleton Wand"}, {"item_friendlyskeletonwand_desc", "Spawn friendly skeleton minions."},
-                {"friendlyskeletonwand_shwing", "Woooosh"}, {"friendlyskeletonwand_scroll", "*scroll*"},
-                {"friendlyskeletonwand_beevil", "Be evil"}, {"friendlyskeletonwand_beevilmessage", "test"},
-                {"friendlyskeletonwand_effectname", "Evil"}, {"friendlyskeletonwand_effectstart", "You feel evil"},
-                {"friendlyskeletonwand_effectstop", "You feel nice again"}
+                {"item_friendlyskeletonwand", "Friendly Skeleton Wand"},
+                {"item_friendlyskeletonwand_desc", "Spawn friendly skeleton minions."},
+                {"friendlyskeletonwand_shwing", "Woooosh"},
+                {"friendlyskeletonwand_scroll", "*scroll*"},
+                {"friendlyskeletonwand_beevil", "Be evil"},
+                {"friendlyskeletonwand_effectname", "Evil"},
+                {"friendlyskeletonwand_effectstart", "You feel evil"},
+                {"friendlyskeletonwand_effectstop", "You feel nice again"},
+                {"friendlyskeletonwand_notenoughbones", "You need more bone fragments"},
+                {"friendlyskeletonwand_necromancy", "Necromancy"},
+                {"friendlyskeletonwand_necromancy_desc", "The art of creating Undead to serve you."},
             });
 
         }
 
-        public static void SpawnFriendlySkeleton(Player player, int amount = 1, int level = 1)
+        public static void SpawnFriendlySkeleton(Player player, int amount = 1)
         {
+            // check player inventory for requirements
+            int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+
+            Jotunn.Logger.LogInfo("BoneFragments in inventory: " + boneFragmentsInInventory.ToString());
+            if (boneFragmentsInInventory < boneFragmentsRequired)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
+                return;
+            }
+
+            // consume the fragments
+            player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+
+            // scale according to skill
+            float playerNecromancyLevel = 1;
+            try
+            {
+                playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill);
+            }
+            catch (Exception e)
+            {
+                Jotunn.Logger.LogError("Failed to get player necromancy level:" + e.ToString());
+            }
+            Jotunn.Logger.LogInfo("Player necromancy level:" + playerNecromancyLevel.ToString());
+
+            int quality = 1;
+            if (playerNecromancyLevel >= 70) { quality = 3; }
+            else if (playerNecromancyLevel >= 35) { quality = 2; }
+
+            // go on to spawn skeleton
             GameObject prefab = ZNetScene.instance.GetPrefab("Skeleton_Friendly");
             if (!prefab)
             {
@@ -171,9 +226,17 @@ namespace FriendlySkeletonWand
             {
                 GameObject spawnedChar = Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
                 Character character = spawnedChar.GetComponent<Character>();
-                if (level > 1)
-                    character.SetLevel(level);
+                character.SetLevel(quality);
                 spawnedObjects.Add(spawnedChar);
+
+                try
+                {
+                    player.RaiseSkill(SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill, .25f);
+                }
+                catch (Exception e)
+                {
+                    Jotunn.Logger.LogError("Failed to raise player necromancy level:" + e.ToString());
+                }
             }
         }
     }
