@@ -24,23 +24,19 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "0.0.9";
+        public const string PluginVersion = "0.0.10";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
-        private Skills.SkillType necromancySkillType;
         private const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private ConfigEntry<KeyCode> FriendlySkeletonWandSpecialConfig;
         private ConfigEntry<InputManager.GamepadButton> FriendlySkeletonWandGamepadConfig;
         private ButtonConfig FriendlySkeletonWandSpecialButton;
 
-        public const int boneFragmentsRequired = 3;
-
-        // Use this class to add your own localization to the game
-        // https://valheim-modding.github.io/Jotunn/tutorials/localization.html
-        //public static CustomLocalization Localization = LocalizationManager.Instance.GetLocalization();
-        private CustomLocalization Localization;
+        private ConfigEntry<int> boneFragmentsRequiredConfig;
+        private ConfigEntry<float> necromancyLevelIncrease;
+        private ConfigEntry<int> skeletonsPerSummon;
 
         private float nextSummon = 0;
 
@@ -61,30 +57,38 @@ namespace FriendlySkeletonWand
             Config.SaveOnConfigSet = true;
 
             // Add a client side custom input key for the FriendlySkeletonWand
-            FriendlySkeletonWandSpecialConfig = Config.Bind("Client config", "FriendlySkeletonWand Special Attack", 
-                KeyCode.B, new ConfigDescription("Key to unleash evil with the FriendlySkeletonWand"));
+            FriendlySkeletonWandSpecialConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_special_attack", 
+                KeyCode.B, new ConfigDescription("$friendlyskeletonwand_config_special_attack_desc"));
             // Also add an alternative Gamepad button for the FriendlySkeletonWand
-            FriendlySkeletonWandGamepadConfig = Config.Bind("Client config", "FriendlySkeletonWand Special Attack Gamepad", 
+            FriendlySkeletonWandGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_special_attack_gamepad", 
                 InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("Button to unleash evil with the FriendlySkeletonWand"));
+                new ConfigDescription("$friendlyskeletonwand_config_special_attack_gamepad_desc"));
+
+            // add configs for values that user can set in-game with F1
+            boneFragmentsRequiredConfig = Config.Bind("Client config", "BoneFragmentsRequired",
+                3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsrequired_desc"));
+            necromancyLevelIncrease = Config.Bind("Client config", "NecromancyLevelIncrease",
+                .25f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
+            skeletonsPerSummon = Config.Bind("Client config", "SkeletonsPerSummon",
+                1, new ConfigDescription("$friendlyskeletonwand_config_skeletonspersummon_desc"));
+
         }
 
         private void Update()
         {
-            // Since our Update function in our BepInEx mod class will load BEFORE Valheim loads,
-            // we need to check that ZInput is ready to use first.
             if (ZInput.instance != null)
             {
-                // Use the name of the ButtonConfig to identify the button pressed
-                // without knowing what key the user bound to this button in his configuration.
-                // Our button is configured to block all other input, so we just want to query
-                // ZInput when our custom item is equipped.
-                if (FriendlySkeletonWandSpecialButton != null && MessageHud.instance != null &&
-                    Player.m_localPlayer != null)// && Player.m_localPlayer.IsItemEquiped(friendlySkeletonWand.ItemDrop.m_itemData)) //Player.m_localPlayer.m_visEquipment.m_rightItem == CustomItemName)
+                if (FriendlySkeletonWandSpecialButton != null
+                    && MessageHud.instance != null
+                    && Player.m_localPlayer != null)
                 {
-                    if (ZInput.GetButton(FriendlySkeletonWandSpecialButton.Name) && Time.time > nextSummon)// && MessageHud.instance.que //MessageHud.instance.m_msgQeue.Count == 0)
+                    if (ZInput.GetButton(FriendlySkeletonWandSpecialButton.Name) && Time.time > nextSummon)
                     {
-                        SpawnFriendlySkeleton(Player.m_localPlayer);
+                        SpawnFriendlySkeleton(Player.m_localPlayer,
+                            boneFragmentsRequiredConfig.Value,
+                            necromancyLevelIncrease.Value,
+                            skeletonsPerSummon.Value
+                            );
                         nextSummon = Time.time + .5f;
                     }
                 }
@@ -99,21 +103,18 @@ namespace FriendlySkeletonWand
             skill.IconPath = "FriendlySkeletonWand/Assets/necromancy_icon.png";
             skill.Identifier = necromancySkillIdentifier;
 
-            necromancySkillType = SkillManager.Instance.AddSkill(skill);
+            SkillManager.Instance.AddSkill(skill);
         }
 
         private void AddInputs()
         {
-            // Add key bindings backed by a config value
-            // Also adds the alternative Config for the gamepad button
-            // The HintToken is used for the custom KeyHint of the FriendlySkeletonWand
             FriendlySkeletonWandSpecialButton = new ButtonConfig
             {
                 Name = "FriendlySkeletonWandSpecialAttack",
-                Config = FriendlySkeletonWandSpecialConfig,        // Keyboard input
-                GamepadConfig = FriendlySkeletonWandGamepadConfig, // Gamepad input
-                HintToken = "$friendlyskeletonwand_create",        // Displayed KeyHint
-                BlockOtherInputs = true   // Blocks all other input for this Key / Button
+                Config = FriendlySkeletonWandSpecialConfig,
+                GamepadConfig = FriendlySkeletonWandGamepadConfig,
+                HintToken = "$friendlyskeletonwand_create",
+                BlockOtherInputs = true
             };
             InputManager.Instance.AddButton(PluginGUID, FriendlySkeletonWandSpecialButton);
         }
@@ -145,7 +146,7 @@ namespace FriendlySkeletonWand
                 ButtonConfigs = new[]
                 {
                     // Override vanilla "Attack" key text
-                    new ButtonConfig { Name = "Attack", HintToken = "$friendlyskeletonwand_shwing" },
+                    new ButtonConfig { Name = "Attack", HintToken = "$friendlyskeletonwand_attack" },
                     // User our custom button defined earlier, syncs with the backing config value
                     FriendlySkeletonWandSpecialButton,
                     // Override vanilla "Mouse Wheel" text
@@ -155,20 +156,23 @@ namespace FriendlySkeletonWand
             KeyHintManager.Instance.AddKeyHint(KHC);
         }
 
-        public static void SpawnFriendlySkeleton(Player player, int amount = 1)
+        public static void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, int amount)
         {
             // check player inventory for requirements
-            int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-            Jotunn.Logger.LogInfo("BoneFragments in inventory: " + boneFragmentsInInventory.ToString());
-            if (boneFragmentsInInventory < boneFragmentsRequired)
+            if (boneFragmentsRequired > 0)
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
-                return;
-            }
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
-            // consume the fragments
-            player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+                Jotunn.Logger.LogInfo("BoneFragments in inventory: " + boneFragmentsInInventory.ToString());
+                if (boneFragmentsInInventory < boneFragmentsRequired)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
+                    return;
+                }
+
+                // consume the fragments
+                player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+            }
 
             // scale according to skill
             float playerNecromancyLevel = 1;
@@ -204,7 +208,7 @@ namespace FriendlySkeletonWand
 
                 try
                 {
-                    player.RaiseSkill(SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill, .25f);
+                    player.RaiseSkill(SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
                 }
                 catch (Exception e)
                 {

@@ -1,0 +1,17 @@
+{
+  "item_friendlyskeletonwand": "Friendly Skeleton Wand",
+  "item_friendlyskeletonwand_desc": "Spawn friendly skeleton minions.",
+  "friendlyskeletonwand_attack": "Attack",
+  "friendlyskeletonwand_scroll": "*scroll*",
+  "friendlyskeletonwand_create": "Create Skeleton",
+  "friendlyskeletonwand_notenoughbones": "You need more bone fragments",
+  "friendlyskeletonwand_necromancy": "Necromancy",
+  "friendlyskeletonwand_necromancy_desc": "The art of creating Undead to serve you.",
+  "friendlyskeletonwand_config_special_attack": "Friendly Skeleton Wand Special Attack",
+  "friendlyskeletonwand_config_special_attack_desc": "Key to create a skeleton.",
+  "friendlyskeletonwand_config_special_attack_gamepad": "Friendly Skeleton Wand Special Attack Gamepad",
+  "friendlyskeletonwand_config_special_attack_gamepad_desc": "Button to create a skeleton.",
+  "friendlyskeletonwand_config_bonefragmentsrequired_desc": "The bone fragments requirement (use 0 for none).",
+  "friendlyskeletonwand_config_necromancylevelincrease_desc": "How much the necromancy level increases per skeleton created.",
+  "friendlyskeletonwand_config_skeletonspersummon_desc": "How many skeletons are created at a time."
+}
