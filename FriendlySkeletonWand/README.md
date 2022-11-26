@@ -40,6 +40,7 @@ Property | Value | Notes
 Date | Version | Notes
 --- | --- | ---
 25/11/2022 | 1.0.0 | Release
+25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
 
 ## Known issues
 

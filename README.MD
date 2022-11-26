@@ -25,11 +25,9 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 ### Config
 
-~~**Attention:** To edit the config as described, the [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) is required. This is a separate mod. Please download and install it.~~
+**Attention:** To edit the config as described, the [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) is required. This is a separate mod. Please download and install it.
 
-~~Press **F1** to open the mod's configuration panel where you can modify the following:~~
-
-The Configuration Manager mod doesn't seem to work with my mod. I don't know why. Anyway, you can edit the settings manually in `Valheim/BepInEx/config/com.chebgonaz.FriendlySkeletonWand.cfg`:
+Press **F1** to open the mod's configuration panel where you can modify the following:
 
 Property | Value | Notes
 --- | --- | ---
@@ -42,6 +40,7 @@ Property | Value | Notes
 Date | Version | Notes
 --- | --- | ---
 25/11/2022 | 1.0.0 | Release
+25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
 
 ## Known issues
 

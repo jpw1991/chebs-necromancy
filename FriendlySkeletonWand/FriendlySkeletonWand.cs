@@ -24,7 +24,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.0";
+        public const string PluginVersion = "1.0.1";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
@@ -80,7 +80,11 @@ namespace FriendlySkeletonWand
             {
                 if (FriendlySkeletonWandSpecialButton != null
                     && MessageHud.instance != null
-                    && Player.m_localPlayer != null)
+                    && Player.m_localPlayer != null
+                    && Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
+                        equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand")
+                        ) != null
+                    )
                 {
                     if (ZInput.GetButton(FriendlySkeletonWandSpecialButton.Name) && Time.time > nextSummon)
                     {
