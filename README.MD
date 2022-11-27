@@ -45,6 +45,7 @@ Date | Version | Notes
 25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
 26/11/2022 | 1.0.2 | All creatures drop bone fragments, skeletons can be told to follow/wait, skeletons health scales with necromancy level.
 26/11/2022 | 1.0.3 | Default skeleton health multiplier jacked up to 15.
+27/11/2022 | 1.0.4 | Amount of bone fragments dropped by creatures exposed to config file; fixed a bug where at necromancy level 0 a skeleton spawned would instantly die
 
 ## Known issues
 

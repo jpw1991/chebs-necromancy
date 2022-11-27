@@ -26,5 +26,7 @@
   "friendlyskeletonwand_config_wait": "The wait key.",
   "friendlyskeletonwand_config_wait_desc": "The wait key.",
   "friendlyskeletonwand_config_wait_gamepad": "The wait gamepad button.",
-  "friendlyskeletonwand_config_wait_gamepad_desc": "The wait gamepad button."
+  "friendlyskeletonwand_config_wait_gamepad_desc": "The wait gamepad button.",
+  "friendlyskeletonwand_config_bonefragmentsdroppedamountmin_desc": "The minimum amount of bone fragments that dead creatures drop.",
+  "friendlyskeletonwand_config_bonefragmentsdroppedamountmax_desc": "The maximum amount of bone fragments that dead creatures drop."
 }

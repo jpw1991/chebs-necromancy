@@ -26,7 +26,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.3";
+        public const string PluginVersion = "1.0.4";
         private readonly Harmony harmony = new Harmony(PluginGUID);
         public const string friendlySkeletonName = "FriendlySkeletonWand_SkeletonMinion";
 
@@ -51,6 +51,8 @@ namespace FriendlySkeletonWand
         private ConfigEntry<int> skeletonsPerSummon;
         private ConfigEntry<float> skeletonHealthMultiplier;
         private ConfigEntry<float> skeletonSetFollowRange;
+        public static ConfigEntry<int> boneFragmentsDroppedAmountMin;
+        public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
 
         private float inputDelay = 0;
 
@@ -59,9 +61,10 @@ namespace FriendlySkeletonWand
             // Jotunn comes with its own Logger class to provide a consistent Log style for all mods using it
             Jotunn.Logger.LogInfo("FriendlySkeletonWand has landed");
 
+            CreateConfigValues();
+
             harmony.PatchAll();
 
-            CreateConfigValues();
             AddInputs();
             AddNecromancy();
 
@@ -104,6 +107,11 @@ namespace FriendlySkeletonWand
             FriendlySkeletonWandWaitGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_wait_gamepad",
                 InputManager.GamepadButton.ButtonEast,
                 new ConfigDescription("$friendlyskeletonwand_config_wait_gamepad_desc"));
+
+            boneFragmentsDroppedAmountMin = Config.Bind("Client config", "BoneFragmentsDroppedAmountMin",
+                1, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsdroppedamountmin_desc"));
+            boneFragmentsDroppedAmountMax = Config.Bind("Client config", "BoneFragmentsDroppedAmountMax",
+                3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsdroppedamountmax_desc"));
 
         }
 
@@ -230,6 +238,9 @@ namespace FriendlySkeletonWand
                 return;
             }
             float health = necromancyLevel * skeletonHealthMultiplier;
+            // if the necromancy level is 0, the skeleton has 0 HP and instantly dies. Fix that
+            // by giving it the minimum health amount possible
+            if (health <= 0) { health = skeletonHealthMultiplier; }
             character.SetMaxHealth(health);
             character.SetHealth(health);
 
@@ -363,13 +374,17 @@ namespace FriendlySkeletonWand
         [HarmonyPrefix]
         static void addBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
         {
-            CharacterDrop.Drop bones = new CharacterDrop.Drop();
-            bones.m_prefab = ZNetScene.instance.GetPrefab("BoneFragments");
-            bones.m_onePerPlayer = true;
-            bones.m_amountMin = 1;
-            bones.m_amountMax = 2;
-            bones.m_chance = 1f;
-            ___m_drops.Add(bones);
+            if (FriendlySkeletonWand.boneFragmentsDroppedAmountMin.Value != 0
+                && FriendlySkeletonWand.boneFragmentsDroppedAmountMax.Value != 0)
+            {
+                CharacterDrop.Drop bones = new CharacterDrop.Drop();
+                bones.m_prefab = ZNetScene.instance.GetPrefab("BoneFragments");
+                bones.m_onePerPlayer = true;
+                bones.m_amountMin = FriendlySkeletonWand.boneFragmentsDroppedAmountMin.Value;
+                bones.m_amountMax = FriendlySkeletonWand.boneFragmentsDroppedAmountMax.Value;
+                bones.m_chance = 1f;
+                ___m_drops.Add(bones);
+            }
         }
     }
 }
