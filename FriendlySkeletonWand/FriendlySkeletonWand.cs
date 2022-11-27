@@ -26,7 +26,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.2";
+        public const string PluginVersion = "1.0.3";
         private readonly Harmony harmony = new Harmony(PluginGUID);
         public const string friendlySkeletonName = "FriendlySkeletonWand_SkeletonMinion";
 
@@ -89,7 +89,7 @@ namespace FriendlySkeletonWand
                 1, new ConfigDescription("$friendlyskeletonwand_config_skeletonspersummon_desc"));
 
             skeletonHealthMultiplier = Config.Bind("Client config", "SkeletonHealthMultiplier",
-                .25f, new ConfigDescription("$friendlyskeletonwand_config_skeletonhealthmultiplier_desc"));
+                15f, new ConfigDescription("$friendlyskeletonwand_config_skeletonhealthmultiplier_desc"));
             skeletonSetFollowRange = Config.Bind("Client config", "SkeletonSetFollowRange",
                 10f, new ConfigDescription("$friendlyskeletonwand_config_skeletonsetfollowrange_desc"));
 
