@@ -375,5 +375,8 @@ Environment.props
 */Package/plugins/*
 
 # other
+<<<<<<< Updated upstream
 FriendlySkeletonWand/libs
+=======
+>>>>>>> Stashed changes
 *.backup

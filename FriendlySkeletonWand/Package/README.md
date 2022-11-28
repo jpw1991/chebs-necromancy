@@ -16,8 +16,13 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 - Craftable Wand at the workbench called **Friendly Skeleton Wand**.
 - Pressing **B** while the Wand is equipped will create a friendly skeleton guard with **Bone Fragments** from your inventory.
+<<<<<<< Updated upstream
 - Skeletons can be told to **wait** with **T**.
 - Skeleotns can be told to **follow** with **F**.
+=======
+- Nearby skeletons can be told to **Wait** by pressing **T**.
+- Nearby skeletons can be told to **Follow** by pressing **F**.
+>>>>>>> Stashed changes
 - Skeleton quality increases with **Necromancy Skill Level**:
 	+ 0 to 34: Level 1 skeletons.
 	+ 35 to 69: Level 2 skeletons.
@@ -38,6 +43,9 @@ Property | Value | Notes
 `BoneFragmentsRequired` | `integer` | How many **Bone Fragments** are consumed from your inventory when creating a skeleton (default `3`, set to `0` for free skeletons).
 `NecromancyLevelIncrease` | `float` | How much the **Necromancy Skill**'s level increases when you create a skeleton (default `0.25`).
 `SkeletonsPerSummon` | `integer` | How many skeletons are created each time you create a skeleton (default `1`, set to larger numbers  for unbridled madness [**Warning: Your game might crash - this really is unlimited!**]).
+`SkeletonHealthMultiplier` | `float` | `Necromancy Level * Health multiplier = Skeleton's HP`.
+`BoneFragmentsDroppedAmountMin` | `integer` | The minimum amount of bones a creature will drop.
+`BoneFragmentsDroppedAmountMax` | `integer` | The maximum amount of bones a creature will drop.
 
 ## Changelog
 
@@ -52,7 +60,12 @@ Date | Version | Notes
 
 ## Known issues
 
+<<<<<<< Updated upstream
 - Skeletons can't follow you into/out of dungeons
+=======
+- Skeletons do not follow you into/out of dungeons
+- Skeletons don't respond to commands after logging off and coming back
+>>>>>>> Stashed changes
 
 ## Source
 

@@ -27,7 +27,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.5";
+        public const string PluginVersion = "1.0.6";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         public const string CustomItemName = "FriendlySkeletonWand";
@@ -46,6 +46,14 @@ namespace FriendlySkeletonWand
         private ConfigEntry<InputManager.GamepadButton> FriendlySkeletonWandWaitGamepadConfig;
         private ButtonConfig FriendlySkeletonWandWaitButton;
 
+        private ConfigEntry<KeyCode> FriendlySkeletonWandTeleportConfig;
+        private ConfigEntry<InputManager.GamepadButton> FriendlySkeletonWandTeleportGamepadConfig;
+        private ButtonConfig FriendlySkeletonWandTeleportButton;
+
+        private ConfigEntry<KeyCode> FriendlySkeletonWandAttackTargetConfig;
+        private ConfigEntry<InputManager.GamepadButton> FriendlySkeletonWandAttackTargetGamepadConfig;
+        private ButtonConfig FriendlySkeletonWandAttackTargetButton;
+
         private ConfigEntry<int> boneFragmentsRequiredConfig;
         private ConfigEntry<float> necromancyLevelIncrease;
         private ConfigEntry<int> skeletonsPerSummon;
@@ -53,6 +61,8 @@ namespace FriendlySkeletonWand
         private ConfigEntry<float> skeletonSetFollowRange;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
+
+        private GameObject invisibleTargetObject;
 
         private float inputDelay = 0;
 
@@ -113,6 +123,17 @@ namespace FriendlySkeletonWand
             boneFragmentsDroppedAmountMax = Config.Bind("Client config", "BoneFragmentsDroppedAmountMax",
                 3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsdroppedamountmax_desc"));
 
+            FriendlySkeletonWandTeleportConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_teleport",
+                KeyCode.G, new ConfigDescription("$friendlyskeletonwand_config_teleport_desc"));
+            FriendlySkeletonWandTeleportGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_teleport_gamepad",
+                InputManager.GamepadButton.SelectButton,
+                new ConfigDescription("$friendlyskeletonwand_config_teleport_gamepad_desc"));
+
+            FriendlySkeletonWandAttackTargetConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_attacktarget",
+                KeyCode.R, new ConfigDescription("$friendlyskeletonwand_config_attacktarget_desc"));
+            FriendlySkeletonWandAttackTargetGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_attacktarget_gamepad",
+                InputManager.GamepadButton.StartButton,
+                new ConfigDescription("$friendlyskeletonwand_config_attacktarget_gamepad_desc"));
         }
 
         private void Update()
@@ -144,6 +165,16 @@ namespace FriendlySkeletonWand
                     else if (ZInput.GetButton(FriendlySkeletonWandWaitButton.Name) && Time.time > inputDelay)
                     {
                         MakeNearbySkeletonsFollow(Player.m_localPlayer, skeletonSetFollowRange.Value, false);
+                        inputDelay = Time.time + .5f;
+                    }
+                    else if (ZInput.GetButton(FriendlySkeletonWandTeleportButton.Name) && Time.time > inputDelay)
+                    {
+                        TeleportFollowingSkeletonsToPlayer(Player.m_localPlayer);
+                        inputDelay = Time.time + .5f;
+                    }
+                    else if (ZInput.GetButton(FriendlySkeletonWandAttackTargetButton.Name) && Time.time > inputDelay)
+                    {
+                        MakeFollowingSkeletonsAttackTarget(Player.m_localPlayer);
                         inputDelay = Time.time + .5f;
                     }
                 }
@@ -192,6 +223,26 @@ namespace FriendlySkeletonWand
                 BlockOtherInputs = true
             };
             InputManager.Instance.AddButton(PluginGUID, FriendlySkeletonWandWaitButton);
+
+            FriendlySkeletonWandTeleportButton = new ButtonConfig
+            {
+                Name = "FriendlySkeletonWandTeleport",
+                Config = FriendlySkeletonWandTeleportConfig,
+                GamepadConfig = FriendlySkeletonWandTeleportGamepadConfig,
+                HintToken = "$friendlyskeletonwand_teleport",
+                BlockOtherInputs = true
+            };
+            InputManager.Instance.AddButton(PluginGUID, FriendlySkeletonWandTeleportButton);
+
+            FriendlySkeletonWandAttackTargetButton = new ButtonConfig
+            {
+                Name = "FriendlySkeletonWandAttackTarget",
+                Config = FriendlySkeletonWandAttackTargetConfig,
+                GamepadConfig = FriendlySkeletonWandAttackTargetGamepadConfig,
+                HintToken = "$friendlyskeletonwand_attacktarget",
+                BlockOtherInputs = true
+            };
+            InputManager.Instance.AddButton(PluginGUID, FriendlySkeletonWandAttackTargetButton);
         }
 
         private void AddClonedItems()
@@ -224,6 +275,8 @@ namespace FriendlySkeletonWand
                     FriendlySkeletonWandSpecialButton,
                     FriendlySkeletonWandFollowButton,
                     FriendlySkeletonWandWaitButton,
+                    FriendlySkeletonWandTeleportButton,
+                    FriendlySkeletonWandAttackTargetButton,
                 }
             };
             KeyHintManager.Instance.AddKeyHint(KHC);
@@ -285,8 +338,8 @@ namespace FriendlySkeletonWand
                 if (item.GetComponent<FriendlySkeletonWandMinion>() != null)
                 {
                     float distance = Vector3.Distance(item.transform.position, player.transform.position);
-                    Jotunn.Logger.LogInfo("Found skeleton minion at distance " + distance.ToString());
-                    if (distance < radius)
+                    //Jotunn.Logger.LogInfo("Found skeleton minion at distance " + distance.ToString());
+                    if (distance < radius || item.GetComponent<MonsterAI>().GetFollowTarget() == invisibleTargetObject)
                     {
                         MonsterAI monsterAI = item.GetComponent<MonsterAI>();
                         if (monsterAI == null)
@@ -300,6 +353,65 @@ namespace FriendlySkeletonWand
                             monsterAI.SetFollowTarget(follow ? player.gameObject : null);
                         }
                     }
+                }
+            }
+        }
+
+        public void TeleportFollowingSkeletonsToPlayer(Player player)
+        {
+            // based off BaseAI.FindClosestCreature
+            List<Character> allCharacters = Character.GetAllCharacters();
+            foreach (Character item in allCharacters)
+            {
+                if (item.IsDead())
+                {
+                    continue;
+                }
+
+                if (item.GetComponent<FriendlySkeletonWandMinion>() != null
+                    && item.GetComponent<MonsterAI>().GetFollowTarget() == player.gameObject)
+                {
+                    item.transform.position = player.transform.position;
+                }
+            }
+        }
+
+        public void MakeFollowingSkeletonsAttackTarget(Player player)
+        {
+            // make raycast between player and whatever is being looked at
+            // we also need to highlight the target somehow (dont know how yet)
+            // eg. change its shader
+            Ray ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100f))
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                                "$friendlyskeletonwand_targetfound");
+                invisibleTargetObject = Instantiate(ZNetScene.instance.GetPrefab("Stone"));
+                invisibleTargetObject.transform.position = hit.transform.position;
+                invisibleTargetObject.transform.localScale = Vector3.one * 5;
+                invisibleTargetObject.name = "FriendlySkeletonWandTarget";
+            }
+            else
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                                "$friendlyskeletonwand_notargetfound");
+                return;
+            }
+
+            // based off BaseAI.FindClosestCreature
+            List<Character> allCharacters = Character.GetAllCharacters();
+            foreach (Character item in allCharacters)
+            {
+                if (item.IsDead())
+                {
+                    continue;
+                }
+
+                if (item.GetComponent<FriendlySkeletonWandMinion>() != null
+                    && item.GetComponent<MonsterAI>().GetFollowTarget() == player.gameObject)
+                {
+                    item.GetComponent<MonsterAI>().SetFollowTarget(invisibleTargetObject);
                 }
             }
         }
@@ -402,5 +514,7 @@ namespace FriendlySkeletonWand
             }
         }
     }
+
+    // todo: override collision so that skeletons collide with everything except the player
 }
 

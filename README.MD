@@ -16,8 +16,8 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 - Craftable Wand at the workbench called **Friendly Skeleton Wand**.
 - Pressing **B** while the Wand is equipped will create a friendly skeleton guard with **Bone Fragments** from your inventory.
-- Skeletons can be told to **wait** with **T**.
-- Skeleotns can be told to **follow** with **F**.
+- Nearby skeletons can be told to **Wait** by pressing **T**.
+- Nearby skeletons can be told to **Follow** by pressing **F**.
 - Skeleton quality increases with **Necromancy Skill Level**:
 	+ 0 to 34: Level 1 skeletons.
 	+ 35 to 69: Level 2 skeletons.
@@ -38,6 +38,9 @@ Property | Value | Notes
 `BoneFragmentsRequired` | `integer` | How many **Bone Fragments** are consumed from your inventory when creating a skeleton (default `3`, set to `0` for free skeletons).
 `NecromancyLevelIncrease` | `float` | How much the **Necromancy Skill**'s level increases when you create a skeleton (default `0.25`).
 `SkeletonsPerSummon` | `integer` | How many skeletons are created each time you create a skeleton (default `1`, set to larger numbers  for unbridled madness [**Warning: Your game might crash - this really is unlimited!**]).
+`SkeletonHealthMultiplier` | `float` | `Necromancy Level * Health multiplier = Skeleton's HP`.
+`BoneFragmentsDroppedAmountMin` | `integer` | The minimum amount of bones a creature will drop.
+`BoneFragmentsDroppedAmountMax` | `integer` | The maximum amount of bones a creature will drop.
 
 ## Changelog
 
@@ -49,10 +52,12 @@ Date | Version | Notes
 26/11/2022 | 1.0.3 | Default skeleton health multiplier jacked up to 15.
 27/11/2022 | 1.0.4 | Amount of bone fragments dropped by creatures exposed to config file; fixed a bug where at necromancy level 0 a skeleton spawned would instantly die
 27/11/2022 | 1.0.5 | Fixed a bug where after logging out and coming back in your skeletons wouldn't respond to commands anymore
+27/11/2022 | 1.0.6 | Function added to teleport minions to you and to tell minions to attack what you're looking at.
 
 ## Known issues
 
 - Skeletons can't follow you into/out of dungeons
+- Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
 
 ## Source
 
