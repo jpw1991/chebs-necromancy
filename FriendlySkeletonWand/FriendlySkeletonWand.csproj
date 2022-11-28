@@ -35,7 +35,7 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
@@ -48,8 +48,12 @@
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\HarmonyX.2.9.0\lib\net45\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_valheim">
+    <Reference Include="assembly_valheim, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\assembly_valheim.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim_publicized2">
+      <HintPath>libs\assembly_valheim_publicized2.dll</HintPath>
     </Reference>
     <Reference Include="Jotunn, Version=2.7.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JotunnLib.2.7.9\lib\net462\Jotunn.dll</HintPath>
@@ -92,6 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FriendlySkeletonWandMinion.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="FriendlySkeletonWand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

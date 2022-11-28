@@ -14,6 +14,7 @@ using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using UnityEngine;
 
 
@@ -26,9 +27,8 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.4";
+        public const string PluginVersion = "1.0.5";
         private readonly Harmony harmony = new Harmony(PluginGUID);
-        public const string friendlySkeletonName = "FriendlySkeletonWand_SkeletonMinion";
 
         public const string CustomItemName = "FriendlySkeletonWand";
         private CustomItem friendlySkeletonWand;
@@ -76,10 +76,10 @@ namespace FriendlySkeletonWand
             Config.SaveOnConfigSet = true;
 
             // Add a client side custom input key for the FriendlySkeletonWand
-            FriendlySkeletonWandSpecialConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_special_attack", 
+            FriendlySkeletonWandSpecialConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_special_attack",
                 KeyCode.B, new ConfigDescription("$friendlyskeletonwand_config_special_attack_desc"));
             // Also add an alternative Gamepad button for the FriendlySkeletonWand
-            FriendlySkeletonWandGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_special_attack_gamepad", 
+            FriendlySkeletonWandGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_special_attack_gamepad",
                 InputManager.GamepadButton.ButtonSouth,
                 new ConfigDescription("$friendlyskeletonwand_config_special_attack_gamepad_desc"));
 
@@ -282,7 +282,7 @@ namespace FriendlySkeletonWand
                     continue;
                 }
 
-                if (item.name.Equals(friendlySkeletonName))
+                if (item.GetComponent<FriendlySkeletonWandMinion>() != null)
                 {
                     float distance = Vector3.Distance(item.transform.position, player.transform.position);
                     Jotunn.Logger.LogInfo("Found skeleton minion at distance " + distance.ToString());
@@ -295,7 +295,7 @@ namespace FriendlySkeletonWand
                         }
                         else
                         {
-                            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, 
+                            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
                                 follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
                             monsterAI.SetFollowTarget(follow ? player.gameObject : null);
                         }
@@ -350,7 +350,7 @@ namespace FriendlySkeletonWand
             for (int i = 0; i < amount; i++)
             {
                 GameObject spawnedChar = Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                spawnedChar.name = friendlySkeletonName;
+                spawnedChar.AddComponent<FriendlySkeletonWandMinion>();
                 Character character = spawnedChar.GetComponent<Character>();
                 character.SetLevel(quality);
                 AdjustSkeletonStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel, skeletonHealthMultiplier.Value);
@@ -384,6 +384,21 @@ namespace FriendlySkeletonWand
                 bones.m_amountMax = FriendlySkeletonWand.boneFragmentsDroppedAmountMax.Value;
                 bones.m_chance = 1f;
                 ___m_drops.Add(bones);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(MonsterAI))]
+    static class FriendlySkeletonPatch
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(MonsterAI.Awake))]
+        static void AwakePostfix(ref Character __instance)
+        {
+            if (__instance.name.Contains("Skeleton_Friendly") 
+                && __instance.gameObject.GetComponent<FriendlySkeletonWandMinion>() == null)
+            {
+                __instance.gameObject.AddComponent<FriendlySkeletonWandMinion>();
             }
         }
     }
