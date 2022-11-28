@@ -16,13 +16,8 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 - Craftable Wand at the workbench called **Friendly Skeleton Wand**.
 - Pressing **B** while the Wand is equipped will create a friendly skeleton guard with **Bone Fragments** from your inventory.
-<<<<<<< Updated upstream
-- Skeletons can be told to **wait** with **T**.
-- Skeleotns can be told to **follow** with **F**.
-=======
 - Nearby skeletons can be told to **Wait** by pressing **T**.
 - Nearby skeletons can be told to **Follow** by pressing **F**.
->>>>>>> Stashed changes
 - Skeleton quality increases with **Necromancy Skill Level**:
 	+ 0 to 34: Level 1 skeletons.
 	+ 35 to 69: Level 2 skeletons.
@@ -57,15 +52,12 @@ Date | Version | Notes
 26/11/2022 | 1.0.3 | Default skeleton health multiplier jacked up to 15.
 27/11/2022 | 1.0.4 | Amount of bone fragments dropped by creatures exposed to config file; fixed a bug where at necromancy level 0 a skeleton spawned would instantly die
 27/11/2022 | 1.0.5 | Fixed a bug where after logging out and coming back in your skeletons wouldn't respond to commands anymore
+27/11/2022 | 1.0.6 | Function added to teleport minions to you and to tell minions to attack what you're looking at.
 
 ## Known issues
 
-<<<<<<< Updated upstream
 - Skeletons can't follow you into/out of dungeons
-=======
-- Skeletons do not follow you into/out of dungeons
-- Skeletons don't respond to commands after logging off and coming back
->>>>>>> Stashed changes
+- Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
 
 ## Source
 

@@ -389,6 +389,7 @@ namespace FriendlySkeletonWand
                                 "$friendlyskeletonwand_targetfound");
                 invisibleTargetObject = Instantiate(ZNetScene.instance.GetPrefab("Stone"));
                 invisibleTargetObject.transform.position = hit.transform.position;
+                invisibleTargetObject.transform.position += new Vector3(0, 10, 0);
                 invisibleTargetObject.transform.localScale = Vector3.one * 5;
                 invisibleTargetObject.name = "FriendlySkeletonWandTarget";
             }
