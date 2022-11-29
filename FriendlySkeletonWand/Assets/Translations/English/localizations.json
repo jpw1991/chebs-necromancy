@@ -17,6 +17,7 @@
   "friendlyskeletonwand_skeletonwaiting": "Waiting, master...",
   "friendlyskeletonwand_targetfound": "Go forth, minions!",
   "friendlyskeletonwand_notargetfound": "No target found.",
+  "friendlyskeletonwand_wraithmessage": "Master... I come to serve thee...",
   
   "friendlyskeletonwand_config_special_attack": "Friendly Skeleton Wand Special Attack",
   "friendlyskeletonwand_config_special_attack_desc": "Key to create a skeleton.",
@@ -46,9 +47,11 @@
   "friendlyskeletonwand_config_teleport_desc": "Teleport minions to you.",
   "friendlyskeletonwand_config_teleport_gamepad": "Teleport minions to you.",
   "friendlyskeletonwand_config_teleport_gamepad_desc": "Teleport minions to you.",
-  
+
   "friendlyskeletonwand_config_attacktarget": "Minion attack target.",
   "friendlyskeletonwand_config_attacktarget_desc": "Minion attack target.",
   "friendlyskeletonwand_config_attacktarget_gamepad": "Minion attack target.",
-  "friendlyskeletonwand_config_attacktarget_gamepad_desc": "Minion attack target."
+  "friendlyskeletonwand_config_attacktarget_gamepad_desc": "Minion attack target.",
+
+  "friendlyskeletonwand_config_guardianwraithlevelrequirement_desc": "The level requirement for the wraith to spawn."
 }

@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using static ClutterSystem;
 
 namespace FriendlySkeletonWand
 {
@@ -14,5 +15,18 @@ namespace FriendlySkeletonWand
         // that the mod has created and it also persists across sessions,
         // unlike gameObject.name, so that these commands will work
         // even after logging out and coming back in.
+
+        public bool canBeCommanded = true;
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            // ignore collision with player
+            Character character = collision.gameObject.GetComponent<Character>();
+            if (character != null && character.m_faction == Character.Faction.Players)
+            {
+                Physics.IgnoreCollision(collision.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
+                return;
+            }
+        }
     }
 }

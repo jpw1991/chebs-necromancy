@@ -96,6 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GuardianWraithMinion.cs" />
     <Compile Include="FriendlySkeletonWandMinion.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="FriendlySkeletonWand.cs" />

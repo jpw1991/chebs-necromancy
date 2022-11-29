@@ -23,6 +23,10 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 	+ 35 to 69: Level 2 skeletons.
 	+ 70+: Level 3 skeleotns.
 - Skeletons created are either an archer or warrior. This is random.
+- Minions ignore collision with the player so you won't be trapped.
+- **G** to **teleport** minions to you.
+- **R** to tell minions to **attack** a specific target.
+- Starting at level 25, a wraith spawns to guard you at all times (until it is destroyed - then it respawns again after a little while)
 - Tweakable settings by pressing **F1** to edit the config.
 
 ### Config
@@ -53,6 +57,7 @@ Date | Version | Notes
 27/11/2022 | 1.0.4 | Amount of bone fragments dropped by creatures exposed to config file; fixed a bug where at necromancy level 0 a skeleton spawned would instantly die
 27/11/2022 | 1.0.5 | Fixed a bug where after logging out and coming back in your skeletons wouldn't respond to commands anymore
 27/11/2022 | 1.0.6 | Function added to teleport minions to you and to tell minions to attack what you're looking at.
+29/11/2022 | 1.0.7 | Add Guardian Wraith; ignore minion collision on player
 
 ## Known issues
 

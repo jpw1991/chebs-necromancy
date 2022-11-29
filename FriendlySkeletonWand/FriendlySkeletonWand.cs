@@ -12,10 +12,10 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using UnityEngine;
+using static ClutterSystem;
 
 
 namespace FriendlySkeletonWand
@@ -27,7 +27,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.6";
+        public const string PluginVersion = "1.0.7";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         public const string CustomItemName = "FriendlySkeletonWand";
@@ -61,8 +61,11 @@ namespace FriendlySkeletonWand
         private ConfigEntry<float> skeletonSetFollowRange;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
+        private ConfigEntry<int> guardianWraithLevelRequirement;
+        private ConfigEntry<float> guardianWraithTetherDistance;
 
         private GameObject invisibleTargetObject;
+        private GameObject guardianWraith;
 
         private float inputDelay = 0;
 
@@ -79,6 +82,8 @@ namespace FriendlySkeletonWand
             AddNecromancy();
 
             PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
+
+            StartCoroutine(GuardianWraithCoroutine());
         }
 
         private void CreateConfigValues()
@@ -97,7 +102,7 @@ namespace FriendlySkeletonWand
             boneFragmentsRequiredConfig = Config.Bind("Client config", "BoneFragmentsRequired",
                 3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsrequired_desc"));
             necromancyLevelIncrease = Config.Bind("Client config", "NecromancyLevelIncrease",
-                .25f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
+                1f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
             skeletonsPerSummon = Config.Bind("Client config", "SkeletonsPerSummon",
                 1, new ConfigDescription("$friendlyskeletonwand_config_skeletonspersummon_desc"));
 
@@ -134,6 +139,11 @@ namespace FriendlySkeletonWand
             FriendlySkeletonWandAttackTargetGamepadConfig = Config.Bind("Client config", "$friendlyskeletonwand_config_attacktarget_gamepad",
                 InputManager.GamepadButton.StartButton,
                 new ConfigDescription("$friendlyskeletonwand_config_attacktarget_gamepad_desc"));
+
+            guardianWraithLevelRequirement = Config.Bind("Client config", "GuardianWraithLevelRequirement",
+                25, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithlevelrequirement_desc"));
+            guardianWraithTetherDistance = Config.Bind("Client config", "GuardianWraithTetherDistance",
+                15f, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithtetherdistance_desc"));
         }
 
         private void Update()
@@ -178,6 +188,46 @@ namespace FriendlySkeletonWand
                         inputDelay = Time.time + .5f;
                     }
                 }
+            }
+        }
+
+        IEnumerator GuardianWraithCoroutine()
+        {
+            while (true)
+            {
+                if (ZInput.instance != null)
+                {
+                    Player player = Player.m_localPlayer;
+                    float necromancyLevel = player.GetSkillLevel(
+                        SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill);
+
+                    if (necromancyLevel >= guardianWraithLevelRequirement.Value && (guardianWraith == null || guardianWraith.GetComponent<Character>().IsDead()))
+                    {
+                        GameObject prefab = ZNetScene.instance.GetPrefab("Wraith");
+                        if (!prefab)
+                        {
+                            Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
+                        }
+                        else
+                        {
+                            int quality = 1;
+                            if (necromancyLevel >= 70) { quality = 3; }
+                            else if (necromancyLevel >= 35) { quality = 2; }
+
+                            player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
+                            guardianWraith = Instantiate(prefab, 
+                                player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                            GuardianWraithMinion guardianWraithMinion = guardianWraith.AddComponent<GuardianWraithMinion>();
+                            guardianWraithMinion.canBeCommanded = false;
+                            Character character = guardianWraith.GetComponent<Character>();
+                            character.SetLevel(quality);
+                            character.m_faction = Character.Faction.Players;
+                            guardianWraith.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+                        }
+                    }
+
+                }
+                yield return new WaitForSeconds(30);
             }
         }
 
@@ -335,7 +385,8 @@ namespace FriendlySkeletonWand
                     continue;
                 }
 
-                if (item.GetComponent<FriendlySkeletonWandMinion>() != null)
+                FriendlySkeletonWandMinion friendlySkeletonWandMinion = item.GetComponent<FriendlySkeletonWandMinion>();
+                if (friendlySkeletonWandMinion != null && friendlySkeletonWandMinion.canBeCommanded)
                 {
                     float distance = Vector3.Distance(item.transform.position, player.transform.position);
                     //Jotunn.Logger.LogInfo("Found skeleton minion at distance " + distance.ToString());
@@ -512,6 +563,11 @@ namespace FriendlySkeletonWand
                 && __instance.gameObject.GetComponent<FriendlySkeletonWandMinion>() == null)
             {
                 __instance.gameObject.AddComponent<FriendlySkeletonWandMinion>();
+            }
+            else if (__instance.name.Contains("Wraith")
+                && __instance.gameObject.GetComponent<GuardianWraithMinion>() == null)
+            {
+                __instance.gameObject.AddComponent<GuardianWraithMinion>();
             }
         }
     }
