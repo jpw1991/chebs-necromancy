@@ -2,12 +2,16 @@
   "item_friendlyskeletonwand": "Friendly Skeleton Wand",
   "item_friendlyskeletonwand_desc": "Spawn friendly skeleton minions.",
 
+  "item_friendlyskeletonwand_draugrwand": "Friendly Draugr Wand",
+  "item_friendlyskeletonwand_draugrwand_desc": "Spawn friendly draugr minions.",
+
   "friendlyskeletonwand_attack": "Attack",
   "friendlyskeletonwand_follow": "Follow",
   "friendlyskeletonwand_wait": "Wait",
-  "friendlyskeletonwand_create": "Create Skeleton",
+  "friendlyskeletonwand_create": "Create Minion",
   "friendlyskeletonwand_teleport": "Teleport",
   "friendlyskeletonwand_attacktarget": "Target",
+  "friendlyskeletonwand_create_archer": "Create Archer",
 
   "friendlyskeletonwand_necromancy": "Necromancy",
   "friendlyskeletonwand_necromancy_desc": "The art of creating Undead to serve you.",
@@ -19,10 +23,10 @@
   "friendlyskeletonwand_notargetfound": "No target found.",
   "friendlyskeletonwand_wraithmessage": "Master... I come to serve thee...",
   
-  "friendlyskeletonwand_config_special_attack": "Friendly Skeleton Wand Special Attack",
-  "friendlyskeletonwand_config_special_attack_desc": "Key to create a skeleton.",
-  "friendlyskeletonwand_config_special_attack_gamepad": "Friendly Skeleton Wand Special Attack Gamepad",
-  "friendlyskeletonwand_config_special_attack_gamepad_desc": "Button to create a skeleton.",
+  "friendlyskeletonwand_config_create_minion": "Friendly Skeleton Wand Special Attack",
+  "friendlyskeletonwand_config_create_minion_desc": "Key to create a skeleton.",
+  "friendlyskeletonwand_config_create_minion_gamepad": "Friendly Skeleton Wand Special Attack Gamepad",
+  "friendlyskeletonwand_config_create_minion_gamepad_desc": "Button to create a skeleton.",
 
   "friendlyskeletonwand_config_follow": "The follow key.",
   "friendlyskeletonwand_config_follow_desc": "The follow key.",

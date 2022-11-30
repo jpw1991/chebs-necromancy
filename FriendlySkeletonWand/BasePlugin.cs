@@ -30,14 +30,17 @@ namespace FriendlySkeletonWand
         public const string PluginVersion = "1.0.8";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
-        private List<Wand> wands = new List<Wand>();
+        private List<Wand> wands = new List<Wand>()
+        {
+            new SkeletonWand(),
+            new DraugrWand(),
+        };
         public const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         // todo: move to GuardianWraithMinion.cs
         private ConfigEntry<int> guardianWraithLevelRequirement;
         public static ConfigEntry<float> guardianWraithTetherDistance;
 
-        //private GameObject invisibleTargetObject;
         public static GameObject guardianWraith;
 
         private float inputDelay = 0;
@@ -46,14 +49,11 @@ namespace FriendlySkeletonWand
         {
             Jotunn.Logger.LogInfo("FriendlySkeletonWand has landed");
 
-            wands.Add(new SkeletonWand());
-            //wands.Add(new DraugrWand());
-
             CreateConfigValues();
 
             harmony.PatchAll();
 
-            AddInputs();
+            AddButtons();
             AddNecromancy();
 
             PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
@@ -65,12 +65,40 @@ namespace FriendlySkeletonWand
         {
             Config.SaveOnConfigSet = true;
 
-            wands.ForEach(w => w.CreateConfigs(this));
-
             guardianWraithLevelRequirement = Config.Bind("Client config", "GuardianWraithLevelRequirement",
                 25, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithlevelrequirement_desc"));
             guardianWraithTetherDistance = Config.Bind("Client config", "GuardianWraithTetherDistance",
                 15f, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithtetherdistance_desc"));
+
+            wands.ForEach(w => w.CreateConfigs(this));
+        }
+
+        private void AddButtons()
+        {
+            wands.ForEach(wand => wand.CreateButtons());
+        }
+
+        private void AddNecromancy()
+        {
+            SkillConfig skill = new SkillConfig();
+            skill.Name = "$friendlyskeletonwand_necromancy";
+            skill.Description = "$friendlyskeletonwand_necromancy_desc";
+            skill.IconPath = "FriendlySkeletonWand/Assets/necromancy_icon.png";
+            skill.Identifier = necromancySkillIdentifier;
+
+            SkillManager.Instance.AddSkill(skill);
+        }
+
+        private void AddClonedItems()
+        {
+            wands.ForEach(wand =>
+            {
+                ItemManager.Instance.AddItem(wand.GetCustomItem());
+                KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
+            });
+
+            // You want that to run only once, Jotunn has the item cached for the game session
+            PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
         }
 
         private void Update()
@@ -128,35 +156,6 @@ namespace FriendlySkeletonWand
                 yield return new WaitForSeconds(30);
             }
         }
-
-        private void AddNecromancy()
-        {
-            SkillConfig skill = new SkillConfig();
-            skill.Name = "$friendlyskeletonwand_necromancy";
-            skill.Description = "$friendlyskeletonwand_necromancy_desc";
-            skill.IconPath = "FriendlySkeletonWand/Assets/necromancy_icon.png";
-            skill.Identifier = necromancySkillIdentifier;
-
-            SkillManager.Instance.AddSkill(skill);
-        }
-
-        private void AddInputs()
-        {
-            wands.ForEach(wand => 
-                wand.buttonConfigs.ForEach(buttonConfig =>
-                    InputManager.Instance.AddButton(PluginGUID, buttonConfig)
-                    ));
-        }
-
-        private void AddClonedItems()
-        {
-
-            wands.ForEach(wand => ItemManager.Instance.AddItem(wand.GetCustomItem()));
-            wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
-
-            // You want that to run only once, Jotunn has the item cached for the game session
-            PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
-        }
     }
 
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
@@ -191,15 +190,14 @@ namespace FriendlySkeletonWand
             {
                 __instance.gameObject.AddComponent<UndeadMinion>();
             }
-            else if (__instance.name.Contains("Wraith")
-                && __instance.gameObject.GetComponent<GuardianWraithMinion>() == null)
+            else if (__instance.name.Contains("Wraith"))
             {
-                __instance.gameObject.AddComponent<GuardianWraithMinion>();
-                BasePlugin.guardianWraith = __instance.gameObject;
+                GameObject.Destroy(__instance);
+                //
+                //__instance.gameObject.AddComponent<GuardianWraithMinion>();
+                //BasePlugin.guardianWraith = __instance.gameObject;
             }
         }
     }
-
-    // todo: override collision so that skeletons collide with everything except the player
 }
 
