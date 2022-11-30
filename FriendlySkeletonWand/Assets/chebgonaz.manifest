@@ -1,0 +1,149 @@
+ManifestFileVersion: 0
+CRC: 243573369
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f02d4934dc6b49c63a79d479bfbbc60b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 158857d4c3d39a5062ea59bb5da5de71
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: be16254816f96ba41af5440d542f90cb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1d0d84f1b0c4e674caeb5522ccd8f7af, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 20cfbf6120998ca42a2a62f1c4057838, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d6157b0b18e9e304197647f91e87ced3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1a027cdac826a864e861db0274a1f34b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: cc7fb22b183fffc4e9416a1879681770, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 60bdbbe4f22cff64b80526506408568b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0d63346c2542c524383d8511c5dfb36e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a3b6f62fc956ca54baeef2581863399f, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8e87a7704aa0f034b9426bd24e81a011, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: bceb9301f21a36448a621d5f7e901a40, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9c4651de43cae6b458d3b4e9fa9332f2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2da9ebf2a21fb8543a727655b115f3ab, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f5ed7a02af2e56c439edc16572d31312, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 628949b7f7c395247acc1b1f6ac7b384, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 429058c67edd8744d99b716e632f9063, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 686e8e7838256dd4ba76096ffa87c22b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ea9e8b5bba6afde428b8ef39382e6ff9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 55256ddac25b05c42b53ba296907ea77, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c9f6d3c19c41d71469247acb4f808532, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: bcab4528206e8074b9520daa35f02657, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d463499e0c0d29648a855a86136ef8d0, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+- Class: 135
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+- Class: 144
+  Script: {instanceID: 0}
+- Class: 165
+  Script: {instanceID: 0}
+- Class: 183
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 241
+  Script: {instanceID: 0}
+- Class: 243
+  Script: {instanceID: 0}
+- Class: 245
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: assembly_valheim
+  ClassName: Attack
+- AssemblyName: assembly_valheim
+  ClassName: EffectList
+- AssemblyName: assembly_valheim
+  ClassName: EffectList/EffectData
+- AssemblyName: assembly_valheim
+  ClassName: FootStep/StepEffect
+- AssemblyName: assembly_valheim
+  ClassName: HitData/DamageModifiers
+- AssemblyName: assembly_valheim
+  ClassName: HitData/DamageTypes
+- AssemblyName: assembly_valheim
+  ClassName: ItemDrop/ItemData
+- AssemblyName: assembly_valheim
+  ClassName: ItemDrop/ItemData/SharedData
+- AssemblyName: assembly_valheim
+  ClassName: LevelEffects/LevelSetup
+Assets:
+- Assets/GameObject/ChebGonaz_Wraith.prefab
+- Assets/GameObject/ChebGonaz_Draugr_Archer.prefab
+- Assets/GameObject/ChebGonaz_Skeleton_Warrior.prefab
+- Assets/GameObject/ChebGonaz_Skeleton_Archer.prefab
+- Assets/GameObject/ChebGonaz_Skeleton_Archer_LightArmor.prefab
+- Assets/GameObject/ChebGonaz_Draugr_Warrior.prefab
+- Assets/GameObject/ChebGonaz_Skeleton_Warrior_LightArmor.prefab
+Dependencies: []

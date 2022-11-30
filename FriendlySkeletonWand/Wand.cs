@@ -36,6 +36,10 @@ namespace FriendlySkeletonWand
         public ConfigEntry<InputManager.GamepadButton> AttackTargetGamepadConfig;
         public ButtonConfig AttackTargetButton;
 
+        public ConfigEntry<KeyCode> CreateArcherMinionConfig;
+        public ConfigEntry<InputManager.GamepadButton> CreateArcherMinionGamepadConfig;
+        public ButtonConfig CreateArcherMinionButton;
+
         private GameObject targetObject;
 
         public virtual void CreateConfigs(BaseUnityPlugin plugin)
@@ -45,6 +49,12 @@ namespace FriendlySkeletonWand
             CreateMinionGamepadConfig = plugin.Config.Bind("Client config", ItemName + "CreateMinionGamepad",
                 InputManager.GamepadButton.ButtonSouth,
                 new ConfigDescription("$friendlyskeletonwand_config_create_minion_gamepad_desc"));
+
+            CreateArcherMinionConfig = plugin.Config.Bind("Client config", ItemName + "CreateArcher",
+                KeyCode.E, new ConfigDescription("$friendlyskeletonwand_config_create_minion_desc"));
+            CreateArcherMinionGamepadConfig = plugin.Config.Bind("Client config", ItemName + "CreateArcherGamepad",
+                InputManager.GamepadButton.ButtonSouth,
+                new ConfigDescription("$friendlyskeletonwand_config_create_archer_minion_gamepad_desc"));
 
             FollowConfig = plugin.Config.Bind("Client config", ItemName + "Follow",
                 KeyCode.F, new ConfigDescription("$friendlyskeletonwand_config_follow_desc"));
@@ -82,6 +92,16 @@ namespace FriendlySkeletonWand
                 BlockOtherInputs = true
             };
             InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateMinionButton);
+
+            CreateArcherMinionButton = new ButtonConfig
+            {
+                Name = ItemName+"CreateArcherMinion",
+                Config = CreateArcherMinionConfig,
+                GamepadConfig = CreateArcherMinionGamepadConfig,
+                HintToken = "$friendlyskeletonwand_create_archer",
+                BlockOtherInputs = true
+            };
+            InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateArcherMinionButton);
 
             FollowButton = new ButtonConfig
             {
@@ -156,7 +176,6 @@ namespace FriendlySkeletonWand
                 if (minion != null && minion.canBeCommanded)
                 {
                     float distance = Vector3.Distance(item.transform.position, player.transform.position);
-                    //Jotunn.Logger.LogInfo("Found skeleton minion at distance " + distance.ToString());
                     if (distance < radius || item.GetComponent<MonsterAI>().GetFollowTarget() == targetObject)
                     {
                         MonsterAI monsterAI = item.GetComponent<MonsterAI>();

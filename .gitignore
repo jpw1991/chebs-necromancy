@@ -378,4 +378,4 @@ Environment.props
 *.unitypackage
 FriendlySkeletonWand/libs
 *.backup
-FriendlySkeletonWandUnity/Assets/*
+FriendlySkeletonWandUnity/Assets

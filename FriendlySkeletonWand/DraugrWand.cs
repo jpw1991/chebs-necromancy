@@ -26,10 +26,6 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> sinewDroppedAmountMin;
         public static ConfigEntry<int> sinewDroppedAmountMax;
 
-        public static ConfigEntry<KeyCode> CreateArcherMinionConfig;
-        public static ConfigEntry<InputManager.GamepadButton> CreateArcherMinionGamepadConfig;
-        public ButtonConfig CreateArcherMinionButton;
-
         public DraugrWand()
         {
             ItemName = "FriendlySkeletonWand_DraugrWand";
@@ -60,12 +56,6 @@ namespace FriendlySkeletonWand
 
             necromancyLevelIncrease = plugin.Config.Bind("Client config", "DraugrNecromancyLevelIncrease",
                 1.5f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
-
-            CreateArcherMinionConfig = plugin.Config.Bind("Client config", "CreateArcher",
-                KeyCode.E, new ConfigDescription("$friendlyskeletonwand_config_create_minion_desc"));
-            CreateArcherMinionGamepadConfig = plugin.Config.Bind("Client config", "CreateArcherGamepad",
-                InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("$friendlyskeletonwand_config_create_archer_minion_gamepad_desc"));
         }
 
         public override void CreateButtons()
@@ -74,15 +64,7 @@ namespace FriendlySkeletonWand
             base.CreateButtons();
 
             // add any extra buttons
-            CreateArcherMinionButton = new ButtonConfig
-            {
-                Name = "CreateArcherMinion",
-                Config = CreateArcherMinionConfig,
-                GamepadConfig = CreateArcherMinionGamepadConfig,
-                HintToken = "$friendlyskeletonwand_create_archer",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateArcherMinionButton);
+            
         }
 
         public override CustomItem GetCustomItem()
@@ -138,7 +120,7 @@ namespace FriendlySkeletonWand
                         );
                     return true;
                 }
-                if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
+                else if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
                 {
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
@@ -196,7 +178,7 @@ namespace FriendlySkeletonWand
             {
                 int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
-                Jotunn.Logger.LogInfo("BoneFragments in inventory: " + boneFragmentsInInventory.ToString());
+                Jotunn.Logger.LogInfo($"BoneFragments in inventory: {boneFragmentsInInventory}");
                 if (boneFragmentsInInventory < boneFragmentsRequired)
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
@@ -215,27 +197,27 @@ namespace FriendlySkeletonWand
             }
             catch (Exception e)
             {
-                Jotunn.Logger.LogError("Failed to get player necromancy level:" + e.ToString());
+                Jotunn.Logger.LogError($"Failed to get player necromancy level: {e}");
             }
-            Jotunn.Logger.LogInfo("Player necromancy level:" + playerNecromancyLevel.ToString());
+            Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
             int quality = 1;
             if (playerNecromancyLevel >= 70) { quality = 3; }
             else if (playerNecromancyLevel >= 35) { quality = 2; }
 
             // go on to spawn skeleton
-            string prefabName = archer ? "Draugr_Ranged" : "Draugr";
+            string prefabName = archer ? "ChebGonaz_Draugr_Archer" : "ChebGonaz_Draugr_Warrior";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, prefabName+" does not exist");
-                Jotunn.Logger.LogError("SpawnFriendlyDraugr: spawning "+ prefabName + " failed");
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
+                Jotunn.Logger.LogError($"SpawnFriendlyDraugr: spawning {prefabName} failed");
             }
 
             List<GameObject> spawnedObjects = new List<GameObject>();
             for (int i = 0; i < amount; i++)
             {
-                Jotunn.Logger.LogInfo("Spawning " + prefabName);
+                Jotunn.Logger.LogInfo($"Spawning {prefabName}");
                 GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
                 spawnedChar.AddComponent<UndeadMinion>();
                 Character character = spawnedChar.GetComponent<Character>();
@@ -250,7 +232,7 @@ namespace FriendlySkeletonWand
                 }
                 catch (Exception e)
                 {
-                    Jotunn.Logger.LogError("Failed to raise player necromancy level:" + e.ToString());
+                    Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
                 }
             }
         }

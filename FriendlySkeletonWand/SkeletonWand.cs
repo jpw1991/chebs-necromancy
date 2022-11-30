@@ -77,11 +77,6 @@ namespace FriendlySkeletonWand
 
         public override KeyHintConfig GetKeyHint()
         {
-            //Jotunn.Logger.LogInfo(CreateMinionButton == null);
-            //Jotunn.Logger.LogInfo(FollowButton == null);
-            //Jotunn.Logger.LogInfo(WaitButton == null);
-            //Jotunn.Logger.LogInfo(TeleportButton == null);
-            //Jotunn.Logger.LogInfo(AttackTargetButton == null);
             return new KeyHintConfig
             {
                 Item = ItemName,
@@ -89,6 +84,7 @@ namespace FriendlySkeletonWand
                 {
                     new ButtonConfig { Name = "Attack", HintToken = "$friendlyskeletonwand_attack" },
                     CreateMinionButton,
+                    CreateArcherMinionButton,
                     FollowButton,
                     WaitButton,
                     TeleportButton,
@@ -111,7 +107,18 @@ namespace FriendlySkeletonWand
                     SpawnFriendlySkeleton(Player.m_localPlayer,
                         boneFragmentsRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
-                        skeletonsPerSummon.Value
+                        skeletonsPerSummon.Value,
+                        false
+                        );
+                    return true;
+                }
+                else if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
+                {
+                    SpawnFriendlySkeleton(Player.m_localPlayer,
+                        boneFragmentsRequiredConfig.Value,
+                        necromancyLevelIncrease.Value,
+                        skeletonsPerSummon.Value,
+                        true
                         );
                     return true;
                 }
@@ -155,14 +162,14 @@ namespace FriendlySkeletonWand
             character.SetHealth(health);
         }
 
-        public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, int amount)
+        public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, int amount, bool archer)
         {
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
                 int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
-                Jotunn.Logger.LogInfo("BoneFragments in inventory: " + boneFragmentsInInventory.ToString());
+                Jotunn.Logger.LogInfo($"BoneFragments in inventory: {boneFragmentsInInventory}");
                 if (boneFragmentsInInventory < boneFragmentsRequired)
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
@@ -181,20 +188,21 @@ namespace FriendlySkeletonWand
             }
             catch (Exception e)
             {
-                Jotunn.Logger.LogError("Failed to get player necromancy level:" + e.ToString());
+                Jotunn.Logger.LogError($"Failed to get player necromancy level: {e}");
             }
-            Jotunn.Logger.LogInfo("Player necromancy level:" + playerNecromancyLevel.ToString());
+            Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
             int quality = 1;
             if (playerNecromancyLevel >= 70) { quality = 3; }
             else if (playerNecromancyLevel >= 35) { quality = 2; }
 
             // go on to spawn skeleton
-            GameObject prefab = ZNetScene.instance.GetPrefab("Skeleton_Friendly");
+            string prefabName = archer ? "ChebGonaz_Skeleton_Archer" : "ChebGonaz_Skeleton_Warrior";
+            GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, "Skeleton_Friendly does not exist");
-                Jotunn.Logger.LogError("SpawnFriendlySkeleton: spawning Skeleton_Friendly failed");
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
+                Jotunn.Logger.LogError($"SpawnFriendlySkeleton: spawning {prefabName} failed");
             }
 
             List<GameObject> spawnedObjects = new List<GameObject>();
@@ -213,7 +221,7 @@ namespace FriendlySkeletonWand
                 }
                 catch (Exception e)
                 {
-                    Jotunn.Logger.LogError("Failed to raise player necromancy level:" + e.ToString());
+                    Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
                 }
             }
         }
