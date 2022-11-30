@@ -95,42 +95,6 @@ namespace FriendlySkeletonWand
                                         "Draugr_Archer_mat"
                                     }
                                 },
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr_Ranged",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/vfx_dripping_water",
-                                //    Materials = new[]
-                                //    {
-                                //        "Rain_drop"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr_Ranged",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/evil_smoke",
-                                //    Materials = new[]
-                                //    {
-                                //        "Dust_particle 1"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr_Ranged",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/evil_smoke _local",
-                                //    Materials = new[]
-                                //    {
-                                //        "Dust_particle 1"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr_Ranged",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/flies",
-                                //    Materials = new[]
-                                //    {
-                                //        "Pixel_lit_opaque"
-                                //    }
-                                //},
                             }
                         }),
                 new Tuple<string, KitbashConfig>("ChebGonaz_Draugr_Warrior.prefab", new KitbashConfig
@@ -147,42 +111,6 @@ namespace FriendlySkeletonWand
                                         "Draugr_mat"
                                     }
                                 },
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/vfx_dripping_water",
-                                //    Materials = new[]
-                                //    {
-                                //        "Rain_drop"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/evil_smoke",
-                                //    Materials = new[]
-                                //    {
-                                //        "Dust_particle 1"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/evil_smoke _local",
-                                //    Materials = new[]
-                                //    {
-                                //        "Dust_particle 1"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Draugr",
-                                //    SourcePath = "_Visual/_draugr_base/Armature/Hips/Spine0/Spine1/flies",
-                                //    Materials = new[]
-                                //    {
-                                //        "Pixel_lit_opaque"
-                                //    }
-                                //},
                             }
                         }),
                 new Tuple<string, KitbashConfig>("ChebGonaz_Skeleton_Warrior.prefab", new KitbashConfig
@@ -219,39 +147,6 @@ namespace FriendlySkeletonWand
 
                             }
                         }),
-                //new Tuple<string, KitbashConfig>("ChebGonaz_Skeleton_Archer_LightArmor.prefab", new KitbashConfig
-                //        {
-                //            Layer = "character",
-                //            KitbashSources = new List<KitbashSourceConfig>
-                //            {
-                //                new KitbashSourceConfig
-                //                {
-                //                    SourcePrefab = "Skeleton_Friendly",
-                //                    SourcePath = "_Visual/_skeleton_base/skeleton",
-                //                    Materials = new[]
-                //                    {
-                //                        "Skeleton_dark"
-                //                    }
-                //                },
-                //            }
-                //        }),
-                //new Tuple<string, KitbashConfig>("ChebGonaz_Skeleton_Warrior_LightArmor.prefab", new KitbashConfig
-                //        {
-                //            Layer = "character",
-                //            KitbashSources = new List<KitbashSourceConfig>
-                //            {
-                //                new KitbashSourceConfig
-                //                {
-                //                    SourcePrefab = "Skeleton_Friendly",
-                //                    SourcePath = "_Visual/_skeleton_base/skeleton",
-                //                    Materials = new[]
-                //                    {
-                //                        "Skeleton_dark"
-                //                    }
-                //                },
-
-                //            }
-                //        }),
                 new Tuple<string, KitbashConfig>("ChebGonaz_Wraith.prefab", new KitbashConfig
                         {
                             Layer = "character",
@@ -284,24 +179,6 @@ namespace FriendlySkeletonWand
                                         "Wraith"
                                     }
                                 },
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Wraith",
-                                //    SourcePath = "Visual/wraith/evil_smoke _world",
-                                //    Materials = new[]
-                                //    {
-                                //        "Wraith_smoke"
-                                //    }
-                                //},
-                                //new KitbashSourceConfig
-                                //{
-                                //    SourcePrefab = "Wraith",
-                                //    SourcePath = "Visual/wraith/evil_smoke _bottom",
-                                //    Materials = new[]
-                                //    {
-                                //        "Wraith_smoke"
-                                //    }
-                                //},
                             }
                         }),
             };
@@ -312,11 +189,16 @@ namespace FriendlySkeletonWand
                 {
                     (string prefabName, KitbashConfig kitbashConfig) = prefabAndKitbashConfig;
 
+                    if (kitbashConfig == null) { Jotunn.Logger.LogError($"kitbashConfig for {prefabName} is null!"); }
+
                     Jotunn.Logger.LogInfo($"Loading {prefabName}...");
                     GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
 
                     Jotunn.Logger.LogInfo("Kitbashing...");
                     KitbashObject kitbashObject = KitbashManager.Instance.AddKitbash(prefab, kitbashConfig);
+
+                    Jotunn.Logger.LogInfo("Adding creature...");
+                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, false));
                 }
                 );
             }
