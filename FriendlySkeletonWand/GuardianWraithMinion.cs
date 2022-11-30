@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace FriendlySkeletonWand
 {
-    internal class GuardianWraithMinion : FriendlySkeletonWandMinion
+    internal class GuardianWraithMinion : UndeadMinion
     {
-        public static float tetherDistance;
+        public static float tetherDistance = 15;
 
         private void Awake()
         {
@@ -28,6 +28,7 @@ namespace FriendlySkeletonWand
                 zinstanceAvailable = ZInput.instance != null;
                 yield return new WaitForSeconds(1);
             }
+            DoWhenZInputAvailable();
         }
 
         IEnumerator TetherToPlayerCoroutine()
@@ -38,10 +39,13 @@ namespace FriendlySkeletonWand
                 {
                     
                     Player player = Player.m_localPlayer;
-                    GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
-                    if (Vector3.Distance(player.transform.position, transform.position) > tetherDistance)
+                    if (player != null)
                     {
-                        transform.position = player.transform.position;
+                        GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+                        if (Vector3.Distance(player.transform.position, transform.position) > BasePlugin.guardianWraithTetherDistance.Value)
+                        {
+                            transform.position = player.transform.position;
+                        }
                     }
                 }
                 yield return new WaitForSeconds(5);

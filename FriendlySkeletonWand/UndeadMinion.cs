@@ -4,7 +4,7 @@ using static ClutterSystem;
 
 namespace FriendlySkeletonWand
 {
-    internal class FriendlySkeletonWandMinion : MonoBehaviour
+    internal class UndeadMinion : MonoBehaviour
     {
         // we add this component to the creatures we create in the mod
         // so that we can use .GetComponent<FriendlySkeletonMinion>()

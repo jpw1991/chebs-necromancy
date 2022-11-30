@@ -96,11 +96,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DraugrWand.cs" />
     <Compile Include="GuardianWraithMinion.cs" />
-    <Compile Include="FriendlySkeletonWandMinion.cs" />
+    <Compile Include="SkeletonWand.cs" />
+    <Compile Include="UndeadMinion.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
-    <Compile Include="FriendlySkeletonWand.cs" />
+    <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Wand.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
