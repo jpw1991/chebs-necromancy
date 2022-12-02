@@ -22,9 +22,6 @@ namespace FriendlySkeletonWand
         private ConfigEntry<float> necromancyLevelIncrease;
 
         public static ConfigEntry<int> draugrBoneFragmentsRequiredConfig;
-        public static ConfigEntry<int> draugrSinewRequiredConfig;
-        public static ConfigEntry<int> sinewDroppedAmountMin;
-        public static ConfigEntry<int> sinewDroppedAmountMax;
 
         public DraugrWand()
         {
@@ -46,13 +43,6 @@ namespace FriendlySkeletonWand
 
             draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrBoneFragmentsRequired",
                 3, new ConfigDescription("$friendlyskeletonwand_config_draugrbonefragmentsrequired_desc"));
-            draugrSinewRequiredConfig = plugin.Config.Bind("Client config", "DraugrSinewRequired",
-                5, new ConfigDescription("$friendlyskeletonwand_config_draugrsinewrequired_desc"));
-
-            sinewDroppedAmountMin = plugin.Config.Bind("Client config", "SinewDroppedAmountMin",
-                1, new ConfigDescription("$friendlyskeletonwand_config_sinewdroppedamountmin_desc"));
-            sinewDroppedAmountMax = plugin.Config.Bind("Client config", "SinewDroppedAmountMax",
-                3, new ConfigDescription("$friendlyskeletonwand_config_sinewdroppedamountmax_desc"));
 
             necromancyLevelIncrease = plugin.Config.Bind("Client config", "DraugrNecromancyLevelIncrease",
                 1.5f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
@@ -113,7 +103,6 @@ namespace FriendlySkeletonWand
                 {
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
-                        draugrSinewRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
                         draugrPerSummon.Value,
                         false
@@ -124,7 +113,6 @@ namespace FriendlySkeletonWand
                 {
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
-                        draugrSinewRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
                         draugrPerSummon.Value,
                         true
@@ -171,7 +159,7 @@ namespace FriendlySkeletonWand
             character.SetHealth(health);
         }
 
-        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int sinewRequired, float necromancyLevelIncrease, int amount, bool archer)
+        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, int amount, bool archer)
         {
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)

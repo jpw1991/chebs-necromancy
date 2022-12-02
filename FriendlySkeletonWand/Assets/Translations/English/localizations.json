@@ -2,8 +2,16 @@
   "item_friendlyskeletonwand": "Friendly Skeleton Wand",
   "item_friendlyskeletonwand_desc": "Spawn friendly skeleton minions.",
 
+  "friendlyskeletonwand_config_guardianwraithtetherdistance_desc": "Guardian Wraith's tether distance from player.",
+  "friendlyskeletonwand_config_guardianwraithlevelrequirement_desc": "Guardian Wraith necromancy level requirement.",
+
   "item_friendlyskeletonwand_draugrwand": "Friendly Draugr Wand",
   "item_friendlyskeletonwand_draugrwand_desc": "Spawn friendly draugr minions.",
+
+  "friendlyskeletonwand_config_draugrhealthmultiplier_desc": "Draugr Health Multiplier",
+  "friendlyskeletonwand_config_draugrsetfollowrange_desc": "Draugr follow range",
+  "friendlyskeletonwand_config_draugrpersummon_desc": "Draugr per summon",
+  "friendlyskeletonwand_config_draugrbonefragmentsrequired_desc": "Bone fragment requirement for draugr",
 
   "friendlyskeletonwand_attack": "Attack",
   "friendlyskeletonwand_follow": "Follow",
@@ -23,8 +31,8 @@
   "friendlyskeletonwand_notargetfound": "No target found.",
   "friendlyskeletonwand_wraithmessage": "Master... I come to serve thee...",
   
-  "friendlyskeletonwand_config_create_minion": "Friendly Skeleton Wand Special Attack",
-  "friendlyskeletonwand_config_create_minion_desc": "Key to create a skeleton.",
+  "friendlyskeletonwand_config_create_minion": "Create Minion",
+  "friendlyskeletonwand_config_create_minion_desc": "Key to create a minion.",
   "friendlyskeletonwand_config_create_minion_gamepad": "Friendly Skeleton Wand Special Attack Gamepad",
   "friendlyskeletonwand_config_create_minion_gamepad_desc": "Button to create a skeleton.",
 
