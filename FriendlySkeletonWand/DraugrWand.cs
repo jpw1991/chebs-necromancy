@@ -89,7 +89,7 @@ namespace FriendlySkeletonWand
                 Item = ItemName,
                 ButtonConfigs = new[]
                 {
-                    new ButtonConfig { Name = "Attack", HintToken = "$friendlyskeletonwand_attack" },
+                    //new ButtonConfig { Name = "Attack", HintToken = "$friendlyskeletonwand_attack" },
                     CreateMinionButton,
                     CreateArcherMinionButton,
                     FollowButton,

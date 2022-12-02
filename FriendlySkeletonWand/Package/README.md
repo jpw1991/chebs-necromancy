@@ -2,6 +2,10 @@
 
 This mod adds a craftable wand which can be used to create skeletons with. These skeletons are supposed to guard your base and hang around the general vicinity of wherever you create them.
 
+## Important Update Note for pre-1.0.8
+
+<details><summary>If you are upgrading from 1.0.7 or lower, your skeletons will still be there but you won't be able to command them anymore! <b>This is not a bug.</b></summary>The old skeletons used the existing Mistlands `Skeleton_Friendly` prefab which belongs to Blood Magic. In 1.0.8 these have been replaced with my own custom prefabs: `ChebGonaz_SkeletonWarrior` and `ChebGonaz_SkeletonArcher`. This gives you the control to choose either kind, instead of it being random, and also stops Blood Magic from levelling up from this mod.</details>
+
 ##  About Me
 
 <a target="_blank" rel="noopener noreferrer" href="https://chebgonaz.pythonanywhere.com"><img alt="Necrobase" style="margin-top: 1%" src="minicheb.png" /></a> <a target="_blank" rel="noopener noreferrer" href="https://ko-fi.com/chebgonaz"><img alt="Ko-fi" style="margin-top: 1%" src="kofi-mug-small.png" /></a> <a target="_blank" rel="noopener noreferrer" href="https://www.patreon.com/chebgonaz?fan_landing=true"><img alt="Patreon" style="margin-top: 1%" src="patreon.png" /></a>
@@ -22,55 +26,59 @@ Thank you and I hope you enjoy the mod!
 
 ## Features
 
-- Craftable Wand at the workbench called **Friendly Skeleton Wand**.
-- Pressing **B** while the Wand is equipped will create a friendly skeleton guard with **Bone Fragments** from your inventory.
-- Nearby skeletons can be told to **Wait** by pressing **T**.
-- Nearby skeletons can be told to **Follow** by pressing **F**.
-- Skeleton quality increases with **Necromancy Skill Level**:
-	+ 0 to 34: Level 1 skeletons.
-	+ 35 to 69: Level 2 skeletons.
-	+ 70+: Level 3 skeleotns.
-- Skeletons created are either an archer or warrior. This is random.
+- Craftable wands at the workbench called **Friendly Skeleton Wand** and **Friendly Draugr Wand**.
+- These wands consume **Bone Fragments** to create minions.
+- **Bone Fragments** now drop from all creatures when they die.
+- With a wand equipped, the following is possible:
+	+ **B** will make a skeleton/draugr warrior.
+	+ **H** will make a skeleton/draugr archer.
+	+ **F** will make all nearby minions **follow** you.
+	+ **T** will make all nearby minions **wait**.
+	+ **G** will teleport all following minions to your position (useful if stuck or to get them on boats)
+	+ **R** to tell minions to **attack** a specific target (this is relatively inaccurate).
+- A new **Necromancy Skill**.
+- Minion quality increases with **Necromancy Skill Level**:
+	+ 0 to 34: Level 1.
+	+ 35 to 69: Level 2.
+	+ 70+: Level 3.
+- Minion health increases with necromancy level.
 - Minions ignore collision with the player so you won't be trapped.
-- **G** to **teleport** minions to you.
-- **R** to tell minions to **attack** a specific target.
 - Starting at level 25, a wraith spawns to guard you at all times (until it is destroyed - then it respawns again after a little while)
-- Tweakable settings by pressing **F1** to edit the config.
+- Tweakable settings by editing the config file.
 
 ### Config
 
 ~~**Attention:** To edit the config as described, the [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) is required. This is a separate mod. Please download and install it.~~
 
-~~Press **F1** to open the mod's configuration panel where you can modify the following:~~
+~~Press **F1** to open the mod's configuration panel.~~
 
-Doesn't work for some reason; please edit the configs manually.
-
-Property | Value | Notes
---- | --- | ---
-`BoneFragmentsRequired` | `integer` | How many **Bone Fragments** are consumed from your inventory when creating a skeleton (default `3`, set to `0` for free skeletons).
-`NecromancyLevelIncrease` | `float` | How much the **Necromancy Skill**'s level increases when you create a skeleton (default `0.25`).
-`SkeletonsPerSummon` | `integer` | How many skeletons are created each time you create a skeleton (default `1`, set to larger numbers  for unbridled madness [**Warning: Your game might crash - this really is unlimited!**]).
-`SkeletonHealthMultiplier` | `float` | `Necromancy Level * Health multiplier = Skeleton's HP`.
-`BoneFragmentsDroppedAmountMin` | `integer` | The minimum amount of bones a creature will drop.
-`BoneFragmentsDroppedAmountMax` | `integer` | The maximum amount of bones a creature will drop.
+Doesn't work for some reason; please edit the configs manually. Almost everything can be tweaked to your liking.
 
 ## Changelog
 
 Date | Version | Notes
 --- | --- | ---
-25/11/2022 | 1.0.0 | Release
-25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
-26/11/2022 | 1.0.2 | All creatures drop bone fragments, skeletons can be told to follow/wait, skeletons health scales with necromancy level.
-26/11/2022 | 1.0.3 | Default skeleton health multiplier jacked up to 15.
-27/11/2022 | 1.0.4 | Amount of bone fragments dropped by creatures exposed to config file; fixed a bug where at necromancy level 0 a skeleton spawned would instantly die
-27/11/2022 | 1.0.5 | Fixed a bug where after logging out and coming back in your skeletons wouldn't respond to commands anymore
-27/11/2022 | 1.0.6 | Function added to teleport minions to you and to tell minions to attack what you're looking at.
+01/12/2022 | 1.0.8 | Big Overhaul → Fully custom prefabs used for minions results in finer control: no more Blood Magic experience; removes randomness of the skeletons so you can choose warrior/archer; permits me to add draugr and wraiths that are not hostile when you log back in; permits me to (in the future) give custom equipment and textures/materials to the minions.
 29/11/2022 | 1.0.7 | Add Guardian Wraith; ignore minion collision on player
+27/11/2022 | 1.0.6 | Function added to teleport minions to you and to tell minions to attack what you're looking at.
+27/11/2022 | 1.0.5 | Fixed a bug where after logging out and coming back in your skeletons wouldn't respond to commands anymore
+27/11/2022 | 1.0.4 | Amount of bone fragments dropped by creatures exposed to config file; fixed a bug where at necromancy level 0 a skeleton spawned would instantly die
+26/11/2022 | 1.0.3 | Default skeleton health multiplier jacked up to 15.
+26/11/2022 | 1.0.2 | All creatures drop bone fragments, skeletons can be told to follow/wait, skeletons health scales with necromancy level.
+25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
+25/11/2022 | 1.0.0 | Release
 
 ## Known issues
 
 - Skeletons can't follow you into/out of dungeons
 - Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
+
+## Future Ideas
+
+- Equipment for skeletons & draugr  → armor, different weapons, etc.
+- Implement ghost minion type.
+- Custom models for the wands (no more clubs).
+- Fully custom undead types.
 
 ## Source
 
