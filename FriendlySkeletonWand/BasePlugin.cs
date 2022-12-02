@@ -227,12 +227,14 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
+                //Jotunn.Logger.LogInfo($"AwakePostfix: Processing {__instance.name}");
                 if (__instance.name.Contains("Wraith"))
                 {
+                    //Jotunn.Logger.LogInfo($"AwakePostfix: Wraith found - {__instance.name}");
                     // remove duplicate wraiths
                     if (BasePlugin.guardianWraith != null)
                     {
-                        Jotunn.Logger.LogInfo("Removing duplicate wraith...");
+                        //Jotunn.Logger.LogInfo("Removing duplicate wraith...");
                         GameObject.Destroy(__instance.gameObject, 5);
                     }
                     else
@@ -243,8 +245,10 @@ namespace FriendlySkeletonWand
                 }
                 else
                 {
+                    //Jotunn.Logger.LogInfo($"AwakePostfix: Skeleton or Draugr found - {__instance.name}");
                     if (__instance.GetComponent<UndeadMinion>() == null)
                     {
+                        //Jotunn.Logger.LogInfo($"AwakePostfix: Adding UndeadMinion component to {__instance.name}");
                         __instance.gameObject.AddComponent<UndeadMinion>();
                     }
                 }

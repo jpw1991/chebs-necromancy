@@ -79,7 +79,7 @@ namespace FriendlySkeletonWand
             draugrWandConfig.AddRequirement(new RequirementConfig("Bronze", 5));
             draugrWandConfig.AddRequirement(new RequirementConfig("TrophyDraugr", 1));
 
-            return new CustomItem(ItemName, "MaceBronze", draugrWandConfig);
+            return new CustomItem(ItemName, "Club", draugrWandConfig);
         }
 
         public override KeyHintConfig GetKeyHint()

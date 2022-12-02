@@ -51,7 +51,7 @@ namespace FriendlySkeletonWand
                 new ConfigDescription("$friendlyskeletonwand_config_create_minion_gamepad_desc"));
 
             CreateArcherMinionConfig = plugin.Config.Bind("Client config", ItemName + "CreateArcher",
-                KeyCode.E, new ConfigDescription("$friendlyskeletonwand_config_create_minion_desc"));
+                KeyCode.H, new ConfigDescription("$friendlyskeletonwand_config_create_minion_desc"));
             CreateArcherMinionGamepadConfig = plugin.Config.Bind("Client config", ItemName + "CreateArcherGamepad",
                 InputManager.GamepadButton.ButtonSouth,
                 new ConfigDescription("$friendlyskeletonwand_config_create_archer_minion_gamepad_desc"));

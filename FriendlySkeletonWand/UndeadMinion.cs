@@ -21,9 +21,10 @@ namespace FriendlySkeletonWand
         private void OnCollisionEnter(Collision collision)
         {
             // ignore collision with player
+
             Character character = collision.gameObject.GetComponent<Character>();
-            if (character != null 
-                && character.m_faction == Character.Faction.Players 
+            if (character != null
+                && character.m_faction == Character.Faction.Players
                 && character.GetComponent<UndeadMinion>() == null) // allow collision between minions
             {
                 Physics.IgnoreCollision(collision.gameObject.GetComponent<Collider>(), GetComponent<Collider>());
