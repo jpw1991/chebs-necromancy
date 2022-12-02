@@ -197,7 +197,7 @@ namespace FriendlySkeletonWand
             else if (playerNecromancyLevel >= 35) { quality = 2; }
 
             // go on to spawn skeleton
-            string prefabName = archer ? "ChebGonaz_Skeleton_Archer" : "ChebGonaz_Skeleton_Warrior";
+            string prefabName = archer ? "ChebGonaz_SkeletonArcher" : "ChebGonaz_SkeletonWarrior";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {

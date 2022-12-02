@@ -79,126 +79,27 @@ namespace FriendlySkeletonWand
 
         private void AddCustomCreatures()
         {
-            List<Tuple<string, KitbashConfig>> prefabsAndKitbashConfigs = new List<Tuple<string, KitbashConfig>>()
+            List<string> prefabNames = new List<string>()
             {
-                new Tuple<string, KitbashConfig>("ChebGonaz_Draugr_Archer.prefab", new KitbashConfig
-                        {
-                            Layer = "character",
-                            KitbashSources = new List<KitbashSourceConfig>
-                            {
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Draugr_Ranged",
-                                    SourcePath = "_Visual/_draugr_base/Cube.001",
-                                    Materials = new[]
-                                    {
-                                        "Draugr_Archer_mat"
-                                    }
-                                },
-                            }
-                        }),
-                new Tuple<string, KitbashConfig>("ChebGonaz_Draugr_Warrior.prefab", new KitbashConfig
-                        {
-                            Layer = "character",
-                            KitbashSources = new List<KitbashSourceConfig>
-                            {
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Draugr",
-                                    SourcePath = "_Visual/_draugr_base/Cube.001",
-                                    Materials = new[]
-                                    {
-                                        "Draugr_mat"
-                                    }
-                                },
-                            }
-                        }),
-                new Tuple<string, KitbashConfig>("ChebGonaz_Skeleton_Warrior.prefab", new KitbashConfig
-                        {
-                            Layer = "character",
-                            KitbashSources = new List<KitbashSourceConfig>
-                            {
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Skeleton_Friendly",
-                                    SourcePath = "_Visual/_skeleton_base/skeleton",
-                                    Materials = new[]
-                                    {
-                                        "Skeleton_dark"
-                                    }
-                                },
-
-                            }
-                        }),
-                new Tuple<string, KitbashConfig>("ChebGonaz_Skeleton_Archer.prefab", new KitbashConfig
-                        {
-                            Layer = "character",
-                            KitbashSources = new List<KitbashSourceConfig>
-                            {
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Skeleton_Friendly",
-                                    SourcePath = "_Visual/_skeleton_base/skeleton",
-                                    Materials = new[]
-                                    {
-                                        "Skeleton_dark"
-                                    }
-                                },
-
-                            }
-                        }),
-                new Tuple<string, KitbashConfig>("ChebGonaz_Wraith.prefab", new KitbashConfig
-                        {
-                            Layer = "character",
-                            KitbashSources = new List<KitbashSourceConfig>
-                            {
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Wraith",
-                                    SourcePath = "Visual/wraith/chain",
-                                    Materials = new[]
-                                    {
-                                        "Wraith"
-                                    }
-                                },
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Wraith",
-                                    SourcePath = "Visual/wraith/RagPlanes",
-                                    Materials = new[]
-                                    {
-                                        "Wraith"
-                                    }
-                                },
-                                new KitbashSourceConfig
-                                {
-                                    SourcePrefab = "Wraith",
-                                    SourcePath = "Visual/wraith/wraith",
-                                    Materials = new[]
-                                    {
-                                        "Wraith"
-                                    }
-                                },
-                            }
-                        }),
+                "ChebGonaz_DraugrArcher.prefab",
+                "ChebGonaz_DraugrWarrior.prefab",
+                "ChebGonaz_SkeletonWarrior.prefab",
+                "ChebGonaz_SkeletonArcher.prefab",
+                "ChebGonaz_GuardianWraith.prefab",
             };
-            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle("FriendlySkeletonWand/Assets/chebgonaz");
+            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle("FriendlySkeletonWand/Assets/chebgonazcreatures");
             try
             {
-                prefabsAndKitbashConfigs.ForEach(prefabAndKitbashConfig =>
+                //chebgonazAssetBundle.GetAllAssetNames().ToList().ForEach(name => Jotunn.Logger.LogInfo($"Asset name: {name}"));
+
+                prefabNames.ForEach(prefabName =>
                 {
-                    (string prefabName, KitbashConfig kitbashConfig) = prefabAndKitbashConfig;
-
-                    if (kitbashConfig == null) { Jotunn.Logger.LogError($"kitbashConfig for {prefabName} is null!"); }
-
                     Jotunn.Logger.LogInfo($"Loading {prefabName}...");
                     GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
-
-                    Jotunn.Logger.LogInfo("Kitbashing...");
-                    KitbashObject kitbashObject = KitbashManager.Instance.AddKitbash(prefab, kitbashConfig);
+                    if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
 
                     Jotunn.Logger.LogInfo("Adding creature...");
-                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, false));
+                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 }
                 );
             }
@@ -268,7 +169,7 @@ namespace FriendlySkeletonWand
 
                     if (necromancyLevel >= guardianWraithLevelRequirement.Value && (guardianWraith == null || guardianWraith.GetComponent<Character>().IsDead()))
                     {
-                        GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_Wraith");
+                        GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
                         if (!prefab)
                         {
                             Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
