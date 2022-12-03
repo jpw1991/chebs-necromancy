@@ -1,4 +1,5 @@
 ﻿
+using Jotunn.Managers;
 using UnityEngine;
 using static ClutterSystem;
 
@@ -17,6 +18,16 @@ namespace FriendlySkeletonWand
         // even after logging out and coming back in.
 
         public bool canBeCommanded = true;
+
+        private void Awake()
+        {
+            Tameable tameable = GetComponent<Tameable>();
+            if (tameable != null)
+            {
+                // let the minions generate a little necromancy XP for their master
+                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
+            }
+        }
 
         private void OnCollisionEnter(Collision collision)
         {

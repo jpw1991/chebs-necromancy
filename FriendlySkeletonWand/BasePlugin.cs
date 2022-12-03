@@ -29,7 +29,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.8";
+        public const string PluginVersion = "1.0.9";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -161,7 +161,7 @@ namespace FriendlySkeletonWand
         {
             while (true)
             {
-                if (ZInput.instance != null)
+                if (ZInput.instance != null && Player.m_localPlayer != null)
                 {
                     Player player = Player.m_localPlayer;
                     float necromancyLevel = player.GetSkillLevel(
