@@ -98,7 +98,9 @@
   <ItemGroup>
     <Compile Include="DraugrWand.cs" />
     <Compile Include="GuardianWraithMinion.cs" />
+    <Compile Include="Item.cs" />
     <Compile Include="SkeletonWand.cs" />
+    <Compile Include="SpectralShroud.cs" />
     <Compile Include="UndeadMinion.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />

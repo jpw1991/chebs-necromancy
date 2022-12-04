@@ -12,10 +12,8 @@ using UnityEngine;
 
 namespace FriendlySkeletonWand
 {
-    internal class Wand
+    internal class Wand : Item
     {
-        public string ItemName;
-
         public ConfigEntry<KeyCode> CreateMinionConfig;
         public ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;
         public ButtonConfig CreateMinionButton;
@@ -142,11 +140,6 @@ namespace FriendlySkeletonWand
                 BlockOtherInputs = true
             };
             InputManager.Instance.AddButton(BasePlugin.PluginGUID, AttackTargetButton);
-        }
-
-        public virtual CustomItem GetCustomItem()
-        {
-            return null;
         }
 
         public virtual KeyHintConfig GetKeyHint()

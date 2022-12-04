@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1216281793
+CRC: 1445681973
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: cb967b1990792bf7a27328082c89d4ff
+    Hash: 32b65247e4addfc1b232823f1f32ab83
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fe741225c9a77fc03569f35554eeade3
+    Hash: 96455109affa9f74f7640672e4d9d67b
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -66,8 +66,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: -1383431051, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
   Script: {fileID: -1266444067, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1421768954, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -116,8 +114,6 @@ ClassTypes:
 SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: Attack
-- AssemblyName: assembly_valheim
-  ClassName: CharacterDrop/Drop
 - AssemblyName: assembly_valheim
   ClassName: EffectList
 - AssemblyName: assembly_valheim

@@ -1,0 +1,22 @@
+ManifestFileVersion: 0
+CRC: 2609136988
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b07f73363c40948ef347cd9096416f20
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 939e20ecac0e95a3f7c5cfb3e57acb1d
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/_ChebGonaz/ChebGonaz_SpectralShroud.mat
+- Assets/_ChebGonaz/spectral_shroud_d.png
+Dependencies: []

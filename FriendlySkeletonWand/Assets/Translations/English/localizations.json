@@ -8,10 +8,16 @@
   "item_friendlyskeletonwand_draugrwand": "Friendly Draugr Wand",
   "item_friendlyskeletonwand_draugrwand_desc": "Spawn friendly draugr minions.",
 
+  "item_friendlyskeletonwand_spectralshroud": "Spectral Shroud",
+  "item_friendlyskeletonwand_spectralshroud_desc": "Attracts spirits to you to serve you, provided you're skilled enough.",
+  "$friendlyskeletonwand_wraithangrymessage": "You are weak! I will punish you!",
+
   "friendlyskeletonwand_config_draugrhealthmultiplier_desc": "Draugr Health Multiplier",
   "friendlyskeletonwand_config_draugrsetfollowrange_desc": "Draugr follow range",
   "friendlyskeletonwand_config_draugrpersummon_desc": "Draugr per summon",
   "friendlyskeletonwand_config_draugrbonefragmentsrequired_desc": "Bone fragment requirement for draugr",
+
+  "chebgonaz_guardianwraith": "Guardian Wraith",
 
   "friendlyskeletonwand_attack": "Attack",
   "friendlyskeletonwand_follow": "Follow",

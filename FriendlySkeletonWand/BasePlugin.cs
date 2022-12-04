@@ -15,8 +15,10 @@ using Jotunn.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.XR;
 using static ClutterSystem;
 
 
@@ -29,7 +31,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.9";
+        public const string PluginVersion = "1.0.11";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -45,6 +47,8 @@ namespace FriendlySkeletonWand
 
         public static GameObject guardianWraith;
 
+        private SpectralShroud spectralShroudItem = new SpectralShroud();
+
         private float inputDelay = 0;
 
         private void Awake()
@@ -53,6 +57,8 @@ namespace FriendlySkeletonWand
 
             CreateConfigValues();
 
+            // custom material not working cuz unknown reasons
+            //LoadCustomMaterials();
             AddCustomCreatures();
 
             harmony.PatchAll();
@@ -72,9 +78,29 @@ namespace FriendlySkeletonWand
             guardianWraithLevelRequirement = Config.Bind("Client config", "GuardianWraithLevelRequirement",
                 25, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithlevelrequirement_desc"));
             guardianWraithTetherDistance = Config.Bind("Client config", "GuardianWraithTetherDistance",
-                15f, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithtetherdistance_desc"));
+                30f, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithtetherdistance_desc"));
 
             wands.ForEach(w => w.CreateConfigs(this));
+        }
+
+        
+
+        private void LoadCustomMaterials()
+        {
+            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazitems");
+            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
+            try
+            {
+                spectralShroudItem.LoadSpectralShroudMaterial(chebgonazAssetBundle);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"Exception caught while loading custom materials: {ex}");
+            }
+            finally
+            {
+                chebgonazAssetBundle.Unload(false);
+            }
         }
 
         private void AddCustomCreatures()
@@ -87,7 +113,8 @@ namespace FriendlySkeletonWand
                 "ChebGonaz_SkeletonArcher.prefab",
                 "ChebGonaz_GuardianWraith.prefab",
             };
-            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle("FriendlySkeletonWand/Assets/chebgonazcreatures");
+            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazcreatures");
+            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
                 //chebgonazAssetBundle.GetAllAssetNames().ToList().ForEach(name => Jotunn.Logger.LogInfo($"Asset name: {name}"));
@@ -120,10 +147,11 @@ namespace FriendlySkeletonWand
 
         private void AddNecromancy()
         {
+            string iconPath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "necromancy_icon.png");
             SkillConfig skill = new SkillConfig();
             skill.Name = "$friendlyskeletonwand_necromancy";
             skill.Description = "$friendlyskeletonwand_necromancy_desc";
-            skill.IconPath = "FriendlySkeletonWand/Assets/necromancy_icon.png";
+            skill.IconPath = iconPath;
             skill.Identifier = necromancySkillIdentifier;
 
             SkillManager.Instance.AddSkill(skill);
@@ -136,6 +164,8 @@ namespace FriendlySkeletonWand
                 ItemManager.Instance.AddItem(wand.GetCustomItem());
                 KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
             });
+
+            ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItem());
 
             // You want that to run only once, Jotunn has the item cached for the game session
             PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
@@ -167,33 +197,61 @@ namespace FriendlySkeletonWand
                     float necromancyLevel = player.GetSkillLevel(
                         SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill);
 
-                    if (necromancyLevel >= guardianWraithLevelRequirement.Value && (guardianWraith == null || guardianWraith.GetComponent<Character>().IsDead()))
+                    if (Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
+                            equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud")
+                            ) != null)
                     {
-                        GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
-                        if (!prefab)
+                        if (necromancyLevel >= guardianWraithLevelRequirement.Value)
                         {
-                            Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
+                            if (guardianWraith == null || guardianWraith.GetComponent<Character>().IsDead())
+                            {
+                                GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
+                                if (!prefab)
+                                {
+                                    Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
+                                }
+                                else
+                                {
+                                    int quality = 1;
+                                    if (necromancyLevel >= 70) { quality = 3; }
+                                    else if (necromancyLevel >= 35) { quality = 2; }
+
+                                    player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
+                                    guardianWraith = Instantiate(prefab,
+                                        player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                                    GuardianWraithMinion guardianWraithMinion = guardianWraith.AddComponent<GuardianWraithMinion>();
+                                    guardianWraithMinion.canBeCommanded = false;
+                                    Character character = guardianWraith.GetComponent<Character>();
+                                    character.SetLevel(quality);
+                                    character.m_faction = Character.Faction.Players;
+                                    guardianWraith.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+                                }
+                            }
                         }
                         else
                         {
-                            int quality = 1;
-                            if (necromancyLevel >= 70) { quality = 3; }
-                            else if (necromancyLevel >= 35) { quality = 2; }
-
-                            player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
-                            guardianWraith = Instantiate(prefab, 
-                                player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                            GuardianWraithMinion guardianWraithMinion = guardianWraith.AddComponent<GuardianWraithMinion>();
-                            guardianWraithMinion.canBeCommanded = false;
-                            Character character = guardianWraith.GetComponent<Character>();
-                            character.SetLevel(quality);
-                            character.m_faction = Character.Faction.Players;
-                            guardianWraith.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+                            // instantiate hostile wraith to punish player
+                            player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithangrymessage");
+                            GameObject prefab = ZNetScene.instance.GetPrefab("Wraith");
+                            if (!prefab)
+                            {
+                                Jotunn.Logger.LogError("Wraith prefab null!");
+                            }
+                            else
+                            {
+                                Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                            }
                         }
                     }
-
+                    else
+                    {
+                        if (guardianWraith != null)
+                        {
+                            guardianWraith.GetComponent<Humanoid>().SetHealth(0);
+                        }
+                    }
                 }
-                yield return new WaitForSeconds(30);
+                yield return new WaitForSeconds(5);
             }
         }
     }
