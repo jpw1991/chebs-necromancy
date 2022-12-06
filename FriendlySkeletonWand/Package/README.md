@@ -43,7 +43,7 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 	+ 70+: Level 3.
 - Minion health increases with necromancy level.
 - Minions ignore collision with the player so you won't be trapped.
-- Starting at level 25, a wraith spawns to guard you at all times (until it is destroyed - then it respawns again after a little while)
+- You can make a special cape called the Spectral Shroud which draws spirits to it. If you're powerful enough, they will serve (necromancy level 25). Removing the cape stops them from spawning.
 - Tweakable settings by editing the config file.
 
 ### Config
@@ -58,6 +58,7 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 
 Date | Version | Notes
 --- | --- | ---
+05/12/2022 | 1.0.12 | Add Vulkan support for Linux
 03/12/2022 | 1.0.11 | Fix more shaders; add Spectral Shroud -> wraiths only summon when you wear it, and get dismissed when you take it off; removed drops from minions
 03/12/2022 | 1.0.10 | Implement fix for Thunderstore Mod Manager that (hopefully) permits it to install correctly.
 02/12/2022 | 1.0.9 | Fix some shaders that got messed up (white squares instead of particles on effects like arrow hit); allow minions to generate a little Necromancy XP for their master; fixed a null object exception in Guardian Wraith coroutine
