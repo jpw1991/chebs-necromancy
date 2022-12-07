@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -e
 display_usage()
 {
     ua=(
@@ -14,7 +14,7 @@ display_usage()
         "FriendlySkeletonWand/bin/Release"
 	"FriendlySkeletonWand.dll"
 	"/home/$USER/.local/share/Steam/steamapps/common/Valheim"
-	"."
+	"$(pwd)"
 	"/home/$USER/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins"
        )
     echo "Example values:"
@@ -43,11 +43,6 @@ if [ ! -d "$TARGETPATH" ]; then
   exit 1
 fi
 
-#if [ ! -f "$TARGETASSEMBLY" ]; then
-#  echo "$TARGETASSEMBLY does not exist."
-#  exit 1
-#fi
-
 if [ ! -d "$VALHEIMPATH" ]; then
   echo "$VALHEIMPATH does not exist."
   exit 1
@@ -67,16 +62,19 @@ TARGET=$( basename "$TARGETPATH" )
 # handle each target differently
 if [ $TARGET == "Release" ]; then
   echo "Packaging for Thunderstore..."
-  packagePath="$PROJECTPATH/Package"
+  packagePath="$PROJECTPATH/$name/Package"
   if [ -d "$packagePath/plugins" ]; then
     rm -rf "$packagePath/plugins"
   fi
   mkdir "$packagePath/plugins"
-  mkdir "$packagePath/$name"
+  mkdir "$packagePath/plugins/$name"
   cp "$TARGETPATH/$TARGETASSEMBLY" "$packagePath/plugins/$name"
   cp "README.md" "$packagePath"
-  cp -r "$PROJECTPATH/Assets" "$packagePath/plugins/$name"
-  zip -r "$TARGETPATH/$(TARGETASSEMBLY).zip" "$packagePath"
+  cp -r "$PROJECTPATH/$name/Assets" "$packagePath/plugins/$name"
+  zipLocation="$TARGETPATH/$TARGETASSEMBLY.zip"
+  echo "Zipping to $PROJECTPATH/$zipLocation"
+  cd $packagePath
+  zip -r "$PROJECTPATH/$zipLocation" .
 fi
 
 if [ $TARGET == "Debug" ]; then
@@ -88,13 +86,11 @@ if [ $TARGET == "Debug" ]; then
   if [ ! -d "$plug" ]; then
 	mkdir $plug
   fi
-  cp -f "$TARGETPATH/$(name).dll" $plug
-  cp -f "$TARGETPATH/$(name).pdb" $plug
-  cp -f "$TARGETPATH/$(name).dll.mdb" $plug
-  # also copy assets over if it exists
-  if [ -d "$PROJECTPATH/Assets" ]; then
-    cp -rf "$PROJECTPATH/Assets" "$TARGETPATH/Assets"
-  fi
+  cp -f "$TARGETPATH/$name.dll" $plug
+  cp -f "$TARGETPATH/$name.pdb" $plug
+  # mdb seems missing on Linux
+  #cp -f "$TARGETPATH/$name.dll.mdb" $plug
+  cp -rf "$PROJECTPATH/$name/Assets" "$plug/Assets"
 fi
 
 echo "Finished"
