@@ -12,7 +12,7 @@ namespace FriendlySkeletonWand
         public static string PrefabName = "ChebGonaz_SpiritPylon";
         public static string PieceTable = "Hammer";
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
-        protected Stack<GameObject> spawnedGhosts = new Stack<GameObject>();
+        protected List<GameObject> spawnedGhosts = new List<GameObject>();
 
         public static RequirementConfig[] GetRequirements()
         {
@@ -26,7 +26,6 @@ namespace FriendlySkeletonWand
 
         private void Awake()
         {
-            Jotunn.Logger.LogInfo("SpiritPylon awakening...");
             StartCoroutine(LookForEnemies());
         }
 
@@ -50,6 +49,15 @@ namespace FriendlySkeletonWand
             {
                 yield return new WaitForSeconds(2);
 
+                // clear out any dead/destroyed ghosts
+                for (int i=spawnedGhosts.Count-1; i>=0; i--)
+                {
+                    if (spawnedGhosts[i] == null)
+                    {
+                        spawnedGhosts.RemoveAt(i);
+                    }
+                }
+
                 if (Player.m_localPlayer != null)
                 {
                     float playerNecromancyLevel = 
@@ -65,25 +73,9 @@ namespace FriendlySkeletonWand
                         // spawn ghosts up until the limit
                         if (spawnedGhosts.Count < amount)
                         {
-                            spawnedGhosts.Push(SpawnFriendlyGhost(playerNecromancyLevel));
+                            spawnedGhosts.Add(SpawnFriendlyGhost(playerNecromancyLevel));
                         }
                     }  
-                    else
-                    {
-                        // despawn ghosts one by one if there are no enemies
-                        if (spawnedGhosts.Count > 0)
-                        {
-                            GameObject ghost = spawnedGhosts.Pop();
-                            if (ghost != null)
-                            {
-                                if (ghost.TryGetComponent(out Character character))
-                                {
-                                    character.SetHealth(0);
-                                }
-                            }
-                            else { Destroy(ghost); }
-                        }
-                    }
                 }
             }
         }
@@ -126,6 +118,8 @@ namespace FriendlySkeletonWand
                 Quaternion.identity);
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
+            // add a self-destruct to it
+            spawnedChar.AddComponent<KillAfterPeriod>();
 
             return spawnedChar;
         }

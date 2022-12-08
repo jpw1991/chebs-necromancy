@@ -356,10 +356,14 @@ namespace FriendlySkeletonWand
                         BasePlugin.guardianWraith = __instance.gameObject;
                     }
                 }
-                else if (__instance.name.Contains("SpiritPylonGhost"))
+                else if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<UndeadMinion>() == null)
                 {
-                    Jotunn.Logger.LogInfo($"Destroying {__instance.name}");
-                    GameObject.Destroy(__instance.gameObject, 5);
+                    // any pylon ghost awakening we want to self-destruct after the period
+                    // so add the component
+                    if (__instance.GetComponent<KillAfterPeriod>() == null)
+                    {
+                        __instance.gameObject.AddComponent<KillAfterPeriod>();
+                    }
                 }
                 else
                 {
