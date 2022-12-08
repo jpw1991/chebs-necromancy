@@ -59,7 +59,7 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 
 Date | Version | Notes
 --- | --- | ---
-07/12/2022 | 1.0.13 | Add Spirit Pylon for static base defence.
+07/12/2022 | 1.0.13 | Add Spirit Pylon for static base defence; change skeleton eyes to blue to differentiate from deadraiser (pink) and enemy (red).
 05/12/2022 | 1.0.12 | Add Vulkan support for Linux
 03/12/2022 | 1.0.11 | Fix more shaders; add Spectral Shroud -> wraiths only summon when you wear it, and get dismissed when you take it off; removed drops from minions
 03/12/2022 | 1.0.10 | Implement fix for Thunderstore Mod Manager that (hopefully) permits it to install correctly.
