@@ -142,6 +142,7 @@
     <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wand.cs" />
+    <Compile Include="SpiritPylon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

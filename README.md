@@ -45,6 +45,7 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 - Minions ignore collision with the player so you won't be trapped.
 - You can make a special cape called the Spectral Shroud which draws spirits to it. If you're powerful enough, they will serve (necromancy level 25). Removing the cape stops them from spawning.
 - Tweakable settings by editing the config file.
+- A Spirit Pylon which can be constructed to serve as static base defence. It detects nearby enemies and if any are found, it spawns temporary Ghosts to defend the base with.
 
 ### Config
 
@@ -58,6 +59,7 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 
 Date | Version | Notes
 --- | --- | ---
+07/12/2022 | 1.0.13 | Add Spirit Pylon for static base defence.
 05/12/2022 | 1.0.12 | Add Vulkan support for Linux
 03/12/2022 | 1.0.11 | Fix more shaders; add Spectral Shroud -> wraiths only summon when you wear it, and get dismissed when you take it off; removed drops from minions
 03/12/2022 | 1.0.10 | Implement fix for Thunderstore Mod Manager that (hopefully) permits it to install correctly.

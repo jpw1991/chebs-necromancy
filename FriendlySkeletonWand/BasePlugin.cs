@@ -29,7 +29,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.12";
+        public const string PluginVersion = "1.0.13";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -127,6 +127,46 @@ namespace FriendlySkeletonWand
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 }
                 );
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning($"Exception caught while adding custom creatures: {ex}");
+            }
+            finally
+            {
+                chebgonazAssetBundle.Unload(false);
+            }
+        }
+
+        private void AddCustomStructures()
+        {
+            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazstructures");
+            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
+            try
+            {
+                Jotunn.Logger.LogInfo($"Loading {SpiritPylon.StructureName}...");
+                PieceConfig spiritPylon = new PieceConfig
+                {
+                    Name = SpiritPylon.StructureDisplayName,
+                    PieceTable = SpiritPylon.PieceTable,
+                    Requirements = SpiritPylon.GetRequirements(),
+                };
+
+                PieceManager.Instance.AddPiece(new CustomPiece(
+                    chebgonazAssetBundle,
+                    SpiritPylon.StructureName,
+                    false,
+                    spiritPylon));
+
+                CustomPiece spiritPylonPiece = PieceManager.Instance.GetPiece(SpiritPylon.StructureName);
+                if (spiritPylonPiece != null)
+                {
+                    spiritPylonPiece.PiecePrefab.AddComponent<SpiritPylon>();
+                }
+                else
+                {
+                    Jotunn.Logger.LogError($"AddCustomStructures: {SpiritPylon.StructureName} is null!");
+                }
             }
             catch (Exception ex)
             {
