@@ -58,6 +58,7 @@ namespace FriendlySkeletonWand
             // custom material not working cuz unknown reasons
             //LoadCustomMaterials();
             AddCustomCreatures();
+            AddCustomStructures();
 
             harmony.PatchAll();
 
@@ -110,20 +111,18 @@ namespace FriendlySkeletonWand
                 "ChebGonaz_SkeletonWarrior.prefab",
                 "ChebGonaz_SkeletonArcher.prefab",
                 "ChebGonaz_GuardianWraith.prefab",
+                "ChebGonaz_SpiritPylonGhost.prefab",
             };
             string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazcreatures");
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
-                //chebgonazAssetBundle.GetAllAssetNames().ToList().ForEach(name => Jotunn.Logger.LogInfo($"Asset name: {name}"));
-
                 prefabNames.ForEach(prefabName =>
                 {
                     Jotunn.Logger.LogInfo($"Loading {prefabName}...");
                     GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
                     if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
 
-                    Jotunn.Logger.LogInfo("Adding creature...");
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 }
                 );
@@ -144,33 +143,28 @@ namespace FriendlySkeletonWand
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
-                Jotunn.Logger.LogInfo($"Loading {SpiritPylon.StructureName}...");
+                Jotunn.Logger.LogInfo($"Loading {SpiritPylon.PrefabName}...");
+
+                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.PrefabName);
+                if (spiritPylonPrefab == null)
+                {
+                    Jotunn.Logger.LogError($"AddCustomStructures: {SpiritPylon.PrefabName} is null!");
+                    return;
+                }
+                spiritPylonPrefab.AddComponent<SpiritPylon>();
+
                 PieceConfig spiritPylon = new PieceConfig
                 {
-                    Name = SpiritPylon.StructureDisplayName,
                     PieceTable = SpiritPylon.PieceTable,
                     Requirements = SpiritPylon.GetRequirements(),
+                    Icon = chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName),
                 };
 
-                PieceManager.Instance.AddPiece(new CustomPiece(
-                    chebgonazAssetBundle,
-                    SpiritPylon.StructureName,
-                    false,
-                    spiritPylon));
-
-                CustomPiece spiritPylonPiece = PieceManager.Instance.GetPiece(SpiritPylon.StructureName);
-                if (spiritPylonPiece != null)
-                {
-                    spiritPylonPiece.PiecePrefab.AddComponent<SpiritPylon>();
-                }
-                else
-                {
-                    Jotunn.Logger.LogError($"AddCustomStructures: {SpiritPylon.StructureName} is null!");
-                }
+                PieceManager.Instance.AddPiece(new CustomPiece(spiritPylonPrefab, false, spiritPylon));
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($"Exception caught while adding custom creatures: {ex}");
+                Logger.LogWarning($"Exception caught while adding custom structures: {ex}");
             }
             finally
             {
@@ -285,7 +279,10 @@ namespace FriendlySkeletonWand
                     {
                         if (guardianWraith != null)
                         {
-                            guardianWraith.GetComponent<Humanoid>().SetHealth(0);
+                            if (guardianWraith.TryGetComponent(out Humanoid humanoid))
+                            {
+                                guardianWraith.GetComponent<Humanoid>().SetHealth(0);
+                            } else { Destroy(guardianWraith); }
                         }
                     }
                 }
@@ -314,6 +311,26 @@ namespace FriendlySkeletonWand
         }
     }
 
+    [HarmonyPatch(typeof(Piece))]
+    static class ChebGonaz_PiecePatch
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(Piece.Awake))]
+        static void AwakePostfix(ref Piece __instance)
+        {
+            if (__instance.name.StartsWith("ChebGonaz"))
+            {
+                if (__instance.name.Contains("SpiritPylonGhost"))
+                {
+                    if (__instance.GetComponent<SpiritPylon>() == null)
+                    {
+                        __instance.gameObject.AddComponent<SpiritPylon>();
+                    }
+                }
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(MonsterAI))]
     static class FriendlySkeletonPatch
     {
@@ -338,6 +355,11 @@ namespace FriendlySkeletonWand
                         __instance.gameObject.AddComponent<GuardianWraithMinion>();
                         BasePlugin.guardianWraith = __instance.gameObject;
                     }
+                }
+                else if (__instance.name.Contains("SpiritPylonGhost"))
+                {
+                    Jotunn.Logger.LogInfo($"Destroying {__instance.name}");
+                    GameObject.Destroy(__instance.gameObject, 5);
                 }
                 else
                 {

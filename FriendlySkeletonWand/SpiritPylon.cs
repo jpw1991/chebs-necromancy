@@ -8,10 +8,10 @@ namespace FriendlySkeletonWand
 {
     internal class SpiritPylon : MonoBehaviour
     {
-        public float sightRadius = 30;
-        public static string StructureName = "ChebGonaz_SpiritPylon";
-        public static string StructureDisplayName = "$chebgonaz_spiritpylon_name";
+        public float sightRadius = 15;
+        public static string PrefabName = "ChebGonaz_SpiritPylon";
         public static string PieceTable = "Hammer";
+        public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected Stack<GameObject> spawnedGhosts = new Stack<GameObject>();
 
         public static RequirementConfig[] GetRequirements()
@@ -26,11 +26,26 @@ namespace FriendlySkeletonWand
 
         private void Awake()
         {
+            Jotunn.Logger.LogInfo("SpiritPylon awakening...");
             StartCoroutine(LookForEnemies());
         }
 
         IEnumerator LookForEnemies()
         {
+            while (ZInput.instance == null)
+            {
+                yield return new WaitForSeconds(2);
+            }
+
+            // prevent coroutine from doing its thing while the pylon isn't
+            // yet constructed
+            Piece piece = GetComponent<Piece>();
+            while (!piece.IsPlacedByPlayer())
+            {
+                //Jotunn.Logger.LogInfo("Waiting for player to place pylon...");
+                yield return new WaitForSeconds(2);
+            }
+
             while (true)
             {
                 yield return new WaitForSeconds(2);
@@ -59,7 +74,14 @@ namespace FriendlySkeletonWand
                         if (spawnedGhosts.Count > 0)
                         {
                             GameObject ghost = spawnedGhosts.Pop();
-                            Destroy(ghost);
+                            if (ghost != null)
+                            {
+                                if (ghost.TryGetComponent(out Character character))
+                                {
+                                    character.SetHealth(0);
+                                }
+                            }
+                            else { Destroy(ghost); }
                         }
                     }
                 }
@@ -76,7 +98,7 @@ namespace FriendlySkeletonWand
                 );
             foreach (Character character in charactersInRange)
             {
-                if (character.m_faction != Character.Faction.Players)
+                if (character != null && character.m_faction != Character.Faction.Players)
                 {
                     return true;
                 }
@@ -90,11 +112,12 @@ namespace FriendlySkeletonWand
             if (playerNecromancyLevel >= 30) { quality = 3; }
             else if (playerNecromancyLevel >= 15) { quality = 2; }
 
-            string prefabName = "Ghost";
+            string prefabName = "ChebGonaz_SpiritPylonGhost";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Jotunn.Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed");
+                Jotunn.Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed!");
+                return null;
             }
 
             GameObject spawnedChar = Instantiate(
@@ -103,7 +126,6 @@ namespace FriendlySkeletonWand
                 Quaternion.identity);
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
-            character.m_faction = Character.Faction.Players;
 
             return spawnedChar;
         }

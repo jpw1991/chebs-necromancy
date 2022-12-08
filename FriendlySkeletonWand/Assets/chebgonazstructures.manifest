@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1376436919
+CRC: 1694285453
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 16917689f12750a06ab2733e3afce9e2
+    Hash: b4502b6d01432000f02d90e84aa3b723
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 0f6a2b66d8ff9b9e9e7fcafb05740c83
+    Hash: d7176f3b5ac60f7b199a821d220586d6
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,7 +25,7 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
-- Class: 64
+- Class: 65
   Script: {instanceID: 0}
 - Class: 82
   Script: {instanceID: 0}
@@ -42,8 +42,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: 963225042, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
   Script: {fileID: 1404409730, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 2094620348, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -56,6 +54,8 @@ ClassTypes:
 - Class: 199
   Script: {instanceID: 0}
 - Class: 205
+  Script: {instanceID: 0}
+- Class: 213
   Script: {instanceID: 0}
 - Class: 241
   Script: {instanceID: 0}
@@ -72,4 +72,5 @@ SerializeReferenceClassIdentifiers:
   ClassName: HitData/DamageModifiers
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylon.prefab
+- Assets/_ChebGonaz/chebgonaz_spiritpylon_icon.png
 Dependencies: []

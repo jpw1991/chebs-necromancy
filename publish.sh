@@ -83,14 +83,15 @@ if [ $TARGET == "Debug" ]; then
   fi
   plug="$DEPLOYPATH/$name"
   # create plug and copy files there
-  if [ ! -d "$plug" ]; then
-	mkdir $plug
+  if [ -d "$plug" ]; then
+	rm -rf $plug
   fi
-  cp -f "$TARGETPATH/$name.dll" $plug
-  cp -f "$TARGETPATH/$name.pdb" $plug
+  mkdir $plug
+  cp "$TARGETPATH/$name.dll" $plug
+  cp "$TARGETPATH/$name.pdb" $plug
   # mdb seems missing on Linux
   #cp -f "$TARGETPATH/$name.dll.mdb" $plug
-  cp -rf "$PROJECTPATH/$name/Assets" "$plug/Assets"
+  cp -r "$PROJECTPATH/$name/Assets" "$plug/Assets"
 fi
 
 echo "Finished"

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1193176106
+CRC: 1185952815
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 0e2e738dd062af79d0a325a5dcc4a1a9
+    Hash: 65aa5ec3efdb7d162db935c5a32dbe89
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 96455109affa9f74f7640672e4d9d67b
+    Hash: 27522e69490d27f06b7b09cd45f35a50
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -46,25 +46,21 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 313648218, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
-  Script: {fileID: 469224316, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
   Script: {fileID: 1109157524, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 469224316, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 825357479, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1578695569, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: 829610738, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+  Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1137906148, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
-  Script: {fileID: 69470131, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
-  Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1266444067, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -76,7 +72,11 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1404409730, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 829610738, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: -2077285929, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 69470131, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -2012497638, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -136,4 +136,5 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_GuardianWraith.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarrior.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.prefab
+- Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
 Dependencies: []
