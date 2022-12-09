@@ -15,7 +15,8 @@ namespace FriendlySkeletonWand
 {
     internal class SkeletonWand : Wand
     {
-        public ConfigEntry<int> skeletonsPerSummon;
+        public static List<GameObject> skeletons = new List<GameObject>();
+
         public ConfigEntry<float> skeletonHealthMultiplier;
         public ConfigEntry<float> skeletonSetFollowRange;
 
@@ -24,6 +25,8 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> boneFragmentsRequiredConfig;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
+
+        public static ConfigEntry<int> maxSkeletons;
 
         public SkeletonWand()
         {
@@ -40,9 +43,6 @@ namespace FriendlySkeletonWand
             skeletonSetFollowRange = plugin.Config.Bind("Client config", "SkeletonSetFollowRange",
                 10f, new ConfigDescription("$friendlyskeletonwand_config_skeletonsetfollowrange_desc"));
 
-            skeletonsPerSummon = plugin.Config.Bind("Client config", "SkeletonsPerSummon",
-                1, new ConfigDescription("$friendlyskeletonwand_config_skeletonspersummon_desc"));
-
             boneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "BoneFragmentsRequired",
                 3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsrequired_desc"));
 
@@ -53,6 +53,9 @@ namespace FriendlySkeletonWand
 
             necromancyLevelIncrease = plugin.Config.Bind("Client config", "NecromancyLevelIncrease",
                 1f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
+
+            maxSkeletons = plugin.Config.Bind("Client config", "MaximumSkeletons",
+                0, new ConfigDescription("$friendlyskeletonwand_config_maxskeletons_desc"));
         }
 
         public override void CreateButtons()
@@ -107,7 +110,6 @@ namespace FriendlySkeletonWand
                     SpawnFriendlySkeleton(Player.m_localPlayer,
                         boneFragmentsRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
-                        skeletonsPerSummon.Value,
                         false
                         );
                     return true;
@@ -117,7 +119,6 @@ namespace FriendlySkeletonWand
                     SpawnFriendlySkeleton(Player.m_localPlayer,
                         boneFragmentsRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
-                        skeletonsPerSummon.Value,
                         true
                         );
                     return true;
@@ -146,7 +147,7 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        private void AdjustSkeletonStatsToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel, float skeletonHealthMultiplier)
+        private void AdjustSkeletonStatsToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel)
         {
             Character character = skeletonInstance.GetComponent<Character>();
             if (character == null)
@@ -154,16 +155,29 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError("FriendlySkeletonMod: error -> failed to scale skeleton to player necromancy level -> Character component is null!");
                 return;
             }
-            float health = necromancyLevel * skeletonHealthMultiplier;
+            float health = necromancyLevel * skeletonHealthMultiplier.Value;
             // if the necromancy level is 0, the skeleton has 0 HP and instantly dies. Fix that
             // by giving it the minimum health amount possible
-            if (health <= 0) { health = skeletonHealthMultiplier; }
+            if (health <= 0) { health = skeletonHealthMultiplier.Value; }
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
 
-        public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, int amount, bool archer)
+        public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            if (maxSkeletons.Value > 0)
+            {
+                // re-count the current active skeletons
+                for (int i=skeletons.Count-1; i>=0; i--) { if (skeletons[i] == null) { skeletons.RemoveAt(i); } }
+                if (skeletons.Count >= maxSkeletons.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_limitexceeded");
+                    return;
+                }
+            }
+
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
@@ -205,24 +219,19 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError($"SpawnFriendlySkeleton: spawning {prefabName} failed");
             }
 
-            List<GameObject> spawnedObjects = new List<GameObject>();
-            for (int i = 0; i < amount; i++)
-            {
-                GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                spawnedChar.AddComponent<UndeadMinion>();
-                Character character = spawnedChar.GetComponent<Character>();
-                character.SetLevel(quality);
-                AdjustSkeletonStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel, skeletonHealthMultiplier.Value);
-                spawnedObjects.Add(spawnedChar);
+            GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+            spawnedChar.AddComponent<UndeadMinion>();
+            Character character = spawnedChar.GetComponent<Character>();
+            character.SetLevel(quality);
+            AdjustSkeletonStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel);
 
-                try
-                {
-                    player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
-                }
-                catch (Exception e)
-                {
-                    Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
-                }
+            try
+            {
+                player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
+            }
+            catch (Exception e)
+            {
+                Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
             }
         }
     }

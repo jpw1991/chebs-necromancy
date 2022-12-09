@@ -1,14 +1,18 @@
-﻿using System;
+﻿using BepInEx;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Jotunn.Configs;
 using Jotunn.Managers;
+using BepInEx.Configuration;
+
+
 namespace FriendlySkeletonWand
 {
     internal class SpiritPylon : MonoBehaviour
     {
-        public float sightRadius = 15;
+        public static ConfigEntry<float> sightRadius;
+
         public static string PrefabName = "ChebGonaz_SpiritPylon";
         public static string PieceTable = "Hammer";
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
@@ -21,7 +25,14 @@ namespace FriendlySkeletonWand
                 new RequirementConfig("Stone", 15, 0, true),
                 new RequirementConfig("Wood", 15, 0, true),
                 new RequirementConfig("BoneFragments", 15, 0, true),
+                new RequirementConfig("SurtlingCore", 1, 0, true),
             };
+        }
+
+        public static void CreateConfigs(BaseUnityPlugin plugin)
+        {
+            sightRadius = plugin.Config.Bind("Client config", "SpiritPylonSightRadius",
+                20f, new ConfigDescription("$friendlyskeletonwand_config_spiritpylonsightradius_desc"));
         }
 
         private void Awake()
@@ -85,7 +96,7 @@ namespace FriendlySkeletonWand
             List<Character> charactersInRange = new List<Character>();
             Character.GetCharactersInRange(
                 transform.position,
-                sightRadius,
+                sightRadius.Value,
                 charactersInRange
                 );
             foreach (Character character in charactersInRange)
@@ -101,8 +112,8 @@ namespace FriendlySkeletonWand
         protected GameObject SpawnFriendlyGhost(float playerNecromancyLevel)
         {
             int quality = 1;
-            if (playerNecromancyLevel >= 30) { quality = 3; }
-            else if (playerNecromancyLevel >= 15) { quality = 2; }
+            if (playerNecromancyLevel >= 70) { quality = 3; }
+            else if (playerNecromancyLevel >= 35) { quality = 2; }
 
             string prefabName = "ChebGonaz_SpiritPylonGhost";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);

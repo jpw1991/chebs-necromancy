@@ -80,6 +80,8 @@ namespace FriendlySkeletonWand
                 30f, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithtetherdistance_desc"));
 
             wands.ForEach(w => w.CreateConfigs(this));
+
+            SpiritPylon.CreateConfigs(this);
         }
 
         
@@ -372,6 +374,16 @@ namespace FriendlySkeletonWand
                     {
                         //Jotunn.Logger.LogInfo($"AwakePostfix: Adding UndeadMinion component to {__instance.name}");
                         __instance.gameObject.AddComponent<UndeadMinion>();
+
+                        // add to the silly limits if needed
+                        if (SkeletonWand.maxSkeletons.Value > 0 && __instance.name.Contains("Skeleton"))
+                        {
+                            SkeletonWand.skeletons.Add(__instance.gameObject);
+                        }
+                        else if (DraugrWand.maxDraugr.Value > 0 && __instance.name.Contains("Draugr"))
+                        {
+                            DraugrWand.draugr.Add(__instance.gameObject);
+                        }
                     }
                 }
             }

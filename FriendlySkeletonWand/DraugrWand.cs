@@ -15,7 +15,9 @@ namespace FriendlySkeletonWand
 {
     internal class DraugrWand : Wand
     {
-        public ConfigEntry<int> draugrPerSummon;
+        public static List<GameObject> draugr = new List<GameObject>();
+        public static ConfigEntry<int> maxDraugr;
+
         public ConfigEntry<float> draugrHealthMultiplier;
         public ConfigEntry<float> draugrSetFollowRange;
 
@@ -38,14 +40,14 @@ namespace FriendlySkeletonWand
             draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrSetFollowRange",
                 10f, new ConfigDescription("$friendlyskeletonwand_config_draugrsetfollowrange_desc"));
 
-            draugrPerSummon = plugin.Config.Bind("Client config", "DraugrPerSummon",
-                1, new ConfigDescription("$friendlyskeletonwand_config_draugrpersummon_desc"));
-
             draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrBoneFragmentsRequired",
                 3, new ConfigDescription("$friendlyskeletonwand_config_draugrbonefragmentsrequired_desc"));
 
             necromancyLevelIncrease = plugin.Config.Bind("Client config", "DraugrNecromancyLevelIncrease",
                 1.5f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
+
+            maxDraugr = plugin.Config.Bind("Client config", "MaximumDraugr",
+                0, new ConfigDescription("$friendlyskeletonwand_config_maxdraugr_desc"));
         }
 
         public override void CreateButtons()
@@ -104,7 +106,6 @@ namespace FriendlySkeletonWand
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
-                        draugrPerSummon.Value,
                         false
                         );
                     return true;
@@ -114,7 +115,6 @@ namespace FriendlySkeletonWand
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
-                        draugrPerSummon.Value,
                         true
                         );
                     return true;
@@ -159,8 +159,21 @@ namespace FriendlySkeletonWand
             character.SetHealth(health);
         }
 
-        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, int amount, bool archer)
+        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            if (maxDraugr.Value > 0)
+            {
+                // re-count the current active draugr
+                for (int i = draugr.Count - 1; i >= 0; i--) { if (draugr[i] == null) { draugr.RemoveAt(i); } }
+                if (draugr.Count >= maxDraugr.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_limitexceeded");
+                    return;
+                }
+            }
+
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
@@ -202,26 +215,21 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError($"SpawnFriendlyDraugr: spawning {prefabName} failed");
             }
 
-            List<GameObject> spawnedObjects = new List<GameObject>();
-            for (int i = 0; i < amount; i++)
-            {
-                Jotunn.Logger.LogInfo($"Spawning {prefabName}");
-                GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                spawnedChar.AddComponent<UndeadMinion>();
-                Character character = spawnedChar.GetComponent<Character>();
-                character.m_faction = Character.Faction.Players;
-                character.SetLevel(quality);
-                AdjustDraugrStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel, draugrHealthMultiplier.Value);
-                spawnedObjects.Add(spawnedChar);
+            Jotunn.Logger.LogInfo($"Spawning {prefabName}");
+            GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+            spawnedChar.AddComponent<UndeadMinion>();
+            Character character = spawnedChar.GetComponent<Character>();
+            character.m_faction = Character.Faction.Players;
+            character.SetLevel(quality);
+            AdjustDraugrStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel, draugrHealthMultiplier.Value);
 
-                try
-                {
-                    player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
-                }
-                catch (Exception e)
-                {
-                    Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
-                }
+            try
+            {
+                player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
+            }
+            catch (Exception e)
+            {
+                Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
             }
         }
     }
