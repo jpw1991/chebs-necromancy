@@ -11,7 +11,7 @@ namespace FriendlySkeletonWand
     {
         public float period = 10;
 
-        private void Start()
+        private void Awake()
         {
             StartCoroutine(Killer());
         }
