@@ -17,10 +17,11 @@ namespace FriendlySkeletonWand
     {
         public static List<GameObject> skeletons = new List<GameObject>();
 
-        public ConfigEntry<float> skeletonHealthMultiplier;
-        public ConfigEntry<float> skeletonSetFollowRange;
+        public static ConfigEntry<float> skeletonBaseHealth;
+        public static ConfigEntry<float> skeletonHealthMultiplier;
+        public static ConfigEntry<float> skeletonSetFollowRange;
 
-        private ConfigEntry<float> necromancyLevelIncrease;
+        private static ConfigEntry<float> necromancyLevelIncrease;
 
         public static ConfigEntry<int> boneFragmentsRequiredConfig;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMin;
@@ -37,8 +38,11 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
+            skeletonBaseHealth = plugin.Config.Bind("Client config", "DraugrBaseHealth",
+                20f, new ConfigDescription("$friendlyskeletonwand_config_draugrbasehealth_desc"));
+
             skeletonHealthMultiplier = plugin.Config.Bind("Client config", "SkeletonHealthMultiplier",
-                15f, new ConfigDescription("$friendlyskeletonwand_config_skeletonhealthmultiplier_desc"));
+                2.5f, new ConfigDescription("$friendlyskeletonwand_config_skeletonhealthmultiplier_desc"));
 
             skeletonSetFollowRange = plugin.Config.Bind("Client config", "SkeletonSetFollowRange",
                 10f, new ConfigDescription("$friendlyskeletonwand_config_skeletonsetfollowrange_desc"));
@@ -147,7 +151,7 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        private void AdjustSkeletonStatsToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel)
+        public static void AdjustSkeletonStatsToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel)
         {
             Character character = skeletonInstance.GetComponent<Character>();
             if (character == null)
@@ -155,12 +159,47 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError("FriendlySkeletonMod: error -> failed to scale skeleton to player necromancy level -> Character component is null!");
                 return;
             }
-            float health = necromancyLevel * skeletonHealthMultiplier.Value;
-            // if the necromancy level is 0, the skeleton has 0 HP and instantly dies. Fix that
-            // by giving it the minimum health amount possible
-            if (health <= 0) { health = skeletonHealthMultiplier.Value; }
+            float health = skeletonBaseHealth.Value + necromancyLevel * skeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
+        }
+
+        private void AdjustSkeletonEquipmentToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel, bool archer)
+        {
+            GameObject weapon = null;
+            if (necromancyLevel >= 50)
+            {
+                weapon = archer 
+                    ? ZNetScene.instance.GetPrefab("BowFineWood")
+                    : ZNetScene.instance.GetPrefab("Battleaxe");
+            }
+            else if (necromancyLevel >= 25)
+            {
+                weapon = archer
+                    ? ZNetScene.instance.GetPrefab("skeleton_bow2")
+                    : ZNetScene.instance.GetPrefab("skeleton_sword2");
+            }
+            else
+            {
+                weapon = archer
+                    ? ZNetScene.instance.GetPrefab("Bow")
+                    : ZNetScene.instance.GetPrefab("Club");
+            }
+
+            if (weapon == null)
+            {
+                Jotunn.Logger.LogError("AdjustSkeletonEquipmentToNecromancyLevel: weapon is null!");
+                return;
+            }
+
+            Humanoid humanoid = skeletonInstance.GetComponent<Humanoid>();
+            if (humanoid == null)
+            {
+                Jotunn.Logger.LogError("AdjustSkeletonEquipmentToNecromancyLevel: humanoid is null!");
+                return;
+            }
+
+            humanoid.m_randomWeapon = new GameObject[] { weapon };
         }
 
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
@@ -224,6 +263,7 @@ namespace FriendlySkeletonWand
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
             AdjustSkeletonStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel);
+            //AdjustSkeletonEquipmentToNecromancyLevel(spawnedChar, playerNecromancyLevel, archer);
 
             try
             {

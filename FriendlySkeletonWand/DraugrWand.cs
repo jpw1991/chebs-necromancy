@@ -18,8 +18,9 @@ namespace FriendlySkeletonWand
         public static List<GameObject> draugr = new List<GameObject>();
         public static ConfigEntry<int> maxDraugr;
 
-        public ConfigEntry<float> draugrHealthMultiplier;
-        public ConfigEntry<float> draugrSetFollowRange;
+        public static ConfigEntry<float> draugrBaseHealth;
+        public static ConfigEntry<float> draugrHealthMultiplier;
+        public static ConfigEntry<float> draugrSetFollowRange;
 
         private ConfigEntry<float> necromancyLevelIncrease;
 
@@ -34,8 +35,11 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
+            draugrBaseHealth = plugin.Config.Bind("Client config", "DraugrBaseHealth",
+                100f, new ConfigDescription("$friendlyskeletonwand_config_draugrbasehealth_desc"));
+
             draugrHealthMultiplier = plugin.Config.Bind("Client config", "DraugrHealthMultiplier",
-                30f, new ConfigDescription("$friendlyskeletonwand_config_draugrhealthmultiplier_desc"));
+                5f, new ConfigDescription("$friendlyskeletonwand_config_draugrhealthmultiplier_desc"));
 
             draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrSetFollowRange",
                 10f, new ConfigDescription("$friendlyskeletonwand_config_draugrsetfollowrange_desc"));
@@ -143,7 +147,7 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        private void AdjustDraugrStatsToNecromancyLevel(GameObject draugrInstance, float necromancyLevel, float healthMultiplier)
+        public static void AdjustDraugrStatsToNecromancyLevel(GameObject draugrInstance, float necromancyLevel)
         {
             Character character = draugrInstance.GetComponent<Character>();
             if (character == null)
@@ -151,10 +155,7 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError("AdjustDraugrStatsToNecromancyLevel: error -> failed to scale minion to player necromancy level -> Character component is null!");
                 return;
             }
-            float health = necromancyLevel * healthMultiplier;
-            // if the necromancy level is 0, the minion has 0 HP and instantly dies. Fix that
-            // by giving it the minimum health amount possible
-            if (health <= 0) { health = healthMultiplier; }
+            float health = draugrBaseHealth.Value + necromancyLevel * draugrHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
@@ -221,7 +222,7 @@ namespace FriendlySkeletonWand
             Character character = spawnedChar.GetComponent<Character>();
             character.m_faction = Character.Faction.Players;
             character.SetLevel(quality);
-            AdjustDraugrStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel, draugrHealthMultiplier.Value);
+            AdjustDraugrStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel);
 
             try
             {

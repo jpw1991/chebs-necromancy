@@ -29,7 +29,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.13";
+        public const string PluginVersion = "1.0.14";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -375,14 +375,30 @@ namespace FriendlySkeletonWand
                         //Jotunn.Logger.LogInfo($"AwakePostfix: Adding UndeadMinion component to {__instance.name}");
                         __instance.gameObject.AddComponent<UndeadMinion>();
 
-                        // add to the silly limits if needed
-                        if (SkeletonWand.maxSkeletons.Value > 0 && __instance.name.Contains("Skeleton"))
+                        if (__instance.name.Contains("Skeleton"))
                         {
-                            SkeletonWand.skeletons.Add(__instance.gameObject);
+                            //todo: localplayer probably no good for multiplayer -> gotta fix
+                            //SkeletonWand.AdjustSkeletonStatsToNecromancyLevel(
+                            //    __instance.gameObject,
+                            //    Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
+
+                            // add to the silly limits if needed
+                            if (SkeletonWand.maxSkeletons.Value > 0)
+                            {
+                                SkeletonWand.skeletons.Add(__instance.gameObject);
+                            }
                         }
-                        else if (DraugrWand.maxDraugr.Value > 0 && __instance.name.Contains("Draugr"))
+
+                        if (__instance.name.Contains("Draugr"))
                         {
-                            DraugrWand.draugr.Add(__instance.gameObject);
+                            //todo: localplayer probably no good for multiplayer -> gotta fix
+                            //DraugrWand.AdjustDraugrStatsToNecromancyLevel(
+                            //    __instance.gameObject,
+                            //    Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
+                            if (DraugrWand.maxDraugr.Value > 0)
+                            {
+                                DraugrWand.draugr.Add(__instance.gameObject);
+                            }
                         }
                     }
                 }
