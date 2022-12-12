@@ -24,12 +24,12 @@ namespace FriendlySkeletonWand
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    //[NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class BasePlugin : BaseUnityPlugin
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.15";
+        public const string PluginVersion = "1.0.16";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -38,8 +38,6 @@ namespace FriendlySkeletonWand
             new DraugrWand(),
         };
         public const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
-
-        public static GameObject guardianWraith;
 
         private SpectralShroud spectralShroudItem = new SpectralShroud();
 
@@ -273,7 +271,7 @@ namespace FriendlySkeletonWand
                 {
                     //Jotunn.Logger.LogInfo($"AwakePostfix: Wraith found - {__instance.name}");
                     // remove duplicate wraiths
-                    if (BasePlugin.guardianWraith != null)
+                    if (GuardianWraithMinion.instance != null)
                     {
                         //Jotunn.Logger.LogInfo("Removing duplicate wraith...");
                         GameObject.Destroy(__instance.gameObject, 5);
@@ -281,7 +279,7 @@ namespace FriendlySkeletonWand
                     else
                     {
                         __instance.gameObject.AddComponent<GuardianWraithMinion>();
-                        BasePlugin.guardianWraith = __instance.gameObject;
+                        GuardianWraithMinion.instance = __instance.gameObject;
                     }
                 }
                 else if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<UndeadMinion>() == null)
