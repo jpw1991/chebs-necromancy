@@ -1,15 +1,16 @@
 ﻿using Jotunn.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BepInEx.Configuration;
+using BepInEx;
 
 namespace FriendlySkeletonWand
 {
     internal class Item
     {
+        public ConfigEntry<bool> allowed;
+
         public string ItemName;
+
+        public virtual void CreateConfigs(BaseUnityPlugin plugin) {}
 
         public virtual CustomItem GetCustomItem()
         {

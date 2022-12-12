@@ -38,28 +38,31 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
-            skeletonBaseHealth = plugin.Config.Bind("Client config", "DraugrBaseHealth",
-                20f, new ConfigDescription("$friendlyskeletonwand_config_draugrbasehealth_desc"));
+            allowed = plugin.Config.Bind("Client config", "SkeletonWandAllowed",
+                true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not."));
+
+            skeletonBaseHealth = plugin.Config.Bind("Client config", "SkeletonBaseHealth",
+                20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
 
             skeletonHealthMultiplier = plugin.Config.Bind("Client config", "SkeletonHealthMultiplier",
-                2.5f, new ConfigDescription("$friendlyskeletonwand_config_skeletonhealthmultiplier_desc"));
+                2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
 
-            skeletonSetFollowRange = plugin.Config.Bind("Client config", "SkeletonSetFollowRange",
-                10f, new ConfigDescription("$friendlyskeletonwand_config_skeletonsetfollowrange_desc"));
+            skeletonSetFollowRange = plugin.Config.Bind("Client config", "SkeletonCommandRange",
+                10f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
 
             boneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "BoneFragmentsRequired",
-                3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsrequired_desc"));
+                3, new ConfigDescription("The amount of Bone Fragments required to craft a skeleton."));
 
             boneFragmentsDroppedAmountMin = plugin.Config.Bind("Client config", "BoneFragmentsDroppedAmountMin",
-                1, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsdroppedamountmin_desc"));
+                1, new ConfigDescription("The minimum amount of bones dropped by creatures."));
             boneFragmentsDroppedAmountMax = plugin.Config.Bind("Client config", "BoneFragmentsDroppedAmountMax",
-                3, new ConfigDescription("$friendlyskeletonwand_config_bonefragmentsdroppedamountmax_desc"));
+                3, new ConfigDescription("The maximum amount of bones dropped by creautres."));
 
             necromancyLevelIncrease = plugin.Config.Bind("Client config", "NecromancyLevelIncrease",
-                1f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
+                1f, new ConfigDescription("How much crafting a skeleton contributes to your Necromancy level increasing."));
 
             maxSkeletons = plugin.Config.Bind("Client config", "MaximumSkeletons",
-                0, new ConfigDescription("$friendlyskeletonwand_config_maxskeletons_desc"));
+                0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited)."));
         }
 
         public override void CreateButtons()
@@ -75,8 +78,11 @@ namespace FriendlySkeletonWand
             ItemConfig friendlySkeletonWandConfig = new ItemConfig();
             friendlySkeletonWandConfig.Name = "$item_friendlyskeletonwand";
             friendlySkeletonWandConfig.Description = "$item_friendlyskeletonwand_desc";
-            friendlySkeletonWandConfig.CraftingStation = "piece_workbench";
-            friendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Wood", 5));
+            if (allowed.Value)
+            {
+                friendlySkeletonWandConfig.CraftingStation = "piece_workbench";
+                friendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Wood", 5));
+            }
 
             return new CustomItem(ItemName, "Club", friendlySkeletonWandConfig);
 

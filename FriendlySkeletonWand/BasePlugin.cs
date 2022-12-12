@@ -24,12 +24,12 @@ namespace FriendlySkeletonWand
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    //[NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class BasePlugin : BaseUnityPlugin
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.14";
+        public const string PluginVersion = "1.0.15";
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -38,10 +38,6 @@ namespace FriendlySkeletonWand
             new DraugrWand(),
         };
         public const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
-
-        // todo: move to GuardianWraithMinion.cs
-        private ConfigEntry<int> guardianWraithLevelRequirement;
-        public static ConfigEntry<float> guardianWraithTetherDistance;
 
         public static GameObject guardianWraith;
 
@@ -67,19 +63,18 @@ namespace FriendlySkeletonWand
 
             PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
 
-            StartCoroutine(GuardianWraithCoroutine());
+            StartCoroutine(GuardianWraithMinion.GuardianWraithCoroutine());
         }
 
         private void CreateConfigValues()
         {
             Config.SaveOnConfigSet = true;
 
-            guardianWraithLevelRequirement = Config.Bind("Client config", "GuardianWraithLevelRequirement",
-                25, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithlevelrequirement_desc"));
-            guardianWraithTetherDistance = Config.Bind("Client config", "GuardianWraithTetherDistance",
-                30f, new ConfigDescription("$friendlyskeletonwand_config_guardianwraithtetherdistance_desc"));
+            GuardianWraithMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
+
+            spectralShroudItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
         }
@@ -157,8 +152,8 @@ namespace FriendlySkeletonWand
 
                 PieceConfig spiritPylon = new PieceConfig
                 {
-                    PieceTable = SpiritPylon.PieceTable,
-                    Requirements = SpiritPylon.GetRequirements(),
+                    PieceTable = SpiritPylon.allowed.Value ? SpiritPylon.PieceTable : "",
+                    Requirements = SpiritPylon.allowed.Value ? SpiritPylon.GetRequirements() : new RequirementConfig[] { },
                     Icon = chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName),
                 };
 
@@ -198,7 +193,7 @@ namespace FriendlySkeletonWand
                 ItemManager.Instance.AddItem(wand.GetCustomItem());
                 KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
             });
-
+            
             ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItem());
 
             // You want that to run only once, Jotunn has the item cached for the game session
@@ -220,78 +215,9 @@ namespace FriendlySkeletonWand
                 }
             }
         }
-
-        IEnumerator GuardianWraithCoroutine()
-        {
-            while (true)
-            {
-                if (ZInput.instance != null && Player.m_localPlayer != null)
-                {
-                    Player player = Player.m_localPlayer;
-                    float necromancyLevel = player.GetSkillLevel(
-                        SkillManager.Instance.GetSkill(necromancySkillIdentifier).m_skill);
-
-                    if (Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
-                            equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud")
-                            ) != null)
-                    {
-                        if (necromancyLevel >= guardianWraithLevelRequirement.Value)
-                        {
-                            if (guardianWraith == null || guardianWraith.GetComponent<Character>().IsDead())
-                            {
-                                GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
-                                if (!prefab)
-                                {
-                                    Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
-                                }
-                                else
-                                {
-                                    int quality = 1;
-                                    if (necromancyLevel >= 70) { quality = 3; }
-                                    else if (necromancyLevel >= 35) { quality = 2; }
-
-                                    player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
-                                    guardianWraith = Instantiate(prefab,
-                                        player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                                    GuardianWraithMinion guardianWraithMinion = guardianWraith.AddComponent<GuardianWraithMinion>();
-                                    guardianWraithMinion.canBeCommanded = false;
-                                    Character character = guardianWraith.GetComponent<Character>();
-                                    character.SetLevel(quality);
-                                    character.m_faction = Character.Faction.Players;
-                                    guardianWraith.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // instantiate hostile wraith to punish player
-                            player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithangrymessage");
-                            GameObject prefab = ZNetScene.instance.GetPrefab("Wraith");
-                            if (!prefab)
-                            {
-                                Jotunn.Logger.LogError("Wraith prefab null!");
-                            }
-                            else
-                            {
-                                Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (guardianWraith != null)
-                        {
-                            if (guardianWraith.TryGetComponent(out Humanoid humanoid))
-                            {
-                                guardianWraith.GetComponent<Humanoid>().SetHealth(0);
-                            } else { Destroy(guardianWraith); }
-                        }
-                    }
-                }
-                yield return new WaitForSeconds(5);
-            }
-        }
     }
+
+    #region HarmonyPatches
 
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     class CharacterDrop_Patches
@@ -405,5 +331,6 @@ namespace FriendlySkeletonWand
             }
         }
     }
+    #endregion
 }
 

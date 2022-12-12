@@ -40,43 +40,43 @@ namespace FriendlySkeletonWand
 
         private GameObject targetObject;
 
-        public virtual void CreateConfigs(BaseUnityPlugin plugin)
+        public override void CreateConfigs(BaseUnityPlugin plugin)
         {
             CreateMinionConfig = plugin.Config.Bind("Client config", ItemName+"CreateMinion",
-                KeyCode.B, new ConfigDescription("$friendlyskeletonwand_config_create_minion_desc"));
+                KeyCode.B, new ConfigDescription("The key to create a warrior minion with."));
             CreateMinionGamepadConfig = plugin.Config.Bind("Client config", ItemName + "CreateMinionGamepad",
                 InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("$friendlyskeletonwand_config_create_minion_gamepad_desc"));
+                new ConfigDescription("The key to gamepad button to create a warrior minion with."));
 
             CreateArcherMinionConfig = plugin.Config.Bind("Client config", ItemName + "CreateArcher",
-                KeyCode.H, new ConfigDescription("$friendlyskeletonwand_config_create_minion_desc"));
+                KeyCode.H, new ConfigDescription("The key to create an archer minion with."));
             CreateArcherMinionGamepadConfig = plugin.Config.Bind("Client config", ItemName + "CreateArcherGamepad",
                 InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("$friendlyskeletonwand_config_create_archer_minion_gamepad_desc"));
+                new ConfigDescription("The key to gamepad button to create an archer minion with."));
 
             FollowConfig = plugin.Config.Bind("Client config", ItemName + "Follow",
-                KeyCode.F, new ConfigDescription("$friendlyskeletonwand_config_follow_desc"));
+                KeyCode.F, new ConfigDescription("The key to tell minions to follow."));
             FollowGamepadConfig = plugin.Config.Bind("Client config", ItemName + "FollowGamepad",
                 InputManager.GamepadButton.ButtonWest,
-                new ConfigDescription("$friendlyskeletonwand_config_follow_gamepad_desc"));
+                new ConfigDescription("The gamepad button to tell minions to follow."));
 
             WaitConfig = plugin.Config.Bind("Client config", ItemName + "Wait",
-                KeyCode.T, new ConfigDescription("$friendlyskeletonwand_config_wait_desc"));
+                KeyCode.T, new ConfigDescription("The key to tell minions to wait."));
             WaitGamepadConfig = plugin.Config.Bind("Client config", ItemName + "WaitGamepad",
                 InputManager.GamepadButton.ButtonEast,
-                new ConfigDescription("$friendlyskeletonwand_config_wait_gamepad_desc"));
+                new ConfigDescription("The gamepad button to tell minions to wait."));
 
             TeleportConfig = plugin.Config.Bind("Client config", ItemName + "Teleport",
-                KeyCode.G, new ConfigDescription("$friendlyskeletonwand_config_teleport_desc"));
+                KeyCode.G, new ConfigDescription("The key to teleport following minions to you."));
             TeleportGamepadConfig = plugin.Config.Bind("Client config", ItemName + "TeleportGamepad",
                 InputManager.GamepadButton.SelectButton,
-                new ConfigDescription("$friendlyskeletonwand_config_teleport_gamepad_desc"));
+                new ConfigDescription("The gamepad button to teleport following minions to you."));
 
             AttackTargetConfig = plugin.Config.Bind("Client config", ItemName + "Target",
-                KeyCode.R, new ConfigDescription("$friendlyskeletonwand_config_attacktarget_desc"));
+                KeyCode.R, new ConfigDescription("The key to tell minions to go to a specific target."));
             AttackTargetGamepadConfig = plugin.Config.Bind("Client config", ItemName + "TargetGamepad",
                 InputManager.GamepadButton.StartButton,
-                new ConfigDescription("$friendlyskeletonwand_config_attacktarget_gamepad_desc"));
+                new ConfigDescription("The gamepad button to tell minions to go to a specific target."));
         }
 
         public virtual void CreateButtons()

@@ -35,23 +35,26 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
+            allowed = plugin.Config.Bind("Client config", "DraugrWandAllowed",
+                true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not."));
+
             draugrBaseHealth = plugin.Config.Bind("Client config", "DraugrBaseHealth",
-                100f, new ConfigDescription("$friendlyskeletonwand_config_draugrbasehealth_desc"));
+                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
 
             draugrHealthMultiplier = plugin.Config.Bind("Client config", "DraugrHealthMultiplier",
-                5f, new ConfigDescription("$friendlyskeletonwand_config_draugrhealthmultiplier_desc"));
+                5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
 
-            draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrSetFollowRange",
-                10f, new ConfigDescription("$friendlyskeletonwand_config_draugrsetfollowrange_desc"));
+            draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrCommandRange",
+                10f, new ConfigDescription("The range from which nearby Draugr will hear your command."));
 
             draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrBoneFragmentsRequired",
-                3, new ConfigDescription("$friendlyskeletonwand_config_draugrbonefragmentsrequired_desc"));
+                3, new ConfigDescription("How many bone fragments it costs to make a Draugr."));
 
             necromancyLevelIncrease = plugin.Config.Bind("Client config", "DraugrNecromancyLevelIncrease",
-                1.5f, new ConfigDescription("$friendlyskeletonwand_config_necromancylevelincrease_desc"));
+                1.5f, new ConfigDescription("How much creating a Draugr contributes to your Necromancy level increasing."));
 
             maxDraugr = plugin.Config.Bind("Client config", "MaximumDraugr",
-                0, new ConfigDescription("$friendlyskeletonwand_config_maxdraugr_desc"));
+                0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited)."));
         }
 
         public override void CreateButtons()
@@ -69,11 +72,14 @@ namespace FriendlySkeletonWand
             ItemConfig draugrWandConfig = new ItemConfig();
             draugrWandConfig.Name = "$item_friendlyskeletonwand_draugrwand";
             draugrWandConfig.Description = "$item_friendlyskeletonwand_draugrwand_desc";
-            draugrWandConfig.CraftingStation = "piece_workbench";
-            draugrWandConfig.AddRequirement(new RequirementConfig("ElderBark", 5));
-            draugrWandConfig.AddRequirement(new RequirementConfig("FineWood", 5));
-            draugrWandConfig.AddRequirement(new RequirementConfig("Bronze", 5));
-            draugrWandConfig.AddRequirement(new RequirementConfig("TrophyDraugr", 1));
+            if (allowed.Value)
+            {
+                draugrWandConfig.CraftingStation = "piece_workbench";
+                draugrWandConfig.AddRequirement(new RequirementConfig("ElderBark", 5));
+                draugrWandConfig.AddRequirement(new RequirementConfig("FineWood", 5));
+                draugrWandConfig.AddRequirement(new RequirementConfig("Bronze", 5));
+                draugrWandConfig.AddRequirement(new RequirementConfig("TrophyDraugr", 1));
+            }
 
             return new CustomItem(ItemName, "Club", draugrWandConfig);
         }

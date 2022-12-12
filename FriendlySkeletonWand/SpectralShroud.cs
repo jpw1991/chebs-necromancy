@@ -1,11 +1,7 @@
 ﻿using Jotunn.Configs;
 using Jotunn.Entities;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BepInEx;
+using BepInEx.Configuration;
 using UnityEngine;
 
 namespace FriendlySkeletonWand
@@ -19,14 +15,25 @@ namespace FriendlySkeletonWand
             ItemName = "ChebGonaz_SpectralShroud";
         }
 
+        public override void CreateConfigs(BaseUnityPlugin plugin)
+        {
+            base.CreateConfigs(plugin);
+
+            allowed = plugin.Config.Bind("Client config", "SpectralShroudAllowed",
+                true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not."));
+        }
+
         public override CustomItem GetCustomItem()
         {
             ItemConfig config = new ItemConfig();
             config.Name = "$item_friendlyskeletonwand_spectralshroud";
             config.Description = "$item_friendlyskeletonwand_spectralshroud_desc";
-            config.CraftingStation = "piece_workbench";
-            config.AddRequirement(new RequirementConfig("Chain", 5));
-            config.AddRequirement(new RequirementConfig("TrollHide", 10));
+            if (allowed.Value)
+            {
+                config.CraftingStation = "piece_workbench";
+                config.AddRequirement(new RequirementConfig("Chain", 5));
+                config.AddRequirement(new RequirementConfig("TrollHide", 10));
+            }
 
             CustomItem customItem = new CustomItem(ItemName, "CapeTrollHide", config);
             //// sigh, nothing works...

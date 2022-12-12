@@ -11,6 +11,7 @@ namespace FriendlySkeletonWand
 {
     internal class SpiritPylon : MonoBehaviour
     {
+        public static ConfigEntry<bool> allowed;
         public static ConfigEntry<float> sightRadius;
 
         public static string PrefabName = "ChebGonaz_SpiritPylon";
@@ -31,8 +32,10 @@ namespace FriendlySkeletonWand
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
+            allowed = plugin.Config.Bind("Client config", "SpiritPylonAllowed",
+                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not."));
             sightRadius = plugin.Config.Bind("Client config", "SpiritPylonSightRadius",
-                20f, new ConfigDescription("$friendlyskeletonwand_config_spiritpylonsightradius_desc"));
+                20f, new ConfigDescription("How far a Spirit Pylon can see enemies."));
         }
 
         private void Awake()
