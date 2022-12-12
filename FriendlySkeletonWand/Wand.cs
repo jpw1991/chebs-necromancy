@@ -169,7 +169,12 @@ namespace FriendlySkeletonWand
                 if (minion != null && minion.canBeCommanded)
                 {
                     float distance = Vector3.Distance(item.transform.position, player.transform.position);
-                    if (distance < radius || item.GetComponent<MonsterAI>().GetFollowTarget() == targetObject)
+                    // if within radius OR it's set to the targetObject so you can recall those you've commanded
+                    // to be somewhere that's beyond the radius
+                    if (distance < radius
+                        || (item.GetComponent<MonsterAI>().GetFollowTarget() == targetObject
+                        && item.GetComponent<MonsterAI>().GetFollowTarget() != null
+                        ))
                     {
                         MonsterAI monsterAI = item.GetComponent<MonsterAI>();
                         if (monsterAI == null)
