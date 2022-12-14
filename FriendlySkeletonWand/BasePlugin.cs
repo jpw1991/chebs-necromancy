@@ -30,6 +30,7 @@ namespace FriendlySkeletonWand
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
         public const string PluginVersion = "1.0.17";
+
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -49,8 +50,7 @@ namespace FriendlySkeletonWand
 
             CreateConfigValues();
 
-            // custom material not working cuz unknown reasons
-            //LoadCustomMaterials();
+            AddCustomItems();
             AddCustomCreatures();
             AddCustomStructures();
 
@@ -77,19 +77,29 @@ namespace FriendlySkeletonWand
             SpiritPylon.CreateConfigs(this);
         }
 
-        
 
-        private void LoadCustomMaterials()
+        private void AddCustomItems()
         {
             string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazitems");
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
-                spectralShroudItem.LoadSpectralShroudMaterial(chebgonazAssetBundle);
+                Jotunn.Logger.LogInfo($"Loading {SpectralShroud.PrefabName}...");
+                GameObject spectralShroudPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpectralShroud.PrefabName);
+                if (spectralShroudPrefab == null)
+                {
+                    Jotunn.Logger.LogError($"AddCustomItems: {SpectralShroud.PrefabName} is null!");
+                    return;
+                }
+
+                CustomItem customItem = spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab);
+
+                ItemManager.Instance.AddItem(customItem);
+
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($"Exception caught while loading custom materials: {ex}");
+                Logger.LogWarning($"Exception caught while loading custom items: {ex}");
             }
             finally
             {
@@ -192,7 +202,7 @@ namespace FriendlySkeletonWand
                 KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
             });
             
-            ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItem());
+            //ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItem());
 
             // You want that to run only once, Jotunn has the item cached for the game session
             PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;

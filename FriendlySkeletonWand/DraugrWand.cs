@@ -25,6 +25,7 @@ namespace FriendlySkeletonWand
         private ConfigEntry<float> necromancyLevelIncrease;
 
         public static ConfigEntry<int> draugrBoneFragmentsRequiredConfig;
+        public static ConfigEntry<int> draugrMeatRequiredConfig;
 
         public DraugrWand()
         {
@@ -47,7 +48,7 @@ namespace FriendlySkeletonWand
             draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrCommandRange",
                 10f, new ConfigDescription("The range from which nearby Draugr will hear your command."));
 
-            draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrMeatRequired",
+            draugrMeatRequiredConfig = plugin.Config.Bind("Client config", "DraugrMeatRequired",
                 1, new ConfigDescription("How many pieces of meat it costs to make a Draugr."));
 
             draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrBoneFragmentsRequired",
@@ -118,6 +119,7 @@ namespace FriendlySkeletonWand
                 {
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
+                        draugrMeatRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
                         false
                         );
@@ -127,6 +129,7 @@ namespace FriendlySkeletonWand
                 {
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         draugrBoneFragmentsRequiredConfig.Value,
+                        draugrMeatRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
                         true
                         );
