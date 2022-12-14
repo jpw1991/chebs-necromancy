@@ -38,6 +38,8 @@ namespace FriendlySkeletonWand
         public ConfigEntry<InputManager.GamepadButton> CreateArcherMinionGamepadConfig;
         public ButtonConfig CreateArcherMinionButton;
 
+        public string IconFile;
+
         private GameObject targetObject;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)

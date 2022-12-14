@@ -44,6 +44,8 @@ namespace FriendlySkeletonWand
 
         private float inputDelay = 0;
 
+        private Dictionary<string, Sprite> itemIcons = new Dictionary<string, Sprite>();
+
         private void Awake()
         {
             Jotunn.Logger.LogInfo("FriendlySkeletonWand has landed");
@@ -91,11 +93,19 @@ namespace FriendlySkeletonWand
                     Jotunn.Logger.LogError($"AddCustomItems: {SpectralShroud.PrefabName} is null!");
                     return;
                 }
+                ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
-                CustomItem customItem = spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab);
+                Jotunn.Logger.LogInfo($"Loading {SkeletonClub.prefabName}...");
+                GameObject skeletonClubPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SkeletonClub.prefabName);
+                if (skeletonClubPrefab == null)
+                {
+                    Jotunn.Logger.LogError($"AddCustomItems: {SkeletonClub.prefabName} is null!");
+                    return;
+                }
+                ItemManager.Instance.AddItem(new SkeletonClub().GetCustomItemFromPrefab(skeletonClubPrefab));
 
-                ItemManager.Instance.AddItem(customItem);
-
+                // get custom icons
+                wands.ForEach(wand => itemIcons[wand.IconFile] = chebgonazAssetBundle.LoadAsset<Sprite>(wand.IconFile));
             }
             catch (Exception ex)
             {
@@ -198,11 +208,9 @@ namespace FriendlySkeletonWand
         {
             wands.ForEach(wand =>
             {
-                ItemManager.Instance.AddItem(wand.GetCustomItem());
+                ItemManager.Instance.AddItem(wand.GetCustomItem(itemIcons[wand.IconFile]));
                 KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
             });
-            
-            //ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItem());
 
             // You want that to run only once, Jotunn has the item cached for the game session
             PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;

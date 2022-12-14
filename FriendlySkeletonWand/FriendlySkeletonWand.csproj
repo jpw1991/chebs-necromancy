@@ -144,6 +144,7 @@
     <Compile Include="Wand.cs" />
     <Compile Include="SpiritPylon.cs" />
     <Compile Include="KillAfterPeriod.cs" />
+    <Compile Include="SkeletonClub.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

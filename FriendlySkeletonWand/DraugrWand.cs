@@ -30,6 +30,7 @@ namespace FriendlySkeletonWand
         public DraugrWand()
         {
             ItemName = "FriendlySkeletonWand_DraugrWand";
+            IconFile = "draugr_staff_icon.png";
         }
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
@@ -70,7 +71,7 @@ namespace FriendlySkeletonWand
             
         }
 
-        public override CustomItem GetCustomItem()
+        public override CustomItem GetCustomItem(Sprite icon=null)
         {
             // Create and add a custom item based on Club
             ItemConfig draugrWandConfig = new ItemConfig();
@@ -84,8 +85,15 @@ namespace FriendlySkeletonWand
                 draugrWandConfig.AddRequirement(new RequirementConfig("Bronze", 5));
                 draugrWandConfig.AddRequirement(new RequirementConfig("TrophyDraugr", 1));
             }
+            if (icon != null)
+            {
+                draugrWandConfig.Icons = new Sprite[] { icon };
+            }
 
-            return new CustomItem(ItemName, "Club", draugrWandConfig);
+            CustomItem customItem = new CustomItem(ItemName, "GoblinShaman_Staff_Bones", draugrWandConfig);
+            customItem.ItemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.OneHandedWeapon;
+
+            return customItem;
         }
 
         public override KeyHintConfig GetKeyHint()

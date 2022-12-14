@@ -32,6 +32,7 @@ namespace FriendlySkeletonWand
         public SkeletonWand()
         {
             ItemName = "FriendlySkeletonWand";
+            IconFile = "skeleton_staff_icon.png";
         }
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
@@ -73,7 +74,7 @@ namespace FriendlySkeletonWand
             // add any extra buttons
         }
 
-        public override CustomItem GetCustomItem()
+        public override CustomItem GetCustomItem(Sprite icon = null)
         {
             ItemConfig friendlySkeletonWandConfig = new ItemConfig();
             friendlySkeletonWandConfig.Name = "$item_friendlyskeletonwand";
@@ -83,8 +84,15 @@ namespace FriendlySkeletonWand
                 friendlySkeletonWandConfig.CraftingStation = "piece_workbench";
                 friendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Wood", 5));
             }
+            if (icon != null)
+            {
+                friendlySkeletonWandConfig.Icons = new Sprite[] { icon };
+            }
 
-            return new CustomItem(ItemName, "Club", friendlySkeletonWandConfig);
+            CustomItem customItem = new CustomItem(ItemName, "GoblinShaman_Staff_Feathers", friendlySkeletonWandConfig);
+            customItem.ItemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.OneHandedWeapon;
+
+            return customItem;
 
         }
 
@@ -188,7 +196,7 @@ namespace FriendlySkeletonWand
             {
                 weapon = archer
                     ? ZNetScene.instance.GetPrefab("Bow")
-                    : ZNetScene.instance.GetPrefab("Club");
+                    : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonClub");
             }
 
             if (weapon == null)
@@ -268,7 +276,7 @@ namespace FriendlySkeletonWand
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
             AdjustSkeletonStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel);
-            //AdjustSkeletonEquipmentToNecromancyLevel(spawnedChar, playerNecromancyLevel, archer);
+            AdjustSkeletonEquipmentToNecromancyLevel(spawnedChar, playerNecromancyLevel, archer);
 
             try
             {
