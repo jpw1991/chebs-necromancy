@@ -47,6 +47,9 @@ namespace FriendlySkeletonWand
             draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrCommandRange",
                 10f, new ConfigDescription("The range from which nearby Draugr will hear your command."));
 
+            draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrMeatRequired",
+                1, new ConfigDescription("How many pieces of meat it costs to make a Draugr."));
+
             draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrBoneFragmentsRequired",
                 3, new ConfigDescription("How many bone fragments it costs to make a Draugr."));
 
@@ -166,7 +169,7 @@ namespace FriendlySkeletonWand
             character.SetHealth(health);
         }
 
-        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
+        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
         {
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
@@ -195,6 +198,56 @@ namespace FriendlySkeletonWand
 
                 // consume the fragments
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+            }
+
+            if (meatRequired > 0)
+            {
+                List<string> allowedMeatTypes = new List<string>()
+                {
+                    "$item_meat_rotten",
+                    "$item_boar_meat",
+                    "$item_deer_meat",
+                    "$item_loxmeat",
+                    "$item_wolf_meat",
+                    "$item_serpentmeat",
+                    "$item_bug_meat",
+                    "$item_chicken_meat",
+                    "$item_hare_meat",
+                };
+                Dictionary<string, int> meatTypesFound = new Dictionary<string, int>();
+                int meatInInventory = 0;
+                allowedMeatTypes.ForEach(meatTypeStr =>
+                {
+                    int meatFound = player.GetInventory().CountItems(meatTypeStr);
+                    if (meatFound > 0)
+                    {
+                        meatInInventory += meatFound;
+                        meatTypesFound[meatTypeStr] = meatFound;
+                    }
+                }
+                );
+
+                Jotunn.Logger.LogInfo($"Meat in inventory: {meatInInventory}");
+                if (meatInInventory < boneFragmentsRequired)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughmeat");
+                    return;
+                }
+
+                // consume the meat
+                int meatConsumed = 0;
+                foreach (string key in meatTypesFound.Keys)
+                {
+                    if (meatConsumed >= meatRequired) { break; }
+
+                    int meatAvailable = meatTypesFound[key];
+                    if (meatAvailable <= meatRequired)
+                    {
+                        player.GetInventory().RemoveItem(key, 1);
+                        meatTypesFound[key] = meatAvailable - 1;
+                        meatConsumed++;
+                    }
+                }
             }
 
             // scale according to skill
