@@ -132,19 +132,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DraugrWand.cs" />
-    <Compile Include="GuardianWraithMinion.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="SkeletonWand.cs" />
-    <Compile Include="SpectralShroud.cs" />
-    <Compile Include="UndeadMinion.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Wand.cs" />
-    <Compile Include="SpiritPylon.cs" />
-    <Compile Include="KillAfterPeriod.cs" />
-    <Compile Include="SkeletonClub.cs" />
+    <Compile Include="Items\DraugrWand.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\Wand.cs" />
+    <Compile Include="Items\SkeletonBow.cs" />
+    <Compile Include="Items\SkeletonBow2.cs" />
+    <Compile Include="Items\SkeletonClub.cs" />
+    <Compile Include="Items\SkeletonWand.cs" />
+    <Compile Include="Items\SpectralShroud.cs" />
+    <Compile Include="Minions\GuardianWraithMinion.cs" />
+    <Compile Include="Minions\KillAfterPeriod.cs" />
+    <Compile Include="Minions\SpiritPylon.cs" />
+    <Compile Include="Minions\UndeadMinion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -153,6 +155,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Package\plugins\" />
+    <Folder Include="Items\" />
+    <Folder Include="Minions\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package\manifest.json" />

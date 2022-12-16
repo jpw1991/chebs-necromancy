@@ -1,5 +1,4 @@
 // FriendlySkeletonWand
-// a Valheim mod skeleton using Jötunn
 // 
 // File:    FriendlySkeletonWand.cs
 // Project: FriendlySkeletonWand
@@ -44,8 +43,6 @@ namespace FriendlySkeletonWand
 
         private float inputDelay = 0;
 
-        private Dictionary<string, Sprite> itemIcons = new Dictionary<string, Sprite>();
-
         private void Awake()
         {
             Jotunn.Logger.LogInfo("FriendlySkeletonWand has landed");
@@ -58,10 +55,10 @@ namespace FriendlySkeletonWand
 
             harmony.PatchAll();
 
-            AddButtons();
+            //AddButtons();
             AddNecromancy();
 
-            PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
+            //PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
 
             StartCoroutine(GuardianWraithMinion.GuardianWraithCoroutine());
         }
@@ -86,26 +83,41 @@ namespace FriendlySkeletonWand
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
-                Jotunn.Logger.LogInfo($"Loading {SpectralShroud.PrefabName}...");
-                GameObject spectralShroudPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpectralShroud.PrefabName);
-                if (spectralShroudPrefab == null)
+                GameObject LoadPrefabFromBundle(string prefabName, AssetBundle bundle)
                 {
-                    Jotunn.Logger.LogError($"AddCustomItems: {SpectralShroud.PrefabName} is null!");
-                    return;
+                    Jotunn.Logger.LogInfo($"Loading {prefabName}...");
+                    GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
+                    if (prefab == null)
+                    {
+                        Jotunn.Logger.LogError($"AddCustomItems: {prefabName} is null!");
+                    }
+                    return prefab;
                 }
+
+                GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
-                Jotunn.Logger.LogInfo($"Loading {SkeletonClub.prefabName}...");
-                GameObject skeletonClubPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SkeletonClub.prefabName);
-                if (skeletonClubPrefab == null)
-                {
-                    Jotunn.Logger.LogError($"AddCustomItems: {SkeletonClub.prefabName} is null!");
-                    return;
-                }
+                SkeletonClub skeletonClubItem = new SkeletonClub();
+                GameObject skeletonClubPrefab = LoadPrefabFromBundle(skeletonClubItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(new SkeletonClub().GetCustomItemFromPrefab(skeletonClubPrefab));
 
-                // get custom icons
-                wands.ForEach(wand => itemIcons[wand.IconFile] = chebgonazAssetBundle.LoadAsset<Sprite>(wand.IconFile));
+                SkeletonBow skeletonBowItem = new SkeletonBow();
+                GameObject skeletonBowPrefab = LoadPrefabFromBundle(skeletonBowItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(new SkeletonBow().GetCustomItemFromPrefab(skeletonBowPrefab));
+
+                SkeletonBow2 skeletonBow2Item = new SkeletonBow2();
+                GameObject skeletonBow2Prefab = LoadPrefabFromBundle(skeletonBow2Item.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(new SkeletonBow2().GetCustomItemFromPrefab(skeletonBow2Prefab));
+
+                wands.ForEach(wand =>
+                {
+                    // we do the keyhints later after vanilla items are available
+                    // so we can override what's in the prefab
+                    GameObject wandPrefab = LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle);
+                    wand.CreateButtons();
+                    KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
+                    ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
+                });
             }
             catch (Exception ex)
             {
@@ -187,10 +199,10 @@ namespace FriendlySkeletonWand
             }
         }
 
-        private void AddButtons()
-        {
-            wands.ForEach(wand => wand.CreateButtons());
-        }
+        //private void AddButtons()
+        //{
+        //    wands.ForEach(wand => wand.CreateButtons());
+        //}
 
         private void AddNecromancy()
         {
@@ -206,14 +218,12 @@ namespace FriendlySkeletonWand
 
         private void AddClonedItems()
         {
-            wands.ForEach(wand =>
-            {
-                ItemManager.Instance.AddItem(wand.GetCustomItem(itemIcons[wand.IconFile]));
-                KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
-            });
+            //wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
 
             // You want that to run only once, Jotunn has the item cached for the game session
             PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
+
+           // wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
         }
 
         private void Update()
@@ -264,7 +274,7 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
-                if (__instance.name.Contains("SpiritPylonGhost"))
+                if (__instance.name.Contains("SpiritPylon"))
                 {
                     if (__instance.GetComponent<SpiritPylon>() == null)
                     {
@@ -274,6 +284,26 @@ namespace FriendlySkeletonWand
             }
         }
     }
+
+    //[HarmonyPatch(typeof(ItemDrop))]
+    //static class ChebGonaz_ItemDropPatch
+    //{
+    //    [HarmonyPostfix]
+    //    [HarmonyPatch(nameof(ItemDrop.Awake))]
+    //    static void AwakePostfix(ref ItemDrop __instance)
+    //    {
+    //        if (__instance.name.StartsWith("ChebGonaz"))
+    //        {
+    //            if (__instance.name.Contains("SkeletonWand"))
+    //            {
+    //                if (__instance.GetComponent<SkeletonWand>() == null)
+    //                {
+    //                    __instance.gameObject.AddComponent<SkeletonWand>();
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     [HarmonyPatch(typeof(MonsterAI))]
     static class FriendlySkeletonPatch

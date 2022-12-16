@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1630072925
+CRC: 356360509
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 363a466d614761202a231bc4f6c0a9aa
+    Hash: beda07a6b6daca67fbb6fbe980ac54f1
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 41ae020451be8bef6aa2dd6efab8f461
+    Hash: 1cbc818a5e07d78793f9996d77c52a71
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -40,11 +40,19 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 927819712, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 469224316, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 825357479, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -585565762, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 69470131, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1345532120, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 115
@@ -81,6 +89,12 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonClub.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.mat
+- Assets/_ChebGonaz/ChebGonaz_SkeletonBow2.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonWand.prefab
+- Assets/_ChebGonaz/draugr_staff_icon.png
 - Assets/_ChebGonaz/spectral_shroud_d.png
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
+- Assets/_ChebGonaz/skeleton_staff_icon.png
+- Assets/_ChebGonaz/ChebGonaz_SkeletonBow.prefab
+- Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
 Dependencies: []
