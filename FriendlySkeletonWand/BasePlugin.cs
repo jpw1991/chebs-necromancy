@@ -28,7 +28,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.17";
+        public const string PluginVersion = "1.0.19";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -284,26 +284,6 @@ namespace FriendlySkeletonWand
             }
         }
     }
-
-    //[HarmonyPatch(typeof(ItemDrop))]
-    //static class ChebGonaz_ItemDropPatch
-    //{
-    //    [HarmonyPostfix]
-    //    [HarmonyPatch(nameof(ItemDrop.Awake))]
-    //    static void AwakePostfix(ref ItemDrop __instance)
-    //    {
-    //        if (__instance.name.StartsWith("ChebGonaz"))
-    //        {
-    //            if (__instance.name.Contains("SkeletonWand"))
-    //            {
-    //                if (__instance.GetComponent<SkeletonWand>() == null)
-    //                {
-    //                    __instance.gameObject.AddComponent<SkeletonWand>();
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
 
     [HarmonyPatch(typeof(MonsterAI))]
     static class FriendlySkeletonPatch

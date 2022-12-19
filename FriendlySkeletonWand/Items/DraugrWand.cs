@@ -103,31 +103,6 @@ namespace FriendlySkeletonWand
             return customItem;
         }
 
-        //public override CustomItem GetCustomItem(Sprite icon=null)
-        //{
-        //    // Create and add a custom item based on Club
-        //    ItemConfig draugrWandConfig = new ItemConfig();
-        //    draugrWandConfig.Name = "$item_friendlyskeletonwand_draugrwand";
-        //    draugrWandConfig.Description = "$item_friendlyskeletonwand_draugrwand_desc";
-        //    if (allowed.Value)
-        //    {
-        //        draugrWandConfig.CraftingStation = "piece_workbench";
-        //        draugrWandConfig.AddRequirement(new RequirementConfig("ElderBark", 5));
-        //        draugrWandConfig.AddRequirement(new RequirementConfig("FineWood", 5));
-        //        draugrWandConfig.AddRequirement(new RequirementConfig("Bronze", 5));
-        //        draugrWandConfig.AddRequirement(new RequirementConfig("TrophyDraugr", 1));
-        //    }
-        //    if (icon != null)
-        //    {
-        //        draugrWandConfig.Icons = new Sprite[] { icon };
-        //    }
-
-        //    CustomItem customItem = new CustomItem(ItemName, "GoblinShaman_Staff_Bones", draugrWandConfig);
-        //    customItem.ItemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.OneHandedWeapon;
-
-        //    return customItem;
-        //}
-
         public override KeyHintConfig GetKeyHint()
         {
             return new KeyHintConfig
@@ -135,7 +110,6 @@ namespace FriendlySkeletonWand
                 Item = ItemName,
                 ButtonConfigs = new[]
                 {
-                    //new ButtonConfig { Name = "Attack", HintToken = "$friendlyskeletonwand_attack" },
                     CreateMinionButton,
                     CreateArcherMinionButton,
                     FollowButton,
@@ -214,19 +188,6 @@ namespace FriendlySkeletonWand
 
         public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
         {
-            // if players have decided to foolishly restrict their power and
-            // create a *cough* LIMIT *spits*... check that here
-            if (maxDraugr.Value > 0)
-            {
-                // re-count the current active draugr
-                for (int i = draugr.Count - 1; i >= 0; i--) { if (draugr[i] == null) { draugr.RemoveAt(i); } }
-                if (draugr.Count >= maxDraugr.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_limitexceeded");
-                    return;
-                }
-            }
-
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
@@ -293,6 +254,21 @@ namespace FriendlySkeletonWand
                 }
             }
 
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            if (maxDraugr.Value > 0)
+            {
+                // re-count the current active draugr
+                for (int i = draugr.Count - 1; i >= 0; i--) { if (draugr[i] == null) { draugr.RemoveAt(i); } }
+                if (draugr.Count >= maxDraugr.Value)
+                {
+                    // destroy one of the existing draugr to make room
+                    // for the new one
+                    draugr[0].GetComponent<Humanoid>().SetHealth(0);
+                    draugr.RemoveAt(0);
+                }
+            }
+
             // scale according to skill
             float playerNecromancyLevel = 1;
             try
@@ -333,6 +309,11 @@ namespace FriendlySkeletonWand
             catch (Exception e)
             {
                 Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
+            }
+
+            if (followByDefault.Value)
+            {
+                spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
             }
         }
     }

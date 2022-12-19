@@ -109,28 +109,6 @@ namespace FriendlySkeletonWand
             return customItem;
         }
 
-        //public override CustomItem GetCustomItem(Sprite icon = null)
-        //{
-        //    ItemConfig friendlySkeletonWandConfig = new ItemConfig();
-        //    friendlySkeletonWandConfig.Name = "$item_friendlyskeletonwand";
-        //    friendlySkeletonWandConfig.Description = "$item_friendlyskeletonwand_desc";
-        //    if (allowed.Value)
-        //    {
-        //        friendlySkeletonWandConfig.CraftingStation = "piece_workbench";
-        //        friendlySkeletonWandConfig.AddRequirement(new RequirementConfig("Wood", 5));
-        //    }
-        //    if (icon != null)
-        //    {
-        //        friendlySkeletonWandConfig.Icons = new Sprite[] { icon };
-        //    }
-
-        //    CustomItem customItem = new CustomItem(ItemName, "GoblinShaman_Staff_Feathers", friendlySkeletonWandConfig);
-        //    customItem.ItemDrop.m_itemData.m_shared.m_itemType = ItemDrop.ItemData.ItemType.OneHandedWeapon;
-
-        //    return customItem;
-
-        //}
-
         public override KeyHintConfig GetKeyHint()
         {
             return new KeyHintConfig
@@ -252,19 +230,6 @@ namespace FriendlySkeletonWand
 
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
-            // if players have decided to foolishly restrict their power and
-            // create a *cough* LIMIT *spits*... check that here
-            if (maxSkeletons.Value > 0)
-            {
-                // re-count the current active skeletons
-                for (int i=skeletons.Count-1; i>=0; i--) { if (skeletons[i] == null) { skeletons.RemoveAt(i); } }
-                if (skeletons.Count >= maxSkeletons.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_limitexceeded");
-                    return;
-                }
-            }
-
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
@@ -279,6 +244,21 @@ namespace FriendlySkeletonWand
 
                 // consume the fragments
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+            }
+
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            if (maxSkeletons.Value > 0)
+            {
+                // re-count the current active skeletons
+                for (int i = skeletons.Count - 1; i >= 0; i--) { if (skeletons[i] == null) { skeletons.RemoveAt(i); } }
+                if (skeletons.Count >= maxSkeletons.Value)
+                {
+                    // destroy one of the existing skeletons to make room
+                    // for the new one
+                    skeletons[0].GetComponent<Humanoid>().SetHealth(0);
+                    skeletons.RemoveAt(0);
+                }
             }
 
             // scale according to skill
@@ -320,6 +300,11 @@ namespace FriendlySkeletonWand
             catch (Exception e)
             {
                 Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
+            }
+
+            if (followByDefault.Value)
+            {
+                spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
             }
         }
     }

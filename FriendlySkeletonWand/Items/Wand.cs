@@ -14,6 +14,8 @@ namespace FriendlySkeletonWand
 {
     internal class Wand : Item
     {
+        public ConfigEntry<bool> followByDefault;
+
         public ConfigEntry<KeyCode> CreateMinionConfig;
         public ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;
         public ButtonConfig CreateMinionButton;
@@ -42,6 +44,9 @@ namespace FriendlySkeletonWand
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
+            followByDefault = plugin.Config.Bind("Client config", "FollowByDefault",
+                false, new ConfigDescription("Whether minions will automatically be set to follow upon being created or not."));
+
             CreateMinionConfig = plugin.Config.Bind("Client config", ItemName+"CreateMinion",
                 KeyCode.B, new ConfigDescription("The key to create a warrior minion with."));
             CreateMinionGamepadConfig = plugin.Config.Bind("Client config", ItemName+"CreateMinionGamepad",

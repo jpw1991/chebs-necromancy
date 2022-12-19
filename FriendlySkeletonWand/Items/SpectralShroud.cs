@@ -22,7 +22,7 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not."));
 
             spawnWraith = plugin.Config.Bind("Client config", "SpectralShroudSpawnWraith",
-                true, new ConfigDescription("Whether wraiths spawn or not."));
+                false, new ConfigDescription("Whether wraiths spawn or not (default false, because buggy right now)."));
         }
 
         public override CustomItem GetCustomItem(Sprite icon=null)

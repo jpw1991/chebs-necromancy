@@ -26,7 +26,10 @@ namespace FriendlySkeletonWand
         private void Awake()
         {
             canBeCommanded = false;
-            StartCoroutine(WaitForZInstance());
+            if (SpectralShroud.spawnWraith.Value)
+            {
+                StartCoroutine(WaitForZInstance());
+            }
         }
 
         void DoWhenZInputAvailable()
