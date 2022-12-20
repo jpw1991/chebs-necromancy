@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using FriendlySkeletonWand.Minions;
 
 namespace FriendlySkeletonWand
 {
@@ -173,19 +174,6 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        public static void AdjustDraugrStatsToNecromancyLevel(GameObject draugrInstance, float necromancyLevel)
-        {
-            Character character = draugrInstance.GetComponent<Character>();
-            if (character == null)
-            {
-                Jotunn.Logger.LogError("AdjustDraugrStatsToNecromancyLevel: error -> failed to scale minion to player necromancy level -> Character component is null!");
-                return;
-            }
-            float health = draugrBaseHealth.Value + necromancyLevel * draugrHealthMultiplier.Value;
-            character.SetMaxHealth(health);
-            character.SetHealth(health);
-        }
-
         public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
         {
             // check player inventory for requirements
@@ -285,7 +273,7 @@ namespace FriendlySkeletonWand
             if (playerNecromancyLevel >= 70) { quality = 3; }
             else if (playerNecromancyLevel >= 35) { quality = 2; }
 
-            // go on to spawn skeleton
+            // go on to spawn draugr
             string prefabName = archer ? "ChebGonaz_DraugrArcher" : "ChebGonaz_DraugrWarrior";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
@@ -296,11 +284,11 @@ namespace FriendlySkeletonWand
 
             Jotunn.Logger.LogInfo($"Spawning {prefabName}");
             GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-            spawnedChar.AddComponent<UndeadMinion>();
+            DraugrMinion minion = spawnedChar.AddComponent<DraugrMinion>();
             Character character = spawnedChar.GetComponent<Character>();
             character.m_faction = Character.Faction.Players;
             character.SetLevel(quality);
-            AdjustDraugrStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel);
+            minion.ScaleStats(playerNecromancyLevel);
 
             try
             {
@@ -314,6 +302,17 @@ namespace FriendlySkeletonWand
             if (followByDefault.Value)
             {
                 spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+            }
+
+            try
+            {
+                spawnedChar.GetComponent<ZNetView>().GetZDO().SetOwner(
+                    ZDOMan.instance.GetMyID()
+                    );
+            }
+            catch (Exception e)
+            {
+                Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
             }
         }
     }

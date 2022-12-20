@@ -165,7 +165,7 @@ namespace FriendlySkeletonWand
             List<Character> allCharacters = Character.GetAllCharacters();
             foreach (Character item in allCharacters)
             {
-                if (item.IsDead())
+                if (item.IsDead() || !item.IsOwner())
                 {
                     continue;
                 }

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using FriendlySkeletonWand.Minions;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -177,57 +178,6 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        public static void AdjustSkeletonStatsToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel)
-        {
-            Character character = skeletonInstance.GetComponent<Character>();
-            if (character == null)
-            {
-                Jotunn.Logger.LogError("FriendlySkeletonMod: error -> failed to scale skeleton to player necromancy level -> Character component is null!");
-                return;
-            }
-            float health = skeletonBaseHealth.Value + necromancyLevel * skeletonHealthMultiplier.Value;
-            character.SetMaxHealth(health);
-            character.SetHealth(health);
-        }
-
-        private void AdjustSkeletonEquipmentToNecromancyLevel(GameObject skeletonInstance, float necromancyLevel, bool archer)
-        {
-            GameObject weapon = null;
-            if (necromancyLevel >= 50)
-            {
-                weapon = archer 
-                    ? ZNetScene.instance.GetPrefab("skeleton_bow2")
-                    : ZNetScene.instance.GetPrefab("draugr_axe");
-            }
-            else if (necromancyLevel >= 25)
-            {
-                weapon = archer
-                    ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonBow2")
-                    : ZNetScene.instance.GetPrefab("skeleton_sword2");
-            }
-            else
-            {
-                weapon = archer
-                    ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonBow")
-                    : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonClub");
-            }
-
-            if (weapon == null)
-            {
-                Jotunn.Logger.LogError("AdjustSkeletonEquipmentToNecromancyLevel: weapon is null!");
-                return;
-            }
-
-            Humanoid humanoid = skeletonInstance.GetComponent<Humanoid>();
-            if (humanoid == null)
-            {
-                Jotunn.Logger.LogError("AdjustSkeletonEquipmentToNecromancyLevel: humanoid is null!");
-                return;
-            }
-
-            humanoid.m_randomWeapon = new GameObject[] { weapon };
-        }
-
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
             // check player inventory for requirements
@@ -287,11 +237,11 @@ namespace FriendlySkeletonWand
             }
 
             GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-            spawnedChar.AddComponent<UndeadMinion>();
+            SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
-            AdjustSkeletonStatsToNecromancyLevel(spawnedChar, playerNecromancyLevel);
-            AdjustSkeletonEquipmentToNecromancyLevel(spawnedChar, playerNecromancyLevel, archer);
+            minion.ScaleEquipment(playerNecromancyLevel, archer);
+            minion.ScaleStats(playerNecromancyLevel);
 
             try
             {
@@ -305,6 +255,17 @@ namespace FriendlySkeletonWand
             if (followByDefault.Value)
             {
                 spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+            }
+
+            try
+            {
+                spawnedChar.GetComponent<ZNetView>().GetZDO().SetOwner(
+                    ZDOMan.instance.GetMyID()
+                    );
+            }
+            catch (Exception e)
+            {
+                Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
             }
         }
     }

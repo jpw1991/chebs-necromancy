@@ -5,6 +5,7 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using FriendlySkeletonWand.Minions;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -245,6 +246,40 @@ namespace FriendlySkeletonWand
 
     #region HarmonyPatches
 
+    //[HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
+    //class ZNet_Patches
+    //{
+    //    // redseiko ¡ª 12/11/2022 7:59 PM
+    //    // Yes, but you need infrastructure to essentially log player logins 
+    //    // with their steamId/host as well as their peer.m_uid; this 
+    //    // peer.m_uid is prefixed to all ZDOs their client should spawn for 
+    //    // that client's session in the form of (UID:ID) where ID goes up 
+    //    // incrementally (UID resets on every full game restart).
+    //    //
+    //    // With that log/database you can then perform a reverse look-up for 
+    //    // any given ZDO on who created it, when, etc. (Assuming you logged 
+    //    // that information from the player session to begin with).
+    //    //
+    //    // Source: ZDOs go brr.
+    //    // For where to patch, just look at ZNet.RPC_PeerInfo and you can 
+    //    // see where peer.m_refPos/m_uid/m_playerName are.
+
+    //    [HarmonyPrefix]
+    //    static void retrievePlayerInfo(ref ZRpc __rpc, ref ZPackage __pkg)
+    //    {
+    //        //Jotunn.Logger.LogInfo("RPC_PeerInfo: " +
+    //        //$"__pkg.ReadZDOID().id={__pkg.ReadZDOID().id}" +
+    //        //$"__pkg.ReadZDOID().userID={__pkg.ReadZDOID().userID}" +
+    //        //$"__pkg.ReadZDOID().ToString()={__pkg.ReadZDOID().ToString()}");
+
+    //        ZNetPeer peer = ZNet.PlayerInfo//.GetPeer(__rpc);
+    //        if (peer == null)
+    //        {
+    //            return;
+    //        }
+    //    }
+    //}
+
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     class CharacterDrop_Patches
     {
@@ -294,14 +329,11 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
-                //Jotunn.Logger.LogInfo($"AwakePostfix: Processing {__instance.name}");
                 if (__instance.name.Contains("Wraith"))
                 {
-                    //Jotunn.Logger.LogInfo($"AwakePostfix: Wraith found - {__instance.name}");
                     // remove duplicate wraiths
                     if (GuardianWraithMinion.instance != null)
                     {
-                        //Jotunn.Logger.LogInfo("Removing duplicate wraith...");
                         GameObject.Destroy(__instance.gameObject, 5);
                     }
                     else
@@ -321,36 +353,15 @@ namespace FriendlySkeletonWand
                 }
                 else
                 {
-                    //Jotunn.Logger.LogInfo($"AwakePostfix: Skeleton or Draugr found - {__instance.name}");
                     if (__instance.GetComponent<UndeadMinion>() == null)
                     {
-                        //Jotunn.Logger.LogInfo($"AwakePostfix: Adding UndeadMinion component to {__instance.name}");
-                        __instance.gameObject.AddComponent<UndeadMinion>();
-
                         if (__instance.name.Contains("Skeleton"))
                         {
-                            //todo: localplayer probably no good for multiplayer -> gotta fix
-                            //SkeletonWand.AdjustSkeletonStatsToNecromancyLevel(
-                            //    __instance.gameObject,
-                            //    Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
-
-                            // add to the silly limits if needed
-                            if (SkeletonWand.maxSkeletons.Value > 0)
-                            {
-                                SkeletonWand.skeletons.Add(__instance.gameObject);
-                            }
+                            __instance.gameObject.AddComponent<SkeletonMinion>();
                         }
-
-                        if (__instance.name.Contains("Draugr"))
+                        else if (__instance.name.Contains("Draugr"))
                         {
-                            //todo: localplayer probably no good for multiplayer -> gotta fix
-                            //DraugrWand.AdjustDraugrStatsToNecromancyLevel(
-                            //    __instance.gameObject,
-                            //    Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
-                            if (DraugrWand.maxDraugr.Value > 0)
-                            {
-                                DraugrWand.draugr.Add(__instance.gameObject);
-                            }
+                            __instance.gameObject.AddComponent<DraugrMinion>();
                         }
                     }
                 }

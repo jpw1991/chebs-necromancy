@@ -147,6 +147,8 @@
     <Compile Include="Minions\KillAfterPeriod.cs" />
     <Compile Include="Minions\SpiritPylon.cs" />
     <Compile Include="Minions\UndeadMinion.cs" />
+    <Compile Include="Minions\SkeletonMinion.cs" />
+    <Compile Include="Minions\DraugrMinion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
