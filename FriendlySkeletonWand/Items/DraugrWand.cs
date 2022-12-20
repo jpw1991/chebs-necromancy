@@ -187,9 +187,6 @@ namespace FriendlySkeletonWand
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
                     return;
                 }
-
-                // consume the fragments
-                player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
 
             if (meatRequired > 0)
@@ -226,19 +223,34 @@ namespace FriendlySkeletonWand
                     return;
                 }
 
+                // consume the fragments
+                player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+
                 // consume the meat
                 int meatConsumed = 0;
+                Stack<Tuple<string, int>> meatToConsume = new Stack<Tuple<string, int>>();
                 foreach (string key in meatTypesFound.Keys)
                 {
                     if (meatConsumed >= meatRequired) { break; }
 
                     int meatAvailable = meatTypesFound[key];
+
                     if (meatAvailable <= meatRequired)
                     {
-                        player.GetInventory().RemoveItem(key, 1);
-                        meatTypesFound[key] = meatAvailable - 1;
-                        meatConsumed++;
+                        meatToConsume.Push(new Tuple<string, int>(key, meatAvailable));
+                        meatConsumed += meatAvailable;
                     }
+                    else
+                    {
+                        meatToConsume.Push(new Tuple<string, int>(key, meatRequired));
+                        meatConsumed += meatRequired;
+                    }
+                }
+
+                while (meatToConsume.Count > 0)
+                {
+                    Tuple<string, int> keyValue = meatToConsume.Pop();
+                    player.GetInventory().RemoveItem(keyValue.Item1, keyValue.Item2);
                 }
             }
 
