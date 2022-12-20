@@ -1,11 +1,11 @@
 // FriendlySkeletonWand
-// a Valheim mod skeleton using Jötunn
 // 
 // File:    FriendlySkeletonWand.cs
 // Project: FriendlySkeletonWand
 
 using BepInEx;
 using BepInEx.Configuration;
+using FriendlySkeletonWand.Minions;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -29,7 +29,8 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.16";
+        public const string PluginVersion = "1.0.19";
+
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
         private List<Wand> wands = new List<Wand>()
@@ -49,17 +50,16 @@ namespace FriendlySkeletonWand
 
             CreateConfigValues();
 
-            // custom material not working cuz unknown reasons
-            //LoadCustomMaterials();
+            AddCustomItems();
             AddCustomCreatures();
             AddCustomStructures();
 
             harmony.PatchAll();
 
-            AddButtons();
+            //AddButtons();
             AddNecromancy();
 
-            PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
+            //PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
 
             StartCoroutine(GuardianWraithMinion.GuardianWraithCoroutine());
         }
@@ -77,19 +77,52 @@ namespace FriendlySkeletonWand
             SpiritPylon.CreateConfigs(this);
         }
 
-        
 
-        private void LoadCustomMaterials()
+        private void AddCustomItems()
         {
             string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazitems");
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
-                spectralShroudItem.LoadSpectralShroudMaterial(chebgonazAssetBundle);
+                GameObject LoadPrefabFromBundle(string prefabName, AssetBundle bundle)
+                {
+                    Jotunn.Logger.LogInfo($"Loading {prefabName}...");
+                    GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
+                    if (prefab == null)
+                    {
+                        Jotunn.Logger.LogError($"AddCustomItems: {prefabName} is null!");
+                    }
+                    return prefab;
+                }
+
+                GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
+
+                SkeletonClub skeletonClubItem = new SkeletonClub();
+                GameObject skeletonClubPrefab = LoadPrefabFromBundle(skeletonClubItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(new SkeletonClub().GetCustomItemFromPrefab(skeletonClubPrefab));
+
+                SkeletonBow skeletonBowItem = new SkeletonBow();
+                GameObject skeletonBowPrefab = LoadPrefabFromBundle(skeletonBowItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(new SkeletonBow().GetCustomItemFromPrefab(skeletonBowPrefab));
+
+                SkeletonBow2 skeletonBow2Item = new SkeletonBow2();
+                GameObject skeletonBow2Prefab = LoadPrefabFromBundle(skeletonBow2Item.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(new SkeletonBow2().GetCustomItemFromPrefab(skeletonBow2Prefab));
+
+                wands.ForEach(wand =>
+                {
+                    // we do the keyhints later after vanilla items are available
+                    // so we can override what's in the prefab
+                    GameObject wandPrefab = LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle);
+                    wand.CreateButtons();
+                    KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
+                    ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
+                });
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($"Exception caught while loading custom materials: {ex}");
+                Logger.LogWarning($"Exception caught while loading custom items: {ex}");
             }
             finally
             {
@@ -167,10 +200,10 @@ namespace FriendlySkeletonWand
             }
         }
 
-        private void AddButtons()
-        {
-            wands.ForEach(wand => wand.CreateButtons());
-        }
+        //private void AddButtons()
+        //{
+        //    wands.ForEach(wand => wand.CreateButtons());
+        //}
 
         private void AddNecromancy()
         {
@@ -186,16 +219,12 @@ namespace FriendlySkeletonWand
 
         private void AddClonedItems()
         {
-            wands.ForEach(wand =>
-            {
-                ItemManager.Instance.AddItem(wand.GetCustomItem());
-                KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
-            });
-            
-            ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItem());
+            //wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
 
             // You want that to run only once, Jotunn has the item cached for the game session
             PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
+
+           // wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
         }
 
         private void Update()
@@ -216,6 +245,40 @@ namespace FriendlySkeletonWand
     }
 
     #region HarmonyPatches
+
+    //[HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
+    //class ZNet_Patches
+    //{
+    //    // redseiko ¡ª 12/11/2022 7:59 PM
+    //    // Yes, but you need infrastructure to essentially log player logins 
+    //    // with their steamId/host as well as their peer.m_uid; this 
+    //    // peer.m_uid is prefixed to all ZDOs their client should spawn for 
+    //    // that client's session in the form of (UID:ID) where ID goes up 
+    //    // incrementally (UID resets on every full game restart).
+    //    //
+    //    // With that log/database you can then perform a reverse look-up for 
+    //    // any given ZDO on who created it, when, etc. (Assuming you logged 
+    //    // that information from the player session to begin with).
+    //    //
+    //    // Source: ZDOs go brr.
+    //    // For where to patch, just look at ZNet.RPC_PeerInfo and you can 
+    //    // see where peer.m_refPos/m_uid/m_playerName are.
+
+    //    [HarmonyPrefix]
+    //    static void retrievePlayerInfo(ref ZRpc __rpc, ref ZPackage __pkg)
+    //    {
+    //        //Jotunn.Logger.LogInfo("RPC_PeerInfo: " +
+    //        //$"__pkg.ReadZDOID().id={__pkg.ReadZDOID().id}" +
+    //        //$"__pkg.ReadZDOID().userID={__pkg.ReadZDOID().userID}" +
+    //        //$"__pkg.ReadZDOID().ToString()={__pkg.ReadZDOID().ToString()}");
+
+    //        ZNetPeer peer = ZNet.PlayerInfo//.GetPeer(__rpc);
+    //        if (peer == null)
+    //        {
+    //            return;
+    //        }
+    //    }
+    //}
 
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     class CharacterDrop_Patches
@@ -246,7 +309,7 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
-                if (__instance.name.Contains("SpiritPylonGhost"))
+                if (__instance.name.Contains("SpiritPylon"))
                 {
                     if (__instance.GetComponent<SpiritPylon>() == null)
                     {
@@ -266,14 +329,11 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
-                //Jotunn.Logger.LogInfo($"AwakePostfix: Processing {__instance.name}");
                 if (__instance.name.Contains("Wraith"))
                 {
-                    //Jotunn.Logger.LogInfo($"AwakePostfix: Wraith found - {__instance.name}");
                     // remove duplicate wraiths
                     if (GuardianWraithMinion.instance != null)
                     {
-                        //Jotunn.Logger.LogInfo("Removing duplicate wraith...");
                         GameObject.Destroy(__instance.gameObject, 5);
                     }
                     else
@@ -293,36 +353,15 @@ namespace FriendlySkeletonWand
                 }
                 else
                 {
-                    //Jotunn.Logger.LogInfo($"AwakePostfix: Skeleton or Draugr found - {__instance.name}");
                     if (__instance.GetComponent<UndeadMinion>() == null)
                     {
-                        //Jotunn.Logger.LogInfo($"AwakePostfix: Adding UndeadMinion component to {__instance.name}");
-                        __instance.gameObject.AddComponent<UndeadMinion>();
-
                         if (__instance.name.Contains("Skeleton"))
                         {
-                            //todo: localplayer probably no good for multiplayer -> gotta fix
-                            //SkeletonWand.AdjustSkeletonStatsToNecromancyLevel(
-                            //    __instance.gameObject,
-                            //    Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
-
-                            // add to the silly limits if needed
-                            if (SkeletonWand.maxSkeletons.Value > 0)
-                            {
-                                SkeletonWand.skeletons.Add(__instance.gameObject);
-                            }
+                            __instance.gameObject.AddComponent<SkeletonMinion>();
                         }
-
-                        if (__instance.name.Contains("Draugr"))
+                        else if (__instance.name.Contains("Draugr"))
                         {
-                            //todo: localplayer probably no good for multiplayer -> gotta fix
-                            //DraugrWand.AdjustDraugrStatsToNecromancyLevel(
-                            //    __instance.gameObject,
-                            //    Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
-                            if (DraugrWand.maxDraugr.Value > 0)
-                            {
-                                DraugrWand.draugr.Add(__instance.gameObject);
-                            }
+                            __instance.gameObject.AddComponent<DraugrMinion>();
                         }
                     }
                 }
