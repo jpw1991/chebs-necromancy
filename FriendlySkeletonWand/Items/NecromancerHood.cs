@@ -7,25 +7,21 @@ using Jotunn.Managers;
 
 namespace FriendlySkeletonWand
 {
-    internal class SpectralShroud : Item
+    internal class NecromancerHood : Item
     {
-        public override string ItemName { get { return "ChebGonaz_SpectralShroud"; } }
-        public override string PrefabName { get { return "ChebGonaz_SpectralShroud.prefab"; } }
+        public override string ItemName { get { return "ChebGonaz_NecromancerHood"; } }
+        public override string PrefabName { get { return "ChebGonaz_NecromancerHood.prefab"; } }
 
-        public static ConfigEntry<bool> spawnWraith;
         public static ConfigEntry<int> necromancySkillBonus;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
             base.CreateConfigs(plugin);
 
-            allowed = plugin.Config.Bind("Client config", "SpectralShroudAllowed",
-                true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not."));
+            allowed = plugin.Config.Bind("Client config", "NecromancerHoodAllowed",
+                true, new ConfigDescription("Whether crafting a Necromancer's Hood is allowed or not."));
 
-            spawnWraith = plugin.Config.Bind("Client config", "SpectralShroudSpawnWraith",
-                false, new ConfigDescription("Whether wraiths spawn or not (default false, because buggy right now)."));
-
-            necromancySkillBonus = plugin.Config.Bind("Client config", "SpectralShroudSkillBonus",
+            necromancySkillBonus = plugin.Config.Bind("Client config", "NecromancerHoodSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all)."));
         }
 
@@ -38,13 +34,13 @@ namespace FriendlySkeletonWand
         public CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
             ItemConfig config = new ItemConfig();
-            config.Name = "$item_friendlyskeletonwand_spectralshroud";
-            config.Description = "$item_friendlyskeletonwand_spectralshroud_desc";
+            config.Name = "$item_chebgonaz_necromancerhood";
+            config.Description = "$item_chebgonaz_necromancerhood_desc";
             if (allowed.Value)
             {
                 config.CraftingStation = "piece_workbench";
-                config.AddRequirement(new RequirementConfig("Chain", 5));
-                config.AddRequirement(new RequirementConfig("TrollHide", 10));
+                config.AddRequirement(new RequirementConfig("WitheredBone", 2));
+                config.AddRequirement(new RequirementConfig("TrollHide", 5));
             }
 
             CustomItem customItem = new CustomItem(prefab, false, config);
@@ -60,12 +56,12 @@ namespace FriendlySkeletonWand
             }
             // make sure the set effect is applied or removed according
             // to config values
-            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = 
+            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect =
                 necromancySkillBonus.Value > 0 ?
-                BasePlugin.setEffectNecromancyArmor : null;
+                BasePlugin.setEffectNecromancyArmor2 : null;
             customItem.ItemDrop.m_itemData.m_shared.m_equipStatusEffect =
                 necromancySkillBonus.Value > 0 ?
-                BasePlugin.setEffectNecromancyArmor : null;
+                BasePlugin.setEffectNecromancyArmor2 : null;
 
             return customItem;
         }

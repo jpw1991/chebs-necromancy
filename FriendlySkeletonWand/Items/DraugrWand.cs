@@ -19,6 +19,8 @@ namespace FriendlySkeletonWand
         public static List<GameObject> draugr = new List<GameObject>();
         public static ConfigEntry<int> maxDraugr;
 
+        public static ConfigEntry<bool> draugrAllowed;
+
         public static ConfigEntry<float> draugrBaseHealth;
         public static ConfigEntry<float> draugrHealthMultiplier;
         public static ConfigEntry<float> draugrSetFollowRange;
@@ -37,6 +39,9 @@ namespace FriendlySkeletonWand
 
             allowed = plugin.Config.Bind("Client config", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not."));
+
+            draugrAllowed = plugin.Config.Bind("Client config", "DraugrAllowed",
+                true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned."));
 
             draugrBaseHealth = plugin.Config.Bind("Client config", "DraugrBaseHealth",
                 100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
@@ -100,6 +105,8 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
                 return null;
             }
+            // make sure the set effect is applied
+            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = BasePlugin.setEffectNecromancyArmor;
 
             return customItem;
         }
@@ -176,6 +183,8 @@ namespace FriendlySkeletonWand
 
         public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
         {
+            if (!draugrAllowed.Value) return;
+
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {

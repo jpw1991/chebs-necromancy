@@ -29,7 +29,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.19";
+        public const string PluginVersion = "1.0.20";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -41,8 +41,11 @@ namespace FriendlySkeletonWand
         public const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private SpectralShroud spectralShroudItem = new SpectralShroud();
+        private NecromancerHood necromancersHoodItem = new NecromancerHood();
 
         private float inputDelay = 0;
+
+        public static SE_Stats setEffectNecromancyArmor, setEffectNecromancyArmor2;
 
         private void Awake()
         {
@@ -73,6 +76,7 @@ namespace FriendlySkeletonWand
             wands.ForEach(w => w.CreateConfigs(this));
 
             spectralShroudItem.CreateConfigs(this);
+            necromancersHoodItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
         }
@@ -95,8 +99,25 @@ namespace FriendlySkeletonWand
                     return prefab;
                 }
 
+                SE_Stats LoadSetEffectFromBundle(string setEffectName, AssetBundle bundle)
+                {
+                    Jotunn.Logger.LogInfo($"Loading {setEffectName}...");
+                    SE_Stats seStat = bundle.LoadAsset<SE_Stats>(setEffectName);
+                    if (seStat == null)
+                    {
+                        Jotunn.Logger.LogError($"AddCustomItems: {setEffectName} is null!");
+                    }
+                    return seStat;
+                }
+
+                setEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
+                setEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
+
                 GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
+
+                GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
                 SkeletonClub skeletonClubItem = new SkeletonClub();
                 GameObject skeletonClubPrefab = LoadPrefabFromBundle(skeletonClubItem.PrefabName, chebgonazAssetBundle);
@@ -132,15 +153,30 @@ namespace FriendlySkeletonWand
 
         private void AddCustomCreatures()
         {
-            List<string> prefabNames = new List<string>()
+            List<string> prefabNames = new List<string>();
+
+            if (DraugrWand.draugrAllowed.Value)
             {
-                "ChebGonaz_DraugrArcher.prefab",
-                "ChebGonaz_DraugrWarrior.prefab",
-                "ChebGonaz_SkeletonWarrior.prefab",
-                "ChebGonaz_SkeletonArcher.prefab",
-                "ChebGonaz_GuardianWraith.prefab",
-                "ChebGonaz_SpiritPylonGhost.prefab",
-            };
+                prefabNames.Add("ChebGonaz_DraugrArcher.prefab");
+                prefabNames.Add("ChebGonaz_DraugrWarrior.prefab");
+            }
+
+            if (SkeletonWand.skeletonsAllowed.Value)
+            {
+                prefabNames.Add("ChebGonaz_SkeletonWarrior.prefab");
+                prefabNames.Add("ChebGonaz_SkeletonArcher.prefab");
+            }
+
+            if (SpectralShroud.spawnWraith.Value)
+            {
+                prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
+            }
+
+            if (SpiritPylon.allowed.Value)
+            {
+                prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
+            }
+
             string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazcreatures");
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
@@ -215,6 +251,13 @@ namespace FriendlySkeletonWand
             skill.Identifier = necromancySkillIdentifier;
 
             SkillManager.Instance.AddSkill(skill);
+
+            // necromancy skill doesn't exist until mod is loaded, so we have to set it here rather than in unity
+            setEffectNecromancyArmor.m_skillLevel = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
+            setEffectNecromancyArmor.m_skillLevelModifier = SpectralShroud.necromancySkillBonus.Value;
+
+            setEffectNecromancyArmor2.m_skillLevel = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
+            setEffectNecromancyArmor2.m_skillLevelModifier = NecromancerHood.necromancySkillBonus.Value;
         }
 
         private void AddClonedItems()

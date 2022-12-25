@@ -59,6 +59,7 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 
 Date | Version | Notes
 --- | --- | ---
+25/12/2022 | 1.0.20 | Add optional equipment effects; add Necromancer's Hood; permit omission of creatures completely via config
 20/12/2022 | 1.0.19 | Max HP of minions is now remembered; Add code to make someone only able to command minions they created; in limit mode, existing minions replaced rather showing a msg
 16/12/2022 | 1.0.17 | Nice models for the wands; skeleton equipment and damage scales to necromancy level; nice texture for Spectral Shroud; add config option to disable Guardian Wraith (permits purely cosmetic Spectral Shroud); made draugr optionally cost meat as well as bone fragments to create
 12/12/2022 | 1.0.16 | Remove version check that kept annoying people; fix Guardian Wraith bug introduced in 1.0.15
@@ -83,6 +84,9 @@ Date | Version | Notes
 
 - Skeletons can't follow you into/out of dungeons
 - Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
+- Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
+  - `DraugrAllowed = false`
+  - `SpectralShroudSpawnWraith = false`
 
 ## Future Ideas
 
@@ -98,4 +102,5 @@ You can find the github [here](https://github.com/jpw1991/Friendly-Skeleton-Wand
 ## Special Thanks
 
 - S970X for making the German language localization for the mod.
+- Ramblez for texturing help
 

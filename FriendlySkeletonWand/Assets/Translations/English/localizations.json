@@ -11,6 +11,9 @@
   "item_friendlyskeletonwand_spectralshroud": "Spectral Shroud",
   "item_friendlyskeletonwand_spectralshroud_desc": "Attracts spirits to you to serve you, provided you're skilled enough.",
   "$friendlyskeletonwand_wraithangrymessage": "You are weak! I will punish you!",
+  
+  "item_chebgonaz_necromancerhood": "Necromancer's Hood",
+  "item_chebgonaz_necromancerhood_desc": "This hood smells earthy; of gravedust, and blood.",
 
   "friendlyskeletonwand_config_draugrhealthmultiplier_desc": "Draugr Health Multiplier",
   "friendlyskeletonwand_config_draugrsetfollowrange_desc": "Draugr follow range",
@@ -36,6 +39,10 @@
 
   "friendlyskeletonwand_necromancy": "Necromancy",
   "friendlyskeletonwand_necromancy_desc": "The art of creating Undead to serve you.",
+  "chebgonaz_necroseteffect_name": "Necro I",
+  "chebgonaz_necroseteffect_tooltip": "Danse Macabre",
+  "chebgonaz_necroseteffect_name2": "Necro II",
+  "chebgonaz_necroseteffect_tooltip2": "Charnel Pit",
 
   "friendlyskeletonwand_notenoughbones": "You need more bone fragments",
   "friendlyskeletonwand_skeletonfollowing": "Following, master...",

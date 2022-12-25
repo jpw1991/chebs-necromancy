@@ -18,6 +18,10 @@ namespace FriendlySkeletonWand
     {
         public static List<GameObject> skeletons = new List<GameObject>();
 
+        public static ConfigEntry<bool> skeletonsAllowed;
+
+        public static ConfigEntry<int> maxSkeletons;
+
         public static ConfigEntry<float> skeletonBaseHealth;
         public static ConfigEntry<float> skeletonHealthMultiplier;
         public static ConfigEntry<float> skeletonSetFollowRange;
@@ -28,7 +32,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> boneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
 
-        public static ConfigEntry<int> maxSkeletons;
+        public static ConfigEntry<int> armorLeatherScrapsRequiredConfig;
 
         public override string ItemName { get { return "ChebGonaz_SkeletonWand"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonWand.prefab"; } }
@@ -39,6 +43,9 @@ namespace FriendlySkeletonWand
 
             allowed = plugin.Config.Bind("Client config", "SkeletonWandAllowed",
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not."));
+
+            skeletonsAllowed = plugin.Config.Bind("Client config", "SkeletonsAllowed",
+                true, new ConfigDescription("If false, skeletons aren't loaded at all and can't be summoned."));
 
             skeletonBaseHealth = plugin.Config.Bind("Client config", "SkeletonBaseHealth",
                 20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
@@ -62,6 +69,9 @@ namespace FriendlySkeletonWand
 
             maxSkeletons = plugin.Config.Bind("Client config", "MaximumSkeletons",
                 0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited)."));
+
+            armorLeatherScrapsRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonLeatherScrapsRequired",
+                2, new ConfigDescription("The amount of LeatherScraps required to craft an armored skeleton."));
         }
 
         public override void CreateButtons()
@@ -106,6 +116,8 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
                 return null;
             }
+            // make sure the set effect is applied
+            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = BasePlugin.setEffectNecromancyArmor;
 
             return customItem;
         }
@@ -180,6 +192,8 @@ namespace FriendlySkeletonWand
 
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
+            if (!skeletonsAllowed.Value) return;
+
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
@@ -195,6 +209,18 @@ namespace FriendlySkeletonWand
                 // consume the fragments
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
+
+            bool createArmoredLeather = false;
+            //if (armorLeatherScrapsRequiredConfig.Value > 0)
+            //{
+            //    int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
+            //    Jotunn.Logger.LogInfo($"LeatherScraps in inventory: {leatherScrapsInInventory}");
+            //    if (leatherScrapsInInventory >= boneFragmentsRequired)
+            //    {
+            //        createArmoredLeather = true;
+            //        player.GetInventory().RemoveItem("$item_leatherscraps", armorLeatherScrapsRequiredConfig.Value);
+            //    }
+            //}
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
@@ -240,7 +266,7 @@ namespace FriendlySkeletonWand
             SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
-            minion.ScaleEquipment(playerNecromancyLevel, archer);
+            minion.ScaleEquipment(playerNecromancyLevel, archer, createArmoredLeather);
             minion.ScaleStats(playerNecromancyLevel);
 
             try
