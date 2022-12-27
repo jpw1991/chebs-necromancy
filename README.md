@@ -8,7 +8,7 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 ##  About Me
 
-<a target="_blank" rel="noopener noreferrer" href="https://chebgonaz.pythonanywhere.com"><img alt="Necrobase" style="margin-top: 1%" src="minicheb.png" /></a> <a target="_blank" rel="noopener noreferrer" href="https://ko-fi.com/chebgonaz"><img alt="Ko-fi" style="margin-top: 1%" src="kofi-mug-small.png" /></a> <a target="_blank" rel="noopener noreferrer" href="https://www.patreon.com/chebgonaz?fan_landing=true"><img alt="Patreon" style="margin-top: 1%" src="patreon.png" /></a>
+<a target="_blank" rel="noopener noreferrer" href="https://chebgonaz.pythonanywhere.com"><img alt="Necrobase" style="margin-top: 1%" src="https://imgur.com/Fahi6sP" /></a> <a target="_blank" rel="noopener noreferrer" href="https://ko-fi.com/chebgonaz"><img alt="Ko-fi" style="margin-top: 1%" src="https://imgur.com/X18OyQs" /></a> <a target="_blank" rel="noopener noreferrer" href="https://www.patreon.com/chebgonaz?fan_landing=true"><img alt="Patreon" style="margin-top: 1%" src="https://imgur.com/4e64jQ8" /></a>
 
 I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 

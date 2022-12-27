@@ -29,7 +29,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.20";
+        public const string PluginVersion = "1.0.21";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -385,7 +385,7 @@ namespace FriendlySkeletonWand
                         GuardianWraithMinion.instance = __instance.gameObject;
                     }
                 }
-                else if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<UndeadMinion>() == null)
+                else if (__instance.name.Contains("SpiritPylonGhost"))
                 {
                     // any pylon ghost awakening we want to self-destruct after the period
                     // so add the component

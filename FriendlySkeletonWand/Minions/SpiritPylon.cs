@@ -130,10 +130,12 @@ namespace FriendlySkeletonWand
                 prefab, 
                 transform.position + transform.forward * 2f + Vector3.up,
                 Quaternion.identity);
-            Character character = spawnedChar.GetComponent<Character>();
-            character.SetLevel(quality);
+
             // add a self-destruct to it
             spawnedChar.AddComponent<KillAfterPeriod>();
+
+            Character character = spawnedChar.GetComponent<Character>();
+            character.SetLevel(quality);
 
             return spawnedChar;
         }
