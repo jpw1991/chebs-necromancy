@@ -37,7 +37,7 @@ namespace FriendlySkeletonWand.Minions
             character.SetHealth(health);
         }
 
-        public void ScaleEquipment(float necromancyLevel, bool archer)
+        public void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor)
         {
             GameObject weapon = null;
             if (necromancyLevel >= 50)
@@ -73,6 +73,23 @@ namespace FriendlySkeletonWand.Minions
             }
 
             humanoid.m_randomWeapon = new GameObject[] { weapon };
+
+            if (leatherArmor)
+            {
+                Jotunn.Logger.LogInfo("this far");
+                humanoid.m_randomArmor = new GameObject[] {
+                    ZNetScene.instance.GetPrefab("HelmetLeather"),
+                    ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
+                    ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
+                    };
+                // rotate it correct way (otherwise it's sideways)
+                //humanoid.m_visEquipment.UpdateBaseModel(); // no effect
+                //humanoid.m_visEquipment.UpdateEquipmentVisuals(); // causes helmet to appear sideways
+                //humanoid.m_visEquipment.UpdateVisuals(); // no effect
+                //humanoid.SetupEquipment(); // causes helmet to appear, but sideways
+                //humanoid.SetupVisEquipment(humanoid.m_visEquipment, false); // causes skirt to appear, but no helmet
+                //humanoid.m_visEquipment.m_helmet.Rotate(new Vector3(0, 90f, 0)); // causes helmet to appear sideways
+            }
         }
     }
 }

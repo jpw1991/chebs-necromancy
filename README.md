@@ -8,7 +8,7 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 ##  About Me
 
-<a target="_blank" rel="noopener noreferrer" href="https://chebgonaz.pythonanywhere.com"><img alt="Necrobase" style="margin-top: 1%" src="minicheb.png" /></a> <a target="_blank" rel="noopener noreferrer" href="https://ko-fi.com/chebgonaz"><img alt="Ko-fi" style="margin-top: 1%" src="kofi-mug-small.png" /></a> <a target="_blank" rel="noopener noreferrer" href="https://www.patreon.com/chebgonaz?fan_landing=true"><img alt="Patreon" style="margin-top: 1%" src="patreon.png" /></a>
+<a target="_blank" rel="noopener noreferrer" href="https://chebgonaz.pythonanywhere.com"><img alt="Necrobase" style="margin-top: 1%" src="https://imgur.com/Fahi6sP" /></a> <a target="_blank" rel="noopener noreferrer" href="https://ko-fi.com/chebgonaz"><img alt="Ko-fi" style="margin-top: 1%" src="https://imgur.com/X18OyQs" /></a> <a target="_blank" rel="noopener noreferrer" href="https://www.patreon.com/chebgonaz?fan_landing=true"><img alt="Patreon" style="margin-top: 1%" src="https://imgur.com/4e64jQ8" /></a>
 
 I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
@@ -59,6 +59,7 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 
 Date | Version | Notes
 --- | --- | ---
+25/12/2022 | 1.0.20 | Add optional equipment effects; add Necromancer's Hood; permit omission of creatures completely via config
 20/12/2022 | 1.0.19 | Max HP of minions is now remembered; Add code to make someone only able to command minions they created; in limit mode, existing minions replaced rather showing a msg
 16/12/2022 | 1.0.17 | Nice models for the wands; skeleton equipment and damage scales to necromancy level; nice texture for Spectral Shroud; add config option to disable Guardian Wraith (permits purely cosmetic Spectral Shroud); made draugr optionally cost meat as well as bone fragments to create
 12/12/2022 | 1.0.16 | Remove version check that kept annoying people; fix Guardian Wraith bug introduced in 1.0.15
@@ -83,6 +84,9 @@ Date | Version | Notes
 
 - Skeletons can't follow you into/out of dungeons
 - Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
+- Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
+  - `DraugrAllowed = false`
+  - `SpectralShroudSpawnWraith = false`
 
 ## Future Ideas
 
@@ -98,4 +102,5 @@ You can find the github [here](https://github.com/jpw1991/Friendly-Skeleton-Wand
 ## Special Thanks
 
 - S970X for making the German language localization for the mod.
+- Ramblez for texturing help
 

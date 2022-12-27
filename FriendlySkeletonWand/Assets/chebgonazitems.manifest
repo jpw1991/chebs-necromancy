@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 356360509
+CRC: 1620149059
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: beda07a6b6daca67fbb6fbe980ac54f1
+    Hash: 1e74536221300b6fa457530a507ca0bd
   TypeTreeHash:
     serializedVersion: 2
     Hash: 1cbc818a5e07d78793f9996d77c52a71
@@ -93,7 +93,11 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/draugr_staff_icon.png
 - Assets/_ChebGonaz/spectral_shroud_d.png
+- Assets/_ChebGonaz/SetEffect_NecromancyArmor.asset
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
+- Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
+- Assets/_ChebGonaz/ChebGonaz_NecromancerHood.prefab
+- Assets/_ChebGonaz/SetEffect_NecromancyArmor2.asset
 - Assets/_ChebGonaz/skeleton_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
