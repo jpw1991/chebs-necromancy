@@ -59,6 +59,7 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 
 Date | Version | Notes
 --- | --- | ---
+25/12/2022 | 1.0.21 | Fix bug about Spirit Pylon Ghosts not despawning
 25/12/2022 | 1.0.20 | Add optional equipment effects; add Necromancer's Hood; permit omission of creatures completely via config
 20/12/2022 | 1.0.19 | Max HP of minions is now remembered; Add code to make someone only able to command minions they created; in limit mode, existing minions replaced rather showing a msg
 16/12/2022 | 1.0.17 | Nice models for the wands; skeleton equipment and damage scales to necromancy level; nice texture for Spectral Shroud; add config option to disable Guardian Wraith (permits purely cosmetic Spectral Shroud); made draugr optionally cost meat as well as bone fragments to create
