@@ -13,6 +13,7 @@ namespace FriendlySkeletonWand
     {
         public static ConfigEntry<bool> allowed;
         public static ConfigEntry<float> sightRadius;
+        public static ConfigEntry<float> ghostDuration;
 
         public static string PrefabName = "ChebGonaz_SpiritPylon";
         public static string PieceTable = "Hammer";
@@ -36,6 +37,8 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not."));
             sightRadius = plugin.Config.Bind("Client config", "SpiritPylonSightRadius",
                 20f, new ConfigDescription("How far a Spirit Pylon can see enemies."));
+            ghostDuration = plugin.Config.Bind("Client config", "SpiritPylonGhostDuration",
+                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists."));
         }
 
         private void Awake()
@@ -132,7 +135,8 @@ namespace FriendlySkeletonWand
                 Quaternion.identity);
 
             // add a self-destruct to it
-            spawnedChar.AddComponent<KillAfterPeriod>();
+            //spawnedChar.AddComponent<KillAfterPeriod>();
+            //Jotunn.Logger.LogInfo("KillAfterPeriod component added");
 
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);

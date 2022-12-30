@@ -204,6 +204,7 @@ namespace FriendlySkeletonWand
                 {
                     "$item_meat_rotten",
                     "$item_boar_meat",
+                    "$item_necktail",
                     "$item_deer_meat",
                     "$item_loxmeat",
                     "$item_wolf_meat",

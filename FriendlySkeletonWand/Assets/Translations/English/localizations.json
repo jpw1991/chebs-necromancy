@@ -45,6 +45,7 @@
   "chebgonaz_necroseteffect_tooltip2": "Charnel Pit",
 
   "friendlyskeletonwand_notenoughbones": "You need more bone fragments",
+  "friendlyskeletonwand_notenoughmeat": "You need more meat.",
   "friendlyskeletonwand_skeletonfollowing": "Following, master...",
   "friendlyskeletonwand_skeletonwaiting": "Waiting, master...",
   "friendlyskeletonwand_targetfound": "Go forth, minions!",
