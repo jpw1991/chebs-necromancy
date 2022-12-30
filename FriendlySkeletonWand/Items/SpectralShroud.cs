@@ -5,6 +5,7 @@ using BepInEx.Configuration;
 using UnityEngine;
 using Jotunn.Managers;
 using Jotunn;
+using System.Collections.Generic;
 
 namespace FriendlySkeletonWand
 {
@@ -15,6 +16,9 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<bool> spawnWraith;
         public static ConfigEntry<int> necromancySkillBonus;
+        public static ConfigEntry<int> delayBetweenWraithSpawns;
+
+        private float wraithLastSpawnedAt;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -28,6 +32,8 @@ namespace FriendlySkeletonWand
 
             necromancySkillBonus = plugin.Config.Bind("Client config", "SpectralShroudSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all)."));
+            delayBetweenWraithSpawns = plugin.Config.Bind("Client config", "SpectralShroudWraithDelay",
+                10, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn."));
         }
 
         public override CustomItem GetCustomItem(Sprite icon=null)
@@ -81,9 +87,30 @@ namespace FriendlySkeletonWand
                 {
                     GuardianWraithStuff();
 
-                    doOnUpdateDelay = Time.time + 5f;
+                    doOnUpdateDelay = Time.time + .5f;
                 }
             }
+        }
+
+        protected bool EnemiesNearby(out Character enemy)
+        {
+
+            List<Character> charactersInRange = new List<Character>();
+            Character.GetCharactersInRange(
+                Player.m_localPlayer.transform.position,
+                30f,
+                charactersInRange
+                );
+            foreach (Character character in charactersInRange)
+            {
+                if (character != null && character.m_faction != Character.Faction.Players)
+                {
+                    enemy = character;
+                    return true;
+                }
+            }
+            enemy = null;
+            return false;
         }
 
         private void GuardianWraithStuff()
@@ -96,60 +123,69 @@ namespace FriendlySkeletonWand
                     equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud")
                     ) != null)
             {
-                if (necromancyLevel >= GuardianWraithMinion.guardianWraithLevelRequirement.Value)
+                if (Time.time > wraithLastSpawnedAt + delayBetweenWraithSpawns.Value)
                 {
-                    if (GuardianWraithMinion.instance == null || GuardianWraithMinion.instance.GetComponent<Character>().IsDead())
+                    if (necromancyLevel >= GuardianWraithMinion.guardianWraithLevelRequirement.Value)
                     {
-                        GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
-                        if (!prefab)
+                        if (EnemiesNearby(out Character enemy))
                         {
-                            Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
-                        }
-                        else
-                        {
-                            int quality = 1;
-                            if (necromancyLevel >= 70) { quality = 3; }
-                            else if (necromancyLevel >= 35) { quality = 2; }
+                            GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
+                            if (!prefab)
+                            {
+                                Jotunn.Logger.LogError("GuardianWraithCoroutine: spawning Wraith failed");
+                            }
+                            else
+                            {
+                                int quality = 1;
+                                if (necromancyLevel >= 70) { quality = 3; }
+                                else if (necromancyLevel >= 35) { quality = 2; }
 
-                            player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
-                            GuardianWraithMinion.instance = GameObject.Instantiate(prefab,
-                                player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-                            GuardianWraithMinion guardianWraithMinion = GuardianWraithMinion.instance.AddComponent<GuardianWraithMinion>();
-                            guardianWraithMinion.canBeCommanded = false;
-                            Character character = GuardianWraithMinion.instance.GetComponent<Character>();
-                            character.SetLevel(quality);
-                            character.m_faction = Character.Faction.Players;
-                            GuardianWraithMinion.instance.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
-                            // set owner to player
-                            character.GetComponent<ZNetView>().GetZDO().SetOwner(ZDOMan.instance.GetMyID());
+                                player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
+                                GameObject instance = GameObject.Instantiate(prefab,
+                                    player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                                GuardianWraithMinion guardianWraithMinion = instance.AddComponent<GuardianWraithMinion>();
+                                guardianWraithMinion.canBeCommanded = false;
+                                Character character = instance.GetComponent<Character>();
+                                character.SetLevel(quality);
+                                character.m_faction = Character.Faction.Players;
+                                // set owner to player
+                                character.GetComponent<ZNetView>().GetZDO().SetOwner(ZDOMan.instance.GetMyID());
+
+                                MonsterAI monsterAI = instance.GetComponent<MonsterAI>();
+                                monsterAI.SetFollowTarget(player.gameObject);
+                                monsterAI.SetTarget(enemy);
+
+                                wraithLastSpawnedAt = Time.time;
+                            }
                         }
-                    }
-                }
-                else
-                {
-                    // instantiate hostile wraith to punish player
-                    player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithangrymessage");
-                    GameObject prefab = ZNetScene.instance.GetPrefab("Wraith");
-                    if (!prefab)
-                    {
-                        Jotunn.Logger.LogError("Wraith prefab null!");
                     }
                     else
                     {
-                        GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                        // instantiate hostile wraith to punish player
+                        player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithangrymessage");
+                        GameObject prefab = ZNetScene.instance.GetPrefab("Wraith");
+                        if (!prefab)
+                        {
+                            Jotunn.Logger.LogError("Wraith prefab null!");
+                        }
+                        else
+                        {
+                            GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                            wraithLastSpawnedAt = Time.time;
+                        }
                     }
                 }
             }
-            else
-            {
-                if (GuardianWraithMinion.instance != null)
-                {
-                    if (GuardianWraithMinion.instance.TryGetComponent(out Humanoid humanoid))
-                    {
-                        GuardianWraithMinion.instance.GetComponent<Humanoid>().SetHealth(0);
-                    }
-                }
-            }
+            //else
+            //{
+            //    if (GuardianWraithMinion.instance != null)
+            //    {
+            //        if (GuardianWraithMinion.instance.TryGetComponent(out Humanoid humanoid))
+            //        {
+            //            GuardianWraithMinion.instance.GetComponent<Humanoid>().SetHealth(0);
+            //        }
+            //    }
+            //}
         }
     }
 }

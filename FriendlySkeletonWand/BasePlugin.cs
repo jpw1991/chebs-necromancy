@@ -391,11 +391,12 @@ namespace FriendlySkeletonWand
                 if (__instance.name.Contains("Wraith"))
                 //&& __instance.IsOwner()) // ignore other players' wraiths
                 {
-                    // remove duplicate wraiths
-                    if (GuardianWraithMinion.instance != null)
-                    {
-                        __instance.SetHealth(0);
-                    }
+                    //// remove duplicate wraiths
+                    //if (GuardianWraithMinion.instance != null)
+                    //{
+                    //    __instance.SetHealth(0);
+                    //}
+                    __instance.gameObject.AddComponent<GuardianWraithMinion>();
                 }
                 else
                 if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<SpiritPylonGhostMinion>() == null)
