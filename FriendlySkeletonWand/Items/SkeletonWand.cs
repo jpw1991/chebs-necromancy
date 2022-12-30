@@ -122,18 +122,19 @@ namespace FriendlySkeletonWand
 
         public override KeyHintConfig GetKeyHint()
         {
+            List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
+
+            if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
+            if (CreateArcherMinionButton != null) buttonConfigs.Add(CreateArcherMinionButton);
+            if (FollowButton != null) buttonConfigs.Add(FollowButton);
+            if (WaitButton != null) buttonConfigs.Add(WaitButton);
+            if (TeleportButton != null) buttonConfigs.Add(TeleportButton);
+            if (AttackTargetButton != null) buttonConfigs.Add(AttackTargetButton);
+
             return new KeyHintConfig
             {
                 Item = ItemName,
-                ButtonConfigs = new[]
-                {
-                    CreateMinionButton,
-                    CreateArcherMinionButton,
-                    FollowButton,
-                    WaitButton,
-                    TeleportButton,
-                    AttackTargetButton,
-                }
+                ButtonConfigs = buttonConfigs.ToArray()
             };
         }
 

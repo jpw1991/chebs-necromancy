@@ -86,65 +86,83 @@ namespace FriendlySkeletonWand
 
         public virtual void CreateButtons()
         {
-            CreateMinionButton = new ButtonConfig
+            if (CreateMinionConfig.Value != KeyCode.None)
             {
-                Name = ItemName+"CreateMinion",
-                Config = CreateMinionConfig,
-                GamepadConfig = CreateMinionGamepadConfig,
-                HintToken = "$friendlyskeletonwand_create",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateMinionButton);
+                CreateMinionButton = new ButtonConfig
+                {
+                    Name = ItemName + "CreateMinion",
+                    Config = CreateMinionConfig,
+                    GamepadConfig = CreateMinionGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_create",
+                    BlockOtherInputs = true
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateMinionButton);
+            }
 
-            CreateArcherMinionButton = new ButtonConfig
+            if (CreateArcherMinionConfig.Value != KeyCode.None)
             {
-                Name = ItemName+"CreateArcherMinion",
-                Config = CreateArcherMinionConfig,
-                GamepadConfig = CreateArcherMinionGamepadConfig,
-                HintToken = "$friendlyskeletonwand_create_archer",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateArcherMinionButton);
+                CreateArcherMinionButton = new ButtonConfig
+                {
+                    Name = ItemName + "CreateArcherMinion",
+                    Config = CreateArcherMinionConfig,
+                    GamepadConfig = CreateArcherMinionGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_create_archer",
+                    BlockOtherInputs = true
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateArcherMinionButton);
+            }
 
-            FollowButton = new ButtonConfig
+            if (FollowConfig.Value != KeyCode.None)
             {
-                Name = ItemName+"Follow",
-                Config = FollowConfig,
-                GamepadConfig = FollowGamepadConfig,
-                HintToken = "$friendlyskeletonwand_follow",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, FollowButton);
+                FollowButton = new ButtonConfig
+                {
+                    Name = ItemName + "Follow",
+                    Config = FollowConfig,
+                    GamepadConfig = FollowGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_follow",
+                    BlockOtherInputs = true
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, FollowButton);
+            }
 
-            WaitButton = new ButtonConfig
+            if (WaitConfig.Value != KeyCode.None)
             {
-                Name = ItemName+"Wait",
-                Config = WaitConfig,
-                GamepadConfig = WaitGamepadConfig,
-                HintToken = "$friendlyskeletonwand_wait",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, WaitButton);
+                WaitButton = new ButtonConfig
+                {
+                    Name = ItemName + "Wait",
+                    Config = WaitConfig,
+                    GamepadConfig = WaitGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_wait",
+                    BlockOtherInputs = true
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, WaitButton);
+            }
 
-            TeleportButton = new ButtonConfig
+            if (TeleportConfig.Value != KeyCode.None)
             {
-                Name = ItemName+"Teleport",
-                Config = TeleportConfig,
-                GamepadConfig = TeleportGamepadConfig,
-                HintToken = "$friendlyskeletonwand_teleport",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, TeleportButton);
+                TeleportButton = new ButtonConfig
+                {
+                    Name = ItemName + "Teleport",
+                    Config = TeleportConfig,
+                    GamepadConfig = TeleportGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_teleport",
+                    BlockOtherInputs = true
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, TeleportButton);
+            }
 
-            AttackTargetButton = new ButtonConfig
+            if (AttackTargetConfig.Value != KeyCode.None)
             {
-                Name = ItemName+"AttackTarget",
-                Config = AttackTargetConfig,
-                GamepadConfig = AttackTargetGamepadConfig,
-                HintToken = "$friendlyskeletonwand_attacktarget",
-                BlockOtherInputs = true
-            };
-            InputManager.Instance.AddButton(BasePlugin.PluginGUID, AttackTargetButton);
+                AttackTargetButton = new ButtonConfig
+                {
+                    Name = ItemName + "AttackTarget",
+                    Config = AttackTargetConfig,
+                    GamepadConfig = AttackTargetGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_attacktarget",
+                    BlockOtherInputs = true
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, AttackTargetButton);
+            }
         }
 
         public virtual KeyHintConfig GetKeyHint()
