@@ -16,7 +16,6 @@ namespace FriendlySkeletonWand
 {
     internal class DraugrWand : Wand
     {
-        public static List<GameObject> draugr = new List<GameObject>();
         public static ConfigEntry<int> maxDraugr;
 
         public static ConfigEntry<bool> draugrAllowed;
@@ -227,7 +226,7 @@ namespace FriendlySkeletonWand
                 );
 
                 Jotunn.Logger.LogInfo($"Meat in inventory: {meatInInventory}");
-                if (meatInInventory < boneFragmentsRequired)
+                if (meatInInventory < meatRequired)
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughmeat");
                     return;
@@ -269,14 +268,8 @@ namespace FriendlySkeletonWand
             if (maxDraugr.Value > 0)
             {
                 // re-count the current active draugr
-                for (int i = draugr.Count - 1; i >= 0; i--) { if (draugr[i] == null) { draugr.RemoveAt(i); } }
-                if (draugr.Count >= maxDraugr.Value)
-                {
-                    // destroy one of the existing draugr to make room
-                    // for the new one
-                    draugr[0].GetComponent<Humanoid>().SetHealth(0);
-                    draugr.RemoveAt(0);
-                }
+                int activeDraugr = CountActiveDraugrMinions();
+                Jotunn.Logger.LogInfo($"Draugr count: {activeDraugr}; maxDraugr = {maxDraugr.Value}");
             }
 
             // scale according to skill
@@ -336,6 +329,48 @@ namespace FriendlySkeletonWand
             {
                 Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
             }
+        }
+
+        public int CountActiveDraugrMinions()
+        {
+            int result = 0;
+            // based off BaseAI.FindClosestCreature
+            List<Character> allCharacters = Character.GetAllCharacters();
+            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
+
+            foreach (Character item in allCharacters)
+            {
+                if (item.IsDead())
+                {
+                    continue;
+                }
+
+                DraugrMinion minion = item.GetComponent<DraugrMinion>();
+                if (minion != null)
+                {
+                    minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
+                }
+            }
+
+            // reverse so that we get newest first, oldest last. This means
+            // when we kill off surplus, the oldest things are getting killed
+            // not the newest things
+            minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
+
+            for (int i = 0; i < minionsFound.Count; i++)
+            {
+                // kill off surplus
+                if (result >= maxDraugr.Value - 1)
+                {
+                    Tuple<int, Character> tuple = minionsFound[i];
+                    tuple.Item2.SetHealth(0);
+                    continue;
+                }
+
+                result++;
+            }
+
+            return result;
         }
     }
 }

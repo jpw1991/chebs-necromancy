@@ -6,12 +6,22 @@ namespace FriendlySkeletonWand.Minions
 {
     internal class SkeletonMinion : UndeadMinion
     {
+        // for limits checking
+        private static int createdOrderIncrementer;
+        public int createdOrder;
+
         private void Awake()
         {
-            if (SkeletonWand.maxSkeletons.Value > 0)
+            createdOrderIncrementer++;
+            createdOrder = createdOrderIncrementer;
+
+            Tameable tameable = GetComponent<Tameable>();
+            if (tameable != null)
             {
-                SkeletonWand.skeletons.Add(gameObject);
+                // let the minions generate a little necromancy XP for their master
+                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
             }
+
             StartCoroutine(WaitForLocalPlayer());
         }
 

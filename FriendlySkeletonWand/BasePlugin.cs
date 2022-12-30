@@ -388,8 +388,6 @@ namespace FriendlySkeletonWand
                 else if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<SpiritPylonGhostMinion>() == null)
                 {
                     __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
-                    // any pylon ghost awakening we want to self-destruct after the period
-                    //GameObject.Destroy(__instance.gameObject, SpiritPylon.ghostDuration.Value);
                 }
                 else
                 {

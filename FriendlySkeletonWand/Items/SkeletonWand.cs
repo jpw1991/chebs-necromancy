@@ -16,8 +16,6 @@ namespace FriendlySkeletonWand
 {
     internal class SkeletonWand : Wand
     {
-        public static List<GameObject> skeletons = new List<GameObject>();
-
         public static ConfigEntry<bool> skeletonsAllowed;
 
         public static ConfigEntry<int> maxSkeletons;
@@ -190,6 +188,48 @@ namespace FriendlySkeletonWand
             return false;
         }
 
+        public int CountActiveSkeletonMinions()
+        {
+            int result = 0;
+            // based off BaseAI.FindClosestCreature
+            List<Character> allCharacters = Character.GetAllCharacters();
+            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
+
+            foreach (Character item in allCharacters)
+            {
+                if (item.IsDead())
+                {
+                    continue;
+                }
+
+                SkeletonMinion minion = item.GetComponent<SkeletonMinion>();
+                if (minion != null)
+                {
+                    minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
+                }
+            }
+
+            // reverse so that we get newest first, oldest last. This means
+            // when we kill off surplus, the oldest things are getting killed
+            // not the newest things
+            minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
+
+            for (int i = 0; i < minionsFound.Count; i++)
+            {
+                // kill off surplus
+                if (result >= maxSkeletons.Value - 1)
+                {
+                    Tuple<int, Character> tuple = minionsFound[i];
+                    tuple.Item2.SetHealth(0);
+                    continue;
+                }
+
+                result++;
+            }
+
+            return result;
+        }
+
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
             if (!skeletonsAllowed.Value) return;
@@ -227,14 +267,8 @@ namespace FriendlySkeletonWand
             if (maxSkeletons.Value > 0)
             {
                 // re-count the current active skeletons
-                for (int i = skeletons.Count - 1; i >= 0; i--) { if (skeletons[i] == null) { skeletons.RemoveAt(i); } }
-                if (skeletons.Count >= maxSkeletons.Value)
-                {
-                    // destroy one of the existing skeletons to make room
-                    // for the new one
-                    skeletons[0].GetComponent<Humanoid>().SetHealth(0);
-                    skeletons.RemoveAt(0);
-                }
+                int activeSkeletons = CountActiveSkeletonMinions();
+                Jotunn.Logger.LogInfo($"Skeleton count: {activeSkeletons}; maxSkeletons = {maxSkeletons.Value}");
             }
 
             // scale according to skill
