@@ -29,7 +29,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.22";
+        public const string PluginVersion = "1.0.23";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -63,8 +63,6 @@ namespace FriendlySkeletonWand
             AddNecromancy();
 
             //PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
-
-            StartCoroutine(GuardianWraithMinion.GuardianWraithCoroutine());
         }
 
         private void CreateConfigValues()
@@ -284,6 +282,8 @@ namespace FriendlySkeletonWand
                         });
                 }
             }
+
+            spectralShroudItem.DoOnUpdate();
         }
     }
 
@@ -372,20 +372,33 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
+                //if (__instance.name.Contains("Wraith"))
+                //    //&& __instance.IsOwner()) // ignore other players' wraiths
+                //{
+                //    // remove duplicate wraiths
+                //    if (GuardianWraithMinion.instance != null)
+                //    {
+                //        __instance.SetHealth(0);
+                //        //GameObject.Destroy(__instance.gameObject, 5);
+                //    }
+                //    else
+                //    {
+                //        __instance.gameObject.AddComponent<GuardianWraithMinion>();
+                //        GuardianWraithMinion.instance = __instance.gameObject;
+                //    }
+                //}
+                //else 
                 if (__instance.name.Contains("Wraith"))
+                //&& __instance.IsOwner()) // ignore other players' wraiths
                 {
                     // remove duplicate wraiths
                     if (GuardianWraithMinion.instance != null)
                     {
-                        GameObject.Destroy(__instance.gameObject, 5);
-                    }
-                    else
-                    {
-                        __instance.gameObject.AddComponent<GuardianWraithMinion>();
-                        GuardianWraithMinion.instance = __instance.gameObject;
+                        __instance.SetHealth(0);
                     }
                 }
-                else if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<SpiritPylonGhostMinion>() == null)
+                else
+                if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<SpiritPylonGhostMinion>() == null)
                 {
                     __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
                 }
