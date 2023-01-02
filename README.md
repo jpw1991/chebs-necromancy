@@ -55,10 +55,25 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 
 Doesn't work for some reason; please edit the configs manually. Almost everything can be tweaked to your liking.
 
+### F.A.Q
+
+Q: How do I kill minions?
+A: They count as tames, so use butcher's knife
+
+Q: What do minions eat?
+A: Nothing. They are just tames so that they earn you Necromancy XP and get a funny name.
+
+Q: What meats work for spawning Draugr?
+A: Boar Meat, Neck Tail, Deer Meat, Lox Meat, Wolf Meat, Serpent Meat, Chicken Meat, Hare meat. It checks and consumes the first one it finds in that order - so low quality meats are preferred to high quality.
+
+Q: Can I heal minions?
+A: Not yet, unless you use other mods that permit healing. I want to add healing eventually in some form.
+
 ## Changelog
 
 Date | Version | Notes
 --- | --- | ---
+30/12/2022 | 1.0.23 | Guardian Wraith implementation changed: Guardian Wraiths only spawn if enemies are nearby and move immediately to intercept enemy; Guardian Wraiths exist on a timer and perish on their own
 29/12/2022 | 1.0.22 | add neck tail to draugr meat; expose ghost timer to config; fix ghost selfdestruct by changing from coroutine to update; add localizations; fix problem with limits not working properly; setting buttons to None in config removes them from GUI
 25/12/2022 | 1.0.21 | Fix bug about Spirit Pylon Ghosts not despawning
 25/12/2022 | 1.0.20 | Add optional equipment effects; add Necromancer's Hood; permit omission of creatures completely via config

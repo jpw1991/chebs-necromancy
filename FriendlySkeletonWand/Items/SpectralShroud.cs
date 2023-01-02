@@ -28,7 +28,7 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not."));
 
             spawnWraith = plugin.Config.Bind("Client config", "SpectralShroudSpawnWraith",
-                true, new ConfigDescription("Whether wraiths spawn or not (default false, because buggy right now)."));
+                true, new ConfigDescription("Whether wraiths spawn or not."));
 
             necromancySkillBonus = plugin.Config.Bind("Client config", "SpectralShroudSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all)."));

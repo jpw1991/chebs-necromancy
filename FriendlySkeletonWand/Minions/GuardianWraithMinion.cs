@@ -33,10 +33,27 @@ namespace FriendlySkeletonWand
         {
             if (Time.time > createdAt + guardianWraithDuration.Value)
             {
-                if (TryGetComponent(out Humanoid humanoid))
+                Kill();
+            }
+            else if (Player.m_localPlayer != null
+                && Player.m_localPlayer.IsTeleporting())
+            {
+                if (TryGetComponent(out Character character))
                 {
-                    humanoid.SetHealth(0);
+                    if (character.IsOwner())
+                    {
+                        Kill();
+                        Jotunn.Logger.LogInfo("GuardianWraithMinion: killing because player entered portal.");
+                    }
                 }
+            }
+        }
+
+        private void Kill()
+        {
+            if (TryGetComponent(out Humanoid humanoid))
+            {
+                humanoid.SetHealth(0);
             }
         }
     }
