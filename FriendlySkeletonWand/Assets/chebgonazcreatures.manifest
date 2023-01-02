@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1242057915
+CRC: 2535199781
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d31a2c42902fb7c7cd817641e1f20d87
+    Hash: 552b8aeec315c0bb38e9f26955047109
   TypeTreeHash:
     serializedVersion: 2
     Hash: 27522e69490d27f06b7b09cd45f35a50
@@ -133,8 +133,9 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcher.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrWarrior.prefab
+- Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
 - Assets/_ChebGonaz/ChebGonaz_GuardianWraith.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarrior.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.prefab
-- Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
+- Assets/_ChebGonaz/ChebGonaz_PoisonSkeleton.prefab
 Dependencies: []

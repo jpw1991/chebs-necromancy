@@ -16,6 +16,10 @@ namespace FriendlySkeletonWand
 {
     internal class SkeletonWand : Wand
     {
+        public const string SkeletonWarriorPrefabName = "ChebGonaz_SkeletonWarrior";
+        public const string SkeletonArcherPrefabName = "ChebGonaz_SkeletonArcher";
+        public const string PoisonSkeletonPrefabName = "ChebGonaz_PoisonSkeleton";
+
         public static ConfigEntry<bool> skeletonsAllowed;
 
         public static ConfigEntry<int> maxSkeletons;
@@ -31,6 +35,11 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
 
         public static ConfigEntry<int> armorLeatherScrapsRequiredConfig;
+
+        public static ConfigEntry<int> poisonSkeletonLevelRequirementConfig;
+        public static ConfigEntry<float> poisonSkeletonBaseHealth;
+        public static ConfigEntry<int> poisonSkeletonGuckRequiredConfig;
+        public static ConfigEntry<float> poisonSkeletonNecromancyLevelIncrease;
 
         public override string ItemName { get { return "ChebGonaz_SkeletonWand"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonWand.prefab"; } }
@@ -69,7 +78,19 @@ namespace FriendlySkeletonWand
                 0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited)."));
 
             armorLeatherScrapsRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonLeatherScrapsRequired",
-                2, new ConfigDescription("The amount of LeatherScraps required to craft an armored skeleton."));
+                2, new ConfigDescription("The amount of LeatherScraps required to craft an armored skeleton (WIP, not ready yet!)."));
+
+            poisonSkeletonBaseHealth = plugin.Config.Bind("Client config", "PoisonSkeletonBaseHealth",
+                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
+
+            poisonSkeletonLevelRequirementConfig = plugin.Config.Bind("Client config", "PoisonSkeletonLevelRequired",
+                50, new ConfigDescription("The Necromancy level needed to summon a Poison Skeleton."));
+
+            poisonSkeletonGuckRequiredConfig = plugin.Config.Bind("Client config", "PoisonSkeletonGuckRequired",
+                1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton."));
+
+            poisonSkeletonNecromancyLevelIncrease = plugin.Config.Bind("Client config", "PoisonSkeletonNecromancyLevelIncrease",
+                3f, new ConfigDescription("How much crafting a Poison Skeleton contributes to your Necromancy level increasing."));
         }
 
         public override void CreateButtons()
@@ -231,6 +252,69 @@ namespace FriendlySkeletonWand
             return result;
         }
 
+        private bool ConsumeGuckIfAvailable(Player player)
+        {
+            // return true if guck is available and got consumed
+            int guckInInventory = player.GetInventory().CountItems("$item_guck");
+            if (guckInInventory >= poisonSkeletonGuckRequiredConfig.Value)
+            {
+                player.GetInventory().RemoveItem("$item_guck", poisonSkeletonGuckRequiredConfig.Value);
+                return true;
+            }
+            return false;
+        }
+
+        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, string prefabName)
+        {
+            GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
+            if (!prefab)
+            {
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
+                Jotunn.Logger.LogError($"InstantiateSkeleton: spawning {prefabName} failed");
+            }
+
+            GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+            Character character = spawnedChar.GetComponent<Character>();
+            character.SetLevel(quality);
+
+            if (prefabName == SkeletonWarriorPrefabName)
+            {
+                SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
+                minion.ScaleEquipment(playerNecromancyLevel, false, false);
+                minion.ScaleStats(playerNecromancyLevel);
+            }
+            else if (prefabName == SkeletonArcherPrefabName)
+            {
+                SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
+                minion.ScaleEquipment(playerNecromancyLevel, true, false);
+                minion.ScaleStats(playerNecromancyLevel);
+            }
+            else if (prefabName == PoisonSkeletonPrefabName)
+            {
+                PoisonSkeletonMinion minion = spawnedChar.AddComponent<PoisonSkeletonMinion>();
+                minion.ScaleEquipment(playerNecromancyLevel, false, false);
+                minion.ScaleStats(playerNecromancyLevel);
+            }
+
+            if (followByDefault.Value)
+            {
+                spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+            }
+
+            try
+            {
+                spawnedChar.GetComponent<ZNetView>().GetZDO().SetOwner(
+                    ZDOMan.instance.GetMyID()
+                    );
+            }
+            catch (Exception e)
+            {
+                Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
+            }
+
+            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease.Value);
+        }
+
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
         {
             if (!skeletonsAllowed.Value) return;
@@ -251,7 +335,7 @@ namespace FriendlySkeletonWand
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
 
-            bool createArmoredLeather = false;
+            //bool createArmoredLeather = false;
             //if (armorLeatherScrapsRequiredConfig.Value > 0)
             //{
             //    int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
@@ -273,15 +357,7 @@ namespace FriendlySkeletonWand
             }
 
             // scale according to skill
-            float playerNecromancyLevel = 1;
-            try
-            {
-                playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
-            }
-            catch (Exception e)
-            {
-                Jotunn.Logger.LogError($"Failed to get player necromancy level: {e}");
-            }
+            float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
             Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
             int quality = 1;
@@ -289,44 +365,17 @@ namespace FriendlySkeletonWand
             else if (playerNecromancyLevel >= 35) { quality = 2; }
 
             // go on to spawn skeleton
-            string prefabName = archer ? "ChebGonaz_SkeletonArcher" : "ChebGonaz_SkeletonWarrior";
-            GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
-            if (!prefab)
+            if (archer)
             {
-                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
-                Jotunn.Logger.LogError($"SpawnFriendlySkeleton: spawning {prefabName} failed");
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonArcherPrefabName);
             }
-
-            GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
-            SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-            Character character = spawnedChar.GetComponent<Character>();
-            character.SetLevel(quality);
-            minion.ScaleEquipment(playerNecromancyLevel, archer, createArmoredLeather);
-            minion.ScaleStats(playerNecromancyLevel);
-
-            try
+            else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value && ConsumeGuckIfAvailable(player))
             {
-                player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, PoisonSkeletonPrefabName);
             }
-            catch (Exception e)
+            else
             {
-                Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
-            }
-
-            if (followByDefault.Value)
-            {
-                spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
-            }
-
-            try
-            {
-                spawnedChar.GetComponent<ZNetView>().GetZDO().SetOwner(
-                    ZDOMan.instance.GetMyID()
-                    );
-            }
-            catch (Exception e)
-            {
-                Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonWarriorPrefabName);
             }
         }
     }

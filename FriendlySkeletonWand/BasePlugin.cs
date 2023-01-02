@@ -163,6 +163,7 @@ namespace FriendlySkeletonWand
             {
                 prefabNames.Add("ChebGonaz_SkeletonWarrior.prefab");
                 prefabNames.Add("ChebGonaz_SkeletonArcher.prefab");
+                prefabNames.Add("ChebGonaz_PoisonSkeleton.prefab");
             }
 
             if (SpectralShroud.spawnWraith.Value)

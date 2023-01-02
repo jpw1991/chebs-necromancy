@@ -36,7 +36,7 @@ namespace FriendlySkeletonWand
             allowed = plugin.Config.Bind("Client config", "SpiritPylonAllowed",
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not."));
             sightRadius = plugin.Config.Bind("Client config", "SpiritPylonSightRadius",
-                20f, new ConfigDescription("How far a Spirit Pylon can see enemies."));
+                30f, new ConfigDescription("How far a Spirit Pylon can see enemies."));
             ghostDuration = plugin.Config.Bind("Client config", "SpiritPylonGhostDuration",
                 30f, new ConfigDescription("How long a Spirit Pylon's ghost persists."));
         }
@@ -85,19 +85,21 @@ namespace FriendlySkeletonWand
                         ? 1 
                         : (int)playerNecromancyLevel / 10;
 
-                    if (EnemiesNearby())
+                    if (EnemiesNearby(out Character characterInRange))
                     {
                         // spawn ghosts up until the limit
                         if (spawnedGhosts.Count < amount)
                         {
-                            spawnedGhosts.Add(SpawnFriendlyGhost(playerNecromancyLevel));
+                            GameObject friendlyGhost = SpawnFriendlyGhost(playerNecromancyLevel);
+                            friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
+                            spawnedGhosts.Add(friendlyGhost);
                         }
                     }  
                 }
             }
         }
 
-        protected bool EnemiesNearby()
+        protected bool EnemiesNearby(out Character characterInRange)
         {
             List<Character> charactersInRange = new List<Character>();
             Character.GetCharactersInRange(
@@ -109,9 +111,11 @@ namespace FriendlySkeletonWand
             {
                 if (character != null && character.m_faction != Character.Faction.Players)
                 {
+                    characterInRange = character;
                     return true;
                 }
             }
+            characterInRange = null;
             return false;
         }
 

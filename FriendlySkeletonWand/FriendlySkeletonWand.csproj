@@ -150,6 +150,7 @@
     <Compile Include="Minions\DraugrMinion.cs" />
     <Compile Include="Items\NecromancerHood.cs" />
     <Compile Include="Minions\SpiritPylonGhostMinion.cs" />
+    <Compile Include="Minions\PoisonSkeletonMinion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

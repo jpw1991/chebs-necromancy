@@ -34,7 +34,7 @@ namespace FriendlySkeletonWand.Minions
             ScaleStats(Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
         }
 
-        public void ScaleStats(float necromancyLevel)
+        public virtual void ScaleStats(float necromancyLevel)
         {
             Character character = GetComponent<Character>();
             if (character == null)
@@ -47,7 +47,7 @@ namespace FriendlySkeletonWand.Minions
             character.SetHealth(health);
         }
 
-        public void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor)
+        public virtual void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor)
         {
             GameObject weapon = null;
             if (necromancyLevel >= 50)
