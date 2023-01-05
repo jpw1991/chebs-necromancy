@@ -48,6 +48,12 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 - You can make a special cape called the Spectral Shroud which draws spirits to it. If you're powerful enough, they will serve (necromancy level 25). Removing the cape stops them from spawning.
 - Tweakable settings by editing the config file.
 - A Spirit Pylon which can be constructed to serve as static base defence. It detects nearby enemies and if any are found, it spawns temporary Ghosts to defend the base with.
+- Having additional items in your inventory can change your minions:
+  - Boar scraps -> leather armor
+  - Bronze -> Bronze armor
+  - Iron -> Iron armor
+  - Guck -> poison skeleton
+  - Surtling core -> skeleton mage
 
 ### Config
 
@@ -78,6 +84,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+04/01/2023 | 1.1.0 | Armored Skeletons and Skeleton Mages!
 02/01/2023 | 1.0.25 | Fix bug where Poison Skeleton's HP is lower than it should be after leaving area and coming back
 02/01/2023 | 1.0.24 | Add Poison Skeleton (requires Guck in inventory); Guardian Wraith despawns when entering portal; Alert range of all entities raised to 30
 30/12/2022 | 1.0.23 | Guardian Wraith implementation changed: Guardian Wraiths only spawn if enemies are nearby and move immediately to intercept enemy; Guardian Wraiths exist on a timer and perish on their own

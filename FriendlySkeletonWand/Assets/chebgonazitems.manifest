@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2453826301
+CRC: 693768502
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d262642082279d4a47542d23c6729dbf
+    Hash: c1f3d93232493268fca7ef72352fbf93
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9923e9f63d7b6fac15c120d46846185b
+    Hash: dc09c88a63f6cd5fba657b98c5cbc2c3
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -34,6 +34,8 @@ ClassTypes:
 - Class: 82
   Script: {instanceID: 0}
 - Class: 83
+  Script: {instanceID: 0}
+- Class: 108
   Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 313648218, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -91,6 +93,7 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonClub.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetBronze.mat
+- Assets/_ChebGonaz/ChebGonaz_FireballLevel1.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetLeather.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.prefab
@@ -103,10 +106,14 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetLeather.mat
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonMageCircletStone.mat
+- Assets/_ChebGonaz/ChebGonaz_FireballLevel2.prefab
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor2.asset
 - Assets/_ChebGonaz/skeleton_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow.prefab
+- Assets/_ChebGonaz/ChebGonaz_FireballLevel3.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetBronze.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.mat
+- Assets/_ChebGonaz/ChebGonaz_SkeletonMageCirclet.prefab
 Dependencies: []

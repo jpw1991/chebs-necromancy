@@ -47,10 +47,25 @@ namespace FriendlySkeletonWand.Minions
             character.SetHealth(health);
         }
 
-        public virtual void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor)
+        public virtual void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool mage)
         {
             GameObject weapon = null;
-            if (necromancyLevel >= 50)
+            if (mage)
+            {
+                if (necromancyLevel >= 75)
+                {
+                    weapon = ZNetScene.instance.GetPrefab("ChebGonaz_FireballLevel3");
+                }
+                else if (necromancyLevel >= 35)
+                {
+                    weapon = ZNetScene.instance.GetPrefab("ChebGonaz_FireballLevel2");
+                }
+                else
+                {
+                    weapon = ZNetScene.instance.GetPrefab("ChebGonaz_FireballLevel1");
+                }
+            }
+            else if (necromancyLevel >= 50)
             {
                 weapon = archer
                     ? ZNetScene.instance.GetPrefab("skeleton_bow2")
@@ -87,7 +102,7 @@ namespace FriendlySkeletonWand.Minions
             if (leatherArmor)
             {
                 humanoid.m_defaultItems = new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
+                    mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
@@ -96,7 +111,7 @@ namespace FriendlySkeletonWand.Minions
             else if (bronzeArmor)
             {
                 humanoid.m_defaultItems = new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
+                    mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
                     ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
                     ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
@@ -105,7 +120,7 @@ namespace FriendlySkeletonWand.Minions
             else if (ironArmor)
             {
                 humanoid.m_defaultItems = new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
+                    mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
                     ZNetScene.instance.GetPrefab("ArmorIronChest"),
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),

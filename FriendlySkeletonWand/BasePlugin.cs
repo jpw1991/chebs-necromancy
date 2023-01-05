@@ -24,7 +24,7 @@ namespace FriendlySkeletonWand
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    //[NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class BasePlugin : BaseUnityPlugin
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
@@ -142,6 +142,22 @@ namespace FriendlySkeletonWand
                 GameObject skeletonHelmetIronPrefab = LoadPrefabFromBundle(skeletonHelmetIronItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(skeletonHelmetIronItem.GetCustomItemFromPrefab(skeletonHelmetIronPrefab));
 
+                SkeletonFireballLevel1 skeletonFireballLevel1Item = new SkeletonFireballLevel1();
+                GameObject skeletonFireballLevel1Prefab = LoadPrefabFromBundle(skeletonFireballLevel1Item.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonFireballLevel1Item.GetCustomItemFromPrefab(skeletonFireballLevel1Prefab));
+
+                SkeletonFireballLevel2 skeletonFireballLevel2Item = new SkeletonFireballLevel2();
+                GameObject skeletonFireballLevel2Prefab = LoadPrefabFromBundle(skeletonFireballLevel2Item.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonFireballLevel2Item.GetCustomItemFromPrefab(skeletonFireballLevel2Prefab));
+
+                SkeletonFireballLevel3 skeletonFireballLevel3Item = new SkeletonFireballLevel3();
+                GameObject skeletonFireballLevel3Prefab = LoadPrefabFromBundle(skeletonFireballLevel3Item.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonFireballLevel3Item.GetCustomItemFromPrefab(skeletonFireballLevel3Prefab));
+
+                SkeletonMageCirclet skeletonMageCircletItem = new SkeletonMageCirclet();
+                GameObject skeletonMageCircletPrefab = LoadPrefabFromBundle(skeletonMageCircletItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonMageCircletItem.GetCustomItemFromPrefab(skeletonMageCircletPrefab));
+
                 wands.ForEach(wand =>
                 {
                     // we do the keyhints later after vanilla items are available
@@ -177,8 +193,6 @@ namespace FriendlySkeletonWand
                 prefabNames.Add("ChebGonaz_SkeletonWarrior.prefab");
                 prefabNames.Add("ChebGonaz_SkeletonArcher.prefab");
                 prefabNames.Add("ChebGonaz_PoisonSkeleton.prefab");
-                prefabNames.Add("ChebGonaz_SkeletonMage.prefab");
-                prefabNames.Add("ChebGonaz_SkeletonWarriorLeather.prefab");
             }
 
             if (SpectralShroud.spawnWraith.Value)

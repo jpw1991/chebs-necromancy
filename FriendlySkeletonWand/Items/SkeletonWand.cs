@@ -37,6 +37,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> armorLeatherScrapsRequiredConfig;
         public static ConfigEntry<int> armorBronzeRequiredConfig;
         public static ConfigEntry<int> armorIronRequiredConfig;
+        public static ConfigEntry<int> surtlingCoresRequiredConfig;
 
         public static ConfigEntry<int> poisonSkeletonLevelRequirementConfig;
         public static ConfigEntry<float> poisonSkeletonBaseHealth;
@@ -87,6 +88,9 @@ namespace FriendlySkeletonWand
 
             armorIronRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonIronRequired",
                 1, new ConfigDescription("The amount of Iron required to craft a skeleton in iron armor."));
+
+            surtlingCoresRequiredConfig = plugin.Config.Bind("Client config", "SkeletonMageSurtlingCoresRequired",
+                1, new ConfigDescription("The amount of surtling cores required to craft a skeleton mage."));
 
             poisonSkeletonBaseHealth = plugin.Config.Bind("Client config", "PoisonSkeletonBaseHealth",
                 100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
@@ -272,7 +276,7 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, string prefabName, bool leatherArmor, bool bronzeArmor, bool ironArmor)
+        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, string prefabName, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool mage)
         {
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
@@ -288,19 +292,19 @@ namespace FriendlySkeletonWand
             if (prefabName == SkeletonWarriorPrefabName)
             {
                 SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor);
+                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor, mage);
                 minion.ScaleStats(playerNecromancyLevel);
             }
             else if (prefabName == SkeletonArcherPrefabName)
             {
                 SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, true, leatherArmor, bronzeArmor, ironArmor);
+                minion.ScaleEquipment(playerNecromancyLevel, true, leatherArmor, bronzeArmor, ironArmor, mage);
                 minion.ScaleStats(playerNecromancyLevel);
             }
             else if (prefabName == PoisonSkeletonPrefabName)
             {
                 PoisonSkeletonMinion minion = spawnedChar.AddComponent<PoisonSkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor);
+                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor, mage);
                 minion.ScaleStats(playerNecromancyLevel);
             }
 
@@ -371,11 +375,23 @@ namespace FriendlySkeletonWand
             if (!createArmoredLeather && !createArmoredBronze && armorIronRequiredConfig.Value > 0)
             {
                 int ironInInventory = player.GetInventory().CountItems("$item_iron");
-                Jotunn.Logger.LogInfo($"Bronze in inventory: {ironInInventory}");
+                Jotunn.Logger.LogInfo($"Iron in inventory: {ironInInventory}");
                 if (ironInInventory >= armorIronRequiredConfig.Value)
                 {
                     createArmoredIron = true;
                     player.GetInventory().RemoveItem("$item_iron", armorIronRequiredConfig.Value);
+                }
+            }
+
+            bool createMage = false;
+            if (!archer && surtlingCoresRequiredConfig.Value > 0)
+            {
+                int surtlingCoresInInventory = player.GetInventory().CountItems("$item_surtlingcore");
+                Jotunn.Logger.LogInfo($"Surtling cores in inventory: {surtlingCoresInInventory}");
+                if (surtlingCoresInInventory >= surtlingCoresRequiredConfig.Value)
+                {
+                    createMage = true;
+                    player.GetInventory().RemoveItem("$item_surtlingcore", surtlingCoresRequiredConfig.Value);
                 }
             }
 
@@ -399,15 +415,20 @@ namespace FriendlySkeletonWand
             // go on to spawn skeleton
             if (archer)
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonArcherPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonArcherPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron, createMage);
             }
-            else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value && ConsumeGuckIfAvailable(player))
+            else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value 
+                && !createMage
+                && !createArmoredIron
+                && !createArmoredBronze
+                && !createArmoredLeather
+                && ConsumeGuckIfAvailable(player))
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, PoisonSkeletonPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, PoisonSkeletonPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron, createMage);
             }
             else
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonWarriorPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonWarriorPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron, createMage);
             }
         }
     }

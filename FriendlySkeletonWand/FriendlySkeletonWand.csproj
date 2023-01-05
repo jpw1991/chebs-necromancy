@@ -154,6 +154,10 @@
     <Compile Include="Items\SkeletonHelmetLeather.cs" />
     <Compile Include="Items\SkeletonHelmetBronze.cs" />
     <Compile Include="Items\SkeletonHelmetIron.cs" />
+    <Compile Include="Items\SkeletonFireballLevel1.cs" />
+    <Compile Include="Items\SkeletonFireballLevel2.cs" />
+    <Compile Include="Items\SkeletonFireballLevel3.cs" />
+    <Compile Include="Items\SkeletonMageCirclet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

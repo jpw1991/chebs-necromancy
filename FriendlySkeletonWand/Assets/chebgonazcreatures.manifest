@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3315503919
+CRC: 190772820
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 2be2e84d88a0704ce341284a519ca0a7
+    Hash: c0f17f8830c654768cfaefd238283ae2
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 1240132941376cec24e4da2d9eed8aa6
+    Hash: 6adfbcf935c5855a6139959640a7ac56
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -80,8 +80,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 69470131, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: 1345532120, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
   Script: {fileID: -2012497638, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -415060008, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -146,6 +144,5 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.mat
 - Assets/_ChebGonaz/ChebGonaz_PoisonSkeleton.prefab
-- Assets/_ChebGonaz/ChebGonaz_SkeletonMage.prefab
 Dependencies:
 - /home/joshua/repositories/FriendlySkeletonWand/FriendlySkeletonWandUnity/Assets/AssetBundles/chebgonazitems
