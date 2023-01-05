@@ -47,7 +47,7 @@ namespace FriendlySkeletonWand.Minions
             character.SetHealth(health);
         }
 
-        public virtual void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor)
+        public virtual void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor)
         {
             GameObject weapon = null;
             if (necromancyLevel >= 50)
@@ -86,19 +86,30 @@ namespace FriendlySkeletonWand.Minions
 
             if (leatherArmor)
             {
-                Jotunn.Logger.LogInfo("this far");
-                humanoid.m_randomArmor = new GameObject[] {
-                    ZNetScene.instance.GetPrefab("HelmetLeather"),
+                humanoid.m_defaultItems = new GameObject[] {
+                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
+                    ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     };
-                // rotate it correct way (otherwise it's sideways)
-                //humanoid.m_visEquipment.UpdateBaseModel(); // no effect
-                //humanoid.m_visEquipment.UpdateEquipmentVisuals(); // causes helmet to appear sideways
-                //humanoid.m_visEquipment.UpdateVisuals(); // no effect
-                //humanoid.SetupEquipment(); // causes helmet to appear, but sideways
-                //humanoid.SetupVisEquipment(humanoid.m_visEquipment, false); // causes skirt to appear, but no helmet
-                //humanoid.m_visEquipment.m_helmet.Rotate(new Vector3(0, 90f, 0)); // causes helmet to appear sideways
+            }
+            else if (bronzeArmor)
+            {
+                humanoid.m_defaultItems = new GameObject[] {
+                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
+                    ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
+                    ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
+                    ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    };
+            }
+            else if (ironArmor)
+            {
+                humanoid.m_defaultItems = new GameObject[] {
+                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
+                    ZNetScene.instance.GetPrefab("ArmorIronChest"),
+                    ZNetScene.instance.GetPrefab("ArmorIronLegs"),
+                    ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    };
             }
         }
     }

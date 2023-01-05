@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3728749199
+CRC: 2453826301
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1e74536221300b6fa457530a507ca0bd
+    Hash: d262642082279d4a47542d23c6729dbf
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 1cbc818a5e07d78793f9996d77c52a71
+    Hash: 9923e9f63d7b6fac15c120d46846185b
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -26,6 +26,8 @@ ClassTypes:
 - Class: 48
   Script: {instanceID: 0}
 - Class: 54
+  Script: {instanceID: 0}
+- Class: 64
   Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
@@ -88,7 +90,10 @@ SerializeReferenceClassIdentifiers:
   ClassName: ItemDrop/ItemData/SharedData
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonClub.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetBronze.mat
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.mat
+- Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetLeather.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/draugr_staff_icon.png
@@ -96,9 +101,12 @@ Assets:
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor.asset
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
+- Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetLeather.mat
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.prefab
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor2.asset
 - Assets/_ChebGonaz/skeleton_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetBronze.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.mat
 Dependencies: []

@@ -8,7 +8,9 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 ##  About Me
 
-<a target="_blank" rel="noopener noreferrer" href="https://chebgonaz.pythonanywhere.com"><img alt="Necrobase" style="margin-top: 1%" src="https://imgur.com/Fahi6sP" /></a> <a target="_blank" rel="noopener noreferrer" href="https://ko-fi.com/chebgonaz"><img alt="Ko-fi" style="margin-top: 1%" src="https://imgur.com/X18OyQs" /></a> <a target="_blank" rel="noopener noreferrer" href="https://www.patreon.com/chebgonaz?fan_landing=true"><img alt="Patreon" style="margin-top: 1%" src="https://imgur.com/4e64jQ8" /></a>
+[![image1](https://imgur.com/Fahi6sP)](https://chebgonaz.pythonanywhere.com)
+[![image2](https://imgur.com/X18OyQs)](https://www.patreon.com/chebgonaz?fan_landing=true)
+[![image3](https://imgur.com/4e64jQ8)](https://ko-fi.com/chebgonaz)
 
 I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
@@ -55,10 +57,29 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 
 Doesn't work for some reason; please edit the configs manually. Almost everything can be tweaked to your liking.
 
+### F.A.Q
+
+Q: How do I kill minions?
+A: They count as tames, so use butcher's knife
+
+Q: What do minions eat?
+A: Nothing. They are just tames so that they earn you Necromancy XP and get a funny name.
+
+Q: What meats work for spawning Draugr?
+A: Boar Meat, Neck Tail, Deer Meat, Lox Meat, Wolf Meat, Serpent Meat, Chicken Meat, Hare meat. It checks and consumes the first one it finds in that order - so low quality meats are preferred to high quality.
+
+Q: Can I heal minions?
+A: Not yet, unless you use other mods that permit healing. I want to add healing eventually in some form.
+
+Q: How do I make a poison skeleton?
+A: Make sure your necromancy level is high enough and have some Guck in your inventory when creating a non-archer skeleton using the staff.
+
 ## Changelog
 
 Date | Version | Notes
 --- | --- | ---
+02/01/2023 | 1.0.25 | Fix bug where Poison Skeleton's HP is lower than it should be after leaving area and coming back
+02/01/2023 | 1.0.24 | Add Poison Skeleton (requires Guck in inventory); Guardian Wraith despawns when entering portal; Alert range of all entities raised to 30
 30/12/2022 | 1.0.23 | Guardian Wraith implementation changed: Guardian Wraiths only spawn if enemies are nearby and move immediately to intercept enemy; Guardian Wraiths exist on a timer and perish on their own
 29/12/2022 | 1.0.22 | add neck tail to draugr meat; expose ghost timer to config; fix ghost selfdestruct by changing from coroutine to update; add localizations; fix problem with limits not working properly; setting buttons to None in config removes them from GUI
 25/12/2022 | 1.0.21 | Fix bug about Spirit Pylon Ghosts not despawning

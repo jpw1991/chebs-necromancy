@@ -35,6 +35,8 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> boneFragmentsDroppedAmountMax;
 
         public static ConfigEntry<int> armorLeatherScrapsRequiredConfig;
+        public static ConfigEntry<int> armorBronzeRequiredConfig;
+        public static ConfigEntry<int> armorIronRequiredConfig;
 
         public static ConfigEntry<int> poisonSkeletonLevelRequirementConfig;
         public static ConfigEntry<float> poisonSkeletonBaseHealth;
@@ -78,7 +80,13 @@ namespace FriendlySkeletonWand
                 0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited)."));
 
             armorLeatherScrapsRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonLeatherScrapsRequired",
-                2, new ConfigDescription("The amount of LeatherScraps required to craft an armored skeleton (WIP, not ready yet!)."));
+                5, new ConfigDescription("The amount of LeatherScraps required to craft a skeleton in leather armor."));
+
+            armorBronzeRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonBronzeRequired",
+                1, new ConfigDescription("The amount of Bronze required to craft a skeleton in bronze armor."));
+
+            armorIronRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonIronRequired",
+                1, new ConfigDescription("The amount of Iron required to craft a skeleton in iron armor."));
 
             poisonSkeletonBaseHealth = plugin.Config.Bind("Client config", "PoisonSkeletonBaseHealth",
                 100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
@@ -264,7 +272,7 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, string prefabName)
+        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, string prefabName, bool leatherArmor, bool bronzeArmor, bool ironArmor)
         {
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
@@ -280,19 +288,19 @@ namespace FriendlySkeletonWand
             if (prefabName == SkeletonWarriorPrefabName)
             {
                 SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, false, false);
+                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor);
                 minion.ScaleStats(playerNecromancyLevel);
             }
             else if (prefabName == SkeletonArcherPrefabName)
             {
                 SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, true, false);
+                minion.ScaleEquipment(playerNecromancyLevel, true, leatherArmor, bronzeArmor, ironArmor);
                 minion.ScaleStats(playerNecromancyLevel);
             }
             else if (prefabName == PoisonSkeletonPrefabName)
             {
                 PoisonSkeletonMinion minion = spawnedChar.AddComponent<PoisonSkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, false, false);
+                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor);
                 minion.ScaleStats(playerNecromancyLevel);
             }
 
@@ -335,17 +343,41 @@ namespace FriendlySkeletonWand
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
 
-            //bool createArmoredLeather = false;
-            //if (armorLeatherScrapsRequiredConfig.Value > 0)
-            //{
-            //    int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
-            //    Jotunn.Logger.LogInfo($"LeatherScraps in inventory: {leatherScrapsInInventory}");
-            //    if (leatherScrapsInInventory >= boneFragmentsRequired)
-            //    {
-            //        createArmoredLeather = true;
-            //        player.GetInventory().RemoveItem("$item_leatherscraps", armorLeatherScrapsRequiredConfig.Value);
-            //    }
-            //}
+            bool createArmoredLeather = false;
+            if (armorLeatherScrapsRequiredConfig.Value > 0)
+            {
+                int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
+                Jotunn.Logger.LogInfo($"LeatherScraps in inventory: {leatherScrapsInInventory}");
+                if (leatherScrapsInInventory >= armorLeatherScrapsRequiredConfig.Value)
+                {
+                    createArmoredLeather = true;
+                    player.GetInventory().RemoveItem("$item_leatherscraps", armorLeatherScrapsRequiredConfig.Value);
+                }
+            }
+
+            bool createArmoredBronze = false;
+            if (!createArmoredLeather && armorBronzeRequiredConfig.Value > 0)
+            {
+                int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
+                Jotunn.Logger.LogInfo($"Bronze in inventory: {bronzeInInventory}");
+                if (bronzeInInventory >= armorBronzeRequiredConfig.Value)
+                {
+                    createArmoredBronze = true;
+                    player.GetInventory().RemoveItem("$item_bronze", armorBronzeRequiredConfig.Value);
+                }
+            }
+
+            bool createArmoredIron = false;
+            if (!createArmoredLeather && !createArmoredBronze && armorIronRequiredConfig.Value > 0)
+            {
+                int ironInInventory = player.GetInventory().CountItems("$item_iron");
+                Jotunn.Logger.LogInfo($"Bronze in inventory: {ironInInventory}");
+                if (ironInInventory >= armorIronRequiredConfig.Value)
+                {
+                    createArmoredIron = true;
+                    player.GetInventory().RemoveItem("$item_iron", armorIronRequiredConfig.Value);
+                }
+            }
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
@@ -367,15 +399,15 @@ namespace FriendlySkeletonWand
             // go on to spawn skeleton
             if (archer)
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonArcherPrefabName);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonArcherPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron);
             }
             else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value && ConsumeGuckIfAvailable(player))
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, PoisonSkeletonPrefabName);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, PoisonSkeletonPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron);
             }
             else
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonWarriorPrefabName);
+                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonWarriorPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron);
             }
         }
     }

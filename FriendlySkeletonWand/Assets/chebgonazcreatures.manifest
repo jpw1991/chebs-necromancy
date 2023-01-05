@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2535199781
+CRC: 3315503919
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 552b8aeec315c0bb38e9f26955047109
+    Hash: 2be2e84d88a0704ce341284a519ca0a7
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 27522e69490d27f06b7b09cd45f35a50
+    Hash: 1240132941376cec24e4da2d9eed8aa6
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -48,6 +48,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1109157524, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 927819712, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -78,6 +80,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 69470131, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1345532120, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: -2012497638, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -415060008, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -96,6 +100,8 @@ ClassTypes:
 - Class: 144
   Script: {instanceID: 0}
 - Class: 165
+  Script: {instanceID: 0}
+- Class: 183
   Script: {instanceID: 0}
 - Class: 198
   Script: {instanceID: 0}
@@ -136,6 +142,10 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
 - Assets/_ChebGonaz/ChebGonaz_GuardianWraith.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarrior.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonWarriorLeather.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.prefab
+- Assets/_ChebGonaz/ChebGonaz_DraugrArcher.mat
 - Assets/_ChebGonaz/ChebGonaz_PoisonSkeleton.prefab
-Dependencies: []
+- Assets/_ChebGonaz/ChebGonaz_SkeletonMage.prefab
+Dependencies:
+- /home/joshua/repositories/FriendlySkeletonWand/FriendlySkeletonWandUnity/Assets/AssetBundles/chebgonazitems

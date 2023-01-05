@@ -24,12 +24,12 @@ namespace FriendlySkeletonWand
 {
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
     [BepInDependency(Jotunn.Main.ModGuid)]
-    //[NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class BasePlugin : BaseUnityPlugin
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.0.23";
+        public const string PluginVersion = "1.1.0";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -117,6 +117,7 @@ namespace FriendlySkeletonWand
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
+                // minion worn items
                 SkeletonClub skeletonClubItem = new SkeletonClub();
                 GameObject skeletonClubPrefab = LoadPrefabFromBundle(skeletonClubItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(new SkeletonClub().GetCustomItemFromPrefab(skeletonClubPrefab));
@@ -128,6 +129,18 @@ namespace FriendlySkeletonWand
                 SkeletonBow2 skeletonBow2Item = new SkeletonBow2();
                 GameObject skeletonBow2Prefab = LoadPrefabFromBundle(skeletonBow2Item.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(new SkeletonBow2().GetCustomItemFromPrefab(skeletonBow2Prefab));
+
+                SkeletonHelmetLeather skeletonHelmetLeatherItem = new SkeletonHelmetLeather();
+                GameObject skeletonHelmetLeatherPrefab = LoadPrefabFromBundle(skeletonHelmetLeatherItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonHelmetLeatherItem.GetCustomItemFromPrefab(skeletonHelmetLeatherPrefab));
+
+                SkeletonHelmetBronze skeletonHelmetBronzeItem = new SkeletonHelmetBronze();
+                GameObject skeletonHelmetBronzePrefab = LoadPrefabFromBundle(skeletonHelmetBronzeItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonHelmetBronzeItem.GetCustomItemFromPrefab(skeletonHelmetBronzePrefab));
+
+                SkeletonHelmetIron skeletonHelmetIronItem = new SkeletonHelmetIron();
+                GameObject skeletonHelmetIronPrefab = LoadPrefabFromBundle(skeletonHelmetIronItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonHelmetIronItem.GetCustomItemFromPrefab(skeletonHelmetIronPrefab));
 
                 wands.ForEach(wand =>
                 {
@@ -164,6 +177,8 @@ namespace FriendlySkeletonWand
                 prefabNames.Add("ChebGonaz_SkeletonWarrior.prefab");
                 prefabNames.Add("ChebGonaz_SkeletonArcher.prefab");
                 prefabNames.Add("ChebGonaz_PoisonSkeleton.prefab");
+                prefabNames.Add("ChebGonaz_SkeletonMage.prefab");
+                prefabNames.Add("ChebGonaz_SkeletonWarriorLeather.prefab");
             }
 
             if (SpectralShroud.spawnWraith.Value)
@@ -373,30 +388,8 @@ namespace FriendlySkeletonWand
         {
             if (__instance.name.StartsWith("ChebGonaz"))
             {
-                //if (__instance.name.Contains("Wraith"))
-                //    //&& __instance.IsOwner()) // ignore other players' wraiths
-                //{
-                //    // remove duplicate wraiths
-                //    if (GuardianWraithMinion.instance != null)
-                //    {
-                //        __instance.SetHealth(0);
-                //        //GameObject.Destroy(__instance.gameObject, 5);
-                //    }
-                //    else
-                //    {
-                //        __instance.gameObject.AddComponent<GuardianWraithMinion>();
-                //        GuardianWraithMinion.instance = __instance.gameObject;
-                //    }
-                //}
-                //else 
                 if (__instance.name.Contains("Wraith"))
-                //&& __instance.IsOwner()) // ignore other players' wraiths
                 {
-                    //// remove duplicate wraiths
-                    //if (GuardianWraithMinion.instance != null)
-                    //{
-                    //    __instance.SetHealth(0);
-                    //}
                     __instance.gameObject.AddComponent<GuardianWraithMinion>();
                 }
                 else
@@ -408,7 +401,11 @@ namespace FriendlySkeletonWand
                 {
                     if (__instance.GetComponent<UndeadMinion>() == null)
                     {
-                        if (__instance.name.Contains("Skeleton"))
+                        if (__instance.name.Contains("PoisonSkeleton"))
+                        {
+                            __instance.gameObject.AddComponent<PoisonSkeletonMinion>();
+                        }
+                        else if (__instance.name.Contains("Skeleton"))
                         {
                             __instance.gameObject.AddComponent<SkeletonMinion>();
                         }

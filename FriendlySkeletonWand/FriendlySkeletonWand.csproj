@@ -151,6 +151,9 @@
     <Compile Include="Items\NecromancerHood.cs" />
     <Compile Include="Minions\SpiritPylonGhostMinion.cs" />
     <Compile Include="Minions\PoisonSkeletonMinion.cs" />
+    <Compile Include="Items\SkeletonHelmetLeather.cs" />
+    <Compile Include="Items\SkeletonHelmetBronze.cs" />
+    <Compile Include="Items\SkeletonHelmetIron.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
