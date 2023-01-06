@@ -40,6 +40,11 @@ namespace FriendlySkeletonWand
         public ConfigEntry<InputManager.GamepadButton> CreateArcherMinionGamepadConfig;
         public ButtonConfig CreateArcherMinionButton;
 
+        public ConfigEntry<KeyCode> UnlockExtraResourceConsumptionConfig;
+        public ButtonConfig UnlockExtraResourceConsumptionButton;
+
+        public bool ExtraResourceConsumptionUnlocked = false;
+
         private GameObject targetObject;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
@@ -82,6 +87,9 @@ namespace FriendlySkeletonWand
             AttackTargetGamepadConfig = plugin.Config.Bind("Client config", ItemName+"TargetGamepad",
                 InputManager.GamepadButton.StartButton,
                 new ConfigDescription("The gamepad button to tell minions to go to a specific target."));
+
+            UnlockExtraResourceConsumptionConfig = plugin.Config.Bind("Client config", ItemName + "UnlockExtraResourceConsumption",
+                KeyCode.LeftShift, new ConfigDescription("The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton."));
         }
 
         public virtual void CreateButtons()
@@ -162,6 +170,19 @@ namespace FriendlySkeletonWand
                     BlockOtherInputs = true
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGUID, AttackTargetButton);
+            }
+
+            if (UnlockExtraResourceConsumptionConfig.Value != KeyCode.None)
+            {
+                UnlockExtraResourceConsumptionButton = new ButtonConfig
+                {
+                    Name = ItemName + "UnlockExtraResourceConsumption",
+                    Config = UnlockExtraResourceConsumptionConfig,
+                    //GamepadConfig = AttackTargetGamepadConfig,
+                    HintToken = "$friendlyskeletonwand_unlockextraresourceconsumption",
+                    BlockOtherInputs = false
+                };
+                InputManager.Instance.AddButton(BasePlugin.PluginGUID, UnlockExtraResourceConsumptionButton);
             }
         }
 

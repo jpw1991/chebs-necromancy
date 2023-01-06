@@ -36,6 +36,7 @@
   "friendlyskeletonwand_teleport": "Teleport",
   "friendlyskeletonwand_attacktarget": "Target",
   "friendlyskeletonwand_create_archer": "Create Archer",
+  "friendlyskeletonwand_unlockextraresourceconsumption": "Use Resources",
 
   "friendlyskeletonwand_necromancy": "Necromancy",
   "friendlyskeletonwand_necromancy_desc": "The art of creating Undead to serve you.",

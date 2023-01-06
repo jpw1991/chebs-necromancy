@@ -48,8 +48,8 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 - You can make a special cape called the Spectral Shroud which draws spirits to it. If you're powerful enough, they will serve (necromancy level 25). Removing the cape stops them from spawning.
 - Tweakable settings by editing the config file.
 - A Spirit Pylon which can be constructed to serve as static base defence. It detects nearby enemies and if any are found, it spawns temporary Ghosts to defend the base with.
-- Having additional items in your inventory can change your minions:
-  - Boar scraps -> leather armor
+- Having additional items in your inventory can change your minions. As a safety measure to prevent you from accidently consuming stuff, hold Left Shift when creating a minion to permit these resources to be consumed (or set to None in the config if you want no checking whatsoever):
+  - Boar scraps or Deer Hide -> leather armor
   - Bronze -> Bronze armor
   - Iron -> Iron armor
   - Guck -> poison skeleton
@@ -84,6 +84,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+05/01/2023 | 1.1.1 | Add left shift as key to unlock extra resource consumption; allow deer hide to be used for leather armor skeletons
 04/01/2023 | 1.1.0 | Armored Skeletons and Skeleton Mages!
 02/01/2023 | 1.0.25 | Fix bug where Poison Skeleton's HP is lower than it should be after leaving area and coming back
 02/01/2023 | 1.0.24 | Add Poison Skeleton (requires Guck in inventory); Guardian Wraith despawns when entering portal; Alert range of all entities raised to 30
@@ -121,9 +122,6 @@ Date | Version | Notes
 
 ## Future Ideas
 
-- Equipment for skeletons & draugr  → armor, different weapons, etc.
-- Implement ghost minion type.
-- Custom models for the wands (no more clubs).
 - Fully custom undead types.
 
 ## Source

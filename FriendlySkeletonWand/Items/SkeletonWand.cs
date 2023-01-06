@@ -180,6 +180,10 @@ namespace FriendlySkeletonWand
                         ) != null
                     )
             {
+                ExtraResourceConsumptionUnlocked =
+                    UnlockExtraResourceConsumptionButton == null
+                    || ZInput.GetButton(UnlockExtraResourceConsumptionButton.Name);
+
                 if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
                 {
                     SpawnFriendlySkeleton(Player.m_localPlayer,
@@ -266,6 +270,8 @@ namespace FriendlySkeletonWand
 
         private bool ConsumeGuckIfAvailable(Player player)
         {
+            if (!ExtraResourceConsumptionUnlocked) return false;
+
             // return true if guck is available and got consumed
             int guckInInventory = player.GetInventory().CountItems("$item_guck");
             if (guckInInventory >= poisonSkeletonGuckRequiredConfig.Value)
@@ -348,7 +354,7 @@ namespace FriendlySkeletonWand
             }
 
             bool createArmoredLeather = false;
-            if (armorLeatherScrapsRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked && armorLeatherScrapsRequiredConfig.Value > 0)
             {
                 int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
                 Jotunn.Logger.LogInfo($"LeatherScraps in inventory: {leatherScrapsInInventory}");
@@ -357,10 +363,21 @@ namespace FriendlySkeletonWand
                     createArmoredLeather = true;
                     player.GetInventory().RemoveItem("$item_leatherscraps", armorLeatherScrapsRequiredConfig.Value);
                 }
+                else
+                {
+                    // no leather scraps? Try some deer hide
+                    int deerHideInInventory = player.GetInventory().CountItems("$item_deerhide");
+                    Jotunn.Logger.LogInfo($"DeerHide in inventory: {deerHideInInventory}");
+                    if (deerHideInInventory >= armorLeatherScrapsRequiredConfig.Value)
+                    {
+                        createArmoredLeather = true;
+                        player.GetInventory().RemoveItem("$item_deerhide", armorLeatherScrapsRequiredConfig.Value);
+                    }
+                }
             }
 
             bool createArmoredBronze = false;
-            if (!createArmoredLeather && armorBronzeRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && armorBronzeRequiredConfig.Value > 0)
             {
                 int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
                 Jotunn.Logger.LogInfo($"Bronze in inventory: {bronzeInInventory}");
@@ -372,7 +389,7 @@ namespace FriendlySkeletonWand
             }
 
             bool createArmoredIron = false;
-            if (!createArmoredLeather && !createArmoredBronze && armorIronRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && !createArmoredBronze && armorIronRequiredConfig.Value > 0)
             {
                 int ironInInventory = player.GetInventory().CountItems("$item_iron");
                 Jotunn.Logger.LogInfo($"Iron in inventory: {ironInInventory}");
@@ -384,7 +401,7 @@ namespace FriendlySkeletonWand
             }
 
             bool createMage = false;
-            if (!archer && surtlingCoresRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked && !archer && surtlingCoresRequiredConfig.Value > 0)
             {
                 int surtlingCoresInInventory = player.GetInventory().CountItems("$item_surtlingcore");
                 Jotunn.Logger.LogInfo($"Surtling cores in inventory: {surtlingCoresInInventory}");

@@ -137,6 +137,10 @@ namespace FriendlySkeletonWand
                         ) != null
                     )
             {
+                ExtraResourceConsumptionUnlocked =
+                    UnlockExtraResourceConsumptionButton == null
+                    || ZInput.GetButton(UnlockExtraResourceConsumptionButton.Name);
+
                 if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
                 {
                     SpawnFriendlyDraugr(Player.m_localPlayer,
