@@ -33,12 +33,17 @@ namespace FriendlySkeletonWand
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            allowed = plugin.Config.Bind("Client config", "SpiritPylonAllowed",
-                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not."));
-            sightRadius = plugin.Config.Bind("Client config", "SpiritPylonSightRadius",
-                30f, new ConfigDescription("How far a Spirit Pylon can see enemies."));
-            ghostDuration = plugin.Config.Bind("Client config", "SpiritPylonGhostDuration",
-                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists."));
+            allowed = plugin.Config.Bind("Server config", "SpiritPylonAllowed",
+                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            sightRadius = plugin.Config.Bind("Server config", "SpiritPylonSightRadius",
+                30f, new ConfigDescription("How far a Spirit Pylon can see enemies.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ghostDuration = plugin.Config.Bind("Server config", "SpiritPylonGhostDuration",
+                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         private void Awake()

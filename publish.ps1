@@ -1,6 +1,6 @@
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('Debug','Release')]
+    [ValidateSet('Debug','DebugServer','Release')]
     [System.String]$Target,
     
     [Parameter(Mandatory)]
@@ -21,9 +21,15 @@ param(
 # Make sure Get-Location is the script path
 Push-Location -Path (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
+# If debugging server set the Valheim dedicated server path
+if ($Target.Equals("DebugServer")){
+    $ValheimServerPath = "${ValheimPath} dedicated server"
+}
+
 # Test some preliminaries
 ("$TargetPath",
  "$ValheimPath",
+ "$ValheimServerPath",
  "$(Get-Location)\libraries"
 ) | % {
     if (!(Test-Path "$_")) {Write-Error -ErrorAction Stop -Message "$_ folder is missing"}
@@ -44,14 +50,26 @@ Write-Host "Publishing for $Target from $TargetPath"
 
 if ($Target.Equals("Debug")) {
     if ($DeployPath.Equals("")){
-      $DeployPath = "$ValheimPath\BepInEx\plugins"
+      $DeployPaths = "$ValheimPath\BepInEx\plugins"
     }
-    
-    $plug = New-Item -Type Directory -Path "$DeployPath\$name" -Force
-    Write-Host "Copy $TargetAssembly to $plug"
-    Copy-Item -Path "$TargetPath\$name.dll" -Destination "$plug" -Force
-    Copy-Item -Path "$TargetPath\$name.pdb" -Destination "$plug" -Force
-    Copy-Item -Path "$TargetPath\$name.dll.mdb" -Destination "$plug" -Force
+} elseif ($Target.Equals("DebugServer")) {
+    if ($DeployPath.Equals("")){
+        $DeployPaths = "$ValheimPath\BepInEx\plugins", "$ValheimServerPath\BepInEx\plugins"
+    }
+}
+
+if ($Target.Equals("Debug") -or $Target.Equals("DebugServer")) {
+    foreach ($DeployPath in $DeployPaths) {
+        $plug = New-Item -Type Directory -Path "$DeployPath\$name" -Force
+        Write-Host "Copy $TargetAssembly to $plug"
+        Copy-Item -Path "$TargetPath\$name.dll" -Destination "$plug" -Force
+        Write-Host "Copy $name.pdb to $plug"
+        Copy-Item -Path "$TargetPath\$name.pdb" -Destination "$plug" -Force
+        Write-Host "Copy $name.dll.mdb to $plug"
+        Copy-Item -Path "$TargetPath\$name.dll.mdb" -Destination "$plug" -Force
+        Write-Host "Copy Assets to $plug"
+        Copy-Item -Recurse -Path "$ProjectPath\Assets" -Destination "$plug" -Force
+    }
 }
 
 if($Target.Equals("Release")) {

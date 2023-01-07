@@ -62,58 +62,75 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
-            allowed = plugin.Config.Bind("Client config", "SkeletonWandAllowed",
-                true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not."));
+            allowed = plugin.Config.Bind("Server config", "SkeletonWandAllowed",
+                true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            skeletonsAllowed = plugin.Config.Bind("Client config", "SkeletonsAllowed",
-                true, new ConfigDescription("If false, skeletons aren't loaded at all and can't be summoned."));
+            skeletonsAllowed = plugin.Config.Bind("Server config", "SkeletonsAllowed",
+                true, new ConfigDescription("If false, skeletons aren't loaded at all and can't be summoned.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            skeletonBaseHealth = plugin.Config.Bind("Client config", "SkeletonBaseHealth",
-                20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
+            skeletonBaseHealth = plugin.Config.Bind("Server config", "SkeletonBaseHealth",
+                20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            skeletonHealthMultiplier = plugin.Config.Bind("Client config", "SkeletonHealthMultiplier",
-                2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
+            skeletonHealthMultiplier = plugin.Config.Bind("Server config", "SkeletonHealthMultiplier",
+                2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonSetFollowRange = plugin.Config.Bind("Client config", "SkeletonCommandRange",
                 10f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
 
-            boneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "BoneFragmentsRequired",
-                3, new ConfigDescription("The amount of Bone Fragments required to craft a skeleton."));
+            boneFragmentsRequiredConfig = plugin.Config.Bind("Server config", "BoneFragmentsRequired",
+                3, new ConfigDescription("The amount of Bone Fragments required to craft a skeleton.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            boneFragmentsDroppedAmountMin = plugin.Config.Bind("Client config", "BoneFragmentsDroppedAmountMin",
-                1, new ConfigDescription("The minimum amount of bones dropped by creatures."));
-            boneFragmentsDroppedAmountMax = plugin.Config.Bind("Client config", "BoneFragmentsDroppedAmountMax",
-                3, new ConfigDescription("The maximum amount of bones dropped by creautres."));
+            boneFragmentsDroppedAmountMin = plugin.Config.Bind("Server config", "BoneFragmentsDroppedAmountMin",
+                1, new ConfigDescription("The minimum amount of bones dropped by creatures.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            boneFragmentsDroppedAmountMax = plugin.Config.Bind("Server config", "BoneFragmentsDroppedAmountMax",
+                3, new ConfigDescription("The maximum amount of bones dropped by creautres.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            necromancyLevelIncrease = plugin.Config.Bind("Client config", "NecromancyLevelIncrease",
-                1f, new ConfigDescription("How much crafting a skeleton contributes to your Necromancy level increasing."));
+            necromancyLevelIncrease = plugin.Config.Bind("Server config", "NecromancyLevelIncrease",
+                1f, new ConfigDescription("How much crafting a skeleton contributes to your Necromancy level increasing.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            maxSkeletons = plugin.Config.Bind("Client config", "MaximumSkeletons",
-                0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited)."));
+            maxSkeletons = plugin.Config.Bind("Server config", "MaximumSkeletons",
+                0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            armorLeatherScrapsRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonLeatherScrapsRequired",
-                5, new ConfigDescription("The amount of LeatherScraps required to craft a skeleton in leather armor."));
+            armorLeatherScrapsRequiredConfig = plugin.Config.Bind("Server config", "ArmoredSkeletonLeatherScrapsRequired",
+                5, new ConfigDescription("The amount of LeatherScraps required to craft a skeleton in leather armor.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            armorBronzeRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonBronzeRequired",
-                1, new ConfigDescription("The amount of Bronze required to craft a skeleton in bronze armor."));
+            armorBronzeRequiredConfig = plugin.Config.Bind("Server config", "ArmoredSkeletonBronzeRequired",
+                1, new ConfigDescription("The amount of Bronze required to craft a skeleton in bronze armor.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            armorIronRequiredConfig = plugin.Config.Bind("Client config", "ArmoredSkeletonIronRequired",
-                1, new ConfigDescription("The amount of Iron required to craft a skeleton in iron armor."));
+            armorIronRequiredConfig = plugin.Config.Bind("Server config", "ArmoredSkeletonIronRequired",
+                1, new ConfigDescription("The amount of Iron required to craft a skeleton in iron armor.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            surtlingCoresRequiredConfig = plugin.Config.Bind("Client config", "SkeletonMageSurtlingCoresRequired",
-                1, new ConfigDescription("The amount of surtling cores required to craft a skeleton mage."));
+            surtlingCoresRequiredConfig = plugin.Config.Bind("Server config", "SkeletonMageSurtlingCoresRequired",
+                1, new ConfigDescription("The amount of surtling cores required to craft a skeleton mage.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            poisonSkeletonBaseHealth = plugin.Config.Bind("Client config", "PoisonSkeletonBaseHealth",
-                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
+            poisonSkeletonBaseHealth = plugin.Config.Bind("Server config", "PoisonSkeletonBaseHealth",
+                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            poisonSkeletonLevelRequirementConfig = plugin.Config.Bind("Client config", "PoisonSkeletonLevelRequired",
-                50, new ConfigDescription("The Necromancy level needed to summon a Poison Skeleton."));
+            poisonSkeletonLevelRequirementConfig = plugin.Config.Bind("Server config", "PoisonSkeletonLevelRequired",
+                50, new ConfigDescription("The Necromancy level needed to summon a Poison Skeleton.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            poisonSkeletonGuckRequiredConfig = plugin.Config.Bind("Client config", "PoisonSkeletonGuckRequired",
-                1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton."));
+            poisonSkeletonGuckRequiredConfig = plugin.Config.Bind("Server config", "PoisonSkeletonGuckRequired",
+                1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            poisonSkeletonNecromancyLevelIncrease = plugin.Config.Bind("Client config", "PoisonSkeletonNecromancyLevelIncrease",
-                3f, new ConfigDescription("How much crafting a Poison Skeleton contributes to your Necromancy level increasing."));
+            poisonSkeletonNecromancyLevelIncrease = plugin.Config.Bind("Server config", "PoisonSkeletonNecromancyLevelIncrease",
+                3f, new ConfigDescription("How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void CreateButtons()

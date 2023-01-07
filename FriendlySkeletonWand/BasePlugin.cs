@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using static Mono.Security.X509.X520;
 
 
 namespace FriendlySkeletonWand
@@ -62,6 +63,19 @@ namespace FriendlySkeletonWand
 
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
+
+            // You can subscribe to a global event when config got synced initially and on changes
+            SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
+            {
+                if (attr.InitialSynchronization)
+                {
+                    Jotunn.Logger.LogMessage("Initial Config sync event received");
+                }
+                else
+                {
+                    Jotunn.Logger.LogMessage("Config sync event received");
+                }
+            };
         }
 
         private void LoadChebGonazAssetBundle()

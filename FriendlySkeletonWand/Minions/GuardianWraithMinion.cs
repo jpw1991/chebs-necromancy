@@ -17,10 +17,12 @@ namespace FriendlySkeletonWand
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            guardianWraithLevelRequirement = plugin.Config.Bind("Client config", "GuardianWraithLevelRequirement",
-                25, new ConfigDescription("The Necromancy level required to control a Guardian Wraith."));
-            guardianWraithDuration = plugin.Config.Bind("Client config", "GuardianWraithDuration",
-                10, new ConfigDescription("The lifetime of a Guardian Wraith."));
+            guardianWraithLevelRequirement = plugin.Config.Bind("Server config", "GuardianWraithLevelRequirement",
+                25, new ConfigDescription("The Necromancy level required to control a Guardian Wraith.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            guardianWraithDuration = plugin.Config.Bind("Server config", "GuardianWraithDuration",
+                10, new ConfigDescription("The lifetime of a Guardian Wraith.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         private void Awake()

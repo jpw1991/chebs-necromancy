@@ -18,11 +18,13 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
-            allowed = plugin.Config.Bind("Client config", "NecromancerHoodAllowed",
-                true, new ConfigDescription("Whether crafting a Necromancer's Hood is allowed or not."));
+            allowed = plugin.Config.Bind("Server config", "NecromancerHoodAllowed",
+                true, new ConfigDescription("Whether crafting a Necromancer's Hood is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            necromancySkillBonus = plugin.Config.Bind("Client config", "NecromancerHoodSkillBonus",
-                10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all)."));
+            necromancySkillBonus = plugin.Config.Bind("Server config", "NecromancerHoodSkillBonus",
+                10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override CustomItem GetCustomItem(Sprite icon=null)

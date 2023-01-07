@@ -36,32 +36,41 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
-            allowed = plugin.Config.Bind("Client config", "DraugrWandAllowed",
-                true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not."));
+            allowed = plugin.Config.Bind("Server config", "DraugrWandAllowed",
+                true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrAllowed = plugin.Config.Bind("Client config", "DraugrAllowed",
-                true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned."));
+            draugrAllowed = plugin.Config.Bind("Server config", "DraugrAllowed",
+                true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrBaseHealth = plugin.Config.Bind("Client config", "DraugrBaseHealth",
-                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
+            draugrBaseHealth = plugin.Config.Bind("Server config", "DraugrBaseHealth",
+                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrHealthMultiplier = plugin.Config.Bind("Client config", "DraugrHealthMultiplier",
-                5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier"));
+            draugrHealthMultiplier = plugin.Config.Bind("Server config", "DraugrHealthMultiplier",
+                5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrSetFollowRange = plugin.Config.Bind("Client config", "DraugrCommandRange",
-                10f, new ConfigDescription("The range from which nearby Draugr will hear your command."));
+            draugrSetFollowRange = plugin.Config.Bind("Server config", "DraugrCommandRange",
+                10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrMeatRequiredConfig = plugin.Config.Bind("Client config", "DraugrMeatRequired",
-                1, new ConfigDescription("How many pieces of meat it costs to make a Draugr."));
+            draugrMeatRequiredConfig = plugin.Config.Bind("Server config", "DraugrMeatRequired",
+                1, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Client config", "DraugrBoneFragmentsRequired",
-                3, new ConfigDescription("How many bone fragments it costs to make a Draugr."));
+            draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Server config", "DraugrBoneFragmentsRequired",
+                3, new ConfigDescription("How many bone fragments it costs to make a Draugr.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            necromancyLevelIncrease = plugin.Config.Bind("Client config", "DraugrNecromancyLevelIncrease",
-                1.5f, new ConfigDescription("How much creating a Draugr contributes to your Necromancy level increasing."));
+            necromancyLevelIncrease = plugin.Config.Bind("Server config", "DraugrNecromancyLevelIncrease",
+                1.5f, new ConfigDescription("How much creating a Draugr contributes to your Necromancy level increasing.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            maxDraugr = plugin.Config.Bind("Client config", "MaximumDraugr",
-                0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited)."));
+            maxDraugr = plugin.Config.Bind("Server config", "MaximumDraugr",
+                0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void CreateButtons()

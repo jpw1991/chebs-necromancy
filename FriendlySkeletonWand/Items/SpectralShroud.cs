@@ -24,16 +24,21 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
-            allowed = plugin.Config.Bind("Client config", "SpectralShroudAllowed",
-                true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not."));
+            allowed = plugin.Config.Bind("Server config", "SpectralShroudAllowed",
+                true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            spawnWraith = plugin.Config.Bind("Client config", "SpectralShroudSpawnWraith",
-                true, new ConfigDescription("Whether wraiths spawn or not."));
+            spawnWraith = plugin.Config.Bind("Server config", "SpectralShroudSpawnWraith",
+                true, new ConfigDescription("Whether wraiths spawn or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            necromancySkillBonus = plugin.Config.Bind("Client config", "SpectralShroudSkillBonus",
-                10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all)."));
-            delayBetweenWraithSpawns = plugin.Config.Bind("Client config", "SpectralShroudWraithDelay",
-                30, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn."));
+            necromancySkillBonus = plugin.Config.Bind("Server config", "SpectralShroudSkillBonus",
+                10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            delayBetweenWraithSpawns = plugin.Config.Bind("Server config", "SpectralShroudWraithDelay",
+                30, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override CustomItem GetCustomItem(Sprite icon=null)
