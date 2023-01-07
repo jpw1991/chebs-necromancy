@@ -2,9 +2,6 @@
   "item_friendlyskeletonwand": "Friendly Skeleton Wand",
   "item_friendlyskeletonwand_desc": "Spawn friendly skeleton minions.",
 
-  "friendlyskeletonwand_config_guardianwraithtetherdistance_desc": "Guardian Wraith's tether distance from player.",
-  "friendlyskeletonwand_config_guardianwraithlevelrequirement_desc": "Guardian Wraith necromancy level requirement.",
-
   "item_friendlyskeletonwand_draugrwand": "Friendly Draugr Wand",
   "item_friendlyskeletonwand_draugrwand_desc": "Spawn friendly draugr minions.",
 
@@ -15,19 +12,11 @@
   "item_chebgonaz_necromancerhood": "Necromancer's Hood",
   "item_chebgonaz_necromancerhood_desc": "This hood smells earthy; of gravedust, and blood.",
 
-  "friendlyskeletonwand_config_draugrhealthmultiplier_desc": "Draugr Health Multiplier",
-  "friendlyskeletonwand_config_draugrsetfollowrange_desc": "Draugr follow range",
-  "friendlyskeletonwand_config_draugrpersummon_desc": "Draugr per summon",
-  "friendlyskeletonwand_config_draugrbonefragmentsrequired_desc": "Bone fragment requirement for draugr",
-  "friendlyskeletonwand_config_draugrmeatrequired_desc": "Meat requirement for draugr",
-  "friendlyskeletonwand_config_maxdraugr_desc": "The maximum amount of draugr you can make.",
-
   "chebgonaz_guardianwraith": "Guardian Wraith",
   
   "chebgonaz_spiritpylon_name": "Spirit Pylon",
   "chebgonaz_spiritpylon_desc": "Spectral entities flock to this necrotic beacon like moths to the moon.",
   "chebgonaz_spiritpylonghost": "Spirit Pylon Ghost",
-  "friendlyskeletonwand_config_spiritpylonsightradius_desc": "The radius that a Spirit Pylon sees enemies at.",
 
   "friendlyskeletonwand_attack": "Attack",
   "friendlyskeletonwand_follow": "Follow",
@@ -53,40 +42,4 @@
   "friendlyskeletonwand_notargetfound": "No target found.",
   "friendlyskeletonwand_wraithmessage": "Master... I come to serve thee...",
   "friendlyskeletonwand_limitexceeded": "Weakling! You cannot command more minions!",
-  
-  "friendlyskeletonwand_config_create_minion": "Create Minion",
-  "friendlyskeletonwand_config_create_minion_desc": "Key to create a minion.",
-  "friendlyskeletonwand_config_create_minion_gamepad": "Friendly Skeleton Wand Special Attack Gamepad",
-  "friendlyskeletonwand_config_create_minion_gamepad_desc": "Button to create a skeleton.",
-
-  "friendlyskeletonwand_config_follow": "The follow key.",
-  "friendlyskeletonwand_config_follow_desc": "The follow key.",
-  "friendlyskeletonwand_config_follow_gamepad": "The follow gamepad button.",
-  "friendlyskeletonwand_config_follow_gamepad_desc": "The follow gamepad button.",
-
-  "friendlyskeletonwand_config_bonefragmentsrequired_desc": "The bone fragments requirement (use 0 for none).",
-  "friendlyskeletonwand_config_necromancylevelincrease_desc": "How much the necromancy level increases per skeleton created.",
-  "friendlyskeletonwand_config_skeletonhealthmultiplier_desc": "Necromancy Level * skeleton health multiplier = skeleton HP",
-  "friendlyskeletonwand_config_skeletonsetfollowrange_desc": "The distance that skeletons hear your command to follow at.",
-  "friendlyskeletonwand_config_maxskeletons_desc": "The maximum amount of skeletons you can make.",
-  
-  "friendlyskeletonwand_config_wait": "The wait key.",
-  "friendlyskeletonwand_config_wait_desc": "The wait key.",
-  "friendlyskeletonwand_config_wait_gamepad": "The wait gamepad button.",
-  "friendlyskeletonwand_config_wait_gamepad_desc": "The wait gamepad button.",
-
-  "friendlyskeletonwand_config_bonefragmentsdroppedamountmin_desc": "The minimum amount of bone fragments that dead creatures drop.",
-  "friendlyskeletonwand_config_bonefragmentsdroppedamountmax_desc": "The maximum amount of bone fragments that dead creatures drop.",
-  
-  "friendlyskeletonwand_config_teleport": "Teleport minions to you.",
-  "friendlyskeletonwand_config_teleport_desc": "Teleport minions to you.",
-  "friendlyskeletonwand_config_teleport_gamepad": "Teleport minions to you.",
-  "friendlyskeletonwand_config_teleport_gamepad_desc": "Teleport minions to you.",
-
-  "friendlyskeletonwand_config_attacktarget": "Minion attack target.",
-  "friendlyskeletonwand_config_attacktarget_desc": "Minion attack target.",
-  "friendlyskeletonwand_config_attacktarget_gamepad": "Minion attack target.",
-  "friendlyskeletonwand_config_attacktarget_gamepad_desc": "Minion attack target.",
-
-  "friendlyskeletonwand_config_guardianwraithlevelrequirement_desc": "The level requirement for the wraith to spawn."
 }

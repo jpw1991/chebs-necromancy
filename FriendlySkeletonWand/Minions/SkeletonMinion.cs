@@ -1,11 +1,20 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Jotunn.Managers;
 using UnityEngine;
 namespace FriendlySkeletonWand.Minions
 {
     internal class SkeletonMinion : UndeadMinion
     {
+        public enum SkeletonType
+        {
+            Warrior,
+            Archer,
+            Mage,
+            Poison,
+        };
+
         // for limits checking
         private static int createdOrderIncrementer;
         public int createdOrder;
@@ -42,53 +51,18 @@ namespace FriendlySkeletonWand.Minions
                 Jotunn.Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
+
+            // only scale player's skeletons, not other ppls
+            if (!character.IsOwner()) return;
+
             float health = SkeletonWand.skeletonBaseHealth.Value + necromancyLevel * SkeletonWand.skeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
 
-        public virtual void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool mage)
+        public virtual void ScaleEquipment(float necromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor)
         {
-            GameObject weapon = null;
-            if (mage)
-            {
-                if (necromancyLevel >= 75)
-                {
-                    weapon = ZNetScene.instance.GetPrefab("ChebGonaz_FireballLevel3");
-                }
-                else if (necromancyLevel >= 35)
-                {
-                    weapon = ZNetScene.instance.GetPrefab("ChebGonaz_FireballLevel2");
-                }
-                else
-                {
-                    weapon = ZNetScene.instance.GetPrefab("ChebGonaz_FireballLevel1");
-                }
-            }
-            else if (necromancyLevel >= 50)
-            {
-                weapon = archer
-                    ? ZNetScene.instance.GetPrefab("skeleton_bow2")
-                    : ZNetScene.instance.GetPrefab("draugr_axe");
-            }
-            else if (necromancyLevel >= 25)
-            {
-                weapon = archer
-                    ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonBow2")
-                    : ZNetScene.instance.GetPrefab("skeleton_sword2");
-            }
-            else
-            {
-                weapon = archer
-                    ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonBow")
-                    : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonClub");
-            }
-
-            if (weapon == null)
-            {
-                Jotunn.Logger.LogError("ScaleEquipment: weapon is null!");
-                return;
-            }
+            List<GameObject> defaultItems = new List<GameObject>();
 
             Humanoid humanoid = GetComponent<Humanoid>();
             if (humanoid == null)
@@ -97,35 +71,43 @@ namespace FriendlySkeletonWand.Minions
                 return;
             }
 
-            humanoid.m_randomWeapon = new GameObject[] { weapon };
+            // note: as of 1.2.0 weapons were moved into skeleton prefab variants
+            // with different m_randomWeapons set. This is because trying to set
+            // dynamically seems very difficult -> skeletons forgetting their weapons
+            // on logout/log back in; skeletons thinking they have no weapons
+            // and running away from enemies.
+            //
+            // Fortunately, armor seems to work fine.
 
             if (leatherArmor)
             {
-                humanoid.m_defaultItems = new GameObject[] {
-                    mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
+                defaultItems.AddRange(new GameObject[] {
+                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
-                    };
+                    });
             }
             else if (bronzeArmor)
             {
-                humanoid.m_defaultItems = new GameObject[] {
-                    mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
+                defaultItems.AddRange(new GameObject[] {
+                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
                     ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
                     ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
-                    };
+                    });
             }
             else if (ironArmor)
             {
-                humanoid.m_defaultItems = new GameObject[] {
-                    mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
+                defaultItems.AddRange(new GameObject[] {
+                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
                     ZNetScene.instance.GetPrefab("ArmorIronChest"),
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
-                    };
+                    });
             }
+
+            humanoid.m_defaultItems = defaultItems.ToArray();
         }
     }
 }

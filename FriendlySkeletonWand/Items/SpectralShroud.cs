@@ -33,7 +33,7 @@ namespace FriendlySkeletonWand
             necromancySkillBonus = plugin.Config.Bind("Client config", "SpectralShroudSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all)."));
             delayBetweenWraithSpawns = plugin.Config.Bind("Client config", "SpectralShroudWraithDelay",
-                10, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn."));
+                30, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn."));
         }
 
         public override CustomItem GetCustomItem(Sprite icon=null)

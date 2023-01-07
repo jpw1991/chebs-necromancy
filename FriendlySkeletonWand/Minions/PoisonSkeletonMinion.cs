@@ -19,7 +19,7 @@ namespace FriendlySkeletonWand.Minions
             character.SetHealth(health);
         }
 
-        public override void ScaleEquipment(float necromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool mage)
+        public override void ScaleEquipment(float necromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor)
         {
             // do nothing
         }

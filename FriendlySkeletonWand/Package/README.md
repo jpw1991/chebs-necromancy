@@ -54,6 +54,9 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
   - Iron -> Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
+- As of 1.2.0, debug commands that affect minions across the entire world/universe:
+  - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
+  - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
 
 ### Config
 
@@ -84,6 +87,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+06/01/2023 | 1.2.0 | Fix bug of skeletons not remembering their weapons properly; fix problem of tier 3 melee weapon not being stronger than tier 2; add debug commands for players to kill all their skeletons or summon them all
 05/01/2023 | 1.1.1 | Add left shift as key to unlock extra resource consumption; allow deer hide to be used for leather armor skeletons
 04/01/2023 | 1.1.0 | Armored Skeletons and Skeleton Mages!
 02/01/2023 | 1.0.25 | Fix bug where Poison Skeleton's HP is lower than it should be after leaving area and coming back

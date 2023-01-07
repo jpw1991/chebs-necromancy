@@ -11,13 +11,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static FriendlySkeletonWand.Minions.SkeletonMinion;
 
 namespace FriendlySkeletonWand
 {
     internal class SkeletonWand : Wand
     {
         public const string SkeletonWarriorPrefabName = "ChebGonaz_SkeletonWarrior";
+        public const string SkeletonWarriorTier2PrefabName = "ChebGonaz_SkeletonWarriorTier2";
+        public const string SkeletonWarriorTier3PrefabName = "ChebGonaz_SkeletonWarriorTier3";
+
         public const string SkeletonArcherPrefabName = "ChebGonaz_SkeletonArcher";
+        public const string SkeletonArcherTier2PrefabName = "ChebGonaz_SkeletonArcherTier2";
+        public const string SkeletonArcherTier3PrefabName = "ChebGonaz_SkeletonArcherTier3";
+
+        public const string SkeletonMagePrefabName = "ChebGonaz_SkeletonMage";
+        public const string SkeletonMageTier2PrefabName = "ChebGonaz_SkeletonMageTier2";
+        public const string SkeletonMageTier3PrefabName = "ChebGonaz_SkeletonMageTier3";
+
         public const string PoisonSkeletonPrefabName = "ChebGonaz_PoisonSkeleton";
 
         public static ConfigEntry<bool> skeletonsAllowed;
@@ -282,8 +293,63 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, string prefabName, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool mage)
+        private string PrefabFromNecromancyLevel(float necromancyLevel, SkeletonType skeletonType)
         {
+            string result = "";
+            switch (skeletonType)
+            {
+                case SkeletonType.Archer:
+                    if (necromancyLevel >= 75)
+                    {
+                        result = SkeletonArcherTier3PrefabName;
+                    }
+                    else if (necromancyLevel >= 35)
+                    {
+                        result = SkeletonArcherTier2PrefabName;
+                    }
+                    else
+                    {
+                        result = SkeletonArcherPrefabName;
+                    }
+                    break;
+                case SkeletonType.Mage:
+                    if (necromancyLevel >= 75)
+                    {
+                        result = SkeletonMageTier3PrefabName;
+                    }
+                    else if (necromancyLevel >= 35)
+                    {
+                        result = SkeletonMageTier2PrefabName;
+                    }
+                    else
+                    {
+                        result = SkeletonMagePrefabName;
+                    }
+                    break;
+                case SkeletonType.Poison:
+                    result = PoisonSkeletonPrefabName;
+                    break;
+                default:
+                    if (necromancyLevel >= 60)
+                    {
+                        result = SkeletonWarriorTier3PrefabName;
+                    }
+                    else if (necromancyLevel >= 30)
+                    {
+                        result = SkeletonWarriorTier2PrefabName;
+                    }
+                    else
+                    {
+                        result = SkeletonWarriorPrefabName;
+                    }
+                    break;
+            }
+            return result;
+        }
+
+        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor)
+        {
+            string prefabName = PrefabFromNecromancyLevel(playerNecromancyLevel, skeletonType);
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
@@ -295,24 +361,11 @@ namespace FriendlySkeletonWand
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
 
-            if (prefabName == SkeletonWarriorPrefabName)
-            {
-                SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor, mage);
-                minion.ScaleStats(playerNecromancyLevel);
-            }
-            else if (prefabName == SkeletonArcherPrefabName)
-            {
-                SkeletonMinion minion = spawnedChar.AddComponent<SkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, true, leatherArmor, bronzeArmor, ironArmor, mage);
-                minion.ScaleStats(playerNecromancyLevel);
-            }
-            else if (prefabName == PoisonSkeletonPrefabName)
-            {
-                PoisonSkeletonMinion minion = spawnedChar.AddComponent<PoisonSkeletonMinion>();
-                minion.ScaleEquipment(playerNecromancyLevel, false, leatherArmor, bronzeArmor, ironArmor, mage);
-                minion.ScaleStats(playerNecromancyLevel);
-            }
+            SkeletonMinion minion = skeletonType == SkeletonType.Poison 
+                ? spawnedChar.AddComponent<PoisonSkeletonMinion>() 
+                : spawnedChar.AddComponent<SkeletonMinion>();
+            minion.ScaleEquipment(playerNecromancyLevel, skeletonType, leatherArmor, bronzeArmor, ironArmor);
+            minion.ScaleStats(playerNecromancyLevel);
 
             if (followByDefault.Value)
             {
@@ -401,7 +454,9 @@ namespace FriendlySkeletonWand
             }
 
             bool createMage = false;
-            if (ExtraResourceConsumptionUnlocked && !archer && surtlingCoresRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked
+                && !archer
+                && surtlingCoresRequiredConfig.Value > 0)
             {
                 int surtlingCoresInInventory = player.GetInventory().CountItems("$item_surtlingcore");
                 Jotunn.Logger.LogInfo($"Surtling cores in inventory: {surtlingCoresInInventory}");
@@ -429,24 +484,19 @@ namespace FriendlySkeletonWand
             if (playerNecromancyLevel >= 70) { quality = 3; }
             else if (playerNecromancyLevel >= 35) { quality = 2; }
 
-            // go on to spawn skeleton
-            if (archer)
-            {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonArcherPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron, createMage);
-            }
-            else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value 
-                && !createMage
+            SkeletonType skeletonType = SkeletonType.Warrior;
+            if (archer) { skeletonType = SkeletonType.Archer; }
+            else if (createMage) { skeletonType = SkeletonType.Mage; }
+            else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value
                 && !createArmoredIron
                 && !createArmoredBronze
                 && !createArmoredLeather
                 && ConsumeGuckIfAvailable(player))
             {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, PoisonSkeletonPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron, createMage);
+                skeletonType = SkeletonType.Poison;
             }
-            else
-            {
-                InstantiateSkeleton(player, quality, playerNecromancyLevel, SkeletonWarriorPrefabName, createArmoredLeather, createArmoredBronze, createArmoredIron, createMage);
-            }
+
+            InstantiateSkeleton(player, quality, playerNecromancyLevel, skeletonType, createArmoredLeather, createArmoredBronze, createArmoredIron);
         }
     }
 }

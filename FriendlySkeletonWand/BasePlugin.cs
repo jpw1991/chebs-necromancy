@@ -5,6 +5,7 @@
 
 using BepInEx;
 using BepInEx.Configuration;
+using FriendlySkeletonWand.Commands;
 using FriendlySkeletonWand.Minions;
 using HarmonyLib;
 using Jotunn;
@@ -29,7 +30,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.1.1";
+        public const string PluginVersion = "1.2.0";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -53,36 +54,20 @@ namespace FriendlySkeletonWand
 
             CreateConfigValues();
 
-            AddCustomItems();
-            AddCustomCreatures();
-            AddCustomStructures();
+            LoadChebGonazAssetBundle();
 
             harmony.PatchAll();
 
-            //AddButtons();
             AddNecromancy();
 
-            //PrefabManager.OnVanillaPrefabsAvailable += AddClonedItems;
+            CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
+            CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
         }
 
-        private void CreateConfigValues()
+        private void LoadChebGonazAssetBundle()
         {
-            Config.SaveOnConfigSet = true;
-
-            GuardianWraithMinion.CreateConfigs(this);
-
-            wands.ForEach(w => w.CreateConfigs(this));
-
-            spectralShroudItem.CreateConfigs(this);
-            necromancersHoodItem.CreateConfigs(this);
-
-            SpiritPylon.CreateConfigs(this);
-        }
-
-
-        private void AddCustomItems()
-        {
-            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazitems");
+            // order is important (I think): items, creatures, structures
+            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonaz");
             AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
@@ -108,9 +93,12 @@ namespace FriendlySkeletonWand
                     return seStat;
                 }
 
+                #region SetEffects
                 setEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
                 setEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
+                #endregion
 
+                #region Items
                 GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
@@ -158,6 +146,10 @@ namespace FriendlySkeletonWand
                 GameObject skeletonMageCircletPrefab = LoadPrefabFromBundle(skeletonMageCircletItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(skeletonMageCircletItem.GetCustomItemFromPrefab(skeletonMageCircletPrefab));
 
+                SkeletonAxe skeletonAxeItem = new SkeletonAxe();
+                GameObject skeletonAxePrefab = LoadPrefabFromBundle(skeletonAxeItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(skeletonAxeItem.GetCustomItemFromPrefab(skeletonAxePrefab));
+
                 wands.ForEach(wand =>
                 {
                     // we do the keyhints later after vanilla items are available
@@ -167,48 +159,44 @@ namespace FriendlySkeletonWand
                     KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
                     ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
                 });
-            }
-            catch (Exception ex)
-            {
-                Logger.LogWarning($"Exception caught while loading custom items: {ex}");
-            }
-            finally
-            {
-                chebgonazAssetBundle.Unload(false);
-            }
-        }
+                #endregion
 
-        private void AddCustomCreatures()
-        {
-            List<string> prefabNames = new List<string>();
+                #region Creatures
+                List<string> prefabNames = new List<string>();
 
-            if (DraugrWand.draugrAllowed.Value)
-            {
-                prefabNames.Add("ChebGonaz_DraugrArcher.prefab");
-                prefabNames.Add("ChebGonaz_DraugrWarrior.prefab");
-            }
+                if (DraugrWand.draugrAllowed.Value)
+                {
+                    prefabNames.Add("ChebGonaz_DraugrArcher.prefab");
+                    prefabNames.Add("ChebGonaz_DraugrWarrior.prefab");
+                }
 
-            if (SkeletonWand.skeletonsAllowed.Value)
-            {
-                prefabNames.Add("ChebGonaz_SkeletonWarrior.prefab");
-                prefabNames.Add("ChebGonaz_SkeletonArcher.prefab");
-                prefabNames.Add("ChebGonaz_PoisonSkeleton.prefab");
-            }
+                if (SkeletonWand.skeletonsAllowed.Value)
+                {
+                    // 1.2.0: I had to make extra prefabs for each tier because
+                    // the skeletons consistently forgot their weapons and became
+                    // buggy (not attacking enemies) if dynamically set
+                    prefabNames.Add(SkeletonWand.SkeletonWarriorPrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonWarriorTier2PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonWarriorTier3PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonArcherPrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonArcherTier2PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonArcherTier3PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonMagePrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonMageTier2PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonMageTier3PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.PoisonSkeletonPrefabName + ".prefab");
+                }
 
-            if (SpectralShroud.spawnWraith.Value)
-            {
-                prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
-            }
+                if (SpectralShroud.spawnWraith.Value)
+                {
+                    prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
+                }
 
-            if (SpiritPylon.allowed.Value)
-            {
-                prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
-            }
+                if (SpiritPylon.allowed.Value)
+                {
+                    prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
+                }
 
-            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazcreatures");
-            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
-            try
-            {
                 prefabNames.ForEach(prefabName =>
                 {
                     Jotunn.Logger.LogInfo($"Loading {prefabName}...");
@@ -217,24 +205,10 @@ namespace FriendlySkeletonWand
 
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 }
-                );
-            }
-            catch (Exception ex)
-            {
-                Logger.LogWarning($"Exception caught while adding custom creatures: {ex}");
-            }
-            finally
-            {
-                chebgonazAssetBundle.Unload(false);
-            }
-        }
+                    );
+                #endregion
 
-        private void AddCustomStructures()
-        {
-            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonazstructures");
-            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
-            try
-            {
+                #region Structures
                 Jotunn.Logger.LogInfo($"Loading {SpiritPylon.PrefabName}...");
 
                 GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.PrefabName);
@@ -253,10 +227,11 @@ namespace FriendlySkeletonWand
                 };
 
                 PieceManager.Instance.AddPiece(new CustomPiece(spiritPylonPrefab, false, spiritPylon));
+                #endregion
             }
             catch (Exception ex)
             {
-                Logger.LogWarning($"Exception caught while adding custom structures: {ex}");
+                Logger.LogWarning($"Exception caught while loading assets: {ex}");
             }
             finally
             {
@@ -264,10 +239,19 @@ namespace FriendlySkeletonWand
             }
         }
 
-        //private void AddButtons()
-        //{
-        //    wands.ForEach(wand => wand.CreateButtons());
-        //}
+        private void CreateConfigValues()
+        {
+            Config.SaveOnConfigSet = true;
+
+            GuardianWraithMinion.CreateConfigs(this);
+
+            wands.ForEach(w => w.CreateConfigs(this));
+
+            spectralShroudItem.CreateConfigs(this);
+            necromancersHoodItem.CreateConfigs(this);
+
+            SpiritPylon.CreateConfigs(this);
+        }
 
         private void AddNecromancy()
         {
@@ -286,16 +270,6 @@ namespace FriendlySkeletonWand
 
             setEffectNecromancyArmor2.m_skillLevel = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
             setEffectNecromancyArmor2.m_skillLevelModifier = NecromancerHood.necromancySkillBonus.Value;
-        }
-
-        private void AddClonedItems()
-        {
-            //wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
-
-            // You want that to run only once, Jotunn has the item cached for the game session
-            PrefabManager.OnVanillaPrefabsAvailable -= AddClonedItems;
-
-           // wands.ForEach(wand => KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint()));
         }
 
         private void Update()

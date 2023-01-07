@@ -158,6 +158,9 @@
     <Compile Include="Items\SkeletonFireballLevel2.cs" />
     <Compile Include="Items\SkeletonFireballLevel3.cs" />
     <Compile Include="Items\SkeletonMageCirclet.cs" />
+    <Compile Include="Commands\KillAllMinions.cs" />
+    <Compile Include="Commands\SummonAllMinions.cs" />
+    <Compile Include="Items\SkeletonAxe.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -168,6 +171,7 @@
     <Folder Include="Package\plugins\" />
     <Folder Include="Items\" />
     <Folder Include="Minions\" />
+    <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package\manifest.json" />
