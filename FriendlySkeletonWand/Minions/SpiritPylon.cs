@@ -14,6 +14,8 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<bool> allowed;
         public static ConfigEntry<float> sightRadius;
         public static ConfigEntry<float> ghostDuration;
+        public static ConfigEntry<float> delayBetweenGhosts;
+        public static ConfigEntry<int> maxGhosts;
 
         public static string PrefabName = "ChebGonaz_SpiritPylon";
         public static string PieceTable = "Hammer";
@@ -39,6 +41,10 @@ namespace FriendlySkeletonWand
                 30f, new ConfigDescription("How far a Spirit Pylon can see enemies."));
             ghostDuration = plugin.Config.Bind("Client config", "SpiritPylonGhostDuration",
                 30f, new ConfigDescription("How long a Spirit Pylon's ghost persists."));
+            delayBetweenGhosts = plugin.Config.Bind("Client config", "SpiritPylonDelayBetweenGhosts",
+                5f, new ConfigDescription("How long a Spirit Pylon must wait before being able to spawn another ghost."));
+            maxGhosts = plugin.Config.Bind("Client config", "SpiritPylonMaxGhosts",
+                3, new ConfigDescription("The maximum number of ghosts that a Spirit Pylon can spawn."));
         }
 
         private void Awake()
@@ -77,20 +83,12 @@ namespace FriendlySkeletonWand
 
                 if (Player.m_localPlayer != null)
                 {
-                    float playerNecromancyLevel = 
-                        Player.m_localPlayer.GetSkillLevel(
-                            SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier)
-                                .m_skill);
-                    int amount = playerNecromancyLevel <= 19 
-                        ? 1 
-                        : (int)playerNecromancyLevel / 10;
-
                     if (EnemiesNearby(out Character characterInRange))
                     {
                         // spawn ghosts up until the limit
-                        if (spawnedGhosts.Count < amount)
+                        if (spawnedGhosts.Count < maxGhosts.Value)
                         {
-                            GameObject friendlyGhost = SpawnFriendlyGhost(playerNecromancyLevel);
+                            GameObject friendlyGhost = SpawnFriendlyGhost();
                             friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
                             spawnedGhosts.Add(friendlyGhost);
                         }
@@ -119,11 +117,9 @@ namespace FriendlySkeletonWand
             return false;
         }
 
-        protected GameObject SpawnFriendlyGhost(float playerNecromancyLevel)
+        protected GameObject SpawnFriendlyGhost()
         {
             int quality = 1;
-            if (playerNecromancyLevel >= 70) { quality = 3; }
-            else if (playerNecromancyLevel >= 35) { quality = 2; }
 
             string prefabName = "ChebGonaz_SpiritPylonGhost";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
@@ -134,13 +130,9 @@ namespace FriendlySkeletonWand
             }
 
             GameObject spawnedChar = Instantiate(
-                prefab, 
+                prefab,
                 transform.position + transform.forward * 2f + Vector3.up,
                 Quaternion.identity);
-
-            // add a self-destruct to it
-            //spawnedChar.AddComponent<KillAfterPeriod>();
-            //Jotunn.Logger.LogInfo("KillAfterPeriod component added");
 
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);

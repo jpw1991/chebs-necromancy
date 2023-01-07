@@ -60,7 +60,7 @@ namespace FriendlySkeletonWand.Minions
             character.SetHealth(health);
         }
 
-        public virtual void ScaleEquipment(float necromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor)
+        public virtual void ScaleEquipment(float necromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
         {
             List<GameObject> defaultItems = new List<GameObject>();
 
@@ -103,6 +103,15 @@ namespace FriendlySkeletonWand.Minions
                     skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
                     ZNetScene.instance.GetPrefab("ArmorIronChest"),
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
+                    ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    });
+            }
+            else if (blackIronArmor)
+            {
+                defaultItems.AddRange(new GameObject[] {
+                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_HelmetBlackIronSkeleton"),
+                    ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronChest"),
+                    ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
             }
