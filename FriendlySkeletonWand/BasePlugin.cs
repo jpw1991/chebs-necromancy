@@ -30,7 +30,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.2.0";
+        public const string PluginVersion = "1.2.1";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -149,6 +149,22 @@ namespace FriendlySkeletonWand
                 SkeletonAxe skeletonAxeItem = new SkeletonAxe();
                 GameObject skeletonAxePrefab = LoadPrefabFromBundle(skeletonAxeItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(skeletonAxeItem.GetCustomItemFromPrefab(skeletonAxePrefab));
+
+                BlackIronChest blackIronChestItem = new BlackIronChest();
+                GameObject blackIronChestPrefab = LoadPrefabFromBundle(blackIronChestItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(blackIronChestItem.GetCustomItemFromPrefab(blackIronChestPrefab));
+
+                BlackIronHelmet blackIronHelmetItem = new BlackIronHelmet();
+                GameObject blackIronHelmetPrefab = LoadPrefabFromBundle(blackIronHelmetItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(blackIronHelmetItem.GetCustomItemFromPrefab(blackIronHelmetPrefab));
+
+                BlackIronLegs blackIronLegsItem = new BlackIronLegs();
+                GameObject blackIronLegsPrefab = LoadPrefabFromBundle(blackIronLegsItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(blackIronLegsItem.GetCustomItemFromPrefab(blackIronLegsPrefab));
+
+                SkeletonHelmetBlackIron blackIronHelmetSkeletonItem = new SkeletonHelmetBlackIron();
+                GameObject blackIronHelmetSkeletonPrefab = LoadPrefabFromBundle(blackIronHelmetSkeletonItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(blackIronHelmetSkeletonItem.GetCustomItemFromPrefab(blackIronHelmetSkeletonPrefab));
 
                 wands.ForEach(wand =>
                 {

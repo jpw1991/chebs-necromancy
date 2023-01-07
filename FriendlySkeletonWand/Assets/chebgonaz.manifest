@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3548657082
+CRC: 3560796974
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: aad7d0853b9fa26fef1c52bc2478c10f
+    Hash: 1c91d595143a77258e036d30076f01bb
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9b5614f8973fd056b6d8531576e2938d
+    Hash: 80481c417d4ed3cc366bc5ad63973d7e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -48,13 +48,13 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 313648218, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1109157524, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 927819712, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
-  Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 469224316, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -147,6 +147,7 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarriorTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonClub.prefab
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_drop.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetBronze.mat
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel1.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
@@ -164,17 +165,22 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow.prefab
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel3.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageCirclet.prefab
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronChest.prefab
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronLegs.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcher.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageTier3.prefab
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_mat.mat
 - Assets/_ChebGonaz/ChebGonaz_DraugrWarrior.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.mat
 - Assets/_ChebGonaz/ChebGonaz_GuardianWraith.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarrior.prefab
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_mat.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/draugr_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.mat
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIronSkeleton.prefab
 - Assets/_ChebGonaz/spectral_shroud_d.png
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
@@ -186,6 +192,9 @@ Assets:
 - Assets/_ChebGonaz/skeleton_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetBronze.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
-- Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_drop.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.mat
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_helmet_iron_mat.mat
+- Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIron.prefab
+- Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab
 Dependencies: []
