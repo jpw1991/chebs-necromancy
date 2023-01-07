@@ -22,6 +22,8 @@ namespace FriendlySkeletonWand
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected List<GameObject> spawnedGhosts = new List<GameObject>();
 
+        private float ghostLastSpawnedAt;
+
         public static RequirementConfig[] GetRequirements()
         {
             return new RequirementConfig[]
@@ -88,9 +90,14 @@ namespace FriendlySkeletonWand
                         // spawn ghosts up until the limit
                         if (spawnedGhosts.Count < maxGhosts.Value)
                         {
-                            GameObject friendlyGhost = SpawnFriendlyGhost();
-                            friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
-                            spawnedGhosts.Add(friendlyGhost);
+                            if (Time.time > ghostLastSpawnedAt + delayBetweenGhosts.Value)
+                            {
+                                ghostLastSpawnedAt = Time.time;
+
+                                GameObject friendlyGhost = SpawnFriendlyGhost();
+                                friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
+                                spawnedGhosts.Add(friendlyGhost);
+                            }
                         }
                     }  
                 }
