@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using FriendlySkeletonWand.Minions;
+using JetBrains.Annotations;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -8,10 +9,12 @@ using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using static FriendlySkeletonWand.Minions.SkeletonMinion;
+using static System.Collections.Specialized.BitVector32;
 
 namespace FriendlySkeletonWand
 {
@@ -31,10 +34,9 @@ namespace FriendlySkeletonWand
 
         public const string PoisonSkeletonPrefabName = "ChebGonaz_PoisonSkeleton";
 
-        public static ConfigEntry<string> craftingStationRequired;
-        public static ConfigEntry<int> minimumRequiredStationLevel;
+        public static ConfigEntry<CraftingTable> craftingStationRequired;
+        public static ConfigEntry<int> craftingStationLevel;
         public static ConfigEntry<string> craftingCost;
-        public static ConfigEntry<string> upgradingCost;
 
         public static ConfigEntry<bool> skeletonsAllowed;
 
@@ -73,19 +75,15 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingStationRequired = plugin.Config.Bind("Server config", "Crafting Station",
-                "Workbench", new ConfigDescription("Crafting station where Skeleton Wand is available", null,
+                CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            minimumRequiredStationLevel = plugin.Config.Bind("Server config", "Crafting Station Level",
-               1, new ConfigDescription("Required crafting station level to craft Skeleton Wand", null,
+            craftingStationLevel = plugin.Config.Bind("Server config", "Crafting Station Level",
+                1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingCost = plugin.Config.Bind("Server config", "Crafting Costs",
-                "Wood:5"), new ConfigDescription("Materials needed to craft Skeleton Wand", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            upgradingCost = plugin.Config.Bind("Server config", "Upgrading Costs",
-                "Wood:1", new ConfigDescription("Materials needed per level to upgrade Skeleton Wandd", null,
+                "Wood:5", new ConfigDescription("Materials needed to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonsAllowed = plugin.Config.Bind("Server config", "SkeletonsAllowed",
@@ -182,13 +180,38 @@ namespace FriendlySkeletonWand
             if (allowed == null)
             {
                 Jotunn.Logger.LogError("allowed config entry is null!");
+                config.Enabled = false;
             }
 
             if (allowed.Value)
             {
-                config.CraftingStation = "piece_workbench";
-                config.AddRequirement(new RequirementConfig("Wood", 5));
+                // Add a material to the recipe
+                void addMaterial(string material)
+                {
+                    string[] materialSplit = material.Split(':');
+                    string materialName = materialSplit[0];
+                    int materialAmount = int.Parse(materialSplit[1]);
+                    config.AddRequirement(new RequirementConfig(materialName, materialAmount, materialAmount*2));
+                }
+                
+                config.CraftingStation = ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First()).internalName;
+
+                // Material config format ex: Wood:5,Stone:1,Resin:1
+                if (craftingCost.Value.Contains(','))
+                {
+                    string[] materialList = craftingCost.Value.Split(',');
+                    foreach (string material in materialList)
+                    {
+                        addMaterial(material);
+                    }                   
+                } else
+                {
+                    addMaterial(craftingCost.Value);
+                }                
             }
+
+            // Set the minimum required station level to craft
+            config.MinStationLevel = craftingStationLevel.Value;
 
             CustomItem customItem = new CustomItem(prefab, false, config);
             if (customItem == null)
