@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3560796974
+CRC: 89375298
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1c91d595143a77258e036d30076f01bb
+    Hash: 9d02eb30870972ea27f534168114b2cd
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 80481c417d4ed3cc366bc5ad63973d7e
+    Hash: 13822ed83ecd3a37a42351b8e2b2d721
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -67,6 +67,10 @@ ClassTypes:
   Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1137906148, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 1790797106, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -347224168, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1266444067, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -129,6 +133,8 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: Attack
 - AssemblyName: assembly_valheim
+  ClassName: DropTable
+- AssemblyName: assembly_valheim
   ClassName: EffectList
 - AssemblyName: assembly_valheim
   ClassName: EffectList/EffectData
@@ -166,6 +172,8 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel3.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageCirclet.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronChest.prefab
+- Assets/_ChebGonaz/ChebGonaz_Neck.mat
+- Assets/_ChebGonaz/ChebGonaz_NecroNeck.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronLegs.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcher.prefab
