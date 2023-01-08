@@ -2,9 +2,29 @@
 using BepInEx.Configuration;
 using BepInEx;
 using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace FriendlySkeletonWand
 {
+
+    public class InternalName : Attribute
+    {
+        public readonly string internalName;
+        public InternalName(string internalName) => this.internalName = internalName;
+    }
+
+    public enum CraftingTable
+    {
+        None,
+        [InternalName("piece_workbench")] Workbench,
+        [InternalName("piece_cauldron")] Cauldron,
+        [InternalName("forge")] Forge,
+        [InternalName("piece_artisanstation")] ArtisanTable,
+        [InternalName("piece_stonecutter")] StoneCutter
+    }
+
     internal class Item
     {
         public ConfigEntry<bool> allowed;
