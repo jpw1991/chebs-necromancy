@@ -379,3 +379,4 @@ Environment.props
 FriendlySkeletonWand/libs
 *.backup
 FriendlySkeletonWandUnity/Assets
+*my.csproj
