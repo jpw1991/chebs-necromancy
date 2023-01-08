@@ -31,6 +31,11 @@ namespace FriendlySkeletonWand
 
         public const string PoisonSkeletonPrefabName = "ChebGonaz_PoisonSkeleton";
 
+        public static ConfigEntry<string> craftingStationRequired;
+        public static ConfigEntry<int> minimumRequiredStationLevel;
+        public static ConfigEntry<string> craftingCost;
+        public static ConfigEntry<string> upgradingCost;
+
         public static ConfigEntry<bool> skeletonsAllowed;
 
         public static ConfigEntry<int> maxSkeletons;
@@ -65,6 +70,22 @@ namespace FriendlySkeletonWand
 
             allowed = plugin.Config.Bind("Server config", "SkeletonWandAllowed",
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            craftingStationRequired = plugin.Config.Bind("Server config", "Crafting Station",
+                "Workbench", new ConfigDescription("Crafting station where Skeleton Wand is available", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            minimumRequiredStationLevel = plugin.Config.Bind("Server config", "Crafting Station Level",
+               1, new ConfigDescription("Required crafting station level to craft Skeleton Wand", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            craftingCost = plugin.Config.Bind("Server config", "Crafting Costs",
+                "Wood:5"), new ConfigDescription("Materials needed to craft Skeleton Wand", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            upgradingCost = plugin.Config.Bind("Server config", "Upgrading Costs",
+                "Wood:1", new ConfigDescription("Materials needed per level to upgrade Skeleton Wandd", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonsAllowed = plugin.Config.Bind("Server config", "SkeletonsAllowed",
