@@ -161,6 +161,10 @@
     <Compile Include="Commands\KillAllMinions.cs" />
     <Compile Include="Commands\SummonAllMinions.cs" />
     <Compile Include="Items\SkeletonAxe.cs" />
+    <Compile Include="Items\SkeletonHelmetBlackIron.cs" />
+    <Compile Include="Items\BlackIronChest.cs" />
+    <Compile Include="Items\BlackIronLegs.cs" />
+    <Compile Include="Items\BlackIronHelmet.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

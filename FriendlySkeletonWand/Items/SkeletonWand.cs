@@ -48,6 +48,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> armorLeatherScrapsRequiredConfig;
         public static ConfigEntry<int> armorBronzeRequiredConfig;
         public static ConfigEntry<int> armorIronRequiredConfig;
+        public static ConfigEntry<int> armorBlackIronRequiredConfig;
         public static ConfigEntry<int> surtlingCoresRequiredConfig;
 
         public static ConfigEntry<int> poisonSkeletonLevelRequirementConfig;
@@ -114,6 +115,10 @@ namespace FriendlySkeletonWand
 
             surtlingCoresRequiredConfig = plugin.Config.Bind("Server config", "SkeletonMageSurtlingCoresRequired",
                 1, new ConfigDescription("The amount of surtling cores required to craft a skeleton mage.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            armorBlackIronRequiredConfig = plugin.Config.Bind("Server config", "ArmoredSkeletonBlackIronRequired",
+                1, new ConfigDescription("The amount of Black Metal required to craft a skeleton in black iron armor.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             poisonSkeletonBaseHealth = plugin.Config.Bind("Server config", "PoisonSkeletonBaseHealth",
@@ -364,7 +369,7 @@ namespace FriendlySkeletonWand
             return result;
         }
 
-        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor)
+        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
         {
             string prefabName = PrefabFromNecromancyLevel(playerNecromancyLevel, skeletonType);
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
@@ -381,7 +386,7 @@ namespace FriendlySkeletonWand
             SkeletonMinion minion = skeletonType == SkeletonType.Poison 
                 ? spawnedChar.AddComponent<PoisonSkeletonMinion>() 
                 : spawnedChar.AddComponent<SkeletonMinion>();
-            minion.ScaleEquipment(playerNecromancyLevel, skeletonType, leatherArmor, bronzeArmor, ironArmor);
+            minion.ScaleEquipment(playerNecromancyLevel, skeletonType, leatherArmor, bronzeArmor, ironArmor, blackIronArmor);
             minion.ScaleStats(playerNecromancyLevel);
 
             if (followByDefault.Value)
@@ -470,6 +475,22 @@ namespace FriendlySkeletonWand
                 }
             }
 
+            bool createArmoredBlackIron = false;
+            if (ExtraResourceConsumptionUnlocked 
+                && !createArmoredLeather 
+                && !createArmoredBronze 
+                && !createArmoredIron
+                && armorBlackIronRequiredConfig.Value > 0)
+            {
+                int blackIronInInventory = player.GetInventory().CountItems("$item_blackmetal");
+                Jotunn.Logger.LogInfo($"Black metal in inventory: {blackIronInInventory}");
+                if (blackIronInInventory >= armorBlackIronRequiredConfig.Value)
+                {
+                    createArmoredBlackIron = true;
+                    player.GetInventory().RemoveItem("$item_blackmetal", armorBlackIronRequiredConfig.Value);
+                }
+            }
+
             bool createMage = false;
             if (ExtraResourceConsumptionUnlocked
                 && !archer
@@ -505,6 +526,7 @@ namespace FriendlySkeletonWand
             if (archer) { skeletonType = SkeletonType.Archer; }
             else if (createMage) { skeletonType = SkeletonType.Mage; }
             else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value
+                && !createArmoredBlackIron
                 && !createArmoredIron
                 && !createArmoredBronze
                 && !createArmoredLeather
@@ -513,7 +535,10 @@ namespace FriendlySkeletonWand
                 skeletonType = SkeletonType.Poison;
             }
 
-            InstantiateSkeleton(player, quality, playerNecromancyLevel, skeletonType, createArmoredLeather, createArmoredBronze, createArmoredIron);
+            InstantiateSkeleton(player, quality, playerNecromancyLevel, 
+                skeletonType, 
+                createArmoredLeather, createArmoredBronze, 
+                createArmoredIron, createArmoredBlackIron);
         }
     }
 }

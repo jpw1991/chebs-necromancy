@@ -87,6 +87,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+07/01/2023 | 1.2.1 | Add black iron armor; permit skeletons to use black iron armor; rebalance spirit pylon by introducing a delay and a limit (both configurable)
 06/01/2023 | 1.2.0 | Fix bug of skeletons not remembering their weapons properly; fix problem of tier 3 melee weapon not being stronger than tier 2; add debug commands for players to kill all their skeletons or summon them all
 05/01/2023 | 1.1.1 | Add left shift as key to unlock extra resource consumption; allow deer hide to be used for leather armor skeletons
 04/01/2023 | 1.1.0 | Armored Skeletons and Skeleton Mages!
