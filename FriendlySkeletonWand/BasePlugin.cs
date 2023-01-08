@@ -428,7 +428,7 @@ namespace FriendlySkeletonWand
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Projectile.OnHit))]
-        static void OnHitPrefix(ref Collider collider, ref Vector3 hitPoint, ref bool water, ref Projectile __instance)
+        static bool OnHitPrefix(ref Collider collider, ref Vector3 hitPoint, ref bool water, ref Projectile __instance)
         {
             // stop player structure damage from minion arrows
             if (__instance.m_owner.GetComponent<UndeadMinion>() != null)
@@ -437,11 +437,12 @@ namespace FriendlySkeletonWand
                 {
                     if (piece.IsPlacedByPlayer())
                     {
-                        Jotunn.Logger.LogInfo($"Projectile colliding with {piece.name}");
-                        return;
+                        Jotunn.Logger.LogInfo($"Projectile colliding with {piece.name} and returning false");
+                        return false;
                     }
                 }
             }
+            return true;
         }
     }
     #endregion
