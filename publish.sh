@@ -53,6 +53,8 @@ if [ ! -d "$PROJECTPATH" ]; then
   exit 1
 fi
 
+cd "$(dirname "$0")"
+
 # plugin name without .dll
 name=$( basename "$TARGETASSEMBLY" .dll )
 
