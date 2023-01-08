@@ -422,6 +422,66 @@ namespace FriendlySkeletonWand
             }
         }
     }
+
+    [HarmonyPatch(typeof(Projectile))]
+    static class ArrowImpactPatch
+    {
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(Projectile.OnHit))]
+        static void OnHitPrefix(ref Collider __collider, ref Vector3 __hitPoint, ref bool __water)
+        {
+            // stop player structure damage from minion arrows
+            //if (__collider.TryGetComponent(out Piece piece)) // screws up Harmony, too bad: https://github.com/pardeike/Harmony/issues/3
+            Piece piece = __collider.GetComponent<Piece>();
+            if (piece != null)
+            {
+                if (piece.IsPlacedByPlayer())
+                {
+                    Jotunn.Logger.LogInfo($"Projectile colliding with {piece.name}");
+                    return;
+                }
+            }
+        }
+    }
+
+    //[HarmonyPatch(typeof(Projectile))]
+    //static class ArrowImpactPatch
+    //{
+        //[HarmonyPrefix]
+        //[HarmonyPatch(nameof(Projectile.IsValidTarget))]
+        //static void IsValidTargetPrefix(ref IDestructible __destr)
+        //{
+        //    // stop player structure damage from minion arrows
+
+        //    if (m_owner)
+        //    //Character character = destr as Character;
+        //    //if (Object.op_Implicit((Object)(object)character))
+        //    //{
+        //    //    if ((Object)(object)character == (Object)(object)m_owner)
+        //    //    {
+        //    //        return false;
+        //    //    }
+        //    //    if ((Object)(object)m_owner != (Object)null)
+        //    //    {
+        //    //        bool flag = BaseAI.IsEnemy(m_owner, character) || (Object.op_Implicit((Object)(object)character.GetBaseAI()) && character.GetBaseAI().IsAggravatable() && m_owner.IsPlayer());
+        //    //        if (!m_owner.IsPlayer() && !flag)
+        //    //        {
+        //    //            return false;
+        //    //        }
+        //    //        if (m_owner.IsPlayer() && !m_owner.IsPVPEnabled() && !flag)
+        //    //        {
+        //    //            return false;
+        //    //        }
+        //    //    }
+        //    //    if (m_dodgeable && character.IsDodgeInvincible())
+        //    //    {
+        //    //        return false;
+        //    //    }
+        //    //}
+        //    //return true;
+
+        //}
+    //}
     #endregion
 }
 
