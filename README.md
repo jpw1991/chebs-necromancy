@@ -52,6 +52,7 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
   - Boar scraps or Deer Hide -> leather armor
   - Bronze -> Bronze armor
   - Iron -> Iron armor
+  - Black Metal -> Black Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
 - As of 1.2.0, debug commands that affect minions across the entire world/universe:
@@ -87,6 +88,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+07/01/2023 | 1.3.0 | Add server sync so that clients must use the configuration options of the server
 07/01/2023 | 1.2.1 | Add black iron armor; permit skeletons to use black iron armor; rebalance spirit pylon by introducing a delay and a limit (both configurable)
 06/01/2023 | 1.2.0 | Fix bug of skeletons not remembering their weapons properly; fix problem of tier 3 melee weapon not being stronger than tier 2; add debug commands for players to kill all their skeletons or summon them all
 05/01/2023 | 1.1.1 | Add left shift as key to unlock extra resource consumption; allow deer hide to be used for leather armor skeletons
@@ -135,6 +137,7 @@ You can find the github [here](https://github.com/jpw1991/Friendly-Skeleton-Wand
 
 ## Special Thanks
 
+- Dracbjorn for development help & testing
 - S970X for making the German language localization for the mod.
 - Ramblez for texturing help
 

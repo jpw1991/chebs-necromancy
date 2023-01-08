@@ -30,7 +30,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.2.1";
+        public const string PluginVersion = "1.3.0";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
