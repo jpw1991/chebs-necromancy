@@ -423,26 +423,30 @@ namespace FriendlySkeletonWand
         }
     }
 
-    [HarmonyPatch(typeof(Projectile))]
+    [HarmonyPatch(typeof(WearNTear), "RPC_Damage")]
     static class ArrowImpactPatch
     {
-        [HarmonyPrefix]
-        [HarmonyPatch(nameof(Projectile.OnHit))]
-        static bool OnHitPrefix(ref Collider collider, ref Vector3 hitPoint, ref bool water, ref Projectile __instance)
+        // stop minions from damaging player structures
+        static void Prefix(ref HitData hit, Piece ___m_piece)
         {
-            // stop player structure damage from minion arrows
-            if (__instance.m_owner.GetComponent<UndeadMinion>() != null)
+            if (hit.GetAttacker().TryGetComponent(out UndeadMinion undeadMinion))
             {
-                if (collider.TryGetComponent(out Piece piece))
+                if (___m_piece.IsPlacedByPlayer())
                 {
-                    if (piece.IsPlacedByPlayer())
-                    {
-                        Jotunn.Logger.LogInfo($"Projectile colliding with {piece.name} and returning false");
-                        return false;
-                    }
+                    Jotunn.Logger.LogInfo($"Projectile colliding with {___m_piece.name}, setting damage to 0");
+                    hit.m_damage.m_damage = 0f;
+                    hit.m_damage.m_blunt = 0f;
+                    hit.m_damage.m_slash = 0f;
+                    hit.m_damage.m_pierce = 0f;
+                    hit.m_damage.m_chop = 0f;
+                    hit.m_damage.m_pickaxe = 0f;
+                    hit.m_damage.m_fire = 0f;
+                    hit.m_damage.m_frost = 0f;
+                    hit.m_damage.m_lightning = 0f;
+                    hit.m_damage.m_poison = 0f;
+                    hit.m_damage.m_spirit = 0f;
                 }
             }
-            return true;
         }
     }
     #endregion
