@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using BepInEx;
+using BepInEx.Configuration;
 using Jotunn.Managers;
 using UnityEngine;
 namespace FriendlySkeletonWand.Minions
@@ -10,14 +12,27 @@ namespace FriendlySkeletonWand.Minions
         private static int createdOrderIncrementer;
         public int createdOrder;
 
-        private float updateDelay;
+        private float lastUpdate;
 
-        //todo expose to config
-        public const float lookRadius = 5f;
+        public static ConfigEntry<bool> allowed;
+        public static ConfigEntry<float> updateDelay, lookRadius;
 
         private int autoPickupMask;
 
         private Container container;
+
+        public static void CreateConfigs(BaseUnityPlugin plugin)
+        {
+            allowed = plugin.Config.Bind("Server config", "NecroNeckGathererAllowed",
+                true, new ConfigDescription("Whether the NecroNeck Gatherer is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            lookRadius = plugin.Config.Bind("Server config", "NecroNeckGathererLookRadius",
+                5f, new ConfigDescription("The radius in which the NecroNeck Gatherer can pickup items from.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            updateDelay = plugin.Config.Bind("Server config", "NecroNeckGathererUpdateDelay",
+                5f, new ConfigDescription("The delay, in seconds, between item pickup attempts. Attention: small values may impact performance.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
 
         private void Awake()
         {
@@ -33,22 +48,25 @@ namespace FriendlySkeletonWand.Minions
 
             container = GetComponent<Container>();
 
+            container.m_height = LargeCargoCrate.containerHeight.Value;
+            container.m_width = LargeCargoCrate.containerWidth.Value;
+
             autoPickupMask = LayerMask.GetMask(new string[1] { "item" });
         }
 
         private void Update()
         {
-            if (ZNet.instance != null && Time.time > updateDelay)
+            if (ZNet.instance != null && Time.time > lastUpdate)
             {
                 LookForNearbyItems();
 
-                updateDelay = Time.time + 5f;
+                lastUpdate = Time.time + updateDelay.Value;
             }
         }
 
         private void LookForNearbyItems()
         {
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position+Vector3.up, lookRadius, autoPickupMask);
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position+Vector3.up, lookRadius.Value, autoPickupMask);
             foreach (var hitCollider in hitColliders)
             {
                 ItemDrop itemDrop = hitCollider.GetComponentInParent<ItemDrop>();

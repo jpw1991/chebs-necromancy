@@ -179,6 +179,15 @@ namespace FriendlySkeletonWand
 
                 #region CustomPrefabs
                 GameObject largeCargoCratePrefab = LoadPrefabFromBundle(LargeCargoCrate.PrefabName, chebgonazAssetBundle);
+                if (largeCargoCratePrefab.TryGetComponent(out Container container))
+                {
+                    container.m_width = LargeCargoCrate.containerWidth.Value;
+                    container.m_height = LargeCargoCrate.containerHeight.Value;
+                }
+                else
+                {
+                    Jotunn.Logger.LogError($"Failed to retrieve Container component from {LargeCargoCrate.PrefabName}.");
+                }
                 PrefabManager.Instance.AddPrefab(new CustomPrefab(largeCargoCratePrefab, false));
                 #endregion
 
@@ -218,8 +227,10 @@ namespace FriendlySkeletonWand
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 }
 
-                // todo config
-                prefabNames.Add("ChebGonaz_NecroNeck.prefab");
+                if (NecroNeckGathererMinion.allowed.Value && LargeCargoCrate.allowed.Value)
+                {
+                    prefabNames.Add("ChebGonaz_NecroNeck.prefab");
+                }
 
                 prefabNames.ForEach(prefabName =>
                 {
@@ -275,6 +286,10 @@ namespace FriendlySkeletonWand
             necromancersHoodItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
+
+            LargeCargoCrate.CreateConfigs(this);
+
+            NecroNeckGathererMinion.CreateConfigs(this);
         }
 
         private void AddNecromancy()
