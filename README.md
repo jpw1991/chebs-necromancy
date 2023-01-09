@@ -58,6 +58,7 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 - As of 1.2.0, debug commands that affect minions across the entire world/universe:
   - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
   - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
+- As of 1.4.0 you can summon a ChebGonaz_NecroNeck via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
 
 ### Config
 
@@ -88,6 +89,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer
 07/01/2023 | 1.3.0 | Add server sync so that clients must use the configuration options of the server
 07/01/2023 | 1.2.1 | Add black iron armor; permit skeletons to use black iron armor; rebalance spirit pylon by introducing a delay and a limit (both configurable)
 06/01/2023 | 1.2.0 | Fix bug of skeletons not remembering their weapons properly; fix problem of tier 3 melee weapon not being stronger than tier 2; add debug commands for players to kill all their skeletons or summon them all
