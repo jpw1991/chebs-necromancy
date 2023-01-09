@@ -317,40 +317,6 @@ namespace FriendlySkeletonWand
 
     #region HarmonyPatches
 
-    //[HarmonyPatch(typeof(ZNet), "RPC_PeerInfo")]
-    //class ZNet_Patches
-    //{
-    //    // redseiko ¡ª 12/11/2022 7:59 PM
-    //    // Yes, but you need infrastructure to essentially log player logins 
-    //    // with their steamId/host as well as their peer.m_uid; this 
-    //    // peer.m_uid is prefixed to all ZDOs their client should spawn for 
-    //    // that client's session in the form of (UID:ID) where ID goes up 
-    //    // incrementally (UID resets on every full game restart).
-    //    //
-    //    // With that log/database you can then perform a reverse look-up for 
-    //    // any given ZDO on who created it, when, etc. (Assuming you logged 
-    //    // that information from the player session to begin with).
-    //    //
-    //    // Source: ZDOs go brr.
-    //    // For where to patch, just look at ZNet.RPC_PeerInfo and you can 
-    //    // see where peer.m_refPos/m_uid/m_playerName are.
-
-    //    [HarmonyPrefix]
-    //    static void retrievePlayerInfo(ref ZRpc __rpc, ref ZPackage __pkg)
-    //    {
-    //        //Jotunn.Logger.LogInfo("RPC_PeerInfo: " +
-    //        //$"__pkg.ReadZDOID().id={__pkg.ReadZDOID().id}" +
-    //        //$"__pkg.ReadZDOID().userID={__pkg.ReadZDOID().userID}" +
-    //        //$"__pkg.ReadZDOID().ToString()={__pkg.ReadZDOID().ToString()}");
-
-    //        ZNetPeer peer = ZNet.PlayerInfo//.GetPeer(__rpc);
-    //        if (peer == null)
-    //        {
-    //            return;
-    //        }
-    //    }
-    //}
-
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     class CharacterDrop_Patches
     {
@@ -445,7 +411,6 @@ namespace FriendlySkeletonWand
             {
                 if (___m_piece.IsPlacedByPlayer())
                 {
-                    Jotunn.Logger.LogInfo($"Projectile colliding with {___m_piece.name}, setting damage to 0");
                     hit.m_damage.m_damage = 0f;
                     hit.m_damage.m_blunt = 0f;
                     hit.m_damage.m_slash = 0f;
@@ -470,7 +435,6 @@ namespace FriendlySkeletonWand
         // its same functionality in the creature's OnDeath instead.
         static bool Prefix(CharacterDrop __instance)
         {
-            Jotunn.Logger.LogInfo($"CharacterDrop.OnDeath: {__instance.name}");
             if (__instance.TryGetComponent(out NecroNeckGathererMinion necroNeck))
             {
                 if (__instance.TryGetComponent(out Container container))
@@ -483,6 +447,132 @@ namespace FriendlySkeletonWand
         }
     }
 
+    [HarmonyPatch(typeof(Character), "RPC_Damage")]
+    static class CharacterGetDamageModifiersPatch
+    {
+        // here we basically have to rewrite the entire RPC_Damage verbatim
+        // except including the GetBodyArmor that is usually only kept
+        // for players and omitted for NPCs. We also discard the durability
+        // stuff cuz that doesn't matter for NPCs.
+        //
+        // I also pruned some player stuff out.
+        static bool Prefix(ref long sender, ref HitData hit, Character __instance)
+        {
+            if (__instance.TryGetComponent(out SkeletonMinion minion))
+            {
+                if (!__instance.m_nview.IsOwner()
+                    || __instance.GetHealth() <= 0f
+                    || __instance.IsDead()
+                    || __instance.IsTeleporting() 
+                    || __instance.InCutscene() 
+                    || (hit.m_dodgeable && __instance.IsDodgeInvincible()))
+                {
+                    return false; // deny base method completion
+                }
+                Character attacker = hit.GetAttacker();
+                if (hit.HaveAttacker() && attacker == null)
+                {
+                    return false; // deny base method completion
+                }
+                if (attacker != null && !attacker.IsPlayer())
+                {
+                    float difficultyDamageScalePlayer = Game.instance.GetDifficultyDamageScalePlayer(__instance.transform.position);
+                    hit.ApplyModifier(difficultyDamageScalePlayer);
+                }
+                __instance.m_seman.OnDamaged(hit, attacker);
+                if (__instance.m_baseAI !=null 
+                    && __instance.m_baseAI.IsAggravatable() 
+                    && !__instance.m_baseAI.IsAggravated())
+                {
+                    BaseAI.AggravateAllInArea(__instance.transform.position, 20f, BaseAI.AggravatedReason.Damage);
+                }
+                if (__instance.m_baseAI != null 
+                    && !__instance.m_baseAI.IsAlerted() 
+                    && hit.m_backstabBonus > 1f 
+                    && Time.time - __instance.m_backstabTime > 300f)
+                {
+                    __instance.m_backstabTime = Time.time;
+                    hit.ApplyModifier(hit.m_backstabBonus);
+                    __instance.m_backstabHitEffects.Create(hit.m_point, Quaternion.identity, __instance.transform);
+                }
+                if (__instance.IsStaggering() && !__instance.IsPlayer())
+                {
+                    hit.ApplyModifier(2f);
+                    __instance.m_critHitEffects.Create(hit.m_point, Quaternion.identity, __instance.transform);
+                }
+                if (hit.m_blockable && __instance.IsBlocking())
+                {
+                    __instance.BlockAttack(hit, attacker);
+                }
+                __instance.ApplyPushback(hit);
+                if (!string.IsNullOrEmpty(hit.m_statusEffect))
+                {
+                    StatusEffect statusEffect = __instance.m_seman.GetStatusEffect(hit.m_statusEffect);
+                    if (statusEffect == null)
+                    {
+                        statusEffect = __instance.m_seman.AddStatusEffect(
+                            hit.m_statusEffect, 
+                            false,
+                            hit.m_itemLevel, 
+                            hit.m_skillLevel);
+                    }
+                    else
+                    {
+                        statusEffect.ResetTime();
+                        statusEffect.SetLevel(hit.m_itemLevel, hit.m_skillLevel);
+                    }
+                    if (statusEffect != null && attacker != null)
+                    {
+                        statusEffect.SetAttacker(attacker);
+                    }
+                }
+                WeakSpot weakSpot = __instance.GetWeakSpot(hit.m_weakSpot);
+                if (weakSpot != null)
+                {
+                    ZLog.Log($"HIT Weakspot: {weakSpot.gameObject.name}");
+                }
+                HitData.DamageModifiers damageModifiers = __instance.GetDamageModifiers(weakSpot);
+                hit.ApplyResistance(damageModifiers, out var significantModifier);
+                // THIS is what we wrote all the code above for...
+                //
+                // GetBodyArmor should work, but doesn't. So we tally it up
+                // ourselves.
+                //
+                //float bodyArmor = __instance.GetBodyArmor();
+                float bodyArmor = 0f;
+
+                if (__instance.TryGetComponent(out Humanoid humanoid))
+                {
+                    bodyArmor += humanoid.m_chestItem != null
+                        ? humanoid.m_chestItem.m_shared.m_armor : 0;
+
+                    bodyArmor += humanoid.m_legItem != null
+                        ? humanoid.m_legItem.m_shared.m_armor : 0;
+
+                    bodyArmor += humanoid.m_helmetItem != null
+                        ? humanoid.m_helmetItem.m_shared.m_armor : 0;
+                }
+
+                hit.ApplyArmor(bodyArmor);
+                Jotunn.Logger.LogInfo($"{__instance.name} applied body armor {bodyArmor}");
+                // // //
+                float poison = hit.m_damage.m_poison;
+                float fire = hit.m_damage.m_fire;
+                float spirit = hit.m_damage.m_spirit;
+                hit.m_damage.m_poison = 0f;
+                hit.m_damage.m_fire = 0f;
+                hit.m_damage.m_spirit = 0f;
+                __instance.ApplyDamage(hit, true, true, significantModifier);
+                __instance.AddFireDamage(fire);
+                __instance.AddSpiritDamage(spirit);
+                __instance.AddPoisonDamage(poison);
+                __instance.AddFrostDamage(hit.m_damage.m_frost);
+                __instance.AddLightningDamage(hit.m_damage.m_lightning);
+                return false; // deny base method completion
+            }
+            return true; // permit base method to complete
+        }
+    }
     #endregion
 }
 
