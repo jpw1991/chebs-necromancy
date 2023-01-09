@@ -417,6 +417,10 @@ namespace FriendlySkeletonWand
                         {
                             __instance.gameObject.AddComponent<DraugrMinion>();
                         }
+                        else if (__instance.name.Contains("NecroNeck"))
+                        {
+                            __instance.gameObject.AddComponent<NecroNeckGathererMinion>();
+                        }
                     }
                 }
             }
