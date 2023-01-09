@@ -27,10 +27,10 @@ namespace FriendlySkeletonWand.Minions
                 true, new ConfigDescription("Whether the NecroNeck Gatherer is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             lookRadius = plugin.Config.Bind("Server config", "NecroNeckGathererLookRadius",
-                5f, new ConfigDescription("The radius in which the NecroNeck Gatherer can pickup items from.", null,
+                10f, new ConfigDescription("The radius in which the NecroNeck Gatherer can pickup items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             updateDelay = plugin.Config.Bind("Server config", "NecroNeckGathererUpdateDelay",
-                5f, new ConfigDescription("The delay, in seconds, between item pickup attempts. Attention: small values may impact performance.", null,
+                3f, new ConfigDescription("The delay, in seconds, between item pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
