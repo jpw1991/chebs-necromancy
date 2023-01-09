@@ -213,6 +213,9 @@ namespace FriendlySkeletonWand
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 }
 
+                // todo config
+                prefabNames.Add("ChebGonaz_NecroNeck.prefab");
+
                 prefabNames.ForEach(prefabName =>
                 {
                     Jotunn.Logger.LogInfo($"Loading {prefabName}...");
