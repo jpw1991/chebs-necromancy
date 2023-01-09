@@ -177,6 +177,11 @@ namespace FriendlySkeletonWand
                 });
                 #endregion
 
+                #region CustomPrefabs
+                GameObject largeCargoCratePrefab = LoadPrefabFromBundle(LargeCargoCrate.PrefabName, chebgonazAssetBundle);
+                PrefabManager.Instance.AddPrefab(new CustomPrefab(largeCargoCratePrefab, false));
+                #endregion
+
                 #region Creatures
                 List<string> prefabNames = new List<string>();
 
@@ -456,6 +461,28 @@ namespace FriendlySkeletonWand
             }
         }
     }
+
+    [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
+    static class NecroNeckDeathDropPatch
+    {
+        // Although Container component is on the NecroNeck, its OnDestroyed
+        // isn't called on the death of the creature. So instead, implement
+        // its same functionality in the creature's OnDeath instead.
+        static bool Prefix(CharacterDrop __instance)
+        {
+            Jotunn.Logger.LogInfo($"CharacterDrop.OnDeath: {__instance.name}");
+            if (__instance.TryGetComponent(out NecroNeckGathererMinion necroNeck))
+            {
+                if (__instance.TryGetComponent(out Container container))
+                {
+                    container.DropAllItems(container.m_destroyedLootPrefab);
+                    return false; // deny base method completion
+                }
+            }
+            return true; // permit base method to complete
+        }
+    }
+
     #endregion
 }
 

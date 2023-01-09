@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 89375298
+CRC: 529724670
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9d02eb30870972ea27f534168114b2cd
+    Hash: 347fb8a1b79c8ef2284db9adddc213ee
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 13822ed83ecd3a37a42351b8e2b2d721
+    Hash: 7bbe04e36ecbd71cc7a93d56b9e3a42e
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -67,6 +67,8 @@ ClassTypes:
   Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1137906148, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -1383431051, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1790797106, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -202,6 +204,7 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_drop.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.mat
+- Assets/_ChebGonaz/ChebGonaz_LargeCargoCrate.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_helmet_iron_mat.mat
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIron.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab

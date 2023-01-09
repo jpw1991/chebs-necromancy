@@ -166,6 +166,7 @@
     <Compile Include="Items\BlackIronLegs.cs" />
     <Compile Include="Items\BlackIronHelmet.cs" />
     <Compile Include="Minions\NecroNeckGathererMinion.cs" />
+    <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -177,6 +178,7 @@
     <Folder Include="Items\" />
     <Folder Include="Minions\" />
     <Folder Include="Commands\" />
+    <Folder Include="CustomPrefabs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package\manifest.json" />

@@ -38,7 +38,7 @@ namespace FriendlySkeletonWand.Minions
 
         private void Update()
         {
-            if (Time.time > updateDelay)
+            if (ZNet.instance != null && Time.time > updateDelay)
             {
                 LookForNearbyItems();
 
@@ -77,7 +77,6 @@ namespace FriendlySkeletonWand.Minions
             }
 
             container.Save();
-
 
             if (itemDrop.GetComponent<ZNetView>() == null)
                 DestroyImmediate(itemDrop.gameObject);
