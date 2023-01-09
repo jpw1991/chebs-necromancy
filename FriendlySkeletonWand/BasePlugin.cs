@@ -567,7 +567,7 @@ namespace FriendlySkeletonWand
                     bodyArmor += humanoid.m_helmetItem != null
                         ? humanoid.m_helmetItem.m_shared.m_armor : 0;
                 }
-
+                bodyArmor *= SkeletonWand.skeletonArmorValueMultiplier.Value;
                 hit.ApplyArmor(bodyArmor);
                 Jotunn.Logger.LogInfo($"{__instance.name} applied body armor {bodyArmor}");
                 // // //

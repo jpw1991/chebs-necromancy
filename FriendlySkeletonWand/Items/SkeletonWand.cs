@@ -55,6 +55,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<float> poisonSkeletonBaseHealth;
         public static ConfigEntry<int> poisonSkeletonGuckRequiredConfig;
         public static ConfigEntry<float> poisonSkeletonNecromancyLevelIncrease;
+        public static ConfigEntry<float> skeletonArmorValueMultiplier;
 
         public override string ItemName { get { return "ChebGonaz_SkeletonWand"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonWand.prefab"; } }
@@ -135,6 +136,10 @@ namespace FriendlySkeletonWand
 
             poisonSkeletonNecromancyLevelIncrease = plugin.Config.Bind("Server config", "PoisonSkeletonNecromancyLevelIncrease",
                 3f, new ConfigDescription("How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            skeletonArmorValueMultiplier = plugin.Config.Bind("Server config", "SkeletonArmorValueMultiplier",
+                1f, new ConfigDescription("If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
