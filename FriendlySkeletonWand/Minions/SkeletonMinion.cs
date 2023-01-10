@@ -43,7 +43,26 @@ namespace FriendlySkeletonWand.Minions
             // by the time player arrives, ZNet stuff is certainly ready
             if (TryGetComponent(out Humanoid humanoid))
             {
-                humanoid.GiveDefaultItems();
+                // VisEquipment remembers what armor the skeleton is wearing.
+                // Exploit this to reapply the armor so the armor values work
+                // again.
+                List<int> equipmentHashes = new List<int>()
+                {
+                    humanoid.m_visEquipment.m_currentChestItemHash,
+                    humanoid.m_visEquipment.m_currentLegItemHash,
+                    humanoid.m_visEquipment.m_currentHelmetItemHash
+                };
+                equipmentHashes.ForEach(hash =>
+                {
+                    ZNetScene.instance.GetPrefab(hash);
+
+                    GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
+                    if (equipmentPrefab != null)
+                    {
+                        //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
+                        humanoid.GiveDefaultItem(equipmentPrefab);
+                    }
+                });
             }
         }
 
