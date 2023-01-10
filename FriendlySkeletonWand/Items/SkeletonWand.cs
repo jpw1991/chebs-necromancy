@@ -74,15 +74,15 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("Server config", "Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("Server config", "Skeleton Wand Crafting Station",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("Server config", "Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("Server config", "Skeleton Wand Crafting Station Level",
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("Server config", "Crafting Costs",
+            craftingCost = plugin.Config.Bind("Server config", "Skeleton Wand Crafting Costs",
                 "Wood:5", new ConfigDescription("Materials needed to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
@@ -165,12 +165,6 @@ namespace FriendlySkeletonWand
             // add any extra buttons
         }
 
-        public override CustomItem GetCustomItem(Sprite icon = null)
-        {
-            Jotunn.Logger.LogError("I shouldn't be called");
-            return null;
-        }
-
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
             ItemConfig config = new ItemConfig();
@@ -183,35 +177,13 @@ namespace FriendlySkeletonWand
                 config.Enabled = false;
             }
 
-            if (allowed.Value)
-            {
-                // Add a material to the recipe
-                void addMaterial(string material)
-                {
-                    string[] materialSplit = material.Split(':');
-                    string materialName = materialSplit[0];
-                    int materialAmount = int.Parse(materialSplit[1]);
-                    config.AddRequirement(new RequirementConfig(materialName, materialAmount, materialAmount*2));
-                }
-                
-                config.CraftingStation = ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First()).internalName;
-
-                // Material config format ex: Wood:5,Stone:1,Resin:1
-                if (craftingCost.Value.Contains(','))
-                {
-                    string[] materialList = craftingCost.Value.Split(',');
-                    foreach (string material in materialList)
-                    {
-                        addMaterial(material);
-                    }                   
-                } else
-                {
-                    addMaterial(craftingCost.Value);
-                }                
-            }
-
-            // Set the minimum required station level to craft
-            config.MinStationLevel = craftingStationLevel.Value;
+            // set recipe requirements
+            this.SetRecipeReqs(
+                config,
+                craftingCost,
+                craftingStationRequired,
+                craftingStationLevel
+            );
 
             CustomItem customItem = new CustomItem(prefab, false, config);
             if (customItem == null)

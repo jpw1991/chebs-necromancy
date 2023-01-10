@@ -18,6 +18,10 @@ namespace FriendlySkeletonWand
     {
         public static ConfigEntry<int> maxDraugr;
 
+        public static ConfigEntry<CraftingTable> craftingStationRequired;
+        public static ConfigEntry<int> craftingStationLevel;
+        public static ConfigEntry<string> craftingCost;
+
         public static ConfigEntry<bool> draugrAllowed;
 
         public static ConfigEntry<float> draugrBaseHealth;
@@ -39,7 +43,19 @@ namespace FriendlySkeletonWand
             allowed = plugin.Config.Bind("Server config", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+ 
+            craftingStationRequired = plugin.Config.Bind("Server config", "Draugr Wand Crafting Station",
+                CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
+            craftingStationLevel = plugin.Config.Bind("Server config", "Draugr Wand Crafting Station Level",
+                1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            craftingCost = plugin.Config.Bind("Server config", "Draugr Wand Crafting Costs",
+                "Wood:5", new ConfigDescription("Materials needed to craft Skeleton Wand", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+ 
             draugrAllowed = plugin.Config.Bind("Server config", "DraugrAllowed",
                 true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -95,6 +111,15 @@ namespace FriendlySkeletonWand
             config.Description = "$item_friendlyskeletonwand_draugrwand_desc";
             if (allowed.Value)
             {
+
+                // set recipe requirements
+                this.SetRecipeReqs(
+                    config,
+                    craftingCost,
+                    craftingStationRequired,
+                    craftingStationLevel
+                );
+
                 config.CraftingStation = "piece_workbench";
                 config.AddRequirement(new RequirementConfig("ElderBark", 5));
                 config.AddRequirement(new RequirementConfig("FineWood", 5));

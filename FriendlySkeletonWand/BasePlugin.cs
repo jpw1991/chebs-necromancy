@@ -349,8 +349,8 @@ namespace FriendlySkeletonWand
         [HarmonyPrefix]
         static void addBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
         {
-            if (SkeletonWand.boneFragmentsDroppedAmountMin.Value != 0
-                && SkeletonWand.boneFragmentsDroppedAmountMax.Value != 0)
+            if (SkeletonWand.boneFragmentsDroppedAmountMin.Value >= 0
+                && SkeletonWand.boneFragmentsDroppedAmountMax.Value > 0)
             {
                 CharacterDrop.Drop bones = new CharacterDrop.Drop();
                 bones.m_prefab = ZNetScene.instance.GetPrefab("BoneFragments");
