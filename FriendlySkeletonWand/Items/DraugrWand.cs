@@ -40,51 +40,50 @@ namespace FriendlySkeletonWand
         {
             base.CreateConfigs(plugin);
 
-            allowed = plugin.Config.Bind("Server config", "DraugrWandAllowed",
+            draugrSetFollowRange = plugin.Config.Bind("DraugrWand (Client)", "DraugrCommandRange",
+            10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
+
+            allowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
  
-            craftingStationRequired = plugin.Config.Bind("Server config", "Draugr Wand Crafting Station",
-                CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
+            craftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "Draugr Wand Crafting Station",
+                CraftingTable.Forge, new ConfigDescription("Crafting station where Draugr Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("Server config", "Draugr Wand Crafting Station Level",
-                1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
+            craftingStationLevel = plugin.Config.Bind("DraugrWand (Server Synced)", "Draugr Wand Crafting Station Level",
+                1, new ConfigDescription("Crafting station level required to craft Draugr Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("Server config", "Draugr Wand Crafting Costs",
-                "Wood:5", new ConfigDescription("Materials needed to craft Skeleton Wand", null,
+            craftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "Draugr Wand Crafting Costs",
+                "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1", new ConfigDescription("Materials needed to craft Draugr Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
  
-            draugrAllowed = plugin.Config.Bind("Server config", "DraugrAllowed",
+            draugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",
                 true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrBaseHealth = plugin.Config.Bind("Server config", "DraugrBaseHealth",
+            draugrBaseHealth = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBaseHealth",
                 100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrHealthMultiplier = plugin.Config.Bind("Server config", "DraugrHealthMultiplier",
+            draugrHealthMultiplier = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrHealthMultiplier",
                 5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrSetFollowRange = plugin.Config.Bind("Server config", "DraugrCommandRange",
-                10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            draugrMeatRequiredConfig = plugin.Config.Bind("Server config", "DraugrMeatRequired",
+            draugrMeatRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrMeatRequired",
                 1, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("Server config", "DraugrBoneFragmentsRequired",
+            draugrBoneFragmentsRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBoneFragmentsRequired",
                 3, new ConfigDescription("How many bone fragments it costs to make a Draugr.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            necromancyLevelIncrease = plugin.Config.Bind("Server config", "DraugrNecromancyLevelIncrease",
+            necromancyLevelIncrease = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrNecromancyLevelIncrease",
                 1.5f, new ConfigDescription("How much creating a Draugr contributes to your Necromancy level increasing.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            maxDraugr = plugin.Config.Bind("Server config", "MaximumDraugr",
+            maxDraugr = plugin.Config.Bind("DraugrWand (Server Synced)", "MaximumDraugr",
                 0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
@@ -98,20 +97,14 @@ namespace FriendlySkeletonWand
             
         }
 
-        public override CustomItem GetCustomItem(Sprite icon = null)
-        {
-            Jotunn.Logger.LogError("I shouldn't be called");
-            return null;
-        }
-
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
             ItemConfig config = new ItemConfig();
             config.Name = "$item_friendlyskeletonwand_draugrwand";
             config.Description = "$item_friendlyskeletonwand_draugrwand_desc";
+
             if (allowed.Value)
             {
-
                 // set recipe requirements
                 this.SetRecipeReqs(
                     config,
@@ -119,15 +112,13 @@ namespace FriendlySkeletonWand
                     craftingStationRequired,
                     craftingStationLevel
                 );
-
-                config.CraftingStation = "piece_workbench";
-                config.AddRequirement(new RequirementConfig("ElderBark", 5));
-                config.AddRequirement(new RequirementConfig("FineWood", 5));
-                config.AddRequirement(new RequirementConfig("Bronze", 5));
-                config.AddRequirement(new RequirementConfig("TrophyDraugr", 1));
+            }
+            else
+            {
+                config.Enabled = false;
             }
 
-            CustomItem customItem = new CustomItem(prefab, false, config);
+    CustomItem customItem = new CustomItem(prefab, false, config);
             if (customItem == null)
             {
                 Jotunn.Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
