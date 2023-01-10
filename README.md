@@ -2,6 +2,8 @@
 
 This mod adds a craftable wand which can be used to create skeletons with. These skeletons are supposed to guard your base and hang around the general vicinity of wherever you create them.
 
+**Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/Friendly-Skeleton-Wand/releases). Although less tested than the official releases, they are still tested pretty well.
+
 ## Important Update Note for pre-1.0.8
 
 <details><summary>If you are upgrading from 1.0.7 or lower, your skeletons will still be there but you won't be able to command them anymore! <b>This is not a bug.</b></summary>The old skeletons used the existing Mistlands `Skeleton_Friendly` prefab which belongs to Blood Magic. In 1.0.8 these have been replaced with my own custom prefabs: `ChebGonaz_SkeletonWarrior` and `ChebGonaz_SkeletonArcher`. This gives you the control to choose either kind, instead of it being random, and also stops Blood Magic from levelling up from this mod.</details>
