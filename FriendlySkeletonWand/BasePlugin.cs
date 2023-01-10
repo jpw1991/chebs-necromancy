@@ -424,21 +424,26 @@ namespace FriendlySkeletonWand
         // stop minions from damaging player structures
         static void Prefix(ref HitData hit, Piece ___m_piece)
         {
-            if (hit.GetAttacker().TryGetComponent(out UndeadMinion undeadMinion))
+            if (hit != null)
             {
-                if (___m_piece.IsPlacedByPlayer())
+                Character attacker = hit.GetAttacker();
+                if (attacker != null 
+                    && attacker.TryGetComponent(out UndeadMinion undeadMinion))
                 {
-                    hit.m_damage.m_damage = 0f;
-                    hit.m_damage.m_blunt = 0f;
-                    hit.m_damage.m_slash = 0f;
-                    hit.m_damage.m_pierce = 0f;
-                    hit.m_damage.m_chop = 0f;
-                    hit.m_damage.m_pickaxe = 0f;
-                    hit.m_damage.m_fire = 0f;
-                    hit.m_damage.m_frost = 0f;
-                    hit.m_damage.m_lightning = 0f;
-                    hit.m_damage.m_poison = 0f;
-                    hit.m_damage.m_spirit = 0f;
+                    if (___m_piece.IsPlacedByPlayer())
+                    {
+                        hit.m_damage.m_damage = 0f;
+                        hit.m_damage.m_blunt = 0f;
+                        hit.m_damage.m_slash = 0f;
+                        hit.m_damage.m_pierce = 0f;
+                        hit.m_damage.m_chop = 0f;
+                        hit.m_damage.m_pickaxe = 0f;
+                        hit.m_damage.m_fire = 0f;
+                        hit.m_damage.m_frost = 0f;
+                        hit.m_damage.m_lightning = 0f;
+                        hit.m_damage.m_poison = 0f;
+                        hit.m_damage.m_spirit = 0f;
+                    }
                 }
             }
         }
