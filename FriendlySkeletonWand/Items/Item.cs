@@ -48,8 +48,6 @@ namespace FriendlySkeletonWand
             )
         {
 
-            UndeadMinion
-
             // function to add a single material to the recipe
             void addMaterial(string material)
             {
