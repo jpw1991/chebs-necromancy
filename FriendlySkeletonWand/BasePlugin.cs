@@ -30,7 +30,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.4.0";
+        public const string PluginVersion = "1.4.1";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -99,6 +99,8 @@ namespace FriendlySkeletonWand
                 #endregion
 
                 #region Items
+                // by great Cthulhu, this needs refactoring!
+                //
                 GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
