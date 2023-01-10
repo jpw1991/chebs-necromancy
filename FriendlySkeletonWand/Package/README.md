@@ -16,6 +16,15 @@ I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy 
 
 Thank you and I hope you enjoy the mod! If you have questions or need help please join my [Discord](https://discord.com/invite/EB96ASQ).
 
+## Reporting Bugs & Requesting Features
+
+If you would like to report a bug or request a feature, the best way to do it (in order from most preferable to least preferable) is:
+
+a) Create an issue on my [GitHub](https://github.com/jpw1991/Friendly-Skeleton-Wand).
+b) Create a bug report on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=bugs).
+c) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
+d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
+
 ## Requirements
 
 - Valheim Mistlands
@@ -89,6 +98,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+09/01/2023 | 1.4.1 | Fix minions not remembering their armor values
 09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer
 07/01/2023 | 1.3.0 | Add server sync so that clients must use the configuration options of the server
 07/01/2023 | 1.2.1 | Add black iron armor; permit skeletons to use black iron armor; rebalance spirit pylon by introducing a delay and a limit (both configurable)
@@ -139,7 +149,8 @@ You can find the github [here](https://github.com/jpw1991/Friendly-Skeleton-Wand
 
 ## Special Thanks
 
-- Dracbjorn for development help & testing
-- S970X for making the German language localization for the mod.
-- Ramblez for texturing help
+- **Dracbjorn** for development help & testing
+- **S970X** for making the German language localization for the mod.
+- **Ramblez** for texturing help
+- **redseiko** for helpful advice on the official Valheim modding Discord.
 

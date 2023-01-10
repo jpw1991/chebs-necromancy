@@ -98,6 +98,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+09/01/2023 | 1.4.1 | Fix minions not remembering their armor values
 09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer
 07/01/2023 | 1.3.0 | Add server sync so that clients must use the configuration options of the server
 07/01/2023 | 1.2.1 | Add black iron armor; permit skeletons to use black iron armor; rebalance spirit pylon by introducing a delay and a limit (both configurable)
