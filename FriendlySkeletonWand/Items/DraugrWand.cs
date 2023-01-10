@@ -26,6 +26,11 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<float> draugrBaseHealth;
         public static ConfigEntry<float> draugrHealthMultiplier;
+        public static ConfigEntry<int> draugrTierOneQuality;
+        public static ConfigEntry<int> draugrTierTwoQuality;
+        public static ConfigEntry<int> draugrTierTwoLevelReq;
+        public static ConfigEntry<int> draugrTierThreeQuality;
+        public static ConfigEntry<int> draugrTierThreeLevelReq;
         public static ConfigEntry<float> draugrSetFollowRange;
 
         private ConfigEntry<float> necromancyLevelIncrease;
@@ -70,6 +75,26 @@ namespace FriendlySkeletonWand
             draugrHealthMultiplier = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrHealthMultiplier",
                 5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            draugrTierOneQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierOneQuality",
+             1, new ConfigDescription("Quality of tier 1 Draugr minions", null,
+             new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            draugrTierTwoQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoQuality",
+             2, new ConfigDescription("Quality of tier 2 Draugr minions", null,
+             new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            draugrTierTwoLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoLevelReq",
+             35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Draugr", null,
+             new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            draugrTierThreeQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeQuality",
+             3, new ConfigDescription("Quality of tier 3 Draugr minions", null,
+             new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            draugrTierThreeLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeLevelReq",
+             70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Draugr", null,
+             new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             draugrMeatRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrMeatRequired",
                 1, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
@@ -314,9 +339,9 @@ namespace FriendlySkeletonWand
             }
             Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
-            int quality = 1;
-            if (playerNecromancyLevel >= 70) { quality = 3; }
-            else if (playerNecromancyLevel >= 35) { quality = 2; }
+            int quality = draugrTierOneQuality.Value;
+            if (playerNecromancyLevel >= draugrTierThreeLevelReq.Value) { quality = draugrTierThreeQuality.Value; }
+            else if (playerNecromancyLevel >= draugrTierTwoLevelReq.Value) { quality = draugrTierTwoQuality.Value; }
 
             // go on to spawn draugr
             string prefabName = archer ? "ChebGonaz_DraugrArcher" : "ChebGonaz_DraugrWarrior";
