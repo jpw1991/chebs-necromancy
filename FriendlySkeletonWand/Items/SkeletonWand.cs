@@ -72,7 +72,7 @@ namespace FriendlySkeletonWand
             base.CreateConfigs(plugin);
 
             skeletonSetFollowRange = plugin.Config.Bind("SkeletonWand (Client)", "SkeletonCommandRange",
-            10f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
+            20f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
 
             allowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandAllowed",
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
