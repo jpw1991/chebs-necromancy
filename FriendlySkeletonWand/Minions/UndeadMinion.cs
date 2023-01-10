@@ -8,14 +8,13 @@ namespace FriendlySkeletonWand
     internal class UndeadMinion : MonoBehaviour
     {
         // we add this component to the creatures we create in the mod
-        // so that we can use .GetComponent<FriendlySkeletonMinion>()
+        // so that we can use .GetComponent<UndeadMinion>()
         // to determine whether a creature was created by the mod, or
         // whether it was created by something else.
         //
         // This allows us to only call wait/follow/whatever on minions
-        // that the mod has created and it also persists across sessions,
-        // unlike gameObject.name, so that these commands will work
-        // even after logging out and coming back in.
+        // that the mod has created. The component is lost between sessions
+        // so it must be checked for in Awake and readded (see harmony patching).
 
         public bool canBeCommanded = true;
 
