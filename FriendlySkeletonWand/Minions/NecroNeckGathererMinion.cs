@@ -179,7 +179,7 @@ namespace FriendlySkeletonWand.Minions
             //
             //if (nearbyPieces.Count < 1) return false;
             Collider[] nearbyPieces = Physics.OverlapSphere(transform.position + Vector3.up, dropoffPointRadius.Value, pieceMask);
-            if (nearbyPieces.Length < 1) { Jotunn.Logger.LogInfo("crikey"); return false; }
+            if (nearbyPieces.Length < 1) return false;
 
             // order piece from closest to furthest, then take closest container
             Container closest = nearbyPieces

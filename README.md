@@ -69,7 +69,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 - As of 1.2.0, debug commands that affect minions across the entire world/universe:
   - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
   - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
-- As of 1.4.0 you can summon a ChebGonaz_NecroNeck via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
+- As of 1.4.0 you can summon a ChebGonaz_NecroNeck via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner. It also brings items to chests and tries to deposit them.
 
 ### Config
 
@@ -100,6 +100,7 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+09/01/2023 | 1.4.2 | Neckro Gatherer now brings items back to empty containers and stores them
 09/01/2023 | 1.4.1 | Fix minions not remembering their armor values
 09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer
 07/01/2023 | 1.3.0 | Add server sync so that clients must use the configuration options of the server

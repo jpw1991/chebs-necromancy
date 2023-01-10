@@ -1,7 +1,7 @@
 ﻿{
   "name": "FriendlySkeletonWand",
   "description": "Adds craftable wands that can be used to create friendly skeletons and draugr to follow you and guard your base with.",
-  "version_number": "1.4.1",
+  "version_number": "1.4.2",
   "website_url": "chebgonaz.pythonanywhere.com",
   "dependencies": [
     "ValheimModding-Jotunn-2.10.0"
