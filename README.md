@@ -2,6 +2,8 @@
 
 This mod adds a craftable wand which can be used to create skeletons with. These skeletons are supposed to guard your base and hang around the general vicinity of wherever you create them.
 
+**Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/Friendly-Skeleton-Wand/releases). Although less tested than the official releases, they are still tested pretty well.
+
 ## Important Update Note for pre-1.0.8
 
 <details><summary>If you are upgrading from 1.0.7 or lower, your skeletons will still be there but you won't be able to command them anymore! <b>This is not a bug.</b></summary>The old skeletons used the existing Mistlands `Skeleton_Friendly` prefab which belongs to Blood Magic. In 1.0.8 these have been replaced with my own custom prefabs: `ChebGonaz_SkeletonWarrior` and `ChebGonaz_SkeletonArcher`. This gives you the control to choose either kind, instead of it being random, and also stops Blood Magic from levelling up from this mod.</details>
@@ -15,6 +17,15 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
 Thank you and I hope you enjoy the mod! If you have questions or need help please join my [Discord](https://discord.com/invite/EB96ASQ).
+
+## Reporting Bugs & Requesting Features
+
+If you would like to report a bug or request a feature, the best way to do it (in order from most preferable to least preferable) is:
+
+a) Create an issue on my [GitHub](https://github.com/jpw1991/Friendly-Skeleton-Wand).
+b) Create a bug report on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=bugs).
+c) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
+d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
 
 ## Requirements
 
@@ -58,6 +69,7 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 - As of 1.2.0, debug commands that affect minions across the entire world/universe:
   - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
   - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
+- As of 1.4.0 you can summon a ChebGonaz_NecroNeck via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner. It also brings items to chests and tries to deposit them.
 
 ### Config
 
@@ -88,6 +100,9 @@ A: Make sure your necromancy level is high enough and have some Guck in your inv
 
 Date | Version | Notes
 --- | --- | ---
+09/01/2023 | 1.4.2 | Neckro Gatherer now brings items back to empty containers and stores them
+09/01/2023 | 1.4.1 | Fix minions not remembering their armor values
+09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer
 07/01/2023 | 1.3.0 | Add server sync so that clients must use the configuration options of the server
 07/01/2023 | 1.2.1 | Add black iron armor; permit skeletons to use black iron armor; rebalance spirit pylon by introducing a delay and a limit (both configurable)
 06/01/2023 | 1.2.0 | Fix bug of skeletons not remembering their weapons properly; fix problem of tier 3 melee weapon not being stronger than tier 2; add debug commands for players to kill all their skeletons or summon them all
@@ -137,7 +152,8 @@ You can find the github [here](https://github.com/jpw1991/Friendly-Skeleton-Wand
 
 ## Special Thanks
 
-- Dracbjorn for development help & testing
-- S970X for making the German language localization for the mod.
-- Ramblez for texturing help
+- **Dracbjorn** for development help & testing
+- **S970X** for making the German language localization for the mod.
+- **Ramblez** for texturing help
+- **redseiko** for helpful advice on the official Valheim modding Discord.
 

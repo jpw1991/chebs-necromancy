@@ -36,11 +36,34 @@ namespace FriendlySkeletonWand.Minions
 
         IEnumerator WaitForLocalPlayer()
         {
-            while (Player.m_localPlayer == null)
-            {
-                yield return new WaitForSeconds(1);
-            }
+            yield return new WaitUntil(() => Player.m_localPlayer != null);
+
             ScaleStats(Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
+
+            // by the time player arrives, ZNet stuff is certainly ready
+            if (TryGetComponent(out Humanoid humanoid))
+            {
+                // VisEquipment remembers what armor the skeleton is wearing.
+                // Exploit this to reapply the armor so the armor values work
+                // again.
+                List<int> equipmentHashes = new List<int>()
+                {
+                    humanoid.m_visEquipment.m_currentChestItemHash,
+                    humanoid.m_visEquipment.m_currentLegItemHash,
+                    humanoid.m_visEquipment.m_currentHelmetItemHash
+                };
+                equipmentHashes.ForEach(hash =>
+                {
+                    ZNetScene.instance.GetPrefab(hash);
+
+                    GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
+                    if (equipmentPrefab != null)
+                    {
+                        //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
+                        humanoid.GiveDefaultItem(equipmentPrefab);
+                    }
+                });
+            }
         }
 
         public virtual void ScaleStats(float necromancyLevel)
@@ -78,7 +101,6 @@ namespace FriendlySkeletonWand.Minions
             // and running away from enemies.
             //
             // Fortunately, armor seems to work fine.
-
             if (leatherArmor)
             {
                 defaultItems.AddRange(new GameObject[] {
@@ -117,6 +139,8 @@ namespace FriendlySkeletonWand.Minions
             }
 
             humanoid.m_defaultItems = defaultItems.ToArray();
+
+            humanoid.GiveDefaultItems();
         }
     }
 }

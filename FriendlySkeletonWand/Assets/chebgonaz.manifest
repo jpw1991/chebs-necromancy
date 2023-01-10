@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3560796974
+CRC: 1211722759
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1c91d595143a77258e036d30076f01bb
+    Hash: f653aa85caa11ac52f3271b619687dfd
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 80481c417d4ed3cc366bc5ad63973d7e
+    Hash: 2586088ccc21689f143257bdd9be84db
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -60,6 +60,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 825357479, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1790797106, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1578695569, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 895252998, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -67,6 +69,10 @@ ClassTypes:
   Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1137906148, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -1383431051, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -347224168, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1266444067, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -129,6 +135,8 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: Attack
 - AssemblyName: assembly_valheim
+  ClassName: DropTable
+- AssemblyName: assembly_valheim
   ClassName: EffectList
 - AssemblyName: assembly_valheim
   ClassName: EffectList/EffectData
@@ -166,6 +174,8 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel3.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageCirclet.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronChest.prefab
+- Assets/_ChebGonaz/ChebGonaz_Neck.mat
+- Assets/_ChebGonaz/ChebGonaz_NecroNeck.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronLegs.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcher.prefab
@@ -194,6 +204,7 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_DraugrWand.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_drop.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.mat
+- Assets/_ChebGonaz/ChebGonaz_LargeCargoCrate.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_helmet_iron_mat.mat
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIron.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab
