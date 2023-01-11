@@ -15,6 +15,7 @@ namespace FriendlySkeletonWand
     internal class SpiritPylon : MonoBehaviour
     {
         public static ConfigEntry<bool> allowed;
+        public static string defaultCraftingCost;
         public static ConfigEntry<string> craftingCost;
         public static ConfigEntry<float> sightRadius;
         public static ConfigEntry<float> ghostDuration;
@@ -28,23 +29,6 @@ namespace FriendlySkeletonWand
 
         private float ghostLastSpawnedAt;
 
-        //Jotunn.Logger.LogInfo($"Loading {SpiritPylon.PrefabName}...");
-         //           if (spiritPylonPrefab == null)
-          //          {
-            //            Jotunn.Logger.LogError($"AddCustomStructures: {SpiritPylon.PrefabName} is null!");
-              //          return;
-                //    }
-
-    //spiritPylonPrefab.AddComponent<SpiritPylon>();
-
-      //              PieceConfig spiritPylon = new PieceConfig();
-    // spiritPylon.PieceTable = "";
-    //SpiritPylon.SetRequirements(spiritPylon);
-      //              spiritPylon.Icon = chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName);
-
-                    
-        //        }
-
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {
             PieceConfig config = new PieceConfig();
@@ -53,6 +37,10 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
+                if (craftingCost.Value == null || craftingCost.Value == "")
+                {
+                    craftingCost.Value = defaultCraftingCost;
+                }
                 // set recipe requirements
                 SetRecipeReqs(config, craftingCost);
             }
@@ -114,8 +102,10 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
+            defaultCraftingCost = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
+
             craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
-                "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1", new ConfigDescription("Materials needed to build Spirit Pylon", null,
+                defaultCraftingCost, new ConfigDescription("Materials needed to build Spirit Pylon. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             sightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",

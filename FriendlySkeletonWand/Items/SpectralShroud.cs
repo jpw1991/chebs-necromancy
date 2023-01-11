@@ -18,8 +18,15 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<int> necromancySkillBonus;
         public static ConfigEntry<int> delayBetweenWraithSpawns;
 
+        public static ConfigEntry<int> guardianWraithTierOneQuality;
+        public static ConfigEntry<int> guardianWraithTierTwoQuality;
+        public static ConfigEntry<int> guardianWraithTierTwoLevelReq;
+        public static ConfigEntry<int> guardianWraithTierThreeQuality;
+        public static ConfigEntry<int> guardianWraithTierThreeLevelReq;
+
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
+        public static string defaultCraftingCost;
         public static ConfigEntry<string> craftingCost;
 
         private float wraithLastSpawnedAt;
@@ -32,16 +39,18 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("SpectralShroud (Server Synced)", "Spectral Shroud Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Spectral Shroud is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "Spectral Shroud Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "Spectral Shroud Crafting Costs",
-                "Chain:5,TrollHide:10", new ConfigDescription("Materials needed to craft Spectral Shroud", null,
+            defaultCraftingCost = "Chain:5,TrollHide:10";
+
+            craftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingCosts",
+                defaultCraftingCost, new ConfigDescription("Materials needed to craft Spectral Shroud. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             spawnWraith = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSpawnWraith",
@@ -55,6 +64,26 @@ namespace FriendlySkeletonWand
             delayBetweenWraithSpawns = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudWraithDelay",
                 30, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            guardianWraithTierOneQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierOneQuality",
+               1, new ConfigDescription("Star Quality of tier 1 GuardianWraith minions", null,
+               new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            guardianWraithTierTwoQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierTwoQuality",
+                2, new ConfigDescription("Star Quality of tier 2 GuardianWraith minions", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            guardianWraithTierTwoLevelReq = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierTwoLevelReq",
+                35, new ConfigDescription("Necromancy skill level required to summon Tier 2 GuardianWraith", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            guardianWraithTierThreeQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierThreeQuality",
+                3, new ConfigDescription("Star Quality of tier 3 GuardianWraith minions", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            guardianWraithTierThreeLevelReq = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierThreeLevelReq",
+                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 GuardianWraith", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public CustomItem GetCustomItemFromPrefab(GameObject prefab)
@@ -65,6 +94,10 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
+                if (craftingCost.Value == null || craftingCost.Value == "")
+                {
+                    craftingCost.Value = defaultCraftingCost;
+                }
                 // set recipe requirements
                 this.SetRecipeReqs(
                     config,
@@ -140,7 +173,7 @@ namespace FriendlySkeletonWand
         private void GuardianWraithStuff()
         {
             Player player = Player.m_localPlayer;
-            float necromancyLevel = player.GetSkillLevel(
+            float playerNecromancyLevel = player.GetSkillLevel(
                 SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
 
             if (Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
@@ -149,7 +182,7 @@ namespace FriendlySkeletonWand
             {
                 if (Time.time > wraithLastSpawnedAt + delayBetweenWraithSpawns.Value)
                 {
-                    if (necromancyLevel >= GuardianWraithMinion.guardianWraithLevelRequirement.Value)
+                    if (playerNecromancyLevel >= GuardianWraithMinion.guardianWraithLevelRequirement.Value)
                     {
                         if (EnemiesNearby(out Character enemy))
                         {
@@ -160,9 +193,9 @@ namespace FriendlySkeletonWand
                             }
                             else
                             {
-                                int quality = 1;
-                                if (necromancyLevel >= 70) { quality = 3; }
-                                else if (necromancyLevel >= 35) { quality = 2; }
+                                int quality = guardianWraithTierOneQuality.Value;
+                                if (playerNecromancyLevel >= guardianWraithTierThreeLevelReq.Value) { quality = guardianWraithTierThreeQuality.Value; }
+                                else if (playerNecromancyLevel >= guardianWraithTierTwoLevelReq.Value) { quality = guardianWraithTierTwoQuality.Value; }
 
                                 player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
                                 GameObject instance = GameObject.Instantiate(prefab,

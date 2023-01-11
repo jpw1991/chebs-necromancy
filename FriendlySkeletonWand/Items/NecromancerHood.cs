@@ -16,6 +16,7 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
+        public static string defaultCraftingCost;
         public static ConfigEntry<string> craftingCost;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
@@ -26,16 +27,18 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Necromancer's Hood is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "Necromancer Hood Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Necromancer Hood is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "Necromancer Hood Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "Necromancer Hood Crafting Costs",
-                "WitheredBone:2,TrollHide:5", new ConfigDescription("Materials needed to craft Necromancer Hood", null,
+            defaultCraftingCost = "WitheredBone:2,TrollHide:5";
+
+            craftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingCosts",
+               defaultCraftingCost, new ConfigDescription("Materials needed to craft Necromancer Hood. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             necromancySkillBonus = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodSkillBonus",
@@ -51,6 +54,10 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
+                if (craftingCost.Value == null || craftingCost.Value == "")
+                {
+                    craftingCost.Value = defaultCraftingCost;
+                }
                 // set recipe requirements
                 this.SetRecipeReqs(
                     config,

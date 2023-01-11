@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using FriendlySkeletonWand.Minions;
-using JetBrains.Annotations;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -14,7 +13,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using static FriendlySkeletonWand.Minions.SkeletonMinion;
-using static System.Collections.Specialized.BitVector32;
 
 namespace FriendlySkeletonWand
 {
@@ -37,6 +35,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
         public static ConfigEntry<string> craftingCost;
+        public static string defaultCraftingCost;
 
         public static ConfigEntry<bool> skeletonsAllowed;
 
@@ -44,6 +43,11 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<float> skeletonBaseHealth;
         public static ConfigEntry<float> skeletonHealthMultiplier;
+        public static ConfigEntry<int> skeletonTierOneQuality;
+        public static ConfigEntry<int> skeletonTierTwoQuality;
+        public static ConfigEntry<int> skeletonTierTwoLevelReq;
+        public static ConfigEntry<int> skeletonTierThreeQuality;
+        public static ConfigEntry<int> skeletonTierThreeLevelReq;
         public static ConfigEntry<float> skeletonSetFollowRange;
 
         private static ConfigEntry<float> necromancyLevelIncrease;
@@ -78,16 +82,18 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "Skeleton Wand Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "Skeleton Wand Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "Skeleton Wand Crafting Costs",
-                "Wood:5", new ConfigDescription("Materials needed to craft Skeleton Wand", null,
+            defaultCraftingCost = "Wood:5";
+
+            craftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingCosts",
+                defaultCraftingCost, new ConfigDescription("Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonsAllowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonsAllowed",
@@ -100,6 +106,26 @@ namespace FriendlySkeletonWand
 
             skeletonHealthMultiplier = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonHealthMultiplier",
                 2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            skeletonTierOneQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierOneQuality",
+                  1, new ConfigDescription("Star Quality of tier 1 Skeleton minions", null,
+                  new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            skeletonTierTwoQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoQuality",
+                2, new ConfigDescription("Star Quality of tier 2 Skeleton minions", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            skeletonTierTwoLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoLevelReq",
+                35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Skeleton", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            skeletonTierThreeQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeQuality",
+                3, new ConfigDescription("Star Quality of tier 3 Skeleton minions", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            skeletonTierThreeLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeLevelReq",
+                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Skeleton", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             boneFragmentsRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsRequired",
@@ -178,6 +204,10 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
+                if (craftingCost.Value == null || craftingCost.Value == "")
+                {
+                    craftingCost.Value = defaultCraftingCost;
+                }
                 // set recipe requirements
                 this.SetRecipeReqs(
                     config,
@@ -539,9 +569,9 @@ namespace FriendlySkeletonWand
             float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
             Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
-            int quality = 1;
-            if (playerNecromancyLevel >= 70) { quality = 3; }
-            else if (playerNecromancyLevel >= 35) { quality = 2; }
+            int quality = skeletonTierOneQuality.Value;
+            if (playerNecromancyLevel >= skeletonTierThreeLevelReq.Value) { quality = skeletonTierThreeQuality.Value; }
+            else if (playerNecromancyLevel >= skeletonTierTwoLevelReq.Value) { quality = skeletonTierTwoQuality.Value; }
 
             SkeletonType skeletonType = SkeletonType.Warrior;
             if (archer) { skeletonType = SkeletonType.Archer; }
