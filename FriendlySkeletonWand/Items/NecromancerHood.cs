@@ -10,7 +10,7 @@ namespace FriendlySkeletonWand
     {
         public override string ItemName { get { return "ChebGonaz_NecromancerHood"; } }
         public override string PrefabName { get { return "ChebGonaz_NecromancerHood.prefab"; } }
-        protected override string DefaultRecipe { get { return "WitheredBone:2,TrollHide:1"; } }
+        protected override string DefaultRecipe { get { return "WitheredBone:2,TrollHide:5"; } }
 
         public static ConfigEntry<int> necromancySkillBonus;
 
@@ -35,7 +35,7 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingCosts",
-                "WitheredBone:2,TrollHide:5", new ConfigDescription("Materials needed to craft Necromancer Hood", null,
+                DefaultRecipe, new ConfigDescription("Materials needed to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             necromancySkillBonus = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodSkillBonus",

@@ -38,7 +38,7 @@ namespace FriendlySkeletonWand
 
         public override string ItemName { get { return "ChebGonaz_DraugrWand"; } }
         public override string PrefabName { get { return "ChebGonaz_DraugrWand.prefab"; } }
-        protected override string DefaultRecipe { get { return "Wood:5,Stone:1"; } }
+        protected override string DefaultRecipe { get { return "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1"; } }
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -60,7 +60,7 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingCosts",
-                "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1", new ConfigDescription("Materials needed to craft Draugr Wand", null,
+                DefaultRecipe, new ConfigDescription("Materials needed to craft Draugr Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
  
             draugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",

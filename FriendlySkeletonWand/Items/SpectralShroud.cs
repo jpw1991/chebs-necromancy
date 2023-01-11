@@ -42,7 +42,7 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingCosts",
-                "Chain:5,TrollHide:10", new ConfigDescription("Materials needed to craft Spectral Shroud", null,
+                DefaultRecipe, new ConfigDescription("Materials needed to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             spawnWraith = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSpawnWraith",

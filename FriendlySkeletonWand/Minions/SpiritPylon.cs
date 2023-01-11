@@ -23,7 +23,7 @@ namespace FriendlySkeletonWand
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected List<GameObject> spawnedGhosts = new List<GameObject>();
 
-        protected const string DefaultRecipe = "Wood:15,BoneFragments:15,SurtlingCore:1";
+        protected const string DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
 
         private float ghostLastSpawnedAt;
 
@@ -97,7 +97,7 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonBuildCosts",
-                "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1", new ConfigDescription("Materials needed to build Spirit Pylon", null,
+                DefaultRecipe, new ConfigDescription("Materials needed to build Spirit Pylon", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             sightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
