@@ -28,11 +28,9 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStation",
-            craftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Necromancer Hood is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStationLevel",
             craftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));

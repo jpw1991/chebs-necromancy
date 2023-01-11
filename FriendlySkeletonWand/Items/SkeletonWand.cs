@@ -81,11 +81,9 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
-            craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
             craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));

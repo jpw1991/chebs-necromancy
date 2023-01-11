@@ -45,7 +45,6 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
-            craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
