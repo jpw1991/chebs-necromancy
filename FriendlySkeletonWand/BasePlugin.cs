@@ -4,20 +4,16 @@
 // Project: FriendlySkeletonWand
 
 using BepInEx;
-using BepInEx.Configuration;
 using FriendlySkeletonWand.Commands;
 using FriendlySkeletonWand.Minions;
 using HarmonyLib;
-using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 
@@ -246,12 +242,12 @@ namespace FriendlySkeletonWand
                 #endregion
 
                 #region Structures   
-                
-                SpiritPylon spiritPylon = new SpiritPylon();
                 GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.PrefabName);
                 spiritPylonPrefab.AddComponent<SpiritPylon>();
-                PieceManager.Instance.AddPiece(new SpiritPylon().GetCustomPieceFromPrefab(spiritPylonPrefab, chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName)));
-            
+                PieceManager.Instance.AddPiece(
+                    new SpiritPylon().GetCustomPieceFromPrefab(spiritPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName))
+                    );
                 #endregion
             }
             catch (Exception ex)

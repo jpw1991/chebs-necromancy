@@ -3,7 +3,6 @@ using Jotunn.Entities;
 using BepInEx;
 using BepInEx.Configuration;
 using UnityEngine;
-using Jotunn.Managers;
 
 namespace FriendlySkeletonWand
 {
@@ -11,6 +10,7 @@ namespace FriendlySkeletonWand
     {
         public override string ItemName { get { return "ChebGonaz_NecromancerHood"; } }
         public override string PrefabName { get { return "ChebGonaz_NecromancerHood.prefab"; } }
+        protected override string DefaultRecipe { get { return "WitheredBone:2,TrollHide:1"; } }
 
         public static ConfigEntry<int> necromancySkillBonus;
 
@@ -26,15 +26,15 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Necromancer's Hood is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "Necromancer Hood Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Necromancer Hood is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "Necromancer Hood Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "Necromancer Hood Crafting Costs",
+            craftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingCosts",
                 "WitheredBone:2,TrollHide:5", new ConfigDescription("Materials needed to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 

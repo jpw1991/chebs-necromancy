@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Managers;
 using UnityEngine;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace FriendlySkeletonWand.Minions
 {

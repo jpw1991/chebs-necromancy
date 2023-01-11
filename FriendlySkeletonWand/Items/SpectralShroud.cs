@@ -13,6 +13,7 @@ namespace FriendlySkeletonWand
     {
         public override string ItemName { get { return "ChebGonaz_SpectralShroud"; } }
         public override string PrefabName { get { return "ChebGonaz_SpectralShroud.prefab"; } }
+        protected override string DefaultRecipe { get { return "Chain:5,TrollHide:10"; } }
 
         public static ConfigEntry<bool> spawnWraith;
         public static ConfigEntry<int> necromancySkillBonus;
@@ -32,15 +33,15 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("SpectralShroud (Server Synced)", "Spectral Shroud Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Spectral Shroud is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "Spectral Shroud Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "Spectral Shroud Crafting Costs",
+            craftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingCosts",
                 "Chain:5,TrollHide:10", new ConfigDescription("Materials needed to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 

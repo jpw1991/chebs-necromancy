@@ -1,7 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using FriendlySkeletonWand.Minions;
-using JetBrains.Annotations;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -9,12 +8,8 @@ using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using static FriendlySkeletonWand.Minions.SkeletonMinion;
-using static System.Collections.Specialized.BitVector32;
 
 namespace FriendlySkeletonWand
 {
@@ -66,6 +61,7 @@ namespace FriendlySkeletonWand
 
         public override string ItemName { get { return "ChebGonaz_SkeletonWand"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonWand.prefab"; } }
+        protected override string DefaultRecipe { get { return "Wood:5,Stone:1"; } }
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -78,15 +74,15 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "Skeleton Wand Crafting Station",
+            craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "Skeleton Wand Crafting Station Level",
+            craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "Skeleton Wand Crafting Costs",
+            craftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingCosts",
                 "Wood:5", new ConfigDescription("Materials needed to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 

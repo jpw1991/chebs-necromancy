@@ -1,7 +1,5 @@
 ﻿using Jotunn.Configs;
 using Jotunn.Entities;
-using BepInEx;
-using BepInEx.Configuration;
 using UnityEngine;
 
 namespace FriendlySkeletonWand

@@ -1,10 +1,6 @@
-﻿using Jotunn.Entities;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using BepInEx;
-using UnityEngine;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Jotunn.Configs;
 using System.Reflection;
 using System.Linq;
@@ -36,6 +32,9 @@ namespace FriendlySkeletonWand
         public virtual string PrefabName { get { return ""; } }
 
         public virtual void CreateConfigs(BaseUnityPlugin plugin) {}
+
+        // todo: revert to default configuration if errors present
+        protected virtual string DefaultRecipe { get { return ""; } }
 
         //
         // Summary:

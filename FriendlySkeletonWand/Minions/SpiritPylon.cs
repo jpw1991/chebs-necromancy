@@ -3,11 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Jotunn.Configs;
-using Jotunn.Managers;
 using BepInEx.Configuration;
 using System.Linq;
-using System;
-using FriendlySkeletonWand;
 using Jotunn.Entities;
 
 namespace FriendlySkeletonWand
@@ -26,24 +23,9 @@ namespace FriendlySkeletonWand
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected List<GameObject> spawnedGhosts = new List<GameObject>();
 
+        protected const string DefaultRecipe = "Wood:15,BoneFragments:15,SurtlingCore:1";
+
         private float ghostLastSpawnedAt;
-
-        //Jotunn.Logger.LogInfo($"Loading {SpiritPylon.PrefabName}...");
-         //           if (spiritPylonPrefab == null)
-          //          {
-            //            Jotunn.Logger.LogError($"AddCustomStructures: {SpiritPylon.PrefabName} is null!");
-              //          return;
-                //    }
-
-    //spiritPylonPrefab.AddComponent<SpiritPylon>();
-
-      //              PieceConfig spiritPylon = new PieceConfig();
-    // spiritPylon.PieceTable = "";
-    //SpiritPylon.SetRequirements(spiritPylon);
-      //              spiritPylon.Icon = chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName);
-
-                    
-        //        }
 
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {
@@ -114,7 +96,7 @@ namespace FriendlySkeletonWand
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
+            craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonBuildCosts",
                 "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1", new ConfigDescription("Materials needed to build Spirit Pylon", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
