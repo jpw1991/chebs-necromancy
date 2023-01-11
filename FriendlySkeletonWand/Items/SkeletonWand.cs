@@ -8,9 +8,6 @@ using Jotunn.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using static FriendlySkeletonWand.Minions.SkeletonMinion;
 
@@ -70,6 +67,7 @@ namespace FriendlySkeletonWand
 
         public override string ItemName { get { return "ChebGonaz_SkeletonWand"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonWand.prefab"; } }
+        protected override string DefaultRecipe { get { return "Wood:5,Stone:1"; } }
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -83,9 +81,11 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
+            craftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
+            craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
             craftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));

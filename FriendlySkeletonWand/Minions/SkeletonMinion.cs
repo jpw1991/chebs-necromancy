@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Jotunn.Managers;
 using UnityEngine;
+
 namespace FriendlySkeletonWand.Minions
 {
     internal class SkeletonMinion : UndeadMinion

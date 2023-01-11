@@ -1,7 +1,5 @@
 ﻿using Jotunn.Configs;
 using Jotunn.Entities;
-using BepInEx;
-using BepInEx.Configuration;
 using UnityEngine;
 
 namespace FriendlySkeletonWand
@@ -10,6 +8,7 @@ namespace FriendlySkeletonWand
     {
         public override string ItemName { get { return "ChebGonaz_ArmorBlackIronLegs"; } }
         public override string PrefabName { get { return "ChebGonaz_ArmorBlackIronLegs.prefab"; } }
+        protected override string DefaultRecipe { get { return "BlackMetal:5"; } }
 
         public CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {

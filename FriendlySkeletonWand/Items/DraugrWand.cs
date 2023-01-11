@@ -7,8 +7,6 @@ using Jotunn;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using FriendlySkeletonWand.Minions;
 
@@ -41,22 +39,25 @@ namespace FriendlySkeletonWand
 
         public override string ItemName { get { return "ChebGonaz_DraugrWand"; } }
         public override string PrefabName { get { return "ChebGonaz_DraugrWand.prefab"; } }
+        protected override string DefaultRecipe { get { return "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1"; } }
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
             base.CreateConfigs(plugin);
 
             draugrSetFollowRange = plugin.Config.Bind("DraugrWand (Client)", "DraugrCommandRange",
-            10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
+                10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
 
             allowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
  
             craftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStation",
+            craftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStation",
                 CraftingTable.Forge, new ConfigDescription("Crafting station where Draugr Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
+            craftingStationLevel = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStationLevel",
             craftingStationLevel = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Draugr Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -96,6 +97,8 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             draugrTierThreeLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeLevelReq",
+                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Draugr", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
                 70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Draugr", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
@@ -138,7 +141,7 @@ namespace FriendlySkeletonWand
                     craftingCost.Value = defaultCraftingCost;
                 }
                 // set recipe requirements
-                this.SetRecipeReqs(
+                SetRecipeReqs(
                     config,
                     craftingCost,
                     craftingStationRequired,
@@ -150,7 +153,7 @@ namespace FriendlySkeletonWand
                 config.Enabled = false;
             }
 
-    CustomItem customItem = new CustomItem(prefab, false, config);
+            CustomItem customItem = new CustomItem(prefab, false, config);
             if (customItem == null)
             {
                 Jotunn.Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");

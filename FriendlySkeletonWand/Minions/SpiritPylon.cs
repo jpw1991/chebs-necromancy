@@ -3,11 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Jotunn.Configs;
-using Jotunn.Managers;
 using BepInEx.Configuration;
 using System.Linq;
-using System;
-using FriendlySkeletonWand;
 using Jotunn.Entities;
 
 namespace FriendlySkeletonWand
@@ -27,7 +24,10 @@ namespace FriendlySkeletonWand
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected List<GameObject> spawnedGhosts = new List<GameObject>();
 
+        protected const string DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
+
         private float ghostLastSpawnedAt;
+
 
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {

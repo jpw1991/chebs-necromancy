@@ -13,6 +13,7 @@ namespace FriendlySkeletonWand
     {
         public override string ItemName { get { return "ChebGonaz_SpectralShroud"; } }
         public override string PrefabName { get { return "ChebGonaz_SpectralShroud.prefab"; } }
+        protected override string DefaultRecipe { get { return "Chain:5,TrollHide:10"; } }
 
         public static ConfigEntry<bool> spawnWraith;
         public static ConfigEntry<int> necromancySkillBonus;
@@ -43,6 +44,7 @@ namespace FriendlySkeletonWand
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Spectral Shroud is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
+            craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
             craftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
