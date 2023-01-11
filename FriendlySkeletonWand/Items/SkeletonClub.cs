@@ -1,7 +1,5 @@
 ﻿using Jotunn.Configs;
 using Jotunn.Entities;
-using BepInEx;
-using BepInEx.Configuration;
 using UnityEngine;
 
 namespace FriendlySkeletonWand
@@ -10,12 +8,6 @@ namespace FriendlySkeletonWand
     {
         public override string ItemName { get { return "ChebGonaz_SkeletonClub"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonClub.prefab"; } }
-
-        public override CustomItem GetCustomItem(Sprite icon=null)
-        {
-            Jotunn.Logger.LogError("I shouldn't be called");
-            return null;
-        }
 
         public CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {

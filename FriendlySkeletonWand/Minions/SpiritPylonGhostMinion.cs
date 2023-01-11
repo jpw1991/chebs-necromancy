@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using Jotunn.Managers;
-using UnityEngine;
+﻿using UnityEngine;
+
 namespace FriendlySkeletonWand.Minions
 {
     internal class SpiritPylonGhostMinion : UndeadMinion
