@@ -29,13 +29,13 @@ namespace FriendlySkeletonWand.Minions
                 true, new ConfigDescription("Whether the NecroNeck Gatherer is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             lookRadius = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererLookRadius",
-                50f, new ConfigDescription("The radius in which the NecroNeck Gatherer can see items from.", null,
+                100f, new ConfigDescription("The radius in which the NecroNeck Gatherer can see items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             pickupRadius = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererPickupRadius",
                 10f, new ConfigDescription("The radius in which the NecroNeck Gatherer can pickup items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             dropoffPointRadius = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererDropoffPointRadius",
-                100f, new ConfigDescription("The radius in which the NecroNeck Gatherer looks for a container to store its load in.", null,
+                1000f, new ConfigDescription("The radius in which the NecroNeck Gatherer looks for a container to store its load in.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             updateDelay = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererUpdateDelay",
                 3f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
@@ -71,27 +71,25 @@ namespace FriendlySkeletonWand.Minions
             {
                 if (ReturnHome())
                 {
-                    Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", "Going home!", true);
+                    dropoffTarget = GetNearestDropOffPoint();
                     if (dropoffTarget == null)
                     {
-                        if (FindNearestDropOffPoint())
-                        {
-                            Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", $"Moving toward {dropoffTarget.name}", true);
-                        }
-                        else
-                        {
-                            Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", "Can't find a container", true);
-                        }
+                        Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", "Can't find a container", true);
                     }
-                    else if (CloseToDropoffPoint())
+                    else
                     {
-                        DepositItems();
+                        Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", $"Moving toward {dropoffTarget.name}", true);
+                        if (CloseToDropoffPoint())
+                        {
+                            DepositItems();
+                        }
                     }
                 }
                 else
                 {
                     LookForNearbyItems();
                     PickupNearbyItems();
+                    //todo: loot dead gatherers
                 }
 
                 lastUpdate = Time.time + updateDelay.Value;
@@ -106,7 +104,7 @@ namespace FriendlySkeletonWand.Minions
             // order items from closest to furthest, then take closest one
             Collider closest = hitColliders
                 .OrderBy(collider => Vector3.Distance(transform.position, collider.transform.position))
-                .First();
+                .FirstOrDefault();
             if (closest != null)
             {
                 ItemDrop itemDrop = closest.GetComponentInParent<ItemDrop>();
@@ -166,9 +164,9 @@ namespace FriendlySkeletonWand.Minions
             return container.GetInventory().GetEmptySlots() < 1;
         }
 
-        private bool FindNearestDropOffPoint()
+        private Container GetNearestDropOffPoint()
         {
-            // return true if drop off point found
+            // find and return drop off point (some container with room)
 
             // doesnt work, dunno why
             //List<Piece> nearbyPieces = new List<Piece>();
@@ -176,25 +174,25 @@ namespace FriendlySkeletonWand.Minions
             //
             //if (nearbyPieces.Count < 1) return false;
             Collider[] nearbyPieces = Physics.OverlapSphere(transform.position + Vector3.up, dropoffPointRadius.Value, pieceMask);
-            if (nearbyPieces.Length < 1) return false;
+            if (nearbyPieces.Length < 1) return null;
 
             // order piece from closest to furthest, then take closest container
-            Container closest = nearbyPieces
+            Collider closest = nearbyPieces
                 .OrderBy(piece => Vector3.Distance(transform.position, piece.transform.position))
-                .Single(piece => piece.GetComponentInParent<Container>() != null
-                    && piece.GetComponentInParent<Container>().GetInventory().GetEmptySlots() > 0)
-                .GetComponentInParent<Container>();
+                .FirstOrDefault(piece => piece.GetComponentInParent<Container>() != null
+                    && piece.GetComponentInParent<Container>().GetInventory().GetEmptySlots() > 0);
             if (closest != null)
             {
-                if (TryGetComponent(out MonsterAI monsterAI))
+                Container closestContainer = closest.GetComponentInParent<Container>();
+                if (closestContainer != null
+                    && TryGetComponent(out MonsterAI monsterAI))
                 {
                     // move toward that piece
                     monsterAI.SetFollowTarget(closest.gameObject);
-                    dropoffTarget = closest;
-                    return true;
+                    return closestContainer;
                 }
             }
-            return false;
+            return null;
         }
 
         private bool CloseToDropoffPoint()

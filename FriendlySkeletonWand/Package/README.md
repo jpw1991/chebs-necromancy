@@ -69,7 +69,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 - As of 1.2.0, debug commands that affect minions across the entire world/universe:
   - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
   - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
-- As of 1.4.0 you can summon a ChebGonaz_NecroNeck via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner. It also brings items to chests and tries to deposit them.
+- As of 1.4.3 you can summon a Neckro Gatherer via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner. It also brings items to chests and tries to deposit them. The command is `chebgonaz_prerelease_spawnneckro` and is a user command (not admin). This command will be removed in later versions.
 
 ### Config
 
@@ -103,7 +103,7 @@ A: This is currently not planned because another mod called [Custom Armor Stats]
 
 Date | Version | Notes
 --- | --- | ---
-11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player
+11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player; add chebgonaz_prerelease_spawnneckro command to let players test with new neckro gatherer.
 09/01/2023 | 1.4.2 | Neckro Gatherer now brings items back to empty containers and stores them
 09/01/2023 | 1.4.1 | Fix minions not remembering their armor values
 09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer

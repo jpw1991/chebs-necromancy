@@ -19,11 +19,11 @@ namespace FriendlySkeletonWand
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             containerHeight = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "LargeCargoCrateHeight",
-                5, new ConfigDescription("Container slots = containerHeight * containerWidth = 5*5 = 25", null,
+                2, new ConfigDescription("Container slots = containerHeight * containerWidth = 5*5 = 25", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             containerWidth = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "LargeCargoCrateWidth",
-                5, new ConfigDescription("Container slots = containerHeight * containerWidth = 5*5 = 25", null,
+                2, new ConfigDescription("Container slots = containerHeight * containerWidth = 5*5 = 25", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
     }
