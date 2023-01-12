@@ -379,3 +379,5 @@ Environment.props
 FriendlySkeletonWand/libs
 *.backup
 FriendlySkeletonWandUnity/Assets
+FriendlySkeletonWandUnity/ProjectSettings/SceneTemplateSettings.json
+FriendlySkeletonWandUnity/ProjectSettings/TimelineSettings.asset
