@@ -96,10 +96,14 @@ A: Not yet, unless you use other mods that permit healing. I want to add healing
 Q: How do I make a poison skeleton?
 A: Make sure your necromancy level is high enough and have some Guck in your inventory when creating a non-archer skeleton using the staff.
 
+Q: Can you add Frost Resistance to the Spectral Shroud and/or Necromancer Hood so I can use it in the Mountains?
+A: This is currently not planned because another mod called [Custom Armor Stats](https://www.nexusmods.com/valheim/mods/1162/) can be used to add it. So I'd rather spare myself the extra work.
+
 ## Changelog
 
 Date | Version | Notes
 --- | --- | ---
+11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player
 09/01/2023 | 1.4.2 | Neckro Gatherer now brings items back to empty containers and stores them
 09/01/2023 | 1.4.1 | Fix minions not remembering their armor values
 09/01/2023 | 1.4.0 | Minions no longer damage player structures; armor values actually applied to skeletons (although not remembered on logoff/login again - will fix soon); add necroneck gatherer

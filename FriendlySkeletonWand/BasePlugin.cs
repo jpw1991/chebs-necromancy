@@ -26,7 +26,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.4.2";
+        public const string PluginVersion = "1.4.3";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -575,6 +575,26 @@ namespace FriendlySkeletonWand
                 __instance.AddFrostDamage(hit.m_damage.m_frost);
                 __instance.AddLightningDamage(hit.m_damage.m_lightning);
                 return false; // deny base method completion
+            }
+            return true; // permit base method to complete
+        }
+    }
+
+    [HarmonyPatch(typeof(Aoe), "OnHit")]
+    static class SharpStakesMinionPatch
+    {
+        // bool OnHit(Collider collider, Vector3 hitPoint)
+        static bool Prefix(Collider collider, Vector3 hitPoint, Aoe __instance)
+        {
+            if (collider.TryGetComponent(out UndeadMinion minion))
+            {
+                Piece piece = __instance.GetComponentInParent<Piece>();
+                if (piece != null && piece.IsPlacedByPlayer())
+                {
+                    // stop minion from receiving damage from stakes placed
+                    // by a player
+                    return false; // deny base method completion
+                }
             }
             return true; // permit base method to complete
         }
