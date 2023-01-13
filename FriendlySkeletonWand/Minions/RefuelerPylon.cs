@@ -112,7 +112,7 @@ namespace FriendlySkeletonWand
                 DefaultRecipe, new ConfigDescription("Materials needed to build a Refueler Pylon. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            sightRadius = plugin.Config.Bind($"{PrefabName} (Server Synced)", "SpiritPylonSightRadius",
+            sightRadius = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonSightRadius",
                 30f, new ConfigDescription("How far a Refueler Pylon can reach containers.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
