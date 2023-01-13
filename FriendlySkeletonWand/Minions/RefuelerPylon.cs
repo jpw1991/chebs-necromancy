@@ -15,6 +15,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<string> craftingCost;
         public static ConfigEntry<float> sightRadius;
         public static ConfigEntry<float> refuelerUpdateInterval;
+        public static ConfigEntry<int> refuelerContainerWidth, refuelerContainerHeight;
 
         public static string PrefabName = "ChebGonaz_RefuelerPylon.prefab";
         public static string PieceTable = "Hammer";
@@ -25,12 +26,41 @@ namespace FriendlySkeletonWand
         protected int pieceMask;
         protected Container container;
 
+        public static void CreateConfigs(BaseUnityPlugin plugin)
+        {
+            allowed = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonAllowed",
+                true, new ConfigDescription("Whether making a Refueler Pylon is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            craftingCost = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonBuildCosts",
+                DefaultRecipe, new ConfigDescription("Materials needed to build a Refueler Pylon. None or Blank will use Default settings.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            sightRadius = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonSightRadius",
+                30f, new ConfigDescription("How far a Refueler Pylon can reach containers.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            refuelerUpdateInterval = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonUpdateInterval",
+                5f, new ConfigDescription("How long a Refueler Pylon waits between checking containers (lower values may negatively impact performance).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            refuelerContainerWidth = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonContainerWidth",
+                4, new ConfigDescription("Inventory size = width * height = 4 * 4 = 16.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            refuelerContainerHeight = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonContainerHeight",
+                4, new ConfigDescription("Inventory size = width * height = 4 * 4 = 16.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
 
         private void Awake()
         {
             pieceMask = LayerMask.GetMask(new string[1] { "piece" });
 
             container = GetComponent<Container>();
+
+            container.m_width = refuelerContainerWidth.Value;
+            container.m_height = refuelerContainerHeight.Value;
 
             StartCoroutine(LookForFurnaces());
         }
@@ -102,46 +132,20 @@ namespace FriendlySkeletonWand
             }
         }
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
-        {
-            allowed = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonAllowed",
-                true, new ConfigDescription("Whether making a Refueler Pylon is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            craftingCost = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonBuildCosts",
-                DefaultRecipe, new ConfigDescription("Materials needed to build a Refueler Pylon. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            sightRadius = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonSightRadius",
-                30f, new ConfigDescription("How far a Refueler Pylon can reach containers.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            refuelerUpdateInterval = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonUpdateInterval",
-                5f, new ConfigDescription("How long a Refueler Pylon waits between checking containers (lower values may negatively impact performance).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-        }
-
         IEnumerator LookForFurnaces()
         {
-            while (ZInput.instance == null)
-            {
-                yield return new WaitForSeconds(2);
-            }
+            yield return new WaitWhile(() => ZInput.instance == null);
 
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
             Piece piece = GetComponent<Piece>();
-            while (!piece.IsPlacedByPlayer())
-            {
-                //Jotunn.Logger.LogInfo("Waiting for player to place pylon...");
-                yield return new WaitForSeconds(2);
-            }
+            yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
 
             while (true)
             {
                 yield return new WaitForSeconds(refuelerUpdateInterval.Value);
 
-                GetNearbySmelters().ForEach(AddCoalToSmelter);
+                GetNearbySmelters().ForEach(ManageSmelter);
             }
         }
 
@@ -162,24 +166,73 @@ namespace FriendlySkeletonWand
             return result;
         }
 
-        private void AddCoalToSmelter(Smelter smelter)
+        private void ManageSmelter(Smelter smelter)
         {
+            // fuel types
+            // smelters:
+            //     "$item_coal"
+            // kilns (also technically smelters):
+            //     "$item_wood"
+            //     "$item_roundlog" -> core wood
+            //     "$item_finewood"
+
+            if (smelter == null) return;
+
             Inventory inventory = container.GetInventory();
 
-            if (inventory.CountItems("$item_coal") < 1) return;
+            if (inventory == null) return;
 
-            while (inventory.CountItems("$item_coal") > 0)
+            void LoadSmelterWithFuel(string fuel)
             {
-                float currentFuel = smelter.GetFuel();
-                if (currentFuel < smelter.m_maxFuel)
+                while (inventory.CountItems(fuel) > 0)
                 {
-                    smelter.SetFuel(currentFuel + 1);
-                    inventory.RemoveItem("$item_coal", 1);
+                    float currentFuel = smelter.GetFuel();
+                    if (currentFuel < smelter.m_maxFuel)
+                    {
+                        smelter.SetFuel(currentFuel + 1);
+                        inventory.RemoveItem(fuel, 1);
+                    }
+                    else
+                    {
+                        // smelter full
+                        break;
+                    }
                 }
-                else
+            }
+
+            // load smelter with fuel -> coal (smelter)
+            if (smelter.m_fuelItem != null)
+            {
+                // kilns require no fuel, so we gotta null check
+                LoadSmelterWithFuel(smelter.m_fuelItem.m_itemData.m_shared.m_name);
+            }
+
+            // load smelter with any item conversions
+            // eg.
+            // copper ore --> copper
+            // wood --> coal
+            ItemDrop.ItemData itemData = smelter.FindCookableItem(inventory);
+            if (itemData != null)
+            {
+                // adapted from Smelter.OnAddOre
+
+                if (!smelter.IsItemAllowed(itemData.m_dropPrefab.name))
                 {
-                    // smelter full
-                    break;
+                    Jotunn.Logger.LogInfo($"Refueler pylon can't smelt item {itemData.m_dropPrefab.name}");
+                    return;
+                }
+                ZLog.Log((object)("trying to add " + itemData.m_shared.m_name));
+                if (smelter.GetQueueSize() >= smelter.m_maxOre)
+                {
+                    Jotunn.Logger.LogInfo($"Refueler pylon can't smelt item {itemData.m_dropPrefab.name}, queue is full");
+                    return;
+                }
+                inventory.RemoveItem(itemData, 1);
+                smelter.m_nview.InvokeRPC("AddOre", itemData.m_dropPrefab.name);
+                smelter.m_addedOreTime = Time.time;
+                if (smelter.m_addOreAnimationDuration > 0f)
+                {
+                    smelter.SetAnimation(true);
                 }
             }
         }
