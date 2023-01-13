@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2806443054
+CRC: 2371090528
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: b9be8770dd5abbd3cde288d2ee6437de
+    Hash: 9e9c342ee5c4ec4e62b8d93a4a1f6fbf
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 2586088ccc21689f143257bdd9be84db
+    Hash: 360c66588ccc897eaaa856f94763ce69
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -62,6 +62,10 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1790797106, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 130663047, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 54271039, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1578695569, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 895252998, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -72,9 +76,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: -1383431051, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: -870746866, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 963225042, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 489050665, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: -347224168, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1266444067, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -2116187367, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -1421768954, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -83,6 +95,8 @@ ClassTypes:
   Script: {fileID: -1094038755, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1404409730, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 2053127972, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -585565762, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -94,7 +108,17 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 69470131, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1282597392, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -2060124386, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1345532120, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: -1987483406, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 971010301, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 1559923330, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -2012497638, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -131,6 +155,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 245
   Script: {instanceID: 0}
+- Class: 330
+  Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: Attack
@@ -152,6 +178,10 @@ SerializeReferenceClassIdentifiers:
   ClassName: ItemDrop/ItemData/SharedData
 - AssemblyName: assembly_valheim
   ClassName: LevelEffects/LevelSetup
+- AssemblyName: assembly_valheim
+  ClassName: Piece/Requirement
+- AssemblyName: assembly_valheim
+  ClassName: Raven/RavenText
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_NeckroGathererPylon.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarriorTier2.prefab
@@ -161,9 +191,12 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel1.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetLeather.prefab
+- Assets/_ChebGonaz/chebgonaz_batpylon_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarriorTier3.prefab
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.prefab
+- Assets/_ChebGonaz/ChebGonaz_BatBeacon.prefab
+- Assets/_ChebGonaz/ChebGonaz_DraugrMat.mat
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor.asset
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_PoisonSkeleton.prefab
@@ -174,6 +207,7 @@ Assets:
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor2.asset
 - Assets/_ChebGonaz/ChebGonaz_SkeletonBow.prefab
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel3.prefab
+- Assets/_ChebGonaz/ChebGonaz_Bat.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageCirclet.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronChest.prefab
 - Assets/_ChebGonaz/ChebGonaz_Neckro.mat
@@ -193,8 +227,10 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/draugr_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.mat
+- Assets/_ChebGonaz/ChebGonaz_Wraith.mat
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIronSkeleton.prefab
 - Assets/_ChebGonaz/spectral_shroud_d.png
+- Assets/_ChebGonaz/chebgonaz_neckrogathererpylon_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
 - Assets/_ChebGonaz/ChebGonaz_RefuelerPylon.mat

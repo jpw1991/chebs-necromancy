@@ -169,6 +169,8 @@
     <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
     <Compile Include="Minions\RefuelerPylon.cs" />
     <Compile Include="Minions\NeckroGathererPylon.cs" />
+    <Compile Include="Minions\BatBeacon.cs" />
+    <Compile Include="Minions\BatBeaconBatMinion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

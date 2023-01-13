@@ -74,6 +74,7 @@ namespace FriendlySkeletonWand
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
             NeckroGathererPylon.CreateConfigs(this);
+            BatBeacon.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -250,6 +251,11 @@ namespace FriendlySkeletonWand
                     prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 }
 
+                if (BatBeacon.allowed.Value)
+                {
+                    prefabNames.Add("ChebGonaz_Bat.prefab");
+                }
+
                 prefabNames.ForEach(prefabName =>
                 {
                     Jotunn.Logger.LogInfo($"Loading {prefabName}...");
@@ -281,6 +287,13 @@ namespace FriendlySkeletonWand
                 PieceManager.Instance.AddPiece(
                     new NeckroGathererPylon().GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.IconName))
+                    );
+
+                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.PrefabName);
+                batBeaconPrefab.AddComponent<BatBeacon>();
+                PieceManager.Instance.AddPiece(
+                    new BatBeacon().GetCustomPieceFromPrefab(batBeaconPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.IconName))
                     );
                 #endregion
             }
@@ -379,6 +392,20 @@ namespace FriendlySkeletonWand
                         __instance.gameObject.AddComponent<RefuelerPylon>();
                     }
                 }
+                else if (__instance.name.Contains("NeckroGathererPylon"))
+                {
+                    if (__instance.GetComponent<NeckroGathererPylon>() == null)
+                    {
+                        __instance.gameObject.AddComponent<NeckroGathererPylon>();
+                    }
+                }
+                else if (__instance.name.Contains("BatBeacon"))
+                {
+                    if (__instance.GetComponent<BatBeacon>() == null)
+                    {
+                        __instance.gameObject.AddComponent<BatBeacon>();
+                    }
+                }
             }
         }
     }
@@ -420,6 +447,10 @@ namespace FriendlySkeletonWand
                         else if (__instance.name.Contains("Neckro"))
                         {
                             __instance.gameObject.AddComponent<NeckroGathererMinion>();
+                        }
+                        else if (__instance.name.Contains("Bat"))
+                        {
+                            __instance.gameObject.AddComponent<BatBeaconBatMinion>();
                         }
                     }
                 }
