@@ -12,14 +12,14 @@ namespace FriendlySkeletonWand
     internal class SpiritPylon : MonoBehaviour
     {
         public static ConfigEntry<bool> allowed;
-        public static string defaultCraftingCost;
+        
         public static ConfigEntry<string> craftingCost;
         public static ConfigEntry<float> sightRadius;
         public static ConfigEntry<float> ghostDuration;
         public static ConfigEntry<float> delayBetweenGhosts;
         public static ConfigEntry<int> maxGhosts;
 
-        public static string PrefabName = "ChebGonaz_SpiritPylon";
+        public static string PrefabName = "ChebGonaz_SpiritPylon.prefab";
         public static string PieceTable = "Hammer";
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected List<GameObject> spawnedGhosts = new List<GameObject>();
@@ -28,18 +28,49 @@ namespace FriendlySkeletonWand
 
         private float ghostLastSpawnedAt;
 
+        public static void CreateConfigs(BaseUnityPlugin plugin)
+        {
+            allowed = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonAllowed",
+                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
+                DefaultRecipe, new ConfigDescription("Materials needed to build Spirit Pylon. None or Blank will use Default settings.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            sightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
+                30f, new ConfigDescription("How far a Spirit Pylon can see enemies.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ghostDuration = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonGhostDuration",
+                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            delayBetweenGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonDelayBetweenGhosts",
+                5f, new ConfigDescription("How long a Spirit Pylon must wait before being able to spawn another ghost.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            maxGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonMaxGhosts",
+                3, new ConfigDescription("The maximum number of ghosts that a Spirit Pylon can spawn.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
+
+        private void Awake()
+        {
+            StartCoroutine(LookForEnemies());
+        }
 
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {
             PieceConfig config = new PieceConfig();
-            config.Name = "ChebGonaz_SpiritPylon";
-            config.Description = "Spirit Pylon";
+            config.Name = "$chebgonaz_spiritpylon_name";
+            config.Description = "$chebgonaz_spiritpylon_desc";
 
             if (allowed.Value)
             {
                 if (craftingCost.Value == null || craftingCost.Value == "")
                 {
-                    craftingCost.Value = defaultCraftingCost;
+                    craftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
                 SetRecipeReqs(config, craftingCost);
@@ -94,40 +125,6 @@ namespace FriendlySkeletonWand
             {
                 addMaterial(craftingCost.Value);
             }
-        }
-
-        public static void CreateConfigs(BaseUnityPlugin plugin)
-        {
-            allowed = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonAllowed",
-                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            defaultCraftingCost = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
-
-            craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
-                defaultCraftingCost, new ConfigDescription("Materials needed to build Spirit Pylon. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            sightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
-                30f, new ConfigDescription("How far a Spirit Pylon can see enemies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            ghostDuration = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonGhostDuration",
-                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            delayBetweenGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonDelayBetweenGhosts",
-                5f, new ConfigDescription("How long a Spirit Pylon must wait before being able to spawn another ghost.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            maxGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonMaxGhosts",
-                3, new ConfigDescription("The maximum number of ghosts that a Spirit Pylon can spawn.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-        }
-
-        private void Awake()
-        {
-            StartCoroutine(LookForEnemies());
         }
 
         IEnumerator LookForEnemies()

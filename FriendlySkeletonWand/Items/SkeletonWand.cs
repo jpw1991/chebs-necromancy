@@ -32,7 +32,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
         public static ConfigEntry<string> craftingCost;
-        public static string defaultCraftingCost;
+        
 
         public static ConfigEntry<bool> skeletonsAllowed;
 
@@ -88,10 +88,8 @@ namespace FriendlySkeletonWand
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            defaultCraftingCost = "Wood:5";
-
             craftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingCosts",
-                defaultCraftingCost, new ConfigDescription("Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", null,
+                DefaultRecipe, new ConfigDescription("Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonsAllowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonsAllowed",
@@ -204,7 +202,7 @@ namespace FriendlySkeletonWand
             {
                 if (craftingCost.Value == null || craftingCost.Value == "")
                 {
-                    craftingCost.Value = defaultCraftingCost;
+                    craftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
                 this.SetRecipeReqs(

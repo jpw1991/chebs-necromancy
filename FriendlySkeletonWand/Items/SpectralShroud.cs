@@ -27,7 +27,7 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
-        public static string defaultCraftingCost;
+        
         public static ConfigEntry<string> craftingCost;
 
         private float wraithLastSpawnedAt;
@@ -48,10 +48,8 @@ namespace FriendlySkeletonWand
                 1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            defaultCraftingCost = "Chain:5,TrollHide:10";
-
             craftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingCosts",
-                defaultCraftingCost, new ConfigDescription("Materials needed to craft Spectral Shroud. None or Blank will use Default settings.", null,
+                DefaultRecipe, new ConfigDescription("Materials needed to craft Spectral Shroud. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             spawnWraith = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSpawnWraith",
@@ -97,7 +95,7 @@ namespace FriendlySkeletonWand
             {
                 if (craftingCost.Value == null || craftingCost.Value == "")
                 {
-                    craftingCost.Value = defaultCraftingCost;
+                    craftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
                 this.SetRecipeReqs(

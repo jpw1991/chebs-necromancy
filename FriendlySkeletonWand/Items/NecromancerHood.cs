@@ -16,7 +16,7 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
-        public static string defaultCraftingCost;
+        
         public static ConfigEntry<string> craftingCost;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
@@ -35,10 +35,8 @@ namespace FriendlySkeletonWand
                 1, new ConfigDescription("Crafting station level required to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            defaultCraftingCost = "WitheredBone:2,TrollHide:5";
-
             craftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingCosts",
-               defaultCraftingCost, new ConfigDescription("Materials needed to craft Necromancer Hood. None or Blank will use Default settings.", null,
+               DefaultRecipe, new ConfigDescription("Materials needed to craft Necromancer Hood. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             necromancySkillBonus = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodSkillBonus",
@@ -54,9 +52,9 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
-                if (craftingCost.Value == null || craftingCost.Value == "")
+                if (string.IsNullOrEmpty(craftingCost.Value))
                 {
-                    craftingCost.Value = defaultCraftingCost;
+                    craftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
                 this.SetRecipeReqs(
