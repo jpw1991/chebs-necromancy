@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 4284383875
+CRC: 2806443054
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 100a2e1d7a5f31f62c00f946369bec1b
+    Hash: b9be8770dd5abbd3cde288d2ee6437de
   TypeTreeHash:
     serializedVersion: 2
     Hash: 2586088ccc21689f143257bdd9be84db
@@ -153,6 +153,7 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: LevelEffects/LevelSetup
 Assets:
+- Assets/_ChebGonaz/ChebGonaz_NeckroGathererPylon.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarriorTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonClub.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_drop.mat
@@ -175,8 +176,8 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_FireballLevel3.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageCirclet.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronChest.prefab
-- Assets/_ChebGonaz/ChebGonaz_Neck.mat
-- Assets/_ChebGonaz/ChebGonaz_NecroNeck.prefab
+- Assets/_ChebGonaz/ChebGonaz_Neckro.mat
+- Assets/_ChebGonaz/ChebGonaz_NeckroGatherer.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronLegs.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcher.prefab
@@ -188,6 +189,7 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarrior.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_mat.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetIron.prefab
+- Assets/_ChebGonaz/ChebGonaz_NeckroGathererPylon.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/draugr_staff_icon.png
 - Assets/_ChebGonaz/ChebGonaz_DraugrArcher.mat

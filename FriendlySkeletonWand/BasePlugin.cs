@@ -58,7 +58,26 @@ namespace FriendlySkeletonWand
 
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
-            CommandManager.Instance.AddConsoleCommand(new SpawnNeckroGatherer());
+        }
+
+        private void CreateConfigValues()
+        {
+            Config.SaveOnConfigSet = true;
+
+            GuardianWraithMinion.CreateConfigs(this);
+
+            wands.ForEach(w => w.CreateConfigs(this));
+
+            spectralShroudItem.CreateConfigs(this);
+            necromancersHoodItem.CreateConfigs(this);
+
+            SpiritPylon.CreateConfigs(this);
+            RefuelerPylon.CreateConfigs(this);
+            NeckroGathererPylon.CreateConfigs(this);
+
+            LargeCargoCrate.CreateConfigs(this);
+
+            NeckroGathererMinion.CreateConfigs(this);
         }
 
         private void LoadChebGonazAssetBundle()
@@ -226,9 +245,9 @@ namespace FriendlySkeletonWand
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 }
 
-                if (NecroNeckGathererMinion.allowed.Value && LargeCargoCrate.allowed.Value)
+                if (NeckroGathererMinion.allowed.Value && LargeCargoCrate.allowed.Value)
                 {
-                    prefabNames.Add("ChebGonaz_NecroNeck.prefab");
+                    prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 }
 
                 prefabNames.ForEach(prefabName =>
@@ -256,6 +275,13 @@ namespace FriendlySkeletonWand
                     new RefuelerPylon().GetCustomPieceFromPrefab(refuelerPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.IconName))
                     );
+
+                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.PrefabName);
+                neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
+                PieceManager.Instance.AddPiece(
+                    new NeckroGathererPylon().GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.IconName))
+                    );
                 #endregion
             }
             catch (Exception ex)
@@ -268,24 +294,7 @@ namespace FriendlySkeletonWand
             }
         }
 
-        private void CreateConfigValues()
-        {
-            Config.SaveOnConfigSet = true;
 
-            GuardianWraithMinion.CreateConfigs(this);
-
-            wands.ForEach(w => w.CreateConfigs(this));
-
-            spectralShroudItem.CreateConfigs(this);
-            necromancersHoodItem.CreateConfigs(this);
-
-            SpiritPylon.CreateConfigs(this);
-            RefuelerPylon.CreateConfigs(this);
-
-            LargeCargoCrate.CreateConfigs(this);
-
-            NecroNeckGathererMinion.CreateConfigs(this);
-        }
 
         private void AddNecromancy()
         {
@@ -408,9 +417,9 @@ namespace FriendlySkeletonWand
                         {
                             __instance.gameObject.AddComponent<DraugrMinion>();
                         }
-                        else if (__instance.name.Contains("NecroNeck"))
+                        else if (__instance.name.Contains("Neckro"))
                         {
-                            __instance.gameObject.AddComponent<NecroNeckGathererMinion>();
+                            __instance.gameObject.AddComponent<NeckroGathererMinion>();
                         }
                     }
                 }
@@ -450,14 +459,14 @@ namespace FriendlySkeletonWand
     }
 
     [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
-    static class NecroNeckDeathDropPatch
+    static class NeckroDeathDropPatch
     {
-        // Although Container component is on the NecroNeck, its OnDestroyed
+        // Although Container component is on the Neckro, its OnDestroyed
         // isn't called on the death of the creature. So instead, implement
         // its same functionality in the creature's OnDeath instead.
         static bool Prefix(CharacterDrop __instance)
         {
-            if (__instance.TryGetComponent(out NecroNeckGathererMinion necroNeck))
+            if (__instance.TryGetComponent(out NeckroGathererMinion necroNeck))
             {
                 if (__instance.TryGetComponent(out Container container))
                 {

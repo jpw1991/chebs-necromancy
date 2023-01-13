@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FriendlySkeletonWand.Minions
 {
-    internal class NecroNeckGathererMinion : UndeadMinion
+    internal class NeckroGathererMinion : UndeadMinion
     {
         // for limits checking
         private static int createdOrderIncrementer;
@@ -25,19 +25,19 @@ namespace FriendlySkeletonWand.Minions
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            allowed = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererAllowed",
-                true, new ConfigDescription("Whether the NecroNeck Gatherer is allowed or not.", null,
+            allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
+                true, new ConfigDescription("Whether the Neckro Gatherer is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            lookRadius = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererLookRadius",
-                100f, new ConfigDescription("The radius in which the NecroNeck Gatherer can see items from.", null,
+            lookRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
+                500f, new ConfigDescription("The radius in which the Neckro Gatherer can see items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            pickupRadius = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererPickupRadius",
-                10f, new ConfigDescription("The radius in which the NecroNeck Gatherer can pickup items from.", null,
+            pickupRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupRadius",
+                10f, new ConfigDescription("The radius in which the Neckro Gatherer can pickup items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            dropoffPointRadius = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererDropoffPointRadius",
-                1000f, new ConfigDescription("The radius in which the NecroNeck Gatherer looks for a container to store its load in.", null,
+            dropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
+                1000f, new ConfigDescription("The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            updateDelay = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "NecroNeckGathererUpdateDelay",
+            updateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
                 3f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }

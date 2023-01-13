@@ -20,6 +20,9 @@
 
   "chebgonaz_refuelerpylon_name": "Refueler Pylon",
   "chebgonaz_refuelerpylon_desc": "Ghosts toil away endlessly refueling your furnaces with coal.",
+  
+  "$chebgonaz_neckrogathererpylon_name": "Neckro Gatherer Pylon",
+  "$chebgonaz_neckrogathererpylon_desc": "Reanimate Necks into Neckro Gatherers who will collect items for you.",
 
   "friendlyskeletonwand_attack": "Attack",
   "friendlyskeletonwand_follow": "Follow",

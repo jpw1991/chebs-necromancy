@@ -103,7 +103,7 @@ A: This is currently not planned because another mod called [Custom Armor Stats]
 
 Date | Version | Notes
 --- | --- | ---
-12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters
+12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters; fix pylons to face toward their Z axis (it was backwards before); add neckro gatherer pylon; neckros gain 150hp and can't attack; neckros no longer afraid of fire
 11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player; add chebgonaz_prerelease_spawnneckro command to let players test with new neckro gatherer.
 09/01/2023 | 1.4.2 | Neckro Gatherer now brings items back to empty containers and stores them
 09/01/2023 | 1.4.1 | Fix minions not remembering their armor values

@@ -18,7 +18,7 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
-        public static string defaultCraftingCost;
+        
         public static ConfigEntry<string> craftingCost;
 
         public static ConfigEntry<bool> draugrAllowed;
@@ -60,10 +60,8 @@ namespace FriendlySkeletonWand
                 1, new ConfigDescription("Crafting station level required to craft Draugr Wand", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            defaultCraftingCost = "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1";
-
             craftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingCosts",
-               defaultCraftingCost, new ConfigDescription("Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
+               DefaultRecipe, new ConfigDescription("Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
  
             draugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",
@@ -134,7 +132,7 @@ namespace FriendlySkeletonWand
             {
                 if (craftingCost.Value == null || craftingCost.Value == "")
                 {
-                    craftingCost.Value = defaultCraftingCost;
+                    craftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
                 SetRecipeReqs(

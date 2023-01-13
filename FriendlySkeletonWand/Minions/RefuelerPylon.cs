@@ -221,7 +221,6 @@ namespace FriendlySkeletonWand
                     Jotunn.Logger.LogInfo($"Refueler pylon can't smelt item {itemData.m_dropPrefab.name}");
                     return;
                 }
-                ZLog.Log((object)("trying to add " + itemData.m_shared.m_name));
                 if (smelter.GetQueueSize() >= smelter.m_maxOre)
                 {
                     Jotunn.Logger.LogInfo($"Refueler pylon can't smelt item {itemData.m_dropPrefab.name}, queue is full");
