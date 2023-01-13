@@ -36,6 +36,7 @@ TARGETASSEMBLY=$2
 VALHEIMPATH=$3
 PROJECTPATH=$4
 DEPLOYPATH=$5
+VERSION=$6
 
 # verify each argument
 if [ ! -d "$TARGETPATH" ]; then
@@ -73,7 +74,7 @@ if [ $TARGET == "Release" ]; then
   cp "$TARGETPATH/$TARGETASSEMBLY" "$packagePath/plugins/$name"
   cp "README.md" "$packagePath"
   cp -r "$PROJECTPATH/$name/Assets" "$packagePath/plugins/$name"
-  zipLocation="$TARGETPATH/$TARGETASSEMBLY.zip"
+  zipLocation="$TARGETPATH/$TARGETASSEMBLY$VERSION.zip"
   echo "Zipping to $PROJECTPATH/$zipLocation"
   cd $packagePath
   zip -r "$PROJECTPATH/$zipLocation" .

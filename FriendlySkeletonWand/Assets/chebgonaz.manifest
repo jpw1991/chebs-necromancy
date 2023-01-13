@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1211722759
+CRC: 4284383875
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: f653aa85caa11ac52f3271b619687dfd
+    Hash: 100a2e1d7a5f31f62c00f946369bec1b
   TypeTreeHash:
     serializedVersion: 2
     Hash: 2586088ccc21689f143257bdd9be84db
@@ -167,6 +167,7 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_PoisonSkeleton.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylon.prefab
+- Assets/_ChebGonaz/ChebGonaz_RefuelerPylon.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonAxe.prefab
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor2.asset
@@ -194,6 +195,7 @@ Assets:
 - Assets/_ChebGonaz/spectral_shroud_d.png
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
+- Assets/_ChebGonaz/ChebGonaz_RefuelerPylon.mat
 - Assets/_ChebGonaz/ChebGonaz_SkeletonHelmetLeather.mat
 - Assets/_ChebGonaz/chebgonaz_spiritpylon_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonMageCircletStone.mat
@@ -207,5 +209,6 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_LargeCargoCrate.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_helmet_iron_mat.mat
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIron.prefab
+- Assets/_ChebGonaz/chebgonaz_refuelerpylon_icon.png
 - Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab
 Dependencies: []

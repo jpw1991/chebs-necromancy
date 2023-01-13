@@ -168,6 +168,7 @@
     <Compile Include="Minions\NecroNeckGathererMinion.cs" />
     <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
     <Compile Include="Commands\SpawnNeckroGatherer.cs" />
+    <Compile Include="Minions\RefuelerPylon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

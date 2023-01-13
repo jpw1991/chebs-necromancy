@@ -18,6 +18,9 @@
   "chebgonaz_spiritpylon_desc": "Spectral entities flock to this necrotic beacon like moths to the moon.",
   "chebgonaz_spiritpylonghost": "Spirit Pylon Ghost",
 
+  "chebgonaz_refuelerpylon_name": "Refueler Pylon",
+  "chebgonaz_refuelerpylon_desc": "Ghosts toil away endlessly refueling your furnaces with coal.",
+
   "friendlyskeletonwand_attack": "Attack",
   "friendlyskeletonwand_follow": "Follow",
   "friendlyskeletonwand_wait": "Wait",

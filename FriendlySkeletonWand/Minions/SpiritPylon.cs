@@ -19,7 +19,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<float> delayBetweenGhosts;
         public static ConfigEntry<int> maxGhosts;
 
-        public static string PrefabName = "ChebGonaz_SpiritPylon";
+        public static string PrefabName = "ChebGonaz_SpiritPylon.prefab";
         public static string PieceTable = "Hammer";
         public static string IconName = "chebgonaz_spiritpylon_icon.png";
         protected List<GameObject> spawnedGhosts = new List<GameObject>();
@@ -32,8 +32,8 @@ namespace FriendlySkeletonWand
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {
             PieceConfig config = new PieceConfig();
-            config.Name = "ChebGonaz_SpiritPylon";
-            config.Description = "Spirit Pylon";
+            config.Name = "$chebgonaz_spiritpylon_name";
+            config.Description = "$chebgonaz_spiritpylon_desc";
 
             if (allowed.Value)
             {

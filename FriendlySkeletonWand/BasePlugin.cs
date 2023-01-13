@@ -26,7 +26,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.4.3";
+        public const string PluginVersion = "1.5.0";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -249,6 +249,13 @@ namespace FriendlySkeletonWand
                     new SpiritPylon().GetCustomPieceFromPrefab(spiritPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName))
                     );
+
+                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.PrefabName);
+                refuelerPylonPrefab.AddComponent<RefuelerPylon>();
+                PieceManager.Instance.AddPiece(
+                    new RefuelerPylon().GetCustomPieceFromPrefab(refuelerPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.IconName))
+                    );
                 #endregion
             }
             catch (Exception ex)
@@ -273,6 +280,7 @@ namespace FriendlySkeletonWand
             necromancersHoodItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
+            RefuelerPylon.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -353,6 +361,13 @@ namespace FriendlySkeletonWand
                     if (__instance.GetComponent<SpiritPylon>() == null)
                     {
                         __instance.gameObject.AddComponent<SpiritPylon>();
+                    }
+                }
+                else if (__instance.name.Contains("RefuelerPylon"))
+                {
+                    if (__instance.GetComponent<RefuelerPylon>() == null)
+                    {
+                        __instance.gameObject.AddComponent<RefuelerPylon>();
                     }
                 }
             }
