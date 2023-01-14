@@ -26,7 +26,7 @@ namespace FriendlySkeletonWand
     {
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
-        public const string PluginVersion = "1.5.0";
+        public const string PluginVersion = "1.5.1";
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -46,8 +46,6 @@ namespace FriendlySkeletonWand
 
         private void Awake()
         {
-            Jotunn.Logger.LogInfo("FriendlySkeletonWand has landed");
-
             CreateConfigValues();
 
             LoadChebGonazAssetBundle();
@@ -90,7 +88,7 @@ namespace FriendlySkeletonWand
             {
                 GameObject LoadPrefabFromBundle(string prefabName, AssetBundle bundle)
                 {
-                    Jotunn.Logger.LogInfo($"Loading {prefabName}...");
+                    //Jotunn.Logger.LogInfo($"Loading {prefabName}...");
                     GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
                     if (prefab == null)
                     {
@@ -101,7 +99,7 @@ namespace FriendlySkeletonWand
 
                 SE_Stats LoadSetEffectFromBundle(string setEffectName, AssetBundle bundle)
                 {
-                    Jotunn.Logger.LogInfo($"Loading {setEffectName}...");
+                    //Jotunn.Logger.LogInfo($"Loading {setEffectName}...");
                     SE_Stats seStat = bundle.LoadAsset<SE_Stats>(setEffectName);
                     if (seStat == null)
                     {
@@ -258,7 +256,7 @@ namespace FriendlySkeletonWand
 
                 prefabNames.ForEach(prefabName =>
                 {
-                    Jotunn.Logger.LogInfo($"Loading {prefabName}...");
+                    //Jotunn.Logger.LogInfo($"Loading {prefabName}...");
                     GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
                     if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
 
@@ -616,7 +614,7 @@ namespace FriendlySkeletonWand
                 }
                 bodyArmor *= SkeletonWand.skeletonArmorValueMultiplier.Value;
                 hit.ApplyArmor(bodyArmor);
-                Jotunn.Logger.LogInfo($"{__instance.name} applied body armor {bodyArmor}");
+                //Jotunn.Logger.LogInfo($"{__instance.name} applied body armor {bodyArmor}");
                 // // //
                 float poison = hit.m_damage.m_poison;
                 float fire = hit.m_damage.m_fire;
