@@ -28,7 +28,7 @@ namespace FriendlySkeletonWand
         public const string PluginName = "FriendlySkeletonWand";
         public const string PluginVersion = "1.5.0";
         private const string ConfigFileName =  PluginGUID + ".cfg";
-        private static readonly string ConfigFileFullPath = BepInEx.Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
+        private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -91,6 +91,7 @@ namespace FriendlySkeletonWand
             watcher.Changed += ReadConfigValues;
             watcher.Created += ReadConfigValues;
             watcher.Renamed += ReadConfigValues;
+            watcher.Error += (sender, e) => Jotunn.Logger.LogError($"Error watching for config changes: {e}");
             watcher.IncludeSubdirectories = true;
             watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
             watcher.EnableRaisingEvents = true;
