@@ -27,6 +27,8 @@ namespace FriendlySkeletonWand
         public const string PluginGUID = "com.chebgonaz.FriendlySkeletonWand";
         public const string PluginName = "FriendlySkeletonWand";
         public const string PluginVersion = "1.5.0";
+        private const string ConfigFileName =  PluginGUID + ".cfg";
+        private static readonly string ConfigFileFullPath = BepInEx.Paths.ConfigPath + Path.DirectorySeparatorChar + ConfigFileName;
 
         private readonly Harmony harmony = new Harmony(PluginGUID);
 
@@ -58,6 +60,8 @@ namespace FriendlySkeletonWand
 
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
+
+            SetupWatcher();
         }
 
         private void CreateConfigValues()
@@ -79,6 +83,32 @@ namespace FriendlySkeletonWand
             LargeCargoCrate.CreateConfigs(this);
 
             NeckroGathererMinion.CreateConfigs(this);
+        }
+
+        private void SetupWatcher()
+        {
+            FileSystemWatcher watcher = new FileSystemWatcher(BepInEx.Paths.ConfigPath, ConfigFileName);
+            watcher.Changed += ReadConfigValues;
+            watcher.Created += ReadConfigValues;
+            watcher.Renamed += ReadConfigValues;
+            watcher.IncludeSubdirectories = true;
+            watcher.SynchronizingObject = ThreadingHelper.SynchronizingObject;
+            watcher.EnableRaisingEvents = true;
+        }
+
+        private void ReadConfigValues(object sender, FileSystemEventArgs e)
+        {
+            if (!File.Exists(ConfigFileFullPath)) return;
+            try
+            {
+                Jotunn.Logger.LogInfo("Read updated config values");
+                Config.Reload();
+            }
+            catch
+            {
+                Jotunn.Logger.LogError($"There was an issue loading your {ConfigFileName}");
+                Jotunn.Logger.LogError("Please check your config entries for spelling and format!");
+            }
         }
 
         private void LoadChebGonazAssetBundle()
