@@ -18,7 +18,7 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
-        
+
         public static ConfigEntry<string> craftingCost;
 
         public static ConfigEntry<bool> draugrAllowed;
@@ -51,7 +51,7 @@ namespace FriendlySkeletonWand
             allowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
- 
+
             craftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStation",
                 CraftingTable.Forge, new ConfigDescription("Crafting station where Draugr Wand is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -63,7 +63,7 @@ namespace FriendlySkeletonWand
             craftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingCosts",
                DefaultRecipe, new ConfigDescription("Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
- 
+
             draugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",
                 true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -119,7 +119,7 @@ namespace FriendlySkeletonWand
             base.CreateButtons();
 
             // add any extra buttons
-            
+
         }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
@@ -130,7 +130,7 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
-                if (craftingCost.Value == null || craftingCost.Value == "")
+                if (string.IsNullOrEmpty(craftingCost.Value))
                 {
                     craftingCost.Value = DefaultRecipe;
                 }
@@ -247,8 +247,6 @@ namespace FriendlySkeletonWand
             if (boneFragmentsRequired > 0)
             {
                 int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                Jotunn.Logger.LogInfo($"BoneFragments in inventory: {boneFragmentsInInventory}");
                 if (boneFragmentsInInventory < boneFragmentsRequired)
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
@@ -284,7 +282,6 @@ namespace FriendlySkeletonWand
                 }
                 );
 
-                Jotunn.Logger.LogInfo($"Meat in inventory: {meatInInventory}");
                 if (meatInInventory < meatRequired)
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughmeat");
@@ -327,8 +324,7 @@ namespace FriendlySkeletonWand
             if (maxDraugr.Value > 0)
             {
                 // re-count the current active draugr
-                int activeDraugr = CountActiveDraugrMinions();
-                Jotunn.Logger.LogInfo($"Draugr count: {activeDraugr}; maxDraugr = {maxDraugr.Value}");
+                CountActiveDraugrMinions();
             }
 
             // scale according to skill
@@ -341,7 +337,6 @@ namespace FriendlySkeletonWand
             {
                 Jotunn.Logger.LogError($"Failed to get player necromancy level: {e}");
             }
-            Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
             int quality = draugrTierOneQuality.Value;
             if (playerNecromancyLevel >= draugrTierThreeLevelReq.Value) { quality = draugrTierThreeQuality.Value; }
@@ -356,7 +351,6 @@ namespace FriendlySkeletonWand
                 Jotunn.Logger.LogError($"SpawnFriendlyDraugr: spawning {prefabName} failed");
             }
 
-            Jotunn.Logger.LogInfo($"Spawning {prefabName}");
             GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
             DraugrMinion minion = spawnedChar.AddComponent<DraugrMinion>();
             Character character = spawnedChar.GetComponent<Character>();
@@ -392,6 +386,9 @@ namespace FriendlySkeletonWand
 
         public int CountActiveDraugrMinions()
         {
+            //todo: this function is poorly designed. Return value is not
+            // important to its function; function has side effects, etc.
+            // Refactor sometime
             int result = 0;
             // based off BaseAI.FindClosestCreature
             List<Character> allCharacters = Character.GetAllCharacters();

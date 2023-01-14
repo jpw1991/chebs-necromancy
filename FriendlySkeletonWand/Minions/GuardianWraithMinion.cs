@@ -45,7 +45,6 @@ namespace FriendlySkeletonWand
                     if (character.IsOwner())
                     {
                         Kill();
-                        Jotunn.Logger.LogInfo("GuardianWraithMinion: killing because player entered portal.");
                     }
                 }
             }

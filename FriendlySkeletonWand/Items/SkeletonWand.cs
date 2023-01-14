@@ -32,7 +32,7 @@ namespace FriendlySkeletonWand
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
         public static ConfigEntry<string> craftingCost;
-        
+
 
         public static ConfigEntry<bool> skeletonsAllowed;
 
@@ -200,7 +200,7 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
-                if (craftingCost.Value == null || craftingCost.Value == "")
+                if (string.IsNullOrEmpty(craftingCost.Value))
                 {
                     craftingCost.Value = DefaultRecipe;
                 }
@@ -211,7 +211,8 @@ namespace FriendlySkeletonWand
                     craftingStationRequired,
                     craftingStationLevel
                 );
-            } else
+            }
+            else
             {
                 config.Enabled = false;
             }
@@ -308,6 +309,10 @@ namespace FriendlySkeletonWand
 
         public int CountActiveSkeletonMinions()
         {
+            //todo: this function is poorly designed. Return value is not
+            // important to its function; function has side effects, etc.
+            // Refactor sometime
+
             int result = 0;
             // based off BaseAI.FindClosestCreature
             List<Character> allCharacters = Character.GetAllCharacters();
@@ -430,8 +435,8 @@ namespace FriendlySkeletonWand
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
 
-            SkeletonMinion minion = skeletonType == SkeletonType.Poison 
-                ? spawnedChar.AddComponent<PoisonSkeletonMinion>() 
+            SkeletonMinion minion = skeletonType == SkeletonType.Poison
+                ? spawnedChar.AddComponent<PoisonSkeletonMinion>()
                 : spawnedChar.AddComponent<SkeletonMinion>();
             minion.ScaleEquipment(playerNecromancyLevel, skeletonType, leatherArmor, bronzeArmor, ironArmor, blackIronArmor);
             minion.ScaleStats(playerNecromancyLevel);
@@ -464,7 +469,6 @@ namespace FriendlySkeletonWand
             {
                 int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
-                Jotunn.Logger.LogInfo($"BoneFragments in inventory: {boneFragmentsInInventory}");
                 if (boneFragmentsInInventory < boneFragmentsRequired)
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
@@ -479,7 +483,6 @@ namespace FriendlySkeletonWand
             if (ExtraResourceConsumptionUnlocked && armorLeatherScrapsRequiredConfig.Value > 0)
             {
                 int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
-                Jotunn.Logger.LogInfo($"LeatherScraps in inventory: {leatherScrapsInInventory}");
                 if (leatherScrapsInInventory >= armorLeatherScrapsRequiredConfig.Value)
                 {
                     createArmoredLeather = true;
@@ -489,7 +492,6 @@ namespace FriendlySkeletonWand
                 {
                     // no leather scraps? Try some deer hide
                     int deerHideInInventory = player.GetInventory().CountItems("$item_deerhide");
-                    Jotunn.Logger.LogInfo($"DeerHide in inventory: {deerHideInInventory}");
                     if (deerHideInInventory >= armorLeatherScrapsRequiredConfig.Value)
                     {
                         createArmoredLeather = true;
@@ -502,7 +504,6 @@ namespace FriendlySkeletonWand
             if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && armorBronzeRequiredConfig.Value > 0)
             {
                 int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
-                Jotunn.Logger.LogInfo($"Bronze in inventory: {bronzeInInventory}");
                 if (bronzeInInventory >= armorBronzeRequiredConfig.Value)
                 {
                     createArmoredBronze = true;
@@ -514,7 +515,6 @@ namespace FriendlySkeletonWand
             if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && !createArmoredBronze && armorIronRequiredConfig.Value > 0)
             {
                 int ironInInventory = player.GetInventory().CountItems("$item_iron");
-                Jotunn.Logger.LogInfo($"Iron in inventory: {ironInInventory}");
                 if (ironInInventory >= armorIronRequiredConfig.Value)
                 {
                     createArmoredIron = true;
@@ -523,14 +523,13 @@ namespace FriendlySkeletonWand
             }
 
             bool createArmoredBlackIron = false;
-            if (ExtraResourceConsumptionUnlocked 
-                && !createArmoredLeather 
-                && !createArmoredBronze 
+            if (ExtraResourceConsumptionUnlocked
+                && !createArmoredLeather
+                && !createArmoredBronze
                 && !createArmoredIron
                 && armorBlackIronRequiredConfig.Value > 0)
             {
                 int blackIronInInventory = player.GetInventory().CountItems("$item_blackmetal");
-                Jotunn.Logger.LogInfo($"Black metal in inventory: {blackIronInInventory}");
                 if (blackIronInInventory >= armorBlackIronRequiredConfig.Value)
                 {
                     createArmoredBlackIron = true;
@@ -544,7 +543,6 @@ namespace FriendlySkeletonWand
                 && surtlingCoresRequiredConfig.Value > 0)
             {
                 int surtlingCoresInInventory = player.GetInventory().CountItems("$item_surtlingcore");
-                Jotunn.Logger.LogInfo($"Surtling cores in inventory: {surtlingCoresInInventory}");
                 if (surtlingCoresInInventory >= surtlingCoresRequiredConfig.Value)
                 {
                     createMage = true;
@@ -557,13 +555,11 @@ namespace FriendlySkeletonWand
             if (maxSkeletons.Value > 0)
             {
                 // re-count the current active skeletons
-                int activeSkeletons = CountActiveSkeletonMinions();
-                Jotunn.Logger.LogInfo($"Skeleton count: {activeSkeletons}; maxSkeletons = {maxSkeletons.Value}");
+                CountActiveSkeletonMinions();
             }
 
             // scale according to skill
             float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
-            Jotunn.Logger.LogInfo($"Player necromancy level: {playerNecromancyLevel}");
 
             int quality = skeletonTierOneQuality.Value;
             if (playerNecromancyLevel >= skeletonTierThreeLevelReq.Value) { quality = skeletonTierThreeQuality.Value; }
@@ -582,9 +578,9 @@ namespace FriendlySkeletonWand
                 skeletonType = SkeletonType.Poison;
             }
 
-            InstantiateSkeleton(player, quality, playerNecromancyLevel, 
-                skeletonType, 
-                createArmoredLeather, createArmoredBronze, 
+            InstantiateSkeleton(player, quality, playerNecromancyLevel,
+                skeletonType,
+                createArmoredLeather, createArmoredBronze,
                 createArmoredIron, createArmoredBlackIron);
         }
     }

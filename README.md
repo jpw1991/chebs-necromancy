@@ -66,10 +66,11 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
   - Black Metal -> Black Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
-- As of 1.2.0, debug commands that affect minions across the entire world/universe:
+- As of 1.2.0, debug commands that affect minions ~~across the entire world/universe~~ currently loaded:
   - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
   - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
-- As of 1.4.3 you can summon a Neckro Gatherer via the console (no normal way to spawn it right now) which is an undead Neck with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner. It also brings items to chests and tries to deposit them. The command is `chebgonaz_prerelease_spawnneckro` and is a user command (not admin). This command will be removed in later versions.
+- As of 1.5.0 you can create a Neckro Pylon which spawns undead Necks from Neck Tails with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
+1.5.0 also introduces a refueler pylon, that fills your smelters with ores and coal or wood, and a Bat Beacon which spawns bats to defend your base.
 
 ### Config
 
@@ -82,27 +83,38 @@ Doesn't work for some reason; please edit the configs manually. Almost everythin
 ### F.A.Q
 
 Q: How do I kill minions?
+
 A: They count as tames, so use butcher's knife
 
 Q: What do minions eat?
+
 A: Nothing. They are just tames so that they earn you Necromancy XP and get a funny name.
 
 Q: What meats work for spawning Draugr?
+
 A: Boar Meat, Neck Tail, Deer Meat, Lox Meat, Wolf Meat, Serpent Meat, Chicken Meat, Hare meat. It checks and consumes the first one it finds in that order - so low quality meats are preferred to high quality.
 
 Q: Can I heal minions?
+
 A: Not yet, unless you use other mods that permit healing. I want to add healing eventually in some form.
 
 Q: How do I make a poison skeleton?
+
 A: Make sure your necromancy level is high enough and have some Guck in your inventory when creating a non-archer skeleton using the staff.
 
 Q: Can you add Frost Resistance to the Spectral Shroud and/or Necromancer Hood so I can use it in the Mountains?
+
 A: This is currently not planned because another mod called [Custom Armor Stats](https://www.nexusmods.com/valheim/mods/1162/) can be used to add it. So I'd rather spare myself the extra work.
+
+Q. How do I make the Neckro Gatherer Pylon work?
+
+A. Put some Neck Tails inside it.
 
 ## Changelog
 
 Date | Version | Notes
 --- | --- | ---
+13/01/2023 | 1.5.1 | tone logging down a bit; fix string name on neckro pylon
 12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters; fix pylons to face toward their Z axis (it was backwards before); add neckro gatherer pylon; neckros gain 150hp and can't attack; neckros no longer afraid of fire; update icons with brilliant designs by Ramblez; finally fix transparency issue
 11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player; add chebgonaz_prerelease_spawnneckro command to let players test with new neckro gatherer.
 09/01/2023 | 1.4.2 | Neckro Gatherer now brings items back to empty containers and stores them

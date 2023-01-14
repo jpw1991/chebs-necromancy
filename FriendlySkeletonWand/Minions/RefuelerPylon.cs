@@ -218,12 +218,10 @@ namespace FriendlySkeletonWand
 
                 if (!smelter.IsItemAllowed(itemData.m_dropPrefab.name))
                 {
-                    Jotunn.Logger.LogInfo($"Refueler pylon can't smelt item {itemData.m_dropPrefab.name}");
                     return;
                 }
                 if (smelter.GetQueueSize() >= smelter.m_maxOre)
                 {
-                    Jotunn.Logger.LogInfo($"Refueler pylon can't smelt item {itemData.m_dropPrefab.name}, queue is full");
                     return;
                 }
                 inventory.RemoveItem(itemData, 1);

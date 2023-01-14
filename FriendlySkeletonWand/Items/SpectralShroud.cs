@@ -27,7 +27,7 @@ namespace FriendlySkeletonWand
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
-        
+
         public static ConfigEntry<string> craftingCost;
 
         private float wraithLastSpawnedAt;
@@ -93,7 +93,7 @@ namespace FriendlySkeletonWand
 
             if (allowed.Value)
             {
-                if (craftingCost.Value == null || craftingCost.Value == "")
+                if (string.IsNullOrEmpty(craftingCost.Value))
                 {
                     craftingCost.Value = DefaultRecipe;
                 }
@@ -123,7 +123,7 @@ namespace FriendlySkeletonWand
             }
             // make sure the set effect is applied or removed according
             // to config values
-            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = 
+            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect =
                 necromancySkillBonus.Value > 0 ?
                 BasePlugin.setEffectNecromancyArmor : null;
             customItem.ItemDrop.m_itemData.m_shared.m_equipStatusEffect =
@@ -232,16 +232,6 @@ namespace FriendlySkeletonWand
                     }
                 }
             }
-            //else
-            //{
-            //    if (GuardianWraithMinion.instance != null)
-            //    {
-            //        if (GuardianWraithMinion.instance.TryGetComponent(out Humanoid humanoid))
-            //        {
-            //            GuardianWraithMinion.instance.GetComponent<Humanoid>().SetHealth(0);
-            //        }
-            //    }
-            //}
         }
     }
 }

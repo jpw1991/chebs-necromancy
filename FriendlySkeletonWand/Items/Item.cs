@@ -33,7 +33,6 @@ namespace FriendlySkeletonWand
 
         public virtual void CreateConfigs(BaseUnityPlugin plugin) {}
 
-        // todo: revert to default configuration if errors present
         protected virtual string DefaultRecipe { get { return ""; } }
 
         //
