@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using FriendlySkeletonWand.Abilities;
 
 
 namespace FriendlySkeletonWand
@@ -46,6 +47,8 @@ namespace FriendlySkeletonWand
 
         public static SE_Stats setEffectNecromancyArmor, setEffectNecromancyArmor2;
 
+        public static event Action AbilitiesInitialized;
+
         private void Awake()
         {
             CreateConfigValues();
@@ -58,6 +61,7 @@ namespace FriendlySkeletonWand
 
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
+            Ability.InitializeAbilities();
 
             SetupWatcher();
         }
@@ -81,6 +85,8 @@ namespace FriendlySkeletonWand
             LargeCargoCrate.CreateConfigs(this);
 
             NeckroGathererMinion.CreateConfigs(this);
+
+            FriendlySkeletonWand.Abilities.CreateConfigs(this);
         }
 
         private void SetupWatcher()

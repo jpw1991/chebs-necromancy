@@ -130,8 +130,18 @@
     <Reference Include="assembly_valheim_publicized">
       <HintPath>libs\publicized_assemblies\assembly_valheim_publicized.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>libs\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abilities\Ability.cs" />
+    <Compile Include="Abilities\AbilityBar.cs" />
+    <Compile Include="Abilities\AbilityConfig.cs" />
+    <Compile Include="Abilities\AbilityController.cs" />
+    <Compile Include="Abilities\AbilityDefinitions.cs" />
+    <Compile Include="Abilities\AbilityFactory.cs" />
+    <Compile Include="Abilities\PlayerExtensions_Abilities.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -174,14 +184,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Abilities\abilities.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Package\plugins\" />
-    <Folder Include="Items\" />
-    <Folder Include="Minions\" />
-    <Folder Include="Commands\" />
-    <Folder Include="CustomPrefabs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package\manifest.json" />

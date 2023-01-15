@@ -1,0 +1,84 @@
+{
+  "Abilities": [
+    {
+      "ID": "Follow",
+      "IconAsset": "FollowIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "FollowCustom" ]
+    },
+    {
+      "ID": "Wait",
+      "IconAsset": "WaitIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "WaitCustom" ]
+    },
+    {
+      "ID": "Teleport",
+      "IconAsset": "TeleportIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "TeleportCustom" ]
+    },
+    {
+      "ID": "Target",
+      "IconAsset": "TargetIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "TargetCustom" ]
+    },
+    {
+      "ID": "Skeleton Warrior",
+      "IconAsset": "SkeletonWarriorIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "SkeletonWarriorCustom" ]
+    },
+    {
+      "ID": "Skeleton Archer",
+      "IconAsset": "SkeletonArcherIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "SkeletonArcherCustom" ]
+    },
+    {
+      "ID": "Skeleton Mage",
+      "IconAsset": "SkeletonMageIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "SkeletonMageCustom" ]
+    },
+    {
+      "ID": "Poison Skeleton",
+      "IconAsset": "PoisonSkeletonIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "PoisonSkeletonCustom" ]
+    },
+    {
+      "ID": "Draugr Warrior",
+      "IconAsset": "DraugrWarriorIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "DragurWarriorCustom" ]
+    },
+    {
+      "ID": "Draugr Archer",
+      "IconAsset": "DraugrArcherIcon",
+      "ActivationMode": "Activated",
+      "Cooldown": 1,
+      "Action": "Custom",
+      "ActionParams": [ "DraugrArcherCustom" ]
+    }
+  ]
+}
