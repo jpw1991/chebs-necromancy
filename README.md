@@ -10,9 +10,9 @@ This mod adds a craftable wand which can be used to create skeletons with. These
 
 ##  About Me
 
-[![image1](https://imgur.com/Fahi6sP)](https://chebgonaz.pythonanywhere.com)
-[![image2](https://imgur.com/X18OyQs)](https://www.patreon.com/chebgonaz?fan_landing=true)
-[![image3](https://imgur.com/4e64jQ8)](https://ko-fi.com/chebgonaz)
+[![image1](https://imgur.com/Fahi6sP.png)](https://chebgonaz.pythonanywhere.com)
+[![image2](https://imgur.com/X18OyQs.png)](https://www.patreon.com/chebgonaz?fan_landing=true)
+[![image3](https://imgur.com/4e64jQ8.png)](https://ko-fi.com/chebgonaz)
 
 I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
@@ -74,11 +74,11 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ### Config
 
-~~**Attention:** To edit the config as described, the [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) is required. This is a separate mod. Please download and install it.~~
+**Attention:** To edit the config as described, the [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) is the most user friendly way. This is a separate mod. Please download and install it.
 
-~~Press **F1** to open the mod's configuration panel.~~
+Press **F1** to open the mod's configuration panel.
 
-Doesn't work for some reason; please edit the configs manually. Almost everything can be tweaked to your liking.
+You can also edit the configs manually. Almost everything can be tweaked to your liking.
 
 ### F.A.Q
 
