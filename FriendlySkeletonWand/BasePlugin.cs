@@ -549,9 +549,14 @@ namespace FriendlySkeletonWand
         // I also pruned some player stuff out.
         static bool Prefix(ref long sender, ref HitData hit, Character __instance)
         {
-            if (__instance.TryGetComponent(out SkeletonMinion minion))
+            //todo: this is stupid. Please rescue me code review
+            SkeletonMinion skeletonMinion = __instance.GetComponent<SkeletonMinion>();
+            DraugrMinion draugrMinion = __instance.GetComponent<DraugrMinion>();
+
+            if (__instance.TryGetComponent(out UndeadMinion minion))
             {
                 if (!__instance.m_nview.IsOwner()
+                    || (skeletonMinion == null && draugrMinion == null)
                     || __instance.GetHealth() <= 0f
                     || __instance.IsDead()
                     || __instance.IsTeleporting() 
