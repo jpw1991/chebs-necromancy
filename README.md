@@ -35,7 +35,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ## Installation (manual)
 
-- Drag the `FriendlySkeletonWand` folder from inside the archive to your Bepinex plugins folder in the Valheim directory.
+- Drag the `ChebsNecromancy` folder from inside the archive to your Bepinex plugins folder in the Valheim directory.
 
 ## Features
 

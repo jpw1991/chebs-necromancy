@@ -11,8 +11,8 @@ display_usage()
 	)
     echo "Usage: $0 ${ua[*]}"
     uv=(
-        "FriendlySkeletonWand/bin/Release"
-	"FriendlySkeletonWand.dll"
+        "ChebsNecromancy/bin/Release"
+	"ChebsNecromancy.dll"
 	"/home/$USER/.local/share/Steam/steamapps/common/Valheim"
 	"$(pwd)"
 	"/home/$USER/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins"

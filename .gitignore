@@ -376,8 +376,8 @@ Environment.props
 
 # other
 *.unitypackage
-FriendlySkeletonWand/libs
+ChebsNecromancy/libs
 *.backup
-FriendlySkeletonWandUnity/Assets
-FriendlySkeletonWandUnity/ProjectSettings/SceneTemplateSettings.json
-FriendlySkeletonWandUnity/ProjectSettings/TimelineSettings.asset
+ChebsNecromancyUnity/Assets
+ChebsNecromancyUnity/ProjectSettings/SceneTemplateSettings.json
+ChebsNecromancyUnity/ProjectSettings/TimelineSettings.asset

@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\JotunnLib.2.10.0\build\JotunnLib.props" Condition="Exists('..\packages\JotunnLib.2.10.0\build\JotunnLib.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DEAF4438-8089-40ED-8175-398E1261D45B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ChebsNecromancy</RootNamespace>
+    <AssemblyName>ChebsNecromancy</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <StartAction>Program</StartAction>
+    <StartProgram>$(VALHEIM_INSTALL)\valheim.exe</StartProgram>
+    <StartArguments>-console</StartArguments>
+    <StartWorkingDirectory>$(VALHEIM_INSTALL)</StartWorkingDirectory>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="BepInEx">
+      <HintPath>libs\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils">
+      <HintPath>..\packages\MonoMod.Utils.22.5.1.1\lib\net452\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod">
+      <HintPath>..\packages\MonoMod.22.5.1.1\lib\net452\MonoMod.exe</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour">
+      <HintPath>..\packages\MonoMod.RuntimeDetour.22.5.1.1\lib\net452\MonoMod.RuntimeDetour.dll</HintPath>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\packages\HarmonyX.2.10.1\lib\net45\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Jotunn">
+      <HintPath>..\packages\JotunnLib.2.10.0\lib\net462\Jotunn.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>libs\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>libs\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>libs\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>libs\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_googleanalytics_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_googleanalytics_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_guiutils_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_guiutils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_lux_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_lux_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_postprocessing_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_postprocessing_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_simplemeshcombine_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_simplemeshcombine_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_steamworks_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_steamworks_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_sunshafts_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_sunshafts_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_utils_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_utils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim_publicized">
+      <HintPath>libs\publicized_assemblies\assembly_valheim_publicized.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\IgnoreAccessModifiers.cs" />
+    <Compile Include="BasePlugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Items\DraugrWand.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\Wand.cs" />
+    <Compile Include="Items\SkeletonBow.cs" />
+    <Compile Include="Items\SkeletonBow2.cs" />
+    <Compile Include="Items\SkeletonClub.cs" />
+    <Compile Include="Items\SkeletonWand.cs" />
+    <Compile Include="Items\SpectralShroud.cs" />
+    <Compile Include="Minions\GuardianWraithMinion.cs" />
+    <Compile Include="Minions\SpiritPylon.cs" />
+    <Compile Include="Minions\UndeadMinion.cs" />
+    <Compile Include="Minions\SkeletonMinion.cs" />
+    <Compile Include="Minions\DraugrMinion.cs" />
+    <Compile Include="Items\NecromancerHood.cs" />
+    <Compile Include="Minions\SpiritPylonGhostMinion.cs" />
+    <Compile Include="Minions\PoisonSkeletonMinion.cs" />
+    <Compile Include="Items\SkeletonHelmetLeather.cs" />
+    <Compile Include="Items\SkeletonHelmetBronze.cs" />
+    <Compile Include="Items\SkeletonHelmetIron.cs" />
+    <Compile Include="Items\SkeletonFireballLevel1.cs" />
+    <Compile Include="Items\SkeletonFireballLevel2.cs" />
+    <Compile Include="Items\SkeletonFireballLevel3.cs" />
+    <Compile Include="Items\SkeletonMageCirclet.cs" />
+    <Compile Include="Commands\KillAllMinions.cs" />
+    <Compile Include="Commands\SummonAllMinions.cs" />
+    <Compile Include="Items\SkeletonAxe.cs" />
+    <Compile Include="Items\SkeletonHelmetBlackIron.cs" />
+    <Compile Include="Items\BlackIronChest.cs" />
+    <Compile Include="Items\BlackIronLegs.cs" />
+    <Compile Include="Items\BlackIronHelmet.cs" />
+    <Compile Include="Minions\NecroNeckGathererMinion.cs" />
+    <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
+    <Compile Include="Minions\RefuelerPylon.cs" />
+    <Compile Include="Minions\NeckroGathererPylon.cs" />
+    <Compile Include="Minions\BatBeacon.cs" />
+    <Compile Include="Minions\BatBeaconBatMinion.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Package\plugins\" />
+    <Folder Include="Items\" />
+    <Folder Include="Minions\" />
+    <Folder Include="Commands\" />
+    <Folder Include="CustomPrefabs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package\manifest.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Package\icon.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="JotunnPostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'">
+    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;$(SolutionDir)publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -ValheimPath &quot;$(VALHEIM_INSTALL.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot; " />
+  </Target>
+  <PropertyGroup>
+    <BuildDependsOn>
+      $(BuildDependsOn);
+      JotunnPostBuildTaskWin
+    </BuildDependsOn>
+  </PropertyGroup>
+</Project>

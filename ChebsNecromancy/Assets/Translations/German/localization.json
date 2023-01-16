@@ -1,0 +1,84 @@
+{
+  "item_friendlyskeletonwand": "Skelett Beschwörer",
+  "item_friendlyskeletonwand_desc": "Beschwöre freundliche Skelett-Günstlinge.",
+
+  "friendlyskeletonwand_config_guardianwraithtetherdistance_desc": "Entfernung des Halteseils von Wächtergeist zum Spieler.",
+  "friendlyskeletonwand_config_guardianwraithlevelrequirement_desc": "Die Levelanforderung für das Erschaffen eines Wächtergeistes.",
+
+  "item_friendlyskeletonwand_draugrwand": "Draugr Beschwörer",
+  "item_friendlyskeletonwand_draugrwand_desc": "Beschwöre freundliche Draugr-Günstlinge.",
+
+  "item_friendlyskeletonwand_spectralshroud": "Spektraler Schleier",
+  "item_friendlyskeletonwand_spectralshroud_desc": "Zieht Geister zu Dir, die Dir dienen, vorausgesetzt, Du bist geschickt genug.",
+  "$friendlyskeletonwand_wraithangrymessage": "Du bist schwach! Ich werde Dich bestrafen!",
+
+  "friendlyskeletonwand_config_draugrhealthmultiplier_desc": "Draugr-Gesundheitsmultiplikator",
+  "friendlyskeletonwand_config_draugrsetfollowrange_desc": "Draugr-Folge-Reichweite",
+  "friendlyskeletonwand_config_draugrpersummon_desc": "Draugr pro Beschwörung",
+  "friendlyskeletonwand_config_draugrbonefragmentsrequired_desc": "Knochenfragmentbedarf für Draugr",
+  "friendlyskeletonwand_config_draugrmeatrequired_desc": "Fleischbedarf für Draugr",
+  "friendlyskeletonwand_config_maxdraugr_desc": "Die maximale Menge an Draugr, die Du Beschwören kannst.",
+
+  "chebgonaz_guardianwraith": "Wächtergeist",
+  
+  "chebgonaz_spiritpylon_name": "Spiritueller Pfeiler",
+  "chebgonaz_spiritpylon_desc": "Spektrale Wesen strömen zu diesem nekrotischen Leuchtfeuer wie Motten zum Mond.",
+  "chebgonaz_spiritpylonghost": "Spiritueller Pfeiler-Geist",
+  "friendlyskeletonwand_config_spiritpylonsightradius_desc": "Der Radius, in dem ein Spiritueller Pfeiler Feinde sieht.",
+
+  "friendlyskeletonwand_attack": "Angriff",
+  "friendlyskeletonwand_follow": "Mir Folgen",
+  "friendlyskeletonwand_wait": "Hier Warten",
+  "friendlyskeletonwand_create": "Beschwöre Günstling",
+  "friendlyskeletonwand_teleport": "Zu mir Teleportieren (wenn Folgend)",
+  "friendlyskeletonwand_attacktarget": "Angriff-Ziel",
+  "friendlyskeletonwand_create_archer": "Beschwöre Schütze",
+
+  "friendlyskeletonwand_necromancy": "Nekromantie",
+  "friendlyskeletonwand_necromancy_desc": "Die Kunst, Untote-Günstlinge zu beschwören, die Dir dienen.",
+
+  "friendlyskeletonwand_notenoughbones": "Mehr Knochenfragmente nötig",
+  "friendlyskeletonwand_skeletonfollowing": "Folgend, Meister...",
+  "friendlyskeletonwand_skeletonwaiting": "Wartend, Meister...",
+  "friendlyskeletonwand_targetfound": "Los, Günstling!",
+  "friendlyskeletonwand_notargetfound": "Kein Ziel gefunden.",
+  "friendlyskeletonwand_wraithmessage": "Meister ... ich komme, um Dir zu dienen ...",
+  "friendlyskeletonwand_limitexceeded": "Schwächling! Du kannst nicht mehr Günstlinge befehligen!",
+  
+  "friendlyskeletonwand_config_create_minion": "Günstling beschwören.",
+  "friendlyskeletonwand_config_create_minion_desc": "Taste zum beschwören eines Günstling.",
+  "friendlyskeletonwand_config_create_minion_gamepad": "Günstling beschwören.",
+  "friendlyskeletonwand_config_create_minion_gamepad_desc": "Gamepad-Taste zum beschwören eines Günstling.",
+
+  "friendlyskeletonwand_config_follow": "Die Folgen-Taste.",
+  "friendlyskeletonwand_config_follow_desc": "Die Folgen-Taste.",
+  "friendlyskeletonwand_config_follow_gamepad": "Die Gamepad-Folgen-Taste.",
+  "friendlyskeletonwand_config_follow_gamepad_desc": "Die Gamepad-Folgen-Taste.",
+
+  "friendlyskeletonwand_config_bonefragmentsrequired_desc": "Die Anforderung an Knochenfragmente (verwende 0 für keine).",
+  "friendlyskeletonwand_config_necromancylevelincrease_desc": "Wie stark sich die Nekromantiestufe pro erstelltem Günstling erhöht.",
+  "friendlyskeletonwand_config_skeletonhealthmultiplier_desc": "Nekromantiestufe * Gesundheitsmultiplikator des Günstlings = LP des Günstling.",
+  "friendlyskeletonwand_config_skeletonsetfollowrange_desc": "Die Entfernung, der Günstlinge Deinem Folgenbefehl gehorchen.",
+  "friendlyskeletonwand_config_maxskeletons_desc": "Die maximale Anzahl an Günstlinge, die Du herstellen kannst.",
+  
+  "friendlyskeletonwand_config_wait": "Die Warten-Taste.",
+  "friendlyskeletonwand_config_wait_desc": "Die Warten-Taste.",
+  "friendlyskeletonwand_config_wait_gamepad": "Die Gamepad-Warten-Taste.",
+  "friendlyskeletonwand_config_wait_gamepad_desc": "Die Gamepad-Warten-Taste.",
+
+  "friendlyskeletonwand_config_bonefragmentsdroppedamountmin_desc": "Die Mindestmenge an Knochenfragmenten, die tote Kreaturen fallen lassen.",
+  "friendlyskeletonwand_config_bonefragmentsdroppedamountmax_desc": "Die Maximalmenge an Knochenfragmenten, die tote Kreaturen fallen lassen.",
+  
+  "friendlyskeletonwand_config_teleport": "Teleportiere Günstlinge zu Dir.",
+  "friendlyskeletonwand_config_teleport_desc": "Taste für Teleportiere der Günstlinge zu Dir.",
+  "friendlyskeletonwand_config_teleport_gamepad": "Teleportiere Günstlinge zu Dir.",
+  "friendlyskeletonwand_config_teleport_gamepad_desc": "Gamepad-Taste für Teleportiere der Günstlinge zu Dir.",
+
+  "friendlyskeletonwand_config_attacktarget": "Angriffs-Ziel der Günstlinge.",
+  "friendlyskeletonwand_config_attacktarget_desc": "Taste für Angriffs-Ziel der Günstlinge.",
+  "friendlyskeletonwand_config_attacktarget_gamepad": "Angriffs-Ziel der Günstlinge.",
+  "friendlyskeletonwand_config_attacktarget_gamepad_desc": "Gamepad-Taste für Angriffs-Ziel der Günstlinge.",
+
+  "friendlyskeletonwand_config_guardianwraithlevelrequirement_desc": "Die Levelanforderung für das Erschaffen eines Wächtergeistes."
+}
+

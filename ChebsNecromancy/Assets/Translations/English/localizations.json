@@ -1,0 +1,54 @@
+{
+  "item_friendlyskeletonwand": "Friendly Skeleton Wand",
+  "item_friendlyskeletonwand_desc": "Spawn friendly skeleton minions.",
+
+  "item_friendlyskeletonwand_draugrwand": "Friendly Draugr Wand",
+  "item_friendlyskeletonwand_draugrwand_desc": "Spawn friendly draugr minions.",
+
+  "item_friendlyskeletonwand_spectralshroud": "Spectral Shroud",
+  "item_friendlyskeletonwand_spectralshroud_desc": "Attracts spirits to you to serve you, provided you're skilled enough.",
+  "$friendlyskeletonwand_wraithangrymessage": "You are weak! I will punish you!",
+  
+  "item_chebgonaz_necromancerhood": "Necromancer's Hood",
+  "item_chebgonaz_necromancerhood_desc": "This hood smells earthy; of gravedust, and blood.",
+
+  "chebgonaz_guardianwraith": "Guardian Wraith",
+  
+  "chebgonaz_spiritpylon_name": "Spirit Pylon",
+  "chebgonaz_spiritpylon_desc": "Spectral entities flock to this necrotic beacon like moths to the moon.",
+  "chebgonaz_spiritpylonghost": "Spirit Pylon Ghost",
+
+  "chebgonaz_refuelerpylon_name": "Refueler Pylon",
+  "chebgonaz_refuelerpylon_desc": "Ghosts toil away endlessly refueling your furnaces with coal.",
+  
+  "chebgonaz_neckrogathererpylon_name": "Neckro Gatherer Pylon",
+  "chebgonaz_neckrogathererpylon_desc": "Reanimate Necks into Neckro Gatherers who will collect items for you.",
+  
+  "chebgonaz_batbeacon_name": "Bat Beacon",
+  "chebgonaz_batbeacon_desc": "Enemies that approach this baleful flame will find themselves beset upon by winged flappers.",
+
+  "friendlyskeletonwand_attack": "Attack",
+  "friendlyskeletonwand_follow": "Follow",
+  "friendlyskeletonwand_wait": "Wait",
+  "friendlyskeletonwand_create": "Create Minion",
+  "friendlyskeletonwand_teleport": "Teleport",
+  "friendlyskeletonwand_attacktarget": "Target",
+  "friendlyskeletonwand_create_archer": "Create Archer",
+  "friendlyskeletonwand_unlockextraresourceconsumption": "Use Resources",
+
+  "friendlyskeletonwand_necromancy": "Necromancy",
+  "friendlyskeletonwand_necromancy_desc": "The art of creating Undead to serve you.",
+  "chebgonaz_necroseteffect_name": "Necro I",
+  "chebgonaz_necroseteffect_tooltip": "Danse Macabre",
+  "chebgonaz_necroseteffect_name2": "Necro II",
+  "chebgonaz_necroseteffect_tooltip2": "Charnel Pit",
+
+  "friendlyskeletonwand_notenoughbones": "You need more bone fragments",
+  "friendlyskeletonwand_notenoughmeat": "You need more meat.",
+  "friendlyskeletonwand_skeletonfollowing": "Following, master...",
+  "friendlyskeletonwand_skeletonwaiting": "Waiting, master...",
+  "friendlyskeletonwand_targetfound": "Go forth, minions!",
+  "friendlyskeletonwand_notargetfound": "No target found.",
+  "friendlyskeletonwand_wraithmessage": "Master... I come to serve thee...",
+  "friendlyskeletonwand_limitexceeded": "Weakling! You cannot command more minions!",
+}
