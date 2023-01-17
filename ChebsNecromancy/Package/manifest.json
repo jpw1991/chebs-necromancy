@@ -1,8 +1,8 @@
 ﻿{
-  "name": "ChebsNecromancy",
-  "description": "Adds craftable wands that can be used to create friendly skeletons and draugr to follow you and guard your base with, as well as static defenses and some base automation.",
+  "name": "Cheb's Necromancy",
+  "description": "Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.",
   "version_number": "1.5.1",
-  "website_url": "chebgonaz.pythonanywhere.com",
+  "website_url": "https://github.com/jpw1991/chebs-necromancy",
   "dependencies": [
     "ValheimModding-Jotunn-2.10.0"
   ]
