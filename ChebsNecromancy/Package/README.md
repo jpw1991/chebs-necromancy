@@ -1,10 +1,10 @@
 # Friendly Skeleton Wand
 
-This mod adds a craftable wand which can be used to create skeletons with. These skeletons are supposed to guard your base and hang around the general vicinity of wherever you create them.
+Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
 
-**Confused?** Try the [wiki](https://github.com/jpw1991/Friendly-Skeleton-Wand/wiki). I made it for you & it was time consuming.
+This mod was formerly called Friendly Skeleton Wand, but was renamed since it as grown into something so much more.
 
-**Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/Friendly-Skeleton-Wand/releases). Although less tested than the official releases, they are still tested pretty well.
+**Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/chebs-necromancy/releases). Although less tested than the official releases, they are still tested pretty well.
 
 ## Important Update Note for pre-1.0.8
 
@@ -24,7 +24,7 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 
 If you would like to report a bug or request a feature, the best way to do it (in order from most preferable to least preferable) is:
 
-a) Create an issue on my [GitHub](https://github.com/jpw1991/Friendly-Skeleton-Wand).
+a) Create an issue on my [GitHub](https://github.com/jpw1991/chebs-necromancy).
 b) Create a bug report on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=bugs).
 c) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
 d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
@@ -41,7 +41,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ## Features
 
-- Craftable wands at the workbench called **Friendly Skeleton Wand** and **Friendly Draugr Wand**.
+- Craftable wands at the workbench called **Skeleton Wand** and **Draugr Wand**.
 - These wands consume **Bone Fragments** to create minions.
 - **Bone Fragments** now drop from all creatures when they die.
 - With a wand equipped, the following is possible:
@@ -114,9 +114,13 @@ A. Put some Neck Tails inside it.
 
 ## Changelog
 
+<details>
+<summary>2023</summary>
+
 Date | Version | Notes
 --- | --- | ---
-14/01/2023 | 1.5.2 | made draugr wear armor; lowered draugr helmet attachment point; draugr armor value applied; janky code needs urgent review
+17/01/2023 | 1.5.2 | Tier 3 skeleton mages now throw goblin fireballs.
+16/01/2023 | 1.5.1 | rename to Cheb's Necromancy. No additional changes.
 13/01/2023 | 1.5.1 | tone logging down a bit; fix string name on neckro pylon
 12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters; fix pylons to face toward their Z axis (it was backwards before); add neckro gatherer pylon; neckros gain 150hp and can't attack; neckros no longer afraid of fire; update icons with brilliant designs by Ramblez; finally fix transparency issue
 11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player; add chebgonaz_prerelease_spawnneckro command to let players test with new neckro gatherer.
@@ -130,6 +134,13 @@ Date | Version | Notes
 04/01/2023 | 1.1.0 | Armored Skeletons and Skeleton Mages!
 02/01/2023 | 1.0.25 | Fix bug where Poison Skeleton's HP is lower than it should be after leaving area and coming back
 02/01/2023 | 1.0.24 | Add Poison Skeleton (requires Guck in inventory); Guardian Wraith despawns when entering portal; Alert range of all entities raised to 30
+
+</details>
+
+<details><summary>2022</summary>
+
+Date | Version | Notes
+--- | --- | ---
 30/12/2022 | 1.0.23 | Guardian Wraith implementation changed: Guardian Wraiths only spawn if enemies are nearby and move immediately to intercept enemy; Guardian Wraiths exist on a timer and perish on their own
 29/12/2022 | 1.0.22 | add neck tail to draugr meat; expose ghost timer to config; fix ghost selfdestruct by changing from coroutine to update; add localizations; fix problem with limits not working properly; setting buttons to None in config removes them from GUI
 25/12/2022 | 1.0.21 | Fix bug about Spirit Pylon Ghosts not despawning
@@ -154,6 +165,8 @@ Date | Version | Notes
 25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
 25/11/2022 | 1.0.0 | Release
 
+</details>
+
 ## Known issues
 
 - Skeletons can't follow you into/out of dungeons
@@ -168,7 +181,7 @@ Date | Version | Notes
 
 ## Source
 
-You can find the github [here](https://github.com/jpw1991/Friendly-Skeleton-Wand).
+You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 ## Special Thanks
 

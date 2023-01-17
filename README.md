@@ -114,8 +114,12 @@ A. Put some Neck Tails inside it.
 
 ## Changelog
 
+<details>
+<summary>2023</summary>
+
 Date | Version | Notes
 --- | --- | ---
+17/01/2023 | 1.5.2 | Tier 3 skeleton mages now throw goblin fireballs.
 16/01/2023 | 1.5.1 | rename to Cheb's Necromancy. No additional changes.
 13/01/2023 | 1.5.1 | tone logging down a bit; fix string name on neckro pylon
 12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters; fix pylons to face toward their Z axis (it was backwards before); add neckro gatherer pylon; neckros gain 150hp and can't attack; neckros no longer afraid of fire; update icons with brilliant designs by Ramblez; finally fix transparency issue
@@ -130,6 +134,13 @@ Date | Version | Notes
 04/01/2023 | 1.1.0 | Armored Skeletons and Skeleton Mages!
 02/01/2023 | 1.0.25 | Fix bug where Poison Skeleton's HP is lower than it should be after leaving area and coming back
 02/01/2023 | 1.0.24 | Add Poison Skeleton (requires Guck in inventory); Guardian Wraith despawns when entering portal; Alert range of all entities raised to 30
+
+</details>
+
+<details><summary>2022</summary>
+
+Date | Version | Notes
+--- | --- | ---
 30/12/2022 | 1.0.23 | Guardian Wraith implementation changed: Guardian Wraiths only spawn if enemies are nearby and move immediately to intercept enemy; Guardian Wraiths exist on a timer and perish on their own
 29/12/2022 | 1.0.22 | add neck tail to draugr meat; expose ghost timer to config; fix ghost selfdestruct by changing from coroutine to update; add localizations; fix problem with limits not working properly; setting buttons to None in config removes them from GUI
 25/12/2022 | 1.0.21 | Fix bug about Spirit Pylon Ghosts not despawning
@@ -153,6 +164,8 @@ Date | Version | Notes
 26/11/2022 | 1.0.2 | All creatures drop bone fragments, skeletons can be told to follow/wait, skeletons health scales with necromancy level.
 25/11/2022 | 1.0.1 | Fix a bug that let you create skeletons without the wand equipped.
 25/11/2022 | 1.0.0 | Release
+
+</details>
 
 ## Known issues
 

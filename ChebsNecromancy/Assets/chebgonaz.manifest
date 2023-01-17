@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 4251230628
+CRC: 2575479002
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 90f8882186bf2fc730f7919a3ead884b
+    Hash: bc9f28c09066bba64f8848b87340652c
   TypeTreeHash:
     serializedVersion: 2
     Hash: a74103e9c2dbb2d15c5ba58114381b76
@@ -184,6 +184,7 @@ SerializeReferenceClassIdentifiers:
   ClassName: Raven/RavenText
 Assets:
 - Assets/_ChebGonaz/ChebGonaz_NeckroGathererPylon.mat
+- Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonWarriorTier2.prefab
 - Assets/_ChebGonaz/ChebGonaz_SkeletonClub.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_drop.mat
@@ -248,5 +249,5 @@ Assets:
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_helmet_iron_mat.mat
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIron.prefab
 - Assets/_ChebGonaz/chebgonaz_refuelerpylon_icon.png
-- Assets/_ChebGonaz/ChebGonaz_SkeletonArcherTier3.prefab
+- Assets/_ChebGonaz/ChebGonaz_FireballProjectileGoblin.prefab
 Dependencies: []
