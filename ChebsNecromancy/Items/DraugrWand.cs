@@ -319,6 +319,64 @@ namespace ChebsNecromancy
                 }
             }
 
+            bool createArmoredLeather = false;
+            if (ExtraResourceConsumptionUnlocked && SkeletonWand.armorLeatherScrapsRequiredConfig.Value > 0)
+            {
+                int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
+                if (leatherScrapsInInventory >= SkeletonWand.armorLeatherScrapsRequiredConfig.Value)
+                {
+                    createArmoredLeather = true;
+                    player.GetInventory().RemoveItem("$item_leatherscraps", SkeletonWand.armorLeatherScrapsRequiredConfig.Value);
+                }
+                else
+                {
+                    // no leather scraps? Try some deer hide
+                    int deerHideInInventory = player.GetInventory().CountItems("$item_deerhide");
+                    if (deerHideInInventory >= SkeletonWand.armorLeatherScrapsRequiredConfig.Value)
+                    {
+                        createArmoredLeather = true;
+                        player.GetInventory().RemoveItem("$item_deerhide", SkeletonWand.armorLeatherScrapsRequiredConfig.Value);
+                    }
+                }
+            }
+
+            bool createArmoredBronze = false;
+            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && SkeletonWand.armorBronzeRequiredConfig.Value > 0)
+            {
+                int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
+                if (bronzeInInventory >= SkeletonWand.armorBronzeRequiredConfig.Value)
+                {
+                    createArmoredBronze = true;
+                    player.GetInventory().RemoveItem("$item_bronze", SkeletonWand.armorBronzeRequiredConfig.Value);
+                }
+            }
+
+            bool createArmoredIron = false;
+            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && !createArmoredBronze && SkeletonWand.armorIronRequiredConfig.Value > 0)
+            {
+                int ironInInventory = player.GetInventory().CountItems("$item_iron");
+                if (ironInInventory >= SkeletonWand.armorIronRequiredConfig.Value)
+                {
+                    createArmoredIron = true;
+                    player.GetInventory().RemoveItem("$item_iron", SkeletonWand.armorIronRequiredConfig.Value);
+                }
+            }
+
+            bool createArmoredBlackIron = false;
+            if (ExtraResourceConsumptionUnlocked
+                && !createArmoredLeather
+                && !createArmoredBronze
+                && !createArmoredIron
+                && SkeletonWand.armorBlackIronRequiredConfig.Value > 0)
+            {
+                int blackIronInInventory = player.GetInventory().CountItems("$item_blackmetal");
+                if (blackIronInInventory >= SkeletonWand.armorBlackIronRequiredConfig.Value)
+                {
+                    createArmoredBlackIron = true;
+                    player.GetInventory().RemoveItem("$item_blackmetal", SkeletonWand.armorBlackIronRequiredConfig.Value);
+                }
+            }
+
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
             if (maxDraugr.Value > 0)
@@ -357,6 +415,7 @@ namespace ChebsNecromancy
             character.m_faction = Character.Faction.Players;
             character.SetLevel(quality);
             minion.ScaleStats(playerNecromancyLevel);
+            minion.ScaleEquipment(playerNecromancyLevel, createArmoredLeather, createArmoredBronze, createArmoredIron, createArmoredBlackIron);
 
             try
             {

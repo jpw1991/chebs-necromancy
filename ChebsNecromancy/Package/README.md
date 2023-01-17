@@ -2,6 +2,8 @@
 
 This mod adds a craftable wand which can be used to create skeletons with. These skeletons are supposed to guard your base and hang around the general vicinity of wherever you create them.
 
+**Confused?** Try the [wiki](https://github.com/jpw1991/Friendly-Skeleton-Wand/wiki). I made it for you & it was time consuming.
+
 **Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/Friendly-Skeleton-Wand/releases). Although less tested than the official releases, they are still tested pretty well.
 
 ## Important Update Note for pre-1.0.8
@@ -114,6 +116,7 @@ A. Put some Neck Tails inside it.
 
 Date | Version | Notes
 --- | --- | ---
+14/01/2023 | 1.5.2 | made draugr wear armor; lowered draugr helmet attachment point; draugr armor value applied; janky code needs urgent review
 13/01/2023 | 1.5.1 | tone logging down a bit; fix string name on neckro pylon
 12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters; fix pylons to face toward their Z axis (it was backwards before); add neckro gatherer pylon; neckros gain 150hp and can't attack; neckros no longer afraid of fire; update icons with brilliant designs by Ramblez; finally fix transparency issue
 11/01/2023 | 1.4.3 | item and structure recipes exposed to config file; defensive spikes (standard & dverger)  no longer damage minions if they've been placed by the player; add chebgonaz_prerelease_spawnneckro command to let players test with new neckro gatherer.
