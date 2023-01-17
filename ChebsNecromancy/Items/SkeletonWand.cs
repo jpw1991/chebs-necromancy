@@ -28,6 +28,8 @@ namespace ChebsNecromancy
         public const string SkeletonMageTier3PrefabName = "ChebGonaz_SkeletonMageTier3";
 
         public const string PoisonSkeletonPrefabName = "ChebGonaz_PoisonSkeleton";
+        public const string PoisonSkeleton2PrefabName = "ChebGonaz_PoisonSkeleton2";
+        public const string PoisonSkeleton3PrefabName = "ChebGonaz_PoisonSkeleton3";
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
         public static ConfigEntry<int> craftingStationLevel;
@@ -401,7 +403,18 @@ namespace ChebsNecromancy
                     }
                     break;
                 case SkeletonType.Poison:
-                    result = PoisonSkeletonPrefabName;
+                    if (necromancyLevel >= 85)
+                    {
+                        result = PoisonSkeleton3PrefabName;
+                    }
+                    else if (necromancyLevel >= 65)
+                    {
+                        result = PoisonSkeleton2PrefabName;
+                    }
+                    else
+                    {
+                        result = PoisonSkeletonPrefabName;
+                    }
                     break;
                 default:
                     if (necromancyLevel >= 60)
@@ -569,10 +582,6 @@ namespace ChebsNecromancy
             if (archer) { skeletonType = SkeletonType.Archer; }
             else if (createMage) { skeletonType = SkeletonType.Mage; }
             else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value
-                && !createArmoredBlackIron
-                && !createArmoredIron
-                && !createArmoredBronze
-                && !createArmoredLeather
                 && ConsumeGuckIfAvailable(player))
             {
                 skeletonType = SkeletonType.Poison;

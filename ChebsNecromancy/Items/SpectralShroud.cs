@@ -85,7 +85,7 @@ namespace ChebsNecromancy
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
-        public CustomItem GetCustomItemFromPrefab(GameObject prefab)
+        public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
             ItemConfig config = new ItemConfig();
             config.Name = "$item_friendlyskeletonwand_spectralshroud";

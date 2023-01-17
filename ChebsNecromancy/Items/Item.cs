@@ -4,6 +4,8 @@ using System;
 using Jotunn.Configs;
 using System.Reflection;
 using System.Linq;
+using Jotunn.Entities;
+using UnityEngine;
 
 namespace ChebsNecromancy
 {
@@ -30,6 +32,9 @@ namespace ChebsNecromancy
 
         public virtual string ItemName { get { return ""; } }
         public virtual string PrefabName { get { return ""; } }
+
+        public virtual string NameLocalization { get { return ""; } }
+        public virtual string DescriptionLocalization { get { return ""; } }
 
         public virtual void CreateConfigs(BaseUnityPlugin plugin) {}
 
@@ -85,6 +90,27 @@ namespace ChebsNecromancy
         public virtual void DoOnUpdate()
         {
 
+        }
+
+        public virtual CustomItem GetCustomItemFromPrefab(GameObject prefab)
+        {
+            ItemConfig config = new ItemConfig();
+            config.Name = NameLocalization;
+            config.Description = DescriptionLocalization;
+
+            CustomItem customItem = new CustomItem(prefab, false, config);
+            if (customItem == null)
+            {
+                Jotunn.Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s CustomItem is null!");
+                return null;
+            }
+            if (customItem.ItemPrefab == null)
+            {
+                Jotunn.Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s ItemPrefab is null!");
+                return null;
+            }
+
+            return customItem;
         }
     }
 }

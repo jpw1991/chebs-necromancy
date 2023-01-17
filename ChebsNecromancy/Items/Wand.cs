@@ -301,10 +301,5 @@ namespace ChebsNecromancy
                 }
             }
         }
-
-        public virtual CustomItem GetCustomItemFromPrefab(GameObject prefab)
-        {
-            return null;
-        }
     }
 }

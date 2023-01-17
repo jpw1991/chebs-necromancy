@@ -11,26 +11,7 @@ namespace ChebsNecromancy
 
         public override string ItemName { get { return "ChebGonaz_SkeletonMageCirclet"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonMageCirclet.prefab"; } }
-
-        public CustomItem GetCustomItemFromPrefab(GameObject prefab)
-        {
-            ItemConfig config = new ItemConfig();
-            config.Name = "ChebGonaz_SkeletonMageCirclet";
-            config.Description = "ChebGonaz_SkeletonMageCirclet";
-
-            CustomItem customItem = new CustomItem(prefab, false, config);
-            if (customItem == null)
-            {
-                Jotunn.Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
-            if (customItem.ItemPrefab == null)
-            {
-                Jotunn.Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s ItemPrefab is null!");
-                return null;
-            }
-
-            return customItem;
-        }
+        public override string NameLocalization { get { return "$item_chebgonaz_magecirclet_name"; } }
+        public override string DescriptionLocalization { get { return "$item_chebgonaz_magecirclet_desc"; } }
     }
 }

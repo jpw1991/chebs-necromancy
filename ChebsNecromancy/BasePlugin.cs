@@ -26,7 +26,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGUID = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.5.1";
+        public const string PluginVersion = "1.6.0";
         private const string ConfigFileName =  PluginGUID + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
 
@@ -154,65 +154,36 @@ namespace ChebsNecromancy
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
                 // minion worn items
-                SkeletonClub skeletonClubItem = new SkeletonClub();
-                GameObject skeletonClubPrefab = LoadPrefabFromBundle(skeletonClubItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(new SkeletonClub().GetCustomItemFromPrefab(skeletonClubPrefab));
-
-                SkeletonBow skeletonBowItem = new SkeletonBow();
-                GameObject skeletonBowPrefab = LoadPrefabFromBundle(skeletonBowItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(new SkeletonBow().GetCustomItemFromPrefab(skeletonBowPrefab));
-
-                SkeletonBow2 skeletonBow2Item = new SkeletonBow2();
-                GameObject skeletonBow2Prefab = LoadPrefabFromBundle(skeletonBow2Item.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(new SkeletonBow2().GetCustomItemFromPrefab(skeletonBow2Prefab));
-
-                SkeletonHelmetLeather skeletonHelmetLeatherItem = new SkeletonHelmetLeather();
-                GameObject skeletonHelmetLeatherPrefab = LoadPrefabFromBundle(skeletonHelmetLeatherItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonHelmetLeatherItem.GetCustomItemFromPrefab(skeletonHelmetLeatherPrefab));
-
-                SkeletonHelmetBronze skeletonHelmetBronzeItem = new SkeletonHelmetBronze();
-                GameObject skeletonHelmetBronzePrefab = LoadPrefabFromBundle(skeletonHelmetBronzeItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonHelmetBronzeItem.GetCustomItemFromPrefab(skeletonHelmetBronzePrefab));
-
-                SkeletonHelmetIron skeletonHelmetIronItem = new SkeletonHelmetIron();
-                GameObject skeletonHelmetIronPrefab = LoadPrefabFromBundle(skeletonHelmetIronItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonHelmetIronItem.GetCustomItemFromPrefab(skeletonHelmetIronPrefab));
-
-                SkeletonFireballLevel1 skeletonFireballLevel1Item = new SkeletonFireballLevel1();
-                GameObject skeletonFireballLevel1Prefab = LoadPrefabFromBundle(skeletonFireballLevel1Item.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonFireballLevel1Item.GetCustomItemFromPrefab(skeletonFireballLevel1Prefab));
-
-                SkeletonFireballLevel2 skeletonFireballLevel2Item = new SkeletonFireballLevel2();
-                GameObject skeletonFireballLevel2Prefab = LoadPrefabFromBundle(skeletonFireballLevel2Item.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonFireballLevel2Item.GetCustomItemFromPrefab(skeletonFireballLevel2Prefab));
-
-                SkeletonFireballLevel3 skeletonFireballLevel3Item = new SkeletonFireballLevel3();
-                GameObject skeletonFireballLevel3Prefab = LoadPrefabFromBundle(skeletonFireballLevel3Item.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonFireballLevel3Item.GetCustomItemFromPrefab(skeletonFireballLevel3Prefab));
-
-                SkeletonMageCirclet skeletonMageCircletItem = new SkeletonMageCirclet();
-                GameObject skeletonMageCircletPrefab = LoadPrefabFromBundle(skeletonMageCircletItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonMageCircletItem.GetCustomItemFromPrefab(skeletonMageCircletPrefab));
-
-                SkeletonAxe skeletonAxeItem = new SkeletonAxe();
-                GameObject skeletonAxePrefab = LoadPrefabFromBundle(skeletonAxeItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(skeletonAxeItem.GetCustomItemFromPrefab(skeletonAxePrefab));
-
-                BlackIronChest blackIronChestItem = new BlackIronChest();
-                GameObject blackIronChestPrefab = LoadPrefabFromBundle(blackIronChestItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(blackIronChestItem.GetCustomItemFromPrefab(blackIronChestPrefab));
-
-                BlackIronHelmet blackIronHelmetItem = new BlackIronHelmet();
-                GameObject blackIronHelmetPrefab = LoadPrefabFromBundle(blackIronHelmetItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(blackIronHelmetItem.GetCustomItemFromPrefab(blackIronHelmetPrefab));
-
-                BlackIronLegs blackIronLegsItem = new BlackIronLegs();
-                GameObject blackIronLegsPrefab = LoadPrefabFromBundle(blackIronLegsItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(blackIronLegsItem.GetCustomItemFromPrefab(blackIronLegsPrefab));
-
-                SkeletonHelmetBlackIron blackIronHelmetSkeletonItem = new SkeletonHelmetBlackIron();
-                GameObject blackIronHelmetSkeletonPrefab = LoadPrefabFromBundle(blackIronHelmetSkeletonItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(blackIronHelmetSkeletonItem.GetCustomItemFromPrefab(blackIronHelmetSkeletonPrefab));
+                List<Item> minionWornItems = new List<Item>
+                {
+                    new SkeletonClub(),
+                    new SkeletonBow(),
+                    new SkeletonBow2(),
+                    new SkeletonHelmetLeather(),
+                    new SkeletonHelmetBronze(),
+                    new SkeletonHelmetIron(),
+                    new SkeletonFireballLevel1(),
+                    new SkeletonFireballLevel2(),
+                    new SkeletonFireballLevel3(),
+                    new SkeletonMageCirclet(),
+                    new SkeletonAxe(),
+                    new BlackIronChest(),
+                    new BlackIronHelmet(),
+                    new BlackIronLegs(),
+                    new SkeletonHelmetBlackIron(),
+                    new SkeletonMace(),
+                    new SkeletonMace2(),
+                    new SkeletonMace3(),
+                    new SkeletonHelmetIronPoison(),
+                    new SkeletonHelmetBlackIronPoison(),
+                    new SkeletonHelmetLeatherPoison(),
+                    new SkeletonHelmetBronzePoison(),
+                };
+                minionWornItems.ForEach((minionItem) =>
+                {
+                    GameObject minionItemPrefab = LoadPrefabFromBundle(minionItem.PrefabName, chebgonazAssetBundle);
+                    ItemManager.Instance.AddItem(minionItem.GetCustomItemFromPrefab(minionItemPrefab));
+                });
 
                 wands.ForEach(wand =>
                 {
@@ -263,6 +234,8 @@ namespace ChebsNecromancy
                     prefabNames.Add(SkeletonWand.SkeletonMageTier2PrefabName + ".prefab");
                     prefabNames.Add(SkeletonWand.SkeletonMageTier3PrefabName + ".prefab");
                     prefabNames.Add(SkeletonWand.PoisonSkeletonPrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.PoisonSkeleton2PrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.PoisonSkeleton3PrefabName + ".prefab");
                 }
 
                 if (SpectralShroud.spawnWraith.Value)

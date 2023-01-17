@@ -94,6 +94,25 @@ namespace ChebsNecromancy.Minions
                 return;
             }
 
+            GameObject GetHelmetPrefab()
+            {
+                if (skeletonType == SkeletonType.Mage)
+                {
+                    return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet");
+                }
+                if (skeletonType == SkeletonType.Poison)
+                {
+                    if (leatherArmor) return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeatherPoison");
+                    if (bronzeArmor) return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronzePoison");
+                    if (ironArmor) return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIronPoison");
+                    return ZNetScene.instance.GetPrefab("ChebGonaz_HelmetBlackIronSkeletonPoison");
+                }
+                if (leatherArmor) return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather");
+                if (bronzeArmor) return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze");
+                if (ironArmor) return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron");
+                return ZNetScene.instance.GetPrefab("ChebGonaz_HelmetBlackIronSkeleton");
+            }
+
             // note: as of 1.2.0 weapons were moved into skeleton prefab variants
             // with different m_randomWeapons set. This is because trying to set
             // dynamically seems very difficult -> skeletons forgetting their weapons
@@ -104,7 +123,7 @@ namespace ChebsNecromancy.Minions
             if (leatherArmor)
             {
                 defaultItems.AddRange(new GameObject[] {
-                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
+                    GetHelmetPrefab(),
                     ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
@@ -113,7 +132,7 @@ namespace ChebsNecromancy.Minions
             else if (bronzeArmor)
             {
                 defaultItems.AddRange(new GameObject[] {
-                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
+                    GetHelmetPrefab(),
                     ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
                     ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
@@ -122,7 +141,7 @@ namespace ChebsNecromancy.Minions
             else if (ironArmor)
             {
                 defaultItems.AddRange(new GameObject[] {
-                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
+                    GetHelmetPrefab(),
                     ZNetScene.instance.GetPrefab("ArmorIronChest"),
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
@@ -131,7 +150,7 @@ namespace ChebsNecromancy.Minions
             else if (blackIronArmor)
             {
                 defaultItems.AddRange(new GameObject[] {
-                    skeletonType == SkeletonType.Mage ? ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet") : ZNetScene.instance.GetPrefab("ChebGonaz_HelmetBlackIronSkeleton"),
+                    GetHelmetPrefab(),
                     ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronChest"),
                     ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),

@@ -171,6 +171,13 @@
     <Compile Include="Minions\NeckroGathererPylon.cs" />
     <Compile Include="Minions\BatBeacon.cs" />
     <Compile Include="Minions\BatBeaconBatMinion.cs" />
+    <Compile Include="Items\SkeletonMace.cs" />
+    <Compile Include="Items\SkeletonMace2.cs" />
+    <Compile Include="Items\SkeletonMace3.cs" />
+    <Compile Include="Items\SkeletonHelmetBlackIronPoison.cs" />
+    <Compile Include="Items\SkeletonHelmetBronzePoison.cs" />
+    <Compile Include="Items\SkeletonHelmetIronPoison.cs" />
+    <Compile Include="Items\SkeletonHelmetLeatherPoison.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
