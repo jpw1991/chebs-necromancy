@@ -1,4 +1,4 @@
-# Friendly Skeleton Wand
+# Cheb's Necromancy
 
 Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
 
