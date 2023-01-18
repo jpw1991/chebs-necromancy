@@ -80,6 +80,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                     //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (DraugrWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.durabilityDamageLeather.Value; }
             }
             else if (bronzeArmor)
             {
@@ -89,6 +90,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
                     //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (DraugrWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.durabilityDamageBronze.Value; }
             }
             else if (ironArmor)
             {
@@ -98,6 +100,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
                     //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (DraugrWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.durabilityDamageIron.Value; }
             }
             else if (blackIronArmor)
             {
@@ -107,6 +110,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
                     //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (DraugrWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.durabilityDamageBlackIron.Value; }
             }
 
             humanoid.m_defaultItems = defaultItems.ToArray();

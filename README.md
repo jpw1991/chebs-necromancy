@@ -119,7 +119,7 @@ A. Put some Neck Tails inside it.
 
 Date | Version | Notes
 --- | --- | ---
-17/01/2023 | 1.6.0 | Tier 3 skeleton mages now throw goblin fireballs; poison skeletons have damage tiers and equipment options
+17/01/2023 | 1.6.0 | Tier 3 skeleton mages now throw goblin fireballs; poison skeletons have damage tiers and equipment options; add optional durability damage from making minions
 16/01/2023 | 1.5.1 | rename to Cheb's Necromancy. No additional changes.
 13/01/2023 | 1.5.1 | tone logging down a bit; fix string name on neckro pylon
 12/01/2023 | 1.5.0 | add refueler pylon that puts coal into nearby smelters; fix pylons to face toward their Z axis (it was backwards before); add neckro gatherer pylon; neckros gain 150hp and can't attack; neckros no longer afraid of fire; update icons with brilliant designs by Ramblez; finally fix transparency issue

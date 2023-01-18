@@ -67,6 +67,16 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> poisonSkeletonNecromancyLevelIncrease;
         public static ConfigEntry<float> skeletonArmorValueMultiplier;
 
+        public static ConfigEntry<bool> durabilityDamage;
+        public static ConfigEntry<float> durabilityDamageWarrior;
+        public static ConfigEntry<float> durabilityDamageMage;
+        public static ConfigEntry<float> durabilityDamageArcher;
+        public static ConfigEntry<float> durabilityDamagePoison;
+        public static ConfigEntry<float> durabilityDamageLeather;
+        public static ConfigEntry<float> durabilityDamageBronze;
+        public static ConfigEntry<float> durabilityDamageIron;
+        public static ConfigEntry<float> durabilityDamageBlackIron;
+
         public override string ItemName { get { return "ChebGonaz_SkeletonWand"; } }
         public override string PrefabName { get { return "ChebGonaz_SkeletonWand.prefab"; } }
         protected override string DefaultRecipe { get { return "Wood:5,Stone:1"; } }
@@ -183,6 +193,42 @@ namespace ChebsNecromancy
 
             skeletonArmorValueMultiplier = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonArmorValueMultiplier",
                 1f, new ConfigDescription("If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamage = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamage",
+                true, new ConfigDescription("Whether using a Skeleton Wand damages its durability.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageWarrior = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageWarrior",
+                1f, new ConfigDescription("How much creating a warrior damages the wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageArcher = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageArcher",
+                3f, new ConfigDescription("How much creating an archer damages the wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageMage = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageMage",
+                5f, new ConfigDescription("How much creating a mage damages the wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamagePoison = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamagePoison",
+                5f, new ConfigDescription("How much creating a poison skeleton damages the wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageLeather = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageLeather",
+                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageBronze = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageBronze",
+                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageIron = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageIron",
+                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageBlackIron = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageBlackIron",
+                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 

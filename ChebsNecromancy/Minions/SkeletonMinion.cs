@@ -128,6 +128,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageLeather.Value; }
             }
             else if (bronzeArmor)
             {
@@ -137,6 +138,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageBronze.Value; }
             }
             else if (ironArmor)
             {
@@ -146,6 +148,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageIron.Value; }
             }
             else if (blackIronArmor)
             {
@@ -155,11 +158,31 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
+                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageBlackIron.Value; }
             }
 
             humanoid.m_defaultItems = defaultItems.ToArray();
 
             humanoid.GiveDefaultItems();
+
+            if (SkeletonWand.durabilityDamage.Value)
+            {
+                switch (skeletonType)
+                {
+                    case SkeletonType.Archer:
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageArcher.Value;
+                        break;
+                    case SkeletonType.Mage:
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageMage.Value;
+                        break;
+                    case SkeletonType.Poison:
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamagePoison.Value;
+                        break;
+                    default:
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageWarrior.Value;
+                        break;
+                }
+            }
         }
     }
 }

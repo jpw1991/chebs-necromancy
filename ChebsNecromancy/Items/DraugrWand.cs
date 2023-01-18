@@ -32,6 +32,14 @@ namespace ChebsNecromancy
         public static ConfigEntry<int> draugrTierThreeLevelReq;
         public static ConfigEntry<float> draugrSetFollowRange;
 
+        public static ConfigEntry<bool> durabilityDamage;
+        public static ConfigEntry<float> durabilityDamageWarrior;
+        public static ConfigEntry<float> durabilityDamageArcher;
+        public static ConfigEntry<float> durabilityDamageLeather;
+        public static ConfigEntry<float> durabilityDamageBronze;
+        public static ConfigEntry<float> durabilityDamageIron;
+        public static ConfigEntry<float> durabilityDamageBlackIron;
+
         private ConfigEntry<float> necromancyLevelIncrease;
 
         public static ConfigEntry<int> draugrBoneFragmentsRequiredConfig;
@@ -110,6 +118,34 @@ namespace ChebsNecromancy
 
             maxDraugr = plugin.Config.Bind("DraugrWand (Server Synced)", "MaximumDraugr",
                 0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamage = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamage",
+                true, new ConfigDescription("Whether using a Draugr Wand damages its durability.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageWarrior = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageWarrior",
+                1f, new ConfigDescription("How much creating a warrior damages the wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageArcher = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageArcher",
+                3f, new ConfigDescription("How much creating an archer damages the wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageLeather = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageLeather",
+                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageBronze = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageBronze",
+                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageIron = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageIron",
+                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            durabilityDamageBlackIron = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageBlackIron",
+                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
@@ -440,6 +476,12 @@ namespace ChebsNecromancy
             catch (Exception e)
             {
                 Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
+            }
+
+            if (DraugrWand.durabilityDamage.Value)
+            {
+                Player.m_localPlayer.GetRightItem().m_durability -= archer
+                    ? durabilityDamageArcher.Value : durabilityDamageWarrior.Value ;
             }
         }
 
