@@ -143,19 +143,29 @@ namespace ChebsNecromancy.Minions
 
             if (itemData.m_stack < 1) return;
 
+            int originalStackSize = itemData.m_stack;
+            int itemsDeposited = 0;
+
             while (itemData.m_stack-- > 0 && depositContainer.GetInventory().CanAddItem(itemData, 1))
             {
                 ItemDrop.ItemData newItemData = itemData.Clone();
                 newItemData.m_stack = 1;
                 depositContainer.GetInventory().AddItem(newItemData);
+                itemsDeposited++;
             }
+
+            itemData.m_stack -= itemsDeposited;
 
             depositContainer.Save();
 
-            if (itemDrop.GetComponent<ZNetView>() == null)
-                DestroyImmediate(itemDrop.gameObject);
-            else
-                ZNetScene.instance.Destroy(itemDrop.gameObject);
+            // if the stack was completely deposited, destroy the item
+            if (itemData.m_stack <= 0)
+            {
+                if (itemDrop.GetComponent<ZNetView>() == null)
+                    DestroyImmediate(itemDrop.gameObject);
+                else
+                    ZNetScene.instance.Destroy(itemDrop.gameObject);
+            }
         }
 
         private bool ReturnHome()

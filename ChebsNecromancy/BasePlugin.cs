@@ -26,7 +26,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGUID = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.6.0";
+        public const string PluginVersion = "1.6.1";
         private const string ConfigFileName =  PluginGUID + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
 
