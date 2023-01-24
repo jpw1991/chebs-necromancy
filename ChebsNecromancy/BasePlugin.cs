@@ -58,6 +58,7 @@ namespace ChebsNecromancy
 
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
+            CommandManager.Instance.AddConsoleCommand(new KillAllNeckros());
 
             SetupWatcher();
         }

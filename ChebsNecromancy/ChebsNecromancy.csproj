@@ -165,7 +165,7 @@
     <Compile Include="Items\BlackIronChest.cs" />
     <Compile Include="Items\BlackIronLegs.cs" />
     <Compile Include="Items\BlackIronHelmet.cs" />
-    <Compile Include="Minions\NecroNeckGathererMinion.cs" />
+    <Compile Include="Minions\NeckroGathererMinion.cs" />
     <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
     <Compile Include="Minions\RefuelerPylon.cs" />
     <Compile Include="Minions\NeckroGathererPylon.cs" />
@@ -178,6 +178,7 @@
     <Compile Include="Items\SkeletonHelmetBronzePoison.cs" />
     <Compile Include="Items\SkeletonHelmetIronPoison.cs" />
     <Compile Include="Items\SkeletonHelmetLeatherPoison.cs" />
+    <Compile Include="Commands\KillNearbyNeckros.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
