@@ -4,26 +4,20 @@ namespace ChebsNecromancy.Minions
 {
     internal class SpiritPylonGhostMinion : UndeadMinion
     {
-        private float createdAt;
+        private float killAt;
 
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
             canBeCommanded = false;
-            createdAt = Time.time;
+            killAt = Time.time + SpiritPylon.ghostDuration.Value;
         }
 
         private void Update()
         {
-            if (Time.time > createdAt + SpiritPylon.ghostDuration.Value)
+            if (Time.time > killAt)
             {
-                if (TryGetComponent(out Humanoid humanoid))
-                {
-                    humanoid.SetHealth(0);
-                }
-                else
-                {
-                    Destroy(gameObject);
-                }
+                Kill();
             }
         }
     }

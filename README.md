@@ -119,6 +119,7 @@ A. Put some Neck Tails inside it.
 
 Date | Version | Notes
 --- | --- | ---
+28/01/2023 | 1.6.3 | add optional timer to kill any minion after X seconds
 24/01/2023 | 1.6.2 | minions can be told to follow/wait using E on them; neckros can be killed via terminal command - butcher's knife won't work on them, even with Tameable component added, due to their Container component
 20/01/2023 | 1.6.1 | Fix a problem where the Neckro Gatherer could delete items without storing them if its inventory size is set very small like 1x1
 17/01/2023 | 1.6.0 | Tier 3 skeleton mages now throw goblin fireballs; poison skeletons have damage tiers and equipment options; add optional durability damage from making minions

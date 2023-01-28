@@ -23,7 +23,7 @@ namespace ChebsNecromancy.Minions
 
         private Container dropoffTarget;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
             allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
                 true, new ConfigDescription("Whether the Neckro Gatherer is allowed or not.", null,
@@ -42,17 +42,11 @@ namespace ChebsNecromancy.Minions
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake(); 
             createdOrderIncrementer++;
             createdOrder = createdOrderIncrementer;
-
-            Tameable tameable = GetComponent<Tameable>();
-            if (tameable != null)
-            {
-                // let the minions generate a little necromancy XP for their master
-                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
-            }
 
             container = GetComponent<Container>();
 

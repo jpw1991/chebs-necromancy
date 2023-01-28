@@ -13,9 +13,9 @@ namespace ChebsNecromancy
         public static ConfigEntry<int> guardianWraithLevelRequirement;
         public static ConfigEntry<int> guardianWraithDuration;
 
-        private float createdAt;
+        private float killAt;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public static new void CreateConfigs(BaseUnityPlugin plugin)
         {
             guardianWraithLevelRequirement = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithLevelRequirement",
                 25, new ConfigDescription("The Necromancy level required to control a Guardian Wraith.", null,
@@ -25,15 +25,17 @@ namespace ChebsNecromancy
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
-        private void Awake()
+        public override void Awake()
         {
-            createdAt = Time.time;
+            base.Awake();
+
+            killAt = Time.time + guardianWraithDuration.Value;
             canBeCommanded = false;
         }
 
         private void Update()
         {
-            if (Time.time > createdAt + guardianWraithDuration.Value)
+            if (Time.time > killAt)
             {
                 Kill();
             }
@@ -47,14 +49,6 @@ namespace ChebsNecromancy
                         Kill();
                     }
                 }
-            }
-        }
-
-        private void Kill()
-        {
-            if (TryGetComponent(out Humanoid humanoid))
-            {
-                humanoid.SetHealth(0);
             }
         }
     }

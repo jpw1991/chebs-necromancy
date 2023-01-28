@@ -26,7 +26,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGUID = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.6.1";
+        public const string PluginVersion = "1.6.3";
         private const string ConfigFileName =  PluginGUID + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
 
@@ -66,6 +66,8 @@ namespace ChebsNecromancy
         private void CreateConfigValues()
         {
             Config.SaveOnConfigSet = true;
+
+            UndeadMinion.CreateConfigs(this);
 
             GuardianWraithMinion.CreateConfigs(this);
 
