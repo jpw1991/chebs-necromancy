@@ -661,6 +661,26 @@ namespace ChebsNecromancy
             return true; // permit base method to complete
         }
     }
+
+    [HarmonyPatch(typeof(Tameable), "Interact")]
+    static class TameableInteractPatch
+    {
+        // Stop players that aren't the owner of a minion from interacting
+        // with it.
+        static bool Prefix(Humanoid user, bool hold, bool alt, Tameable __instance)
+        {
+            if (__instance.TryGetComponent(out UndeadMinion undeadMinion)
+                && __instance.TryGetComponent(out Character character))
+            {
+                if (user.GetZDOID().m_userID != character.GetOwner())
+                {
+                    user.Message(MessageHud.MessageType.Center, "$chebgonaz_notyourminion");
+                    return false; // deny base method completion
+                }
+            }
+            return true; // permit base method to complete
+        }
+    }
     #endregion
 }
 

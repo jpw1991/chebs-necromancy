@@ -31,6 +31,11 @@ namespace ChebsNecromancy
 
         protected float cleanupAt;
 
+        #region CleanupAfterLogout
+        private const float nextPlayerOnlineCheckInterval = 15f;
+        private float nextPlayerOnlineCheckAt;
+        #endregion
+
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
             cleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
@@ -53,6 +58,11 @@ namespace ChebsNecromancy
             if (cleanupAfter.Value == CleanupType.Time)
             {
                 cleanupAt = Time.time + cleanupDelay.Value;
+            }
+            else if (cleanupAfter.Value == CleanupType.Logout)
+            {
+                // check if player is still online every X seconds
+                nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
             }
         }
 
@@ -82,6 +92,28 @@ namespace ChebsNecromancy
                 // check again in 5 seconds rather than spamming every frame with Kill requests. In
                 // 99.9% of cases the 2nd check will never occur because the character will be dead
                 cleanupAt += 5;
+            }
+
+            if (nextPlayerOnlineCheckAt > 0
+                && Time.time > nextPlayerOnlineCheckAt)
+            {
+                if (TryGetComponent(out Character character))
+                {
+                    bool playerOnline = Player.GetAllPlayers().Find(player => player.GetZDOID().m_userID == character.GetOwner());
+                    //bool playerOnline = Player.GetAllPlayers().Find(player => {
+                        //Jotunn.Logger.LogInfo($"player ID={player.GetPlayerID()}, userID={player.GetZDOID().m_userID}, {name} owner={character.GetOwner()}");
+                        //return player.GetZDOID().m_userID == character.GetOwner();
+                        //});
+                    if (!playerOnline)
+                    {
+                        cleanupAt = Time.time + cleanupDelay.Value;
+                    }
+                    else
+                    {
+                        cleanupAt = 0;
+                    }
+                    nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
+                }
             }
         }
 
