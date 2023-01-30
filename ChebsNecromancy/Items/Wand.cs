@@ -210,13 +210,14 @@ namespace ChebsNecromancy
             List<Character> allCharacters = Character.GetAllCharacters();
             foreach (Character item in allCharacters)
             {
-                if (item.IsDead() || !item.IsOwner())
+                if (item.IsDead())
                 {
                     continue;
                 }
 
                 UndeadMinion minion = item.GetComponent<UndeadMinion>();
-                if (minion != null && minion.canBeCommanded)
+                if (minion != null && minion.canBeCommanded
+                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 {
                     float distance = Vector3.Distance(item.transform.position, player.transform.position);
                     // if within radius OR it's set to the targetObject so you can recall those you've commanded

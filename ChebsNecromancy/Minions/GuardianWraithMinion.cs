@@ -40,15 +40,10 @@ namespace ChebsNecromancy
                 Kill();
             }
             else if (Player.m_localPlayer != null
-                && Player.m_localPlayer.IsTeleporting())
+                && Player.m_localPlayer.IsTeleporting()
+                && BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
             {
-                if (TryGetComponent(out Character character))
-                {
-                    if (character.IsOwner())
-                    {
-                        Kill();
-                    }
-                }
+                Kill();
             }
         }
     }

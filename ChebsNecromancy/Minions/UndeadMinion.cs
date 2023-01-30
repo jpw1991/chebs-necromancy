@@ -64,6 +64,8 @@ namespace ChebsNecromancy
                 // check if player is still online every X seconds
                 nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
             }
+
+            Jotunn.Logger.LogInfo($"Awake: {name}");
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -97,23 +99,16 @@ namespace ChebsNecromancy
             if (nextPlayerOnlineCheckAt > 0
                 && Time.time > nextPlayerOnlineCheckAt)
             {
-                if (TryGetComponent(out Character character))
+                bool playerOnline = Player.GetAllPlayers().Find(player => BelongsToPlayer(player.GetPlayerName()));
+                if (!playerOnline)
                 {
-                    bool playerOnline = Player.GetAllPlayers().Find(player => player.GetZDOID().m_userID == character.GetOwner());
-                    //bool playerOnline = Player.GetAllPlayers().Find(player => {
-                        //Jotunn.Logger.LogInfo($"player ID={player.GetPlayerID()}, userID={player.GetZDOID().m_userID}, {name} owner={character.GetOwner()}");
-                        //return player.GetZDOID().m_userID == character.GetOwner();
-                        //});
-                    if (!playerOnline)
-                    {
-                        cleanupAt = Time.time + cleanupDelay.Value;
-                    }
-                    else
-                    {
-                        cleanupAt = 0;
-                    }
-                    nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
+                    cleanupAt = Time.time + cleanupDelay.Value;
                 }
+                else
+                {
+                    cleanupAt = 0;
+                }
+                nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
             }
         }
 
@@ -127,6 +122,25 @@ namespace ChebsNecromancy
             {
                 Jotunn.Logger.LogError($"Cannot kill {name} because it has no Character component.");
             }
+        }
+
+        public void SetUndeadMinionMaster(string playerName)
+        {
+            if (TryGetComponent(out ZNetView zNetView))
+            {
+                zNetView.GetZDO().Set("UndeadMinionMaster", playerName);
+            }
+            else
+            {
+                Jotunn.Logger.LogError($"Cannot SetUndeadMinionMaster to {playerName} because it has no ZNetView component.");
+            }
+        }
+
+        public bool BelongsToPlayer(string playerName)
+        {
+            return TryGetComponent(out ZNetView zNetView) 
+                && zNetView.GetZDO().GetString("UndeadMinionMaster", "")
+                .Contains(playerName);
         }
     }
 }

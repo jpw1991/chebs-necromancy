@@ -71,7 +71,7 @@ namespace ChebsNecromancy.Minions
             }
 
             // only scale player's skeletons, not other ppls
-            if (!character.IsOwner()) return;
+            if (!BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) return;
 
             float health = SkeletonWand.skeletonBaseHealth.Value + necromancyLevel * SkeletonWand.skeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);

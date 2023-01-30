@@ -670,13 +670,11 @@ namespace ChebsNecromancy
         static bool Prefix(Humanoid user, bool hold, bool alt, Tameable __instance)
         {
             if (__instance.TryGetComponent(out UndeadMinion undeadMinion)
-                && __instance.TryGetComponent(out Character character))
+                && user.TryGetComponent(out Player player)
+                && !undeadMinion.BelongsToPlayer(player.GetPlayerName()))
             {
-                if (user.GetZDOID().m_userID != character.GetOwner())
-                {
-                    user.Message(MessageHud.MessageType.Center, "$chebgonaz_notyourminion");
-                    return false; // deny base method completion
-                }
+                user.Message(MessageHud.MessageType.Center, "$chebgonaz_notyourminion");
+                return false; // deny base method completion
             }
             return true; // permit base method to complete
         }

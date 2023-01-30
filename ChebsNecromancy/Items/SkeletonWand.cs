@@ -35,7 +35,6 @@ namespace ChebsNecromancy
         public static ConfigEntry<int> craftingStationLevel;
         public static ConfigEntry<string> craftingCost;
 
-
         public static ConfigEntry<bool> skeletonsAllowed;
 
         public static ConfigEntry<int> maxSkeletons;
@@ -374,7 +373,8 @@ namespace ChebsNecromancy
                 }
 
                 SkeletonMinion minion = item.GetComponent<SkeletonMinion>();
-                if (minion != null)
+                if (minion != null 
+                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 {
                     minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
                 }
@@ -505,18 +505,9 @@ namespace ChebsNecromancy
                 spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
             }
 
-            try
-            {
-                spawnedChar.GetComponent<ZNetView>().GetZDO().SetOwner(
-                    ZDOMan.instance.GetMyID()
-                    );
-            }
-            catch (Exception e)
-            {
-                Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
-            }
-
             player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease.Value);
+
+            minion.SetUndeadMinionMaster(player.GetPlayerName());
         }
 
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)

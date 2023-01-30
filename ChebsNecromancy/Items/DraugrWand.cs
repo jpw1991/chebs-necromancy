@@ -467,16 +467,7 @@ namespace ChebsNecromancy
                 spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
             }
 
-            try
-            {
-                spawnedChar.GetComponent<ZNetView>().GetZDO().SetOwner(
-                    ZDOMan.instance.GetMyID()
-                    );
-            }
-            catch (Exception e)
-            {
-                Jotunn.Logger.LogError($"Failed to set minion owner to player: {e}");
-            }
+            minion.SetUndeadMinionMaster(player.GetPlayerName());
 
             if (DraugrWand.durabilityDamage.Value)
             {
@@ -503,7 +494,7 @@ namespace ChebsNecromancy
                 }
 
                 DraugrMinion minion = item.GetComponent<DraugrMinion>();
-                if (minion != null)
+                if (minion != null && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 {
                     minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
                 }
