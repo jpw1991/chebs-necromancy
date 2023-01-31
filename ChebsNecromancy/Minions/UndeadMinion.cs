@@ -65,7 +65,7 @@ namespace ChebsNecromancy
                 nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
             }
 
-            Jotunn.Logger.LogInfo($"Awake: {name}");
+            // old players' skeletons that exist in the world from
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -140,7 +140,7 @@ namespace ChebsNecromancy
         {
             return TryGetComponent(out ZNetView zNetView) 
                 && zNetView.GetZDO().GetString("UndeadMinionMaster", "")
-                .Contains(playerName);
+                .Equals(playerName);
         }
     }
 }
