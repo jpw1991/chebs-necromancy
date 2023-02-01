@@ -112,7 +112,7 @@ A. Put some Neck Tails inside it.
 
 Date | Version | Notes
 --- | --- | ---
-01/02/2023 | 1.6.4 | minions can be configured to drop their crafting requirements on death
+01/02/2023 | 1.6.4 | minions can be configured to drop their crafting requirements on death; hold position now works in that minions no longer wander around
 28/01/2023 | 1.6.3 | add optional timer to kill any minion after X seconds; overhaul minion ownership checks to accurately store and retrieve the minion's creator; minions will only obey commands from their creators and ignore others
 24/01/2023 | 1.6.2 | minions can be told to follow/wait using E on them; neckros can be killed via terminal command - butcher's knife won't work on them, even with Tameable component added, due to their Container component
 20/01/2023 | 1.6.1 | Fix a problem where the Neckro Gatherer could delete items without storing them if its inventory size is set very small like 1x1
