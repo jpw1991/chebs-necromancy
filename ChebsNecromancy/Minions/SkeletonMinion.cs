@@ -19,17 +19,12 @@ namespace ChebsNecromancy.Minions
         private static int createdOrderIncrementer;
         public int createdOrder;
 
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             createdOrderIncrementer++;
             createdOrder = createdOrderIncrementer;
-
-            Tameable tameable = GetComponent<Tameable>();
-            if (tameable != null)
-            {
-                // let the minions generate a little necromancy XP for their master
-                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
-            }
 
             StartCoroutine(WaitForLocalPlayer());
         }
@@ -76,7 +71,7 @@ namespace ChebsNecromancy.Minions
             }
 
             // only scale player's skeletons, not other ppls
-            if (!character.IsOwner()) return;
+            if (!BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) return;
 
             float health = SkeletonWand.skeletonBaseHealth.Value + necromancyLevel * SkeletonWand.skeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);

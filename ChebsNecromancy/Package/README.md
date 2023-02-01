@@ -6,10 +6,6 @@ This mod was formerly called Friendly Skeleton Wand, but was renamed since it as
 
 **Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/chebs-necromancy/releases). Although less tested than the official releases, they are still tested pretty well.
 
-## Important Update Note for pre-1.0.8
-
-<details><summary>If you are upgrading from 1.0.7 or lower, your skeletons will still be there but you won't be able to command them anymore! <b>This is not a bug.</b></summary>The old skeletons used the existing Mistlands `Skeleton_Friendly` prefab which belongs to Blood Magic. In 1.0.8 these have been replaced with my own custom prefabs: `ChebGonaz_SkeletonWarrior` and `ChebGonaz_SkeletonArcher`. This gives you the control to choose either kind, instead of it being random, and also stops Blood Magic from levelling up from this mod.</details>
-
 ##  About Me
 
 [![image1](https://imgur.com/Fahi6sP.png)](https://chebgonaz.pythonanywhere.com)
@@ -37,7 +33,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ## Installation (manual)
 
-- Drag the `ChebsNecromancy` folder from inside the archive to your Bepinex plugins folder in the Valheim directory.
+- Drag the `ChebsNecromancy` folder from inside the archive to your BepInEx plugins folder in the Valheim directory.
 
 ## Features
 
@@ -45,8 +41,8 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 - These wands consume **Bone Fragments** to create minions.
 - **Bone Fragments** now drop from all creatures when they die.
 - With a wand equipped, the following is possible:
-	+ **B** will make a skeleton/draugr warrior.
-	+ **H** will make a skeleton/draugr archer.
+	+ **B** will make a warrior.
+	+ **H** will make an archer.
 	+ **F** will make all nearby minions **follow** you.
 	+ **T** will make all nearby minions **wait**.
 	+ **G** will teleport all following minions to your position (useful if stuck or to get them on boats)
@@ -68,9 +64,6 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
   - Black Metal -> Black Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
-- As of 1.2.0, debug commands that affect minions ~~across the entire world/universe~~ currently loaded:
-  - `chebgonaz_killallminions` -> kills all of your minions (only yours, not other ppls)
-  - `chebgonaz_summonallminions` -> summons all your minions to your location. This can be used to bring minions with you inside instances (eg. dungeons) or through portals. But make sure they aren't following you (set them to wait) otherwise they'll be destroyed. This is Valheim vanilla mechanics stuff and nothing I can fix easily.
 - As of 1.5.0 you can create a Neckro Pylon which spawns undead Necks from Neck Tails with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
 1.5.0 also introduces a refueler pylon, that fills your smelters with ores and coal or wood, and a Bat Beacon which spawns bats to defend your base.
 
@@ -119,6 +112,8 @@ A. Put some Neck Tails inside it.
 
 Date | Version | Notes
 --- | --- | ---
+28/01/2023 | 1.6.3 | add optional timer to kill any minion after X seconds; overhaul minion ownership checks to accurately store and retrieve the minion's creator; minions will only obey commands from their creators and ignore others
+24/01/2023 | 1.6.2 | minions can be told to follow/wait using E on them; neckros can be killed via terminal command - butcher's knife won't work on them, even with Tameable component added, due to their Container component
 20/01/2023 | 1.6.1 | Fix a problem where the Neckro Gatherer could delete items without storing them if its inventory size is set very small like 1x1
 17/01/2023 | 1.6.0 | Tier 3 skeleton mages now throw goblin fireballs; poison skeletons have damage tiers and equipment options; add optional durability damage from making minions
 16/01/2023 | 1.5.1 | rename to Cheb's Necromancy. No additional changes.

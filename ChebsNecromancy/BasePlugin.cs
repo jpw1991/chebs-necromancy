@@ -26,7 +26,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGUID = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.6.1";
+        public const string PluginVersion = "1.6.3";
         private const string ConfigFileName =  PluginGUID + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
 
@@ -59,6 +59,7 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
             CommandManager.Instance.AddConsoleCommand(new KillAllNeckros());
+            CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
 
             SetupWatcher();
         }
@@ -66,6 +67,8 @@ namespace ChebsNecromancy
         private void CreateConfigValues()
         {
             Config.SaveOnConfigSet = true;
+
+            UndeadMinion.CreateConfigs(this);
 
             GuardianWraithMinion.CreateConfigs(this);
 
@@ -655,6 +658,24 @@ namespace ChebsNecromancy
                     // by a player
                     return false; // deny base method completion
                 }
+            }
+            return true; // permit base method to complete
+        }
+    }
+
+    [HarmonyPatch(typeof(Tameable), "Interact")]
+    static class TameableInteractPatch
+    {
+        // Stop players that aren't the owner of a minion from interacting
+        // with it.
+        static bool Prefix(Humanoid user, bool hold, bool alt, Tameable __instance)
+        {
+            if (__instance.TryGetComponent(out UndeadMinion undeadMinion)
+                && user.TryGetComponent(out Player player)
+                && !undeadMinion.BelongsToPlayer(player.GetPlayerName()))
+            {
+                user.Message(MessageHud.MessageType.Center, "$chebgonaz_notyourminion");
+                return false; // deny base method completion
             }
             return true; // permit base method to complete
         }

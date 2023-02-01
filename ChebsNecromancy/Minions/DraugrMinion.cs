@@ -17,17 +17,12 @@ namespace ChebsNecromancy.Minions
         private static int createdOrderIncrementer;
         public int createdOrder;
 
-        private void Awake()
+        public override void Awake()
         {
+            base.Awake();
+
             createdOrderIncrementer++;
             createdOrder = createdOrderIncrementer;
-
-            Tameable tameable = GetComponent<Tameable>();
-            if (tameable != null)
-            {
-                // let the minions generate a little necromancy XP for their master
-                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
-            }
 
             StartCoroutine(WaitForLocalPlayer());
         }

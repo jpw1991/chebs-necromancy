@@ -21,13 +21,14 @@ namespace ChebsNecromancy.Commands
 
             foreach (Character item in allCharacters)
             {
-                if (item.IsDead() || !item.IsOwner())
+                if (item.IsDead())
                 {
                     continue;
                 }
 
                 UndeadMinion minion = item.GetComponent<UndeadMinion>();
-                if (minion != null)
+                if (minion != null
+                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 {
                     minion.transform.position = Player.m_localPlayer.transform.position;
                 }
