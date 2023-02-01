@@ -180,6 +180,7 @@
     <Compile Include="Items\SkeletonHelmetIronPoison.cs" />
     <Compile Include="Items\SkeletonHelmetLeatherPoison.cs" />
     <Compile Include="Commands\KillNearbyNeckros.cs" />
+    <Compile Include="Commands\SetMinionOwnership.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

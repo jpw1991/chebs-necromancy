@@ -64,8 +64,6 @@ namespace ChebsNecromancy
                 // check if player is still online every X seconds
                 nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
             }
-
-            // old players' skeletons that exist in the world from
         }
 
         private void OnCollisionEnter(Collision collision)
