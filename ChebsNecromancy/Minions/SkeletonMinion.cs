@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using BepInEx;
+using BepInEx.Configuration;
 using Jotunn.Managers;
 using UnityEngine;
 
@@ -18,6 +20,20 @@ namespace ChebsNecromancy.Minions
         // for limits checking
         private static int createdOrderIncrementer;
         public int createdOrder;
+
+        public static ConfigEntry<DropType> dropOnDeath;
+        public static ConfigEntry<bool> packDropItemsIntoCargoCrate;
+
+        public static new void CreateConfigs(BaseUnityPlugin plugin)
+        {
+            dropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", "DropOnDeath",
+                DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            packDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
+                true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
 
         public override void Awake()
         {
@@ -59,6 +75,8 @@ namespace ChebsNecromancy.Minions
                     }
                 });
             }
+
+            RestoreDrops();
         }
 
         public virtual void ScaleStats(float necromancyLevel)

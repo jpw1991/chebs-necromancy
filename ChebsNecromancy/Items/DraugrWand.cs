@@ -474,6 +474,92 @@ namespace ChebsNecromancy
                 Player.m_localPlayer.GetRightItem().m_durability -= archer
                     ? durabilityDamageArcher.Value : durabilityDamageWarrior.Value ;
             }
+
+            // handle refunding of resources on death
+            if (DraugrMinion.dropOnDeath.Value != UndeadMinion.DropType.Nothing)
+            {
+                CharacterDrop characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
+
+                if (DraugrMinion.dropOnDeath.Value == UndeadMinion.DropType.Everything)
+                {
+                    // bones
+                    if (boneFragmentsRequired > 0)
+                    {
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
+                            m_onePerPlayer = true,
+                            m_amountMin = boneFragmentsRequired,
+                            m_amountMax = boneFragmentsRequired,
+                            m_chance = 1f
+                        });
+                    }
+
+                    // meat. For now, assume Neck tails
+                    if (meatRequired > 0)
+                    {
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("NeckTail"),
+                            m_onePerPlayer = true,
+                            m_amountMin = meatRequired,
+                            m_amountMax = meatRequired,
+                            m_chance = 1f
+                        });
+                    }
+                }
+                if (createArmoredLeather)
+                {
+                    // for now, assume deerhide
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("DeerHide"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.armorLeatherScrapsRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.armorLeatherScrapsRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                else if (createArmoredBronze)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("Bronze"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.armorBronzeRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.armorBronzeRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                else if (createArmoredIron)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("Iron"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.armorIronRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.armorIronRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                else if (createArmoredBlackIron)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("BlackMetal"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.armorBlackIronRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.armorBlackIronRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                // the component won't be remembered by the game on logout because
+                // only what is on the prefab is remembered. Even changes to the prefab
+                // aren't remembered. So we must write what we're dropping into
+                // the ZDO as well and then read & restore this on Awake
+                minion.RecordDrops(characterDrop);
+            }
         }
 
         public int CountActiveDraugrMinions()

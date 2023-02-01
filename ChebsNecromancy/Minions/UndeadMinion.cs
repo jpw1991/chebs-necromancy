@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Managers;
@@ -24,12 +26,22 @@ namespace ChebsNecromancy
             Logout,
         }
 
+        public enum DropType
+        {
+            Nothing,
+            JustResources,
+            Everything,
+        }
+
         public bool canBeCommanded = true;
 
         public static ConfigEntry<CleanupType> cleanupAfter;
         public static ConfigEntry<int> cleanupDelay;
 
         protected float cleanupAt;
+
+        public const string minionOwnershipZDOKey = "UndeadMinionMaster";
+        public const string minionDropsZDOKey = "UndeadMinionDrops";
 
         #region CleanupAfterLogout
         private const float nextPlayerOnlineCheckInterval = 15f;
@@ -126,7 +138,7 @@ namespace ChebsNecromancy
         {
             if (TryGetComponent(out ZNetView zNetView))
             {
-                zNetView.GetZDO().Set("UndeadMinionMaster", playerName);
+                zNetView.GetZDO().Set(minionOwnershipZDOKey, playerName);
             }
             else
             {
@@ -137,8 +149,75 @@ namespace ChebsNecromancy
         public bool BelongsToPlayer(string playerName)
         {
             return TryGetComponent(out ZNetView zNetView) 
-                && zNetView.GetZDO().GetString("UndeadMinionMaster", "")
+                && zNetView.GetZDO().GetString(minionOwnershipZDOKey, "")
                 .Equals(playerName);
+        }
+
+        public void RecordDrops(CharacterDrop characterDrop)
+        {
+            // the component won't be remembered by the game on logout because
+            // only what is on the prefab is remembered. Even changes to the prefab
+            // aren't remembered. So we must write what we're dropping into
+            // the ZDO as well and then read & restore this on Awake
+            if (TryGetComponent(out ZNetView zNetView))
+            {
+                string dropsList = "";
+                List<string> drops = new List<string>();
+                characterDrop.m_drops.ForEach(drop => drops.Add($"{drop.m_prefab.name}:{drop.m_amountMax}"));
+                dropsList = string.Join(",", drops);
+                //Jotunn.Logger.LogInfo($"Drops list: {dropsList}");
+                zNetView.GetZDO().Set(minionDropsZDOKey, string.Join(",", dropsList));
+            }
+            else
+            {
+                Jotunn.Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
+            }
+        }
+
+        public void RestoreDrops()
+        {
+            // the component won't be remembered by the game on logout because
+            // only what is on the prefab is remembered. Even changes to the prefab
+            // aren't remembered. So we must write what we're dropping into
+            // the ZDO as well and then read & restore this on Awake
+            if (TryGetComponent(out ZNetView zNetView))
+            {
+                if (gameObject.GetComponent<CharacterDrop>() != null)
+                {
+                    // abort - if it's already there, don't add it twice
+                    return;
+                }
+
+                string minionDropsZDOValue = zNetView.GetZDO().GetString(minionDropsZDOKey, "");
+                if (minionDropsZDOValue == "")
+                {
+                    // abort - there's no drops record -> naked minion
+                    return;
+                }
+
+                CharacterDrop characterDrop = gameObject.AddComponent<CharacterDrop>();
+                List<string> dropsList = new List<string>(minionDropsZDOValue.Split(','));
+                dropsList.ForEach(dropString =>
+                {
+                    string[] splut = dropString.Split(':');
+
+                    string prefabName = splut[0];
+                    int amount = int.Parse(splut[1]);
+
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab(prefabName),
+                        m_onePerPlayer = true,
+                        m_amountMin = amount,
+                        m_amountMax = amount,
+                        m_chance = 1f
+                    });
+                });
+            }
+            else
+            {
+                Jotunn.Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
+            }
         }
     }
 }

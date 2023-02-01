@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using BepInEx;
+using BepInEx.Configuration;
 using Jotunn.Managers;
 using UnityEngine;
 namespace ChebsNecromancy.Minions
@@ -16,6 +18,20 @@ namespace ChebsNecromancy.Minions
         // for limits checking
         private static int createdOrderIncrementer;
         public int createdOrder;
+
+        public static ConfigEntry<DropType> dropOnDeath;
+        public static ConfigEntry<bool> packDropItemsIntoCargoCrate;
+
+        public static new void CreateConfigs(BaseUnityPlugin plugin)
+        { 
+            dropOnDeath = plugin.Config.Bind("DraugrMinion (Server Synced)", "DropOnDeath",
+                DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            packDropItemsIntoCargoCrate = plugin.Config.Bind("DraugrMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
+                true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
 
         public override void Awake()
         {
@@ -34,6 +50,33 @@ namespace ChebsNecromancy.Minions
                 yield return new WaitForSeconds(1);
             }
             ScaleStats(Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
+
+            // by the time player arrives, ZNet stuff is certainly ready
+            if (TryGetComponent(out Humanoid humanoid))
+            {
+                // VisEquipment remembers what armor the draugr is wearing.
+                // Exploit this to reapply the armor so the armor values work
+                // again.
+                List<int> equipmentHashes = new List<int>()
+                {
+                    humanoid.m_visEquipment.m_currentChestItemHash,
+                    humanoid.m_visEquipment.m_currentLegItemHash,
+                    humanoid.m_visEquipment.m_currentHelmetItemHash
+                };
+                equipmentHashes.ForEach(hash =>
+                {
+                    ZNetScene.instance.GetPrefab(hash);
+
+                    GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
+                    if (equipmentPrefab != null)
+                    {
+                        //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
+                        humanoid.GiveDefaultItem(equipmentPrefab);
+                    }
+                });
+            }
+
+            RestoreDrops();
         }
 
         public void ScaleStats(float necromancyLevel)

@@ -26,7 +26,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGUID = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.6.3";
+        public const string PluginVersion = "1.6.4";
         private const string ConfigFileName =  PluginGUID + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
 
@@ -70,6 +70,8 @@ namespace ChebsNecromancy
 
             UndeadMinion.CreateConfigs(this);
 
+            SkeletonMinion.CreateConfigs(this);
+            DraugrMinion.CreateConfigs(this);
             GuardianWraithMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
@@ -496,13 +498,13 @@ namespace ChebsNecromancy
     }
 
     [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
-    static class NeckroDeathDropPatch
+    static class OnDeathDropPatch
     {
-        // Although Container component is on the Neckro, its OnDestroyed
-        // isn't called on the death of the creature. So instead, implement
-        // its same functionality in the creature's OnDeath instead.
         static bool Prefix(CharacterDrop __instance)
         {
+            // Although Container component is on the Neckro, its OnDestroyed
+            // isn't called on the death of the creature. So instead, implement
+            // its same functionality in the creature's OnDeath instead.
             if (__instance.TryGetComponent(out NeckroGathererMinion necroNeck))
             {
                 if (__instance.TryGetComponent(out Container container))
@@ -511,6 +513,46 @@ namespace ChebsNecromancy
                     return false; // deny base method completion
                 }
             }
+
+            // For all other minions, check if they're supposed to be dropping
+            // items and whether tehse should be packed into a crate or not.
+            // We don't want ppls surtling cores and things to be claimed by davey jones
+            else if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
+            {
+                void PackDropsIntoCrate()
+                {
+                    // use vanilla cargo crate -> same as a karve/longboat drops
+                    GameObject cratePrefab = ZNetScene.instance.GetPrefab("CargoCrate");
+                    if (cratePrefab != null)
+                    {
+                        // warning: we mustn't ever exceed the maximum storage capacity
+                        // of the crate. Not a problem right now, but could be in the future
+                        // if the ingredients exceed 4. Right now, can only be 3, so it's fine.
+                        // eg. bones, meat, ingot (draugr) OR bones, ingot, surtling core (skele)
+                        Inventory inv =
+                            GameObject.Instantiate(cratePrefab, __instance.transform.position + Vector3.up, Quaternion.identity)
+                            .GetComponent<Container>()
+                            .GetInventory();
+                        __instance.m_drops.ForEach(drop => inv.AddItem(drop.m_prefab, drop.m_amountMax));
+                    }
+                }
+
+                if (undeadMinion is SkeletonMinion
+                    && SkeletonMinion.dropOnDeath.Value != UndeadMinion.DropType.Nothing
+                    && SkeletonMinion.packDropItemsIntoCargoCrate.Value)
+                {
+                    PackDropsIntoCrate();
+                    return false; // deny base method completion
+                }
+                if (undeadMinion is DraugrMinion
+                    && DraugrMinion.dropOnDeath.Value != UndeadMinion.DropType.Nothing
+                    && DraugrMinion.packDropItemsIntoCargoCrate.Value)
+                {
+                    PackDropsIntoCrate();
+                    return false; // deny base method completion
+                }
+            }
+
             return true; // permit base method to complete
         }
     }

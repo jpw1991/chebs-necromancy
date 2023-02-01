@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static ChebsNecromancy.Minions.SkeletonMinion;
 
 namespace ChebsNecromancy
 {
@@ -85,7 +84,7 @@ namespace ChebsNecromancy
             base.CreateConfigs(plugin);
 
             skeletonSetFollowRange = plugin.Config.Bind("SkeletonWand (Client)", "SkeletonCommandRange",
-            20f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
+                20f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
 
             allowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandAllowed",
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
@@ -116,8 +115,8 @@ namespace ChebsNecromancy
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonTierOneQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierOneQuality",
-                  1, new ConfigDescription("Star Quality of tier 1 Skeleton minions", null,
-                  new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                1, new ConfigDescription("Star Quality of tier 1 Skeleton minions", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             skeletonTierTwoQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoQuality",
                 2, new ConfigDescription("Star Quality of tier 2 Skeleton minions", null,
@@ -142,6 +141,7 @@ namespace ChebsNecromancy
             boneFragmentsDroppedAmountMin = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedAmountMin",
                 1, new ConfigDescription("The minimum amount of bones dropped by creatures.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
             boneFragmentsDroppedAmountMax = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedAmountMax",
                 3, new ConfigDescription("The maximum amount of bones dropped by creautres.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -415,12 +415,12 @@ namespace ChebsNecromancy
             return false;
         }
 
-        private string PrefabFromNecromancyLevel(float necromancyLevel, SkeletonType skeletonType)
+        private string PrefabFromNecromancyLevel(float necromancyLevel, SkeletonMinion.SkeletonType skeletonType)
         {
             string result = "";
             switch (skeletonType)
             {
-                case SkeletonType.Archer:
+                case SkeletonMinion.SkeletonType.Archer:
                     if (necromancyLevel >= 75)
                     {
                         result = SkeletonArcherTier3PrefabName;
@@ -434,7 +434,7 @@ namespace ChebsNecromancy
                         result = SkeletonArcherPrefabName;
                     }
                     break;
-                case SkeletonType.Mage:
+                case SkeletonMinion.SkeletonType.Mage:
                     if (necromancyLevel >= 75)
                     {
                         result = SkeletonMageTier3PrefabName;
@@ -448,7 +448,7 @@ namespace ChebsNecromancy
                         result = SkeletonMagePrefabName;
                     }
                     break;
-                case SkeletonType.Poison:
+                case SkeletonMinion.SkeletonType.Poison:
                     if (necromancyLevel >= 85)
                     {
                         result = PoisonSkeleton3PrefabName;
@@ -480,7 +480,7 @@ namespace ChebsNecromancy
             return result;
         }
 
-        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
+        private void InstantiateSkeleton(Player player, int quality, float playerNecromancyLevel, SkeletonMinion.SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
         {
             string prefabName = PrefabFromNecromancyLevel(playerNecromancyLevel, skeletonType);
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
@@ -494,7 +494,7 @@ namespace ChebsNecromancy
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
 
-            SkeletonMinion minion = skeletonType == SkeletonType.Poison
+            SkeletonMinion minion = skeletonType == SkeletonMinion.SkeletonType.Poison
                 ? spawnedChar.AddComponent<PoisonSkeletonMinion>()
                 : spawnedChar.AddComponent<SkeletonMinion>();
             minion.ScaleEquipment(playerNecromancyLevel, skeletonType, leatherArmor, bronzeArmor, ironArmor, blackIronArmor);
@@ -508,6 +508,89 @@ namespace ChebsNecromancy
             player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease.Value);
 
             minion.SetUndeadMinionMaster(player.GetPlayerName());
+
+            // handle refunding of resources on death
+            if (SkeletonMinion.dropOnDeath.Value != UndeadMinion.DropType.Nothing)
+            {
+                CharacterDrop characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
+
+                if (SkeletonMinion.dropOnDeath.Value == UndeadMinion.DropType.Everything
+                    && boneFragmentsRequiredConfig.Value > 0)
+                {
+                    // bones
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
+                        m_onePerPlayer = true,
+                        m_amountMin = boneFragmentsRequiredConfig.Value,
+                        m_amountMax = boneFragmentsRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                if (skeletonType == SkeletonMinion.SkeletonType.Mage)
+                {
+                    // surtling core
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("SurtlingCore"),
+                        m_onePerPlayer = true,
+                        m_amountMin = surtlingCoresRequiredConfig.Value,
+                        m_amountMax = surtlingCoresRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                if (leatherArmor)
+                {
+                    // for now, assume deerhide
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("DeerHide"),
+                        m_onePerPlayer = true,
+                        m_amountMin = armorLeatherScrapsRequiredConfig.Value,
+                        m_amountMax = armorLeatherScrapsRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                else if (bronzeArmor)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("Bronze"),
+                        m_onePerPlayer = true,
+                        m_amountMin = armorBronzeRequiredConfig.Value,
+                        m_amountMax = armorBronzeRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                else if (ironArmor)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("Iron"),
+                        m_onePerPlayer = true,
+                        m_amountMin = armorIronRequiredConfig.Value,
+                        m_amountMax = armorIronRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+                else if (blackIronArmor)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("BlackMetal"),
+                        m_onePerPlayer = true,
+                        m_amountMin = armorBlackIronRequiredConfig.Value,
+                        m_amountMax = armorBlackIronRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                // the component won't be remembered by the game on logout because
+                // only what is on the prefab is remembered. Even changes to the prefab
+                // aren't remembered. So we must write what we're dropping into
+                // the ZDO as well and then read & restore this on Awake
+                minion.RecordDrops(characterDrop);
+            }
         }
 
         public void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, float necromancyLevelIncrease, bool archer)
@@ -615,13 +698,13 @@ namespace ChebsNecromancy
             if (playerNecromancyLevel >= skeletonTierThreeLevelReq.Value) { quality = skeletonTierThreeQuality.Value; }
             else if (playerNecromancyLevel >= skeletonTierTwoLevelReq.Value) { quality = skeletonTierTwoQuality.Value; }
 
-            SkeletonType skeletonType = SkeletonType.Warrior;
-            if (archer) { skeletonType = SkeletonType.Archer; }
-            else if (createMage) { skeletonType = SkeletonType.Mage; }
+            SkeletonMinion.SkeletonType skeletonType = SkeletonMinion.SkeletonType.Warrior;
+            if (archer) { skeletonType = SkeletonMinion.SkeletonType.Archer; }
+            else if (createMage) { skeletonType = SkeletonMinion.SkeletonType.Mage; }
             else if (playerNecromancyLevel >= poisonSkeletonLevelRequirementConfig.Value
                 && ConsumeGuckIfAvailable(player))
             {
-                skeletonType = SkeletonType.Poison;
+                skeletonType = SkeletonMinion.SkeletonType.Poison;
             }
 
             InstantiateSkeleton(player, quality, playerNecromancyLevel,
