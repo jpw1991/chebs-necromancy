@@ -77,6 +77,8 @@ namespace ChebsNecromancy.Minions
             }
 
             RestoreDrops();
+
+            WaitAtRecordedPosition();
         }
 
         public void ScaleStats(float necromancyLevel)

@@ -464,7 +464,11 @@ namespace ChebsNecromancy
 
             if (followByDefault.Value)
             {
-                spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+                minion.Follow(player.gameObject);
+            }
+            else
+            {
+                minion.Wait(player.transform.position);
             }
 
             minion.SetUndeadMinionMaster(player.GetPlayerName());

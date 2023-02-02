@@ -502,7 +502,11 @@ namespace ChebsNecromancy
 
             if (followByDefault.Value)
             {
-                spawnedChar.GetComponent<MonsterAI>().SetFollowTarget(player.gameObject);
+                minion.Follow(player.gameObject);
+            }
+            else
+            {
+                minion.Wait(player.transform.position);
             }
 
             player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease.Value);

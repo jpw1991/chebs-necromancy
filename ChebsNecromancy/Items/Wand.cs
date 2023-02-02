@@ -227,16 +227,15 @@ namespace ChebsNecromancy
                         && item.GetComponent<MonsterAI>().GetFollowTarget() != null
                         ))
                     {
-                        MonsterAI monsterAI = item.GetComponent<MonsterAI>();
-                        if (monsterAI == null)
+                        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                                follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
+                        if (follow)
                         {
-                            Jotunn.Logger.LogError("MakeNearbyMinionsFollow: failed to make skeleton follow -> MonsterAI is null!");
+                            minion.Follow(player.gameObject);
                         }
                         else
                         {
-                            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                                follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
-                            monsterAI.SetFollowTarget(follow ? player.gameObject : null);
+                            minion.Wait(player.transform.position);
                         }
                     }
                 }

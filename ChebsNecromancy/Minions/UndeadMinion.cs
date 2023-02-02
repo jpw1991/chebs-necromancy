@@ -42,6 +42,8 @@ namespace ChebsNecromancy
 
         public const string minionOwnershipZDOKey = "UndeadMinionMaster";
         public const string minionDropsZDOKey = "UndeadMinionDrops";
+        public const string minionWaitPosZDOKey = "UndeadMinionWaitPosition";
+        public const string minionWaitObjectName = "UndeadMinionWaitPositionObject";
 
         #region CleanupAfterLogout
         private const float nextPlayerOnlineCheckInterval = 15f;
@@ -134,6 +136,7 @@ namespace ChebsNecromancy
             }
         }
 
+        #region MinionMasterZDO
         public void SetUndeadMinionMaster(string playerName)
         {
             if (TryGetComponent(out ZNetView zNetView))
@@ -145,7 +148,7 @@ namespace ChebsNecromancy
                 Jotunn.Logger.LogError($"Cannot SetUndeadMinionMaster to {playerName} because it has no ZNetView component.");
             }
         }
-
+        #endregion
         public bool BelongsToPlayer(string playerName)
         {
             return TryGetComponent(out ZNetView zNetView) 
@@ -153,6 +156,7 @@ namespace ChebsNecromancy
                 .Equals(playerName);
         }
 
+        #region DropsZDO
         public void RecordDrops(CharacterDrop characterDrop)
         {
             // the component won't be remembered by the game on logout because
@@ -218,6 +222,72 @@ namespace ChebsNecromancy
             {
                 Jotunn.Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
             }
+        }
+        #endregion
+        #region WaitPositionZDO
+        protected void RecordWaitPosition(Vector3 waitPos)
+        {
+            if (TryGetComponent(out ZNetView zNetView))
+            {
+                zNetView.GetZDO().Set(minionWaitPosZDOKey, waitPos);
+            }
+            else
+            {
+                Jotunn.Logger.LogError($"Cannot RecordWaitPosition {waitPos} because it has no ZNetView component.");
+            }
+        }
+
+        protected Vector3 GetWaitPosition()
+        {
+            if (TryGetComponent(out ZNetView zNetView))
+            {
+                return zNetView.GetZDO().GetVec3(minionWaitPosZDOKey, Vector3.negativeInfinity);
+            }
+
+            Jotunn.Logger.LogError($"Cannot GetWaitPosition because it has no ZNetView component.");
+            return Vector3.negativeInfinity;
+        }
+
+        protected void WaitAtRecordedPosition()
+        {
+            Vector3 waitPos = GetWaitPosition();
+            if (waitPos == Vector3.negativeInfinity)
+            {
+                // either error, or more likely, simply unset
+                return;
+            }
+            if (TryGetComponent(out MonsterAI monsterAI))
+            {
+                // create a temporary object. This has no ZDO so will be cleaned up
+                // after the session ends
+                GameObject waitObject = new GameObject(minionWaitObjectName);
+                waitObject.transform.position = waitPos;
+                monsterAI.SetFollowTarget(waitObject);
+            }
+        }
+        #endregion
+
+        public void Follow(GameObject followObject)
+        {
+            if (!TryGetComponent(out MonsterAI monsterAI))
+            {
+                Jotunn.Logger.LogError($"Cannot Follow because it has no MonsterAI component.");
+                return;
+            }
+            // clear out current wait object if it exists
+            GameObject currentFollowTarget = monsterAI.GetFollowTarget();
+            if (currentFollowTarget != null && currentFollowTarget.name == minionWaitObjectName)
+            {
+                GameObject.Destroy(currentFollowTarget);
+            }
+            // follow
+            monsterAI.SetFollowTarget(followObject);
+        }
+
+        public void Wait(Vector3 waitPosition)
+        {
+            RecordWaitPosition(waitPosition);
+            WaitAtRecordedPosition();
         }
     }
 }
