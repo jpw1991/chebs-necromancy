@@ -14,6 +14,7 @@ namespace ChebsNecromancy
 {
     internal class DraugrWand : Wand
     {
+        #region ConfigEntries
         public static ConfigEntry<int> maxDraugr;
 
         public static ConfigEntry<CraftingTable> craftingStationRequired;
@@ -44,6 +45,7 @@ namespace ChebsNecromancy
 
         public static ConfigEntry<int> draugrBoneFragmentsRequiredConfig;
         public static ConfigEntry<int> draugrMeatRequiredConfig;
+        #endregion
 
         public override string ItemName { get { return "ChebGonaz_DraugrWand"; } }
         public override string PrefabName { get { return "ChebGonaz_DraugrWand.prefab"; } }
@@ -422,20 +424,17 @@ namespace ChebsNecromancy
             }
 
             // scale according to skill
-            float playerNecromancyLevel = 1;
-            try
-            {
-                playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
-            }
-            catch (Exception e)
-            {
-                Jotunn.Logger.LogError($"Failed to get player necromancy level: {e}");
-            }
+            float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
 
             int quality = draugrTierOneQuality.Value;
             if (playerNecromancyLevel >= draugrTierThreeLevelReq.Value) { quality = draugrTierThreeQuality.Value; }
             else if (playerNecromancyLevel >= draugrTierTwoLevelReq.Value) { quality = draugrTierTwoQuality.Value; }
 
+            InstantiateDraugr(player, quality, playerNecromancyLevel, archer, createArmoredLeather, createArmoredBronze, createArmoredIron, createArmoredBlackIron, boneFragmentsRequired, meatRequired);
+        }
+
+        protected void InstantiateDraugr(Player player, int quality, float playerNecromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor, int boneFragmentsRequired, int meatRequired)
+        {
             // go on to spawn draugr
             string prefabName = archer ? "ChebGonaz_DraugrArcher" : "ChebGonaz_DraugrWarrior";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
@@ -446,21 +445,15 @@ namespace ChebsNecromancy
             }
 
             GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+            spawnedChar.AddComponent<FreshMinion>();
             DraugrMinion minion = spawnedChar.AddComponent<DraugrMinion>();
+            minion.SetCreatedAtLevel(playerNecromancyLevel);
             Character character = spawnedChar.GetComponent<Character>();
-            character.m_faction = Character.Faction.Players;
             character.SetLevel(quality);
             minion.ScaleStats(playerNecromancyLevel);
-            minion.ScaleEquipment(playerNecromancyLevel, createArmoredLeather, createArmoredBronze, createArmoredIron, createArmoredBlackIron);
+            minion.ScaleEquipment(playerNecromancyLevel, leatherArmor, bronzeArmor, ironArmor, blackIronArmor);
 
-            try
-            {
-                player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease);
-            }
-            catch (Exception e)
-            {
-                Jotunn.Logger.LogError($"Failed to raise player necromancy level: {e}");
-            }
+            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill, necromancyLevelIncrease.Value);
 
             if (followByDefault.Value)
             {
@@ -476,7 +469,7 @@ namespace ChebsNecromancy
             if (DraugrWand.durabilityDamage.Value)
             {
                 Player.m_localPlayer.GetRightItem().m_durability -= archer
-                    ? durabilityDamageArcher.Value : durabilityDamageWarrior.Value ;
+                    ? durabilityDamageArcher.Value : durabilityDamageWarrior.Value;
             }
 
             // handle refunding of resources on death
@@ -512,7 +505,7 @@ namespace ChebsNecromancy
                         });
                     }
                 }
-                if (createArmoredLeather)
+                if (leatherArmor)
                 {
                     // for now, assume deerhide
                     characterDrop.m_drops.Add(new CharacterDrop.Drop
@@ -524,7 +517,7 @@ namespace ChebsNecromancy
                         m_chance = 1f
                     });
                 }
-                else if (createArmoredBronze)
+                else if (bronzeArmor)
                 {
                     characterDrop.m_drops.Add(new CharacterDrop.Drop
                     {
@@ -535,7 +528,7 @@ namespace ChebsNecromancy
                         m_chance = 1f
                     });
                 }
-                else if (createArmoredIron)
+                else if (ironArmor)
                 {
                     characterDrop.m_drops.Add(new CharacterDrop.Drop
                     {
@@ -546,7 +539,7 @@ namespace ChebsNecromancy
                         m_chance = 1f
                     });
                 }
-                else if (createArmoredBlackIron)
+                else if (blackIronArmor)
                 {
                     characterDrop.m_drops.Add(new CharacterDrop.Drop
                     {

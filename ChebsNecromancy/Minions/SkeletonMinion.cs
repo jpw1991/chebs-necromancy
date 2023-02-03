@@ -49,36 +49,52 @@ namespace ChebsNecromancy.Minions
         {
             yield return new WaitUntil(() => Player.m_localPlayer != null);
 
-            ScaleStats(Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill));
+            ScaleStats(GetCreatedAtLevel());
 
             // by the time player arrives, ZNet stuff is certainly ready
-            if (TryGetComponent(out Humanoid humanoid))
+            if (!TryGetComponent(out Humanoid humanoid))
             {
-                // VisEquipment remembers what armor the skeleton is wearing.
-                // Exploit this to reapply the armor so the armor values work
-                // again.
-                List<int> equipmentHashes = new List<int>()
+                Jotunn.Logger.LogError("Humanoid component missing!");
+                yield break;
+            }
+
+            // VisEquipment remembers what armor the skeleton is wearing.
+            // Exploit this to reapply the armor so the armor values work
+            // again.
+            List<int> equipmentHashes = new List<int>()
                 {
                     humanoid.m_visEquipment.m_currentChestItemHash,
                     humanoid.m_visEquipment.m_currentLegItemHash,
                     humanoid.m_visEquipment.m_currentHelmetItemHash
                 };
-                equipmentHashes.ForEach(hash =>
-                {
-                    ZNetScene.instance.GetPrefab(hash);
+            equipmentHashes.ForEach(hash =>
+            {
+                ZNetScene.instance.GetPrefab(hash);
 
-                    GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
-                    if (equipmentPrefab != null)
-                    {
-                        //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
-                        humanoid.GiveDefaultItem(equipmentPrefab);
-                    }
-                });
-            }
+                GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
+                if (equipmentPrefab != null)
+                {
+                    //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
+                    humanoid.GiveDefaultItem(equipmentPrefab);
+                }
+            });
 
             RestoreDrops();
 
-            WaitAtRecordedPosition();
+            // wondering what the code below does? Check comments in the
+            // FreshMinion.cs file.
+            FreshMinion freshMinion = GetComponent<FreshMinion>();
+            MonsterAI monsterAI = GetComponent<MonsterAI>();
+            if (!Wand.followByDefault.Value || freshMinion == null)
+            {
+                WaitAtRecordedPosition();
+            }
+
+            if (freshMinion != null)
+            {
+                // remove the component
+                GameObject.Destroy(freshMinion);
+            }
         }
 
         public virtual void ScaleStats(float necromancyLevel)

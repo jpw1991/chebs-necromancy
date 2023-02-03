@@ -14,7 +14,7 @@ namespace ChebsNecromancy
 {
     internal class Wand : Item
     {
-        public ConfigEntry<bool> followByDefault;
+        public static ConfigEntry<bool> followByDefault;
 
         public ConfigEntry<KeyCode> CreateMinionConfig;
         public ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;

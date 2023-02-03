@@ -44,6 +44,7 @@ namespace ChebsNecromancy
         public const string minionDropsZDOKey = "UndeadMinionDrops";
         public const string minionWaitPosZDOKey = "UndeadMinionWaitPosition";
         public const string minionWaitObjectName = "UndeadMinionWaitPositionObject";
+        public const string minionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
 
         #region CleanupAfterLogout
         private const float nextPlayerOnlineCheckInterval = 15f;
@@ -148,14 +149,14 @@ namespace ChebsNecromancy
                 Jotunn.Logger.LogError($"Cannot SetUndeadMinionMaster to {playerName} because it has no ZNetView component.");
             }
         }
-        #endregion
+
         public bool BelongsToPlayer(string playerName)
         {
             return TryGetComponent(out ZNetView zNetView) 
                 && zNetView.GetZDO().GetString(minionOwnershipZDOKey, "")
                 .Equals(playerName);
         }
-
+        #endregion
         #region DropsZDO
         public void RecordDrops(CharacterDrop characterDrop)
         {
@@ -289,5 +290,26 @@ namespace ChebsNecromancy
             RecordWaitPosition(waitPosition);
             WaitAtRecordedPosition();
         }
+
+        #region CreatedAtLevelZDO
+        public void SetCreatedAtLevel(float necromancyLevel)
+        {
+            // We store the level the minion was created at so it can be scaled
+            // correctly in the Awake function
+            if (!TryGetComponent(out ZNetView zNetView))
+            {
+                Jotunn.Logger.LogError($"Cannot SetCreatedAtLevel to {necromancyLevel} because it has no ZNetView component.");
+                return;
+            }
+            zNetView.GetZDO().Set(minionCreatedAtLevelKey, necromancyLevel);
+        }
+
+        public float GetCreatedAtLevel()
+        {
+            return TryGetComponent(out ZNetView zNetView)
+                ? zNetView.GetZDO().GetFloat(minionCreatedAtLevelKey, 1f)
+                : 1f;
+        }
+        #endregion
     }
 }

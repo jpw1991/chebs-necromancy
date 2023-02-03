@@ -181,6 +181,7 @@
     <Compile Include="Items\SkeletonHelmetLeatherPoison.cs" />
     <Compile Include="Commands\KillNearbyNeckros.cs" />
     <Compile Include="Commands\SetMinionOwnership.cs" />
+    <Compile Include="Minions\FreshMinion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
