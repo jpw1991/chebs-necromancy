@@ -37,6 +37,7 @@ namespace ChebsNecromancy
 
         public static ConfigEntry<CleanupType> cleanupAfter;
         public static ConfigEntry<int> cleanupDelay;
+        public static ConfigEntry<bool> commandable;
 
         protected float cleanupAt;
 
@@ -59,6 +60,8 @@ namespace ChebsNecromancy
             cleanupDelay = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupDelay",
                 300, new ConfigDescription("The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
+                true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
         }
 
         public virtual void Awake()
@@ -68,6 +71,8 @@ namespace ChebsNecromancy
             {
                 // let the minions generate a little necromancy XP for their master
                 tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
+
+                tameable.m_commandable = commandable.Value;
             }
 
             if (cleanupAfter.Value == CleanupType.Time)

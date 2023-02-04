@@ -706,20 +706,71 @@ namespace ChebsNecromancy
     }
 
     [HarmonyPatch(typeof(Tameable), "Interact")]
-    static class TameableInteractPatch
+    static class TameablePatch1
     {
-        // Stop players that aren't the owner of a minion from interacting
-        // with it.
-        static bool Prefix(Humanoid user, bool hold, bool alt, Tameable __instance)
+        [HarmonyPrefix]
+        static bool InteractPrefix(Humanoid user, bool hold, bool alt, Tameable __instance)
         {
+            // Stop players that aren't the owner of a minion from interacting
+            // with it. Also call UndeadMinion wait/follow methods to
+            // properly update the ZDO with the waiting position.
             if (__instance.TryGetComponent(out UndeadMinion undeadMinion)
-                && user.TryGetComponent(out Player player)
-                && !undeadMinion.BelongsToPlayer(player.GetPlayerName()))
+                && user.TryGetComponent(out Player player))
             {
-                user.Message(MessageHud.MessageType.Center, "$chebgonaz_notyourminion");
-                return false; // deny base method completion
+                if (!undeadMinion.BelongsToPlayer(player.GetPlayerName()))
+                {
+                    user.Message(MessageHud.MessageType.Center, "$chebgonaz_notyourminion");
+                    return false; // deny base method completion
+                }
+
+                if (!UndeadMinion.commandable.Value)
+                {
+                    return false; // deny base method completion
+                }
+
+                // use the minion methods to ensure the ZDO is updated
+                if (__instance.TryGetComponent(out MonsterAI monsterAI))
+                {
+                    if (monsterAI.GetFollowTarget() == player.gameObject)
+                    {
+                        user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonwaiting");
+                        undeadMinion.Wait(player.transform.position);
+                    }
+                    else
+                    {
+                        user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonfollowing");
+                        undeadMinion.Follow(player.gameObject);
+                    }
+                    return false; // deny base method completion
+                }
             }
+
             return true; // permit base method to complete
+        }
+    }
+
+    [HarmonyPatch(typeof(Tameable))]
+    static class TameablePatch2
+    {
+        [HarmonyPatch(nameof(Tameable.GetHoverText))]
+        [HarmonyPrefix]
+        static bool Prefix(Tameable __instance, ref string __result)
+        {
+            if (!__instance.m_nview.IsValid()
+                || !__instance.m_commandable
+                || !__instance.TryGetComponent(out MonsterAI monsterAI)
+                || Player.m_localPlayer == null)
+            {
+                __result = "";
+            }
+            else
+            {
+                __result = monsterAI.GetFollowTarget() == Player.m_localPlayer.gameObject
+                ? Localization.instance.Localize("$chebgonaz_wait")
+                : Localization.instance.Localize("$chebgonaz_follow");
+            }
+
+            return false; // deny base method completion
         }
     }
     #endregion
