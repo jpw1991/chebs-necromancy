@@ -74,6 +74,9 @@ if [ $TARGET == "Release" ]; then
   cp "$TARGETPATH/$TARGETASSEMBLY" "$packagePath/plugins/$name"
   cp "README.md" "$packagePath"
   cp -r "$PROJECTPATH/$name/Assets" "$packagePath/plugins/$name"
+  if [ ! -z "$VERSION" ]; then
+    VERSION=".$VERSION"
+  fi
   zipLocation="$TARGETPATH/$TARGETASSEMBLY$VERSION.zip"
   echo "Zipping to $PROJECTPATH/$zipLocation"
   cd $packagePath
