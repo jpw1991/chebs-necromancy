@@ -4,6 +4,8 @@ Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures.
 
 This mod was formerly called Friendly Skeleton Wand, but was renamed since it as grown into something so much more.
 
+## Confused? Try the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki).
+
 **Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/chebs-necromancy/releases). Although less tested than the official releases, they are still tested pretty well.
 
 ##  About Me
@@ -75,35 +77,29 @@ Press **F1** to open the mod's configuration panel.
 
 You can also edit the configs manually. Almost everything can be tweaked to your liking.
 
-### F.A.Q
+## Known issues
 
-Q: How do I kill minions?
+- Skeletons can't follow you into/out of dungeons
+	+ This might be fixable via mods like **Teleport Everything** ([Nexus](https://www.nexusmods.com/valheim/mods/1806), [Thunderstore](https://valheim.thunderstore.io/package/OdinPlus/TeleportEverything/)).
+- Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
+- Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
+	+ `DraugrAllowed = false`
+	+ `SpectralShroudSpawnWraith = false`
 
-A: They count as tames, so use butcher's knife
+## Future Ideas
 
-Q: What do minions eat?
+- Fully custom undead types.
 
-A: Nothing. They are just tames so that they earn you Necromancy XP and get a funny name.
+## Source
 
-Q: What meats work for spawning Draugr?
+You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
-A: Boar Meat, Neck Tail, Deer Meat, Lox Meat, Wolf Meat, Serpent Meat, Chicken Meat, Hare meat. It checks and consumes the first one it finds in that order - so low quality meats are preferred to high quality.
+## Special Thanks
 
-Q: Can I heal minions?
-
-A: Not yet, unless you use other mods that permit healing. I want to add healing eventually in some form.
-
-Q: How do I make a poison skeleton?
-
-A: Make sure your necromancy level is high enough and have some Guck in your inventory when creating a non-archer skeleton using the staff.
-
-Q: Can you add Frost Resistance to the Spectral Shroud and/or Necromancer Hood so I can use it in the Mountains?
-
-A: This is currently not planned because another mod called [Custom Armor Stats](https://www.nexusmods.com/valheim/mods/1162/) can be used to add it. So I'd rather spare myself the extra work.
-
-Q. How do I make the Neckro Gatherer Pylon work?
-
-A. Put some Neck Tails inside it.
+- **Dracbjorn** for development help & testing.
+- **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
+- **redseiko** for helpful advice on the official Valheim modding Discord.
+- **S970X** for making the German language localization for the mod.
 
 ## Changelog
 
@@ -112,7 +108,7 @@ A. Put some Neck Tails inside it.
 
 Date | Version | Notes
 --- | --- | ---
-03/02/2023 | 1.6.5 | minions now remember the necromancy level with which they're created and scale to that; refactor SkeletonWand and DraugrWand code to be more uniform to make diffing easier; fix a bug where minions set to follow automatically would have bugged AI with the 1.6.4 improvements; minion commandability exposed to config; commands issued via E also update ZDO; hover text for interact patched
+03/02/2023 | 1.7.0 | minions now remember the necromancy level with which they're created and scale to that; refactor SkeletonWand and DraugrWand code to be more uniform to make diffing easier; fix a bug where minions set to follow automatically would have bugged AI with the 1.6.4 improvements; minion commandability exposed to config; commands issued via E also update ZDO; hover text for interact patched
 01/02/2023 | 1.6.4 | minions can be configured to drop their crafting requirements on death; hold position now works in that minions no longer wander around; wait positions are now recorded and stored so that minions return to where they were last waiting after chasing something off
 28/01/2023 | 1.6.3 | add optional timer to kill any minion after X seconds; overhaul minion ownership checks to accurately store and retrieve the minion's creator; minions will only obey commands from their creators and ignore others
 24/01/2023 | 1.6.2 | minions can be told to follow/wait using E on them; neckros can be killed via terminal command - butcher's knife won't work on them, even with Tameable component added, due to their Container component
@@ -164,27 +160,4 @@ Date | Version | Notes
 25/11/2022 | 1.0.0 | Release
 
 </details>
-
-## Known issues
-
-- Skeletons can't follow you into/out of dungeons
-- Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
-- Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
-  - `DraugrAllowed = false`
-  - `SpectralShroudSpawnWraith = false`
-
-## Future Ideas
-
-- Fully custom undead types.
-
-## Source
-
-You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
-
-## Special Thanks
-
-- **Dracbjorn** for development help & testing.
-- **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
-- **redseiko** for helpful advice on the official Valheim modding Discord.
-- **S970X** for making the German language localization for the mod.
 
