@@ -30,9 +30,13 @@ namespace ChebsNecromancy.Commands
                 return;
             }
 
-            if (!Player.GetAllPlayers().Find(player => player.GetPlayerName() == args[0]))
+            string playerName = args[0].Trim().ToLower();
+
+            Player player = Player.GetAllPlayers()
+                .Find(player => player.GetPlayerName().Trim().ToLower() == playerName);
+            if (!player)
             {
-                Console.instance.Print($"Player with name '{args[0]}' not found.");
+                Console.instance.Print($"Player with name '{playerName}' not found.");
                 return;
             }
 
@@ -42,27 +46,25 @@ namespace ChebsNecromancy.Commands
                 return;
             }
 
-            float playerNecromancyLevel = Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+            float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
 
             List<Character> characters = new List<Character>();
             Character.GetCharactersInRange(Player.m_localPlayer.transform.position, radius, characters);
             characters.ForEach(character =>
             {
-                if (character.TryGetComponent(out UndeadMinion undeadMinion))
-                {
-                    Console.instance.Print($"Setting '{character.name}'s owner to '{args[0]}' and scaling to {playerNecromancyLevel}.");
-                    undeadMinion.SetUndeadMinionMaster(args[0]);
-                    undeadMinion.SetCreatedAtLevel(playerNecromancyLevel);
+                if (!character.TryGetComponent(out UndeadMinion undeadMinion)) return;
+                Console.instance.Print($"Setting '{character.name}'s owner to '{args[0]}' and scaling to {playerNecromancyLevel}.");
+                undeadMinion.SetUndeadMinionMaster(player.GetPlayerName());
+                undeadMinion.SetCreatedAtLevel(playerNecromancyLevel);
 
-                    // also scale minion health to player's setup
-                    if (undeadMinion is SkeletonMinion)
-                    {
-                        ((SkeletonMinion)undeadMinion).ScaleStats(playerNecromancyLevel);
-                    }
-                    else if (undeadMinion is DraugrMinion)
-                    {
-                        ((DraugrMinion)undeadMinion).ScaleStats(playerNecromancyLevel);
-                    }
+                // also scale minion health to player's setup
+                if (undeadMinion is SkeletonMinion)
+                {
+                    ((SkeletonMinion)undeadMinion).ScaleStats(playerNecromancyLevel);
+                }
+                else if (undeadMinion is DraugrMinion)
+                {
+                    ((DraugrMinion)undeadMinion).ScaleStats(playerNecromancyLevel);
                 }
             });
         }
