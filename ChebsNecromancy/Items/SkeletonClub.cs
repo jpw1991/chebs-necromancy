@@ -1,14 +1,10 @@
-﻿using Jotunn.Configs;
-using Jotunn.Entities;
-using UnityEngine;
-
-namespace ChebsNecromancy
+﻿namespace ChebsNecromancy.Items
 {
     internal class SkeletonClub : Item
     {
-        public override string ItemName { get { return "ChebGonaz_SkeletonClub"; } }
-        public override string PrefabName { get { return "ChebGonaz_SkeletonClub.prefab"; } }
-        public override string NameLocalization { get { return "$item_chebgonaz_skeletonclub_name"; } }
-        public override string DescriptionLocalization { get { return "$item_chebgonaz_skeletonclub_desc"; } }
+        public override string ItemName => "ChebGonaz_SkeletonClub";
+        public override string PrefabName => "ChebGonaz_SkeletonClub.prefab";
+        public override string NameLocalization => "$item_chebgonaz_skeletonclub_name";
+        public override string DescriptionLocalization => "$item_chebgonaz_skeletonclub_desc";
     }
 }

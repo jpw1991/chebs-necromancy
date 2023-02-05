@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using ChebsNecromancy.Minions;
 using Jotunn.Entities;
 
 namespace ChebsNecromancy.Commands
@@ -12,23 +13,20 @@ namespace ChebsNecromancy.Commands
     {
         public override string Name => "chebgonaz_killallminions";
 
-        public override string Help => "Kills all of your undead minions (won't kill other players' minions)";
+        public override string Help => "Kills all of your undead minions (won't kill other players' minions). Admins can ignore the ownership check with f";
 
         public override void Run(string[] args)
         {
             List<Character> allCharacters = Character.GetAllCharacters();
             List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
 
+            bool force = args.Length > 0 && args[0].Equals("f");
+            
             foreach (Character item in allCharacters)
             {
-                if (item.IsDead())
-                {
-                    continue;
-                }
-
-                UndeadMinion minion = item.GetComponent<UndeadMinion>();
-                if (minion != null 
-                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
+                if (item.IsDead()) continue;
+                if (!item.TryGetComponent(out UndeadMinion minion)) continue;
+                if (force || minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 {
                     item.SetHealth(0);
                 }

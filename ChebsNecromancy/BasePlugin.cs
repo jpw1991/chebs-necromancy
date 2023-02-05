@@ -3,48 +3,53 @@
 // File:    ChebsNecromancy.cs
 // Project: ChebsNecromancy
 
+using System;
+using System.Collections.Generic;
+using System.IO;
 using BepInEx;
 using ChebsNecromancy.Commands;
+using ChebsNecromancy.CustomPrefabs;
+using ChebsNecromancy.Items;
 using ChebsNecromancy.Minions;
 using HarmonyLib;
+using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
-
+using Paths = BepInEx.Paths;
+// ReSharper disable InconsistentNaming
+// ReSharper disable UnusedParameter.Local
 
 namespace ChebsNecromancy
 {
-    [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-    [BepInDependency(Jotunn.Main.ModGuid)]
+    [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
+    [BepInDependency(Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
     internal class BasePlugin : BaseUnityPlugin
     {
-        public const string PluginGUID = "com.chebgonaz.ChebsNecromancy";
+        public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.7.0";
-        private const string ConfigFileName =  PluginGUID + ".cfg";
-        private static readonly string ConfigFileFullPath = Path.Combine(BepInEx.Paths.ConfigPath, ConfigFileName);
+        public const string PluginVersion = "1.7.1";
+        private const string ConfigFileName =  PluginGuid + ".cfg";
+        private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        private readonly Harmony harmony = new Harmony(PluginGUID);
+        private readonly Harmony harmony = new(PluginGuid);
 
-        private List<Wand> wands = new List<Wand>()
+        private List<Wand> wands = new()
         {
             new SkeletonWand(),
             new DraugrWand(),
         };
-        public const string necromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
+        public const string NecromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
-        private SpectralShroud spectralShroudItem = new SpectralShroud();
-        private NecromancerHood necromancersHoodItem = new NecromancerHood();
+        private SpectralShroud spectralShroudItem = new();
+        private NecromancerHood necromancersHoodItem = new();
 
         private float inputDelay = 0;
 
-        public static SE_Stats setEffectNecromancyArmor, setEffectNecromancyArmor2;
+        public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
 
         private void Awake()
         {
@@ -91,7 +96,7 @@ namespace ChebsNecromancy
 
         private void SetupWatcher()
         {
-            FileSystemWatcher watcher = new FileSystemWatcher(BepInEx.Paths.ConfigPath, ConfigFileName);
+            FileSystemWatcher watcher = new FileSystemWatcher(Paths.ConfigPath, ConfigFileName);
             watcher.Changed += ReadConfigValues;
             watcher.Created += ReadConfigValues;
             watcher.Renamed += ReadConfigValues;
@@ -146,8 +151,8 @@ namespace ChebsNecromancy
                 }
 
                 #region SetEffects
-                setEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
-                setEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
+                SetEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
+                SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
                 #endregion
 
                 #region Items
@@ -206,8 +211,8 @@ namespace ChebsNecromancy
                 GameObject largeCargoCratePrefab = LoadPrefabFromBundle(LargeCargoCrate.PrefabName, chebgonazAssetBundle);
                 if (largeCargoCratePrefab.TryGetComponent(out Container container))
                 {
-                    container.m_width = LargeCargoCrate.containerWidth.Value;
-                    container.m_height = LargeCargoCrate.containerHeight.Value;
+                    container.m_width = LargeCargoCrate.ContainerWidth.Value;
+                    container.m_height = LargeCargoCrate.ContainerHeight.Value;
                 }
                 else
                 {
@@ -219,13 +224,13 @@ namespace ChebsNecromancy
                 #region Creatures
                 List<string> prefabNames = new List<string>();
 
-                if (DraugrWand.draugrAllowed.Value)
+                if (DraugrWand.DraugrAllowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_DraugrArcher.prefab");
                     prefabNames.Add("ChebGonaz_DraugrWarrior.prefab");
                 }
 
-                if (SkeletonWand.skeletonsAllowed.Value)
+                if (SkeletonWand.SkeletonsAllowed.Value)
                 {
                     // 1.2.0: I had to make extra prefabs for each tier because
                     // the skeletons consistently forgot their weapons and became
@@ -244,22 +249,22 @@ namespace ChebsNecromancy
                     prefabNames.Add(SkeletonWand.PoisonSkeleton3PrefabName + ".prefab");
                 }
 
-                if (SpectralShroud.spawnWraith.Value)
+                if (SpectralShroud.SpawnWraith.Value)
                 {
                     prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
                 }
 
-                if (SpiritPylon.allowed.Value)
+                if (SpiritPylon.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 }
 
-                if (NeckroGathererMinion.allowed.Value && LargeCargoCrate.allowed.Value)
+                if (NeckroGathererMinion.Allowed.Value && LargeCargoCrate.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 }
 
-                if (BatBeacon.allowed.Value)
+                if (BatBeacon.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
                 }
@@ -277,30 +282,30 @@ namespace ChebsNecromancy
 
                 #region Structures   
                 GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.PrefabName);
-                spiritPylonPrefab.AddComponent<SpiritPylon>();
+                SpiritPylon spiritPylon = spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
-                    new SpiritPylon().GetCustomPieceFromPrefab(spiritPylonPrefab,
+                    spiritPylon.GetCustomPieceFromPrefab(spiritPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName))
                     );
 
                 GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.PrefabName);
-                refuelerPylonPrefab.AddComponent<RefuelerPylon>();
+                RefuelerPylon refuelerPylon = refuelerPylonPrefab.AddComponent<RefuelerPylon>();
                 PieceManager.Instance.AddPiece(
-                    new RefuelerPylon().GetCustomPieceFromPrefab(refuelerPylonPrefab,
+                    refuelerPylon.GetCustomPieceFromPrefab(refuelerPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.IconName))
                     );
 
                 GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.PrefabName);
-                neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
+                NeckroGathererPylon neckroGathererPylon = neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
                 PieceManager.Instance.AddPiece(
-                    new NeckroGathererPylon().GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
+                    neckroGathererPylon.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.IconName))
                     );
 
                 GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.PrefabName);
-                batBeaconPrefab.AddComponent<BatBeacon>();
+                BatBeacon batBeacon = batBeaconPrefab.AddComponent<BatBeacon>();
                 PieceManager.Instance.AddPiece(
-                    new BatBeacon().GetCustomPieceFromPrefab(batBeaconPrefab,
+                    batBeacon.GetCustomPieceFromPrefab(batBeaconPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.IconName))
                     );
                 #endregion
@@ -320,20 +325,22 @@ namespace ChebsNecromancy
         private void AddNecromancy()
         {
             string iconPath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "necromancy_icon.png");
-            SkillConfig skill = new SkillConfig();
-            skill.Name = "$friendlyskeletonwand_necromancy";
-            skill.Description = "$friendlyskeletonwand_necromancy_desc";
-            skill.IconPath = iconPath;
-            skill.Identifier = necromancySkillIdentifier;
+            SkillConfig skill = new SkillConfig
+            {
+                Name = "$friendlyskeletonwand_necromancy",
+                Description = "$friendlyskeletonwand_necromancy_desc",
+                IconPath = iconPath,
+                Identifier = NecromancySkillIdentifier
+            };
 
             SkillManager.Instance.AddSkill(skill);
 
             // necromancy skill doesn't exist until mod is loaded, so we have to set it here rather than in unity
-            setEffectNecromancyArmor.m_skillLevel = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
-            setEffectNecromancyArmor.m_skillLevelModifier = SpectralShroud.necromancySkillBonus.Value;
+            SetEffectNecromancyArmor.m_skillLevel = SkillManager.Instance.GetSkill(NecromancySkillIdentifier).m_skill;
+            SetEffectNecromancyArmor.m_skillLevelModifier = SpectralShroud.NecromancySkillBonus.Value;
 
-            setEffectNecromancyArmor2.m_skillLevel = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
-            setEffectNecromancyArmor2.m_skillLevelModifier = NecromancerHood.necromancySkillBonus.Value;
+            SetEffectNecromancyArmor2.m_skillLevel = SkillManager.Instance.GetSkill(NecromancySkillIdentifier).m_skill;
+            SetEffectNecromancyArmor2.m_skillLevelModifier = NecromancerHood.NecromancySkillBonus.Value;
         }
 
         private void Update()
@@ -347,7 +354,7 @@ namespace ChebsNecromancy
                         {
                             inputDelay = Time.time + .5f;
                         }
-                        });
+                    });
                 }
             }
 
@@ -357,20 +364,28 @@ namespace ChebsNecromancy
 
     #region HarmonyPatches
 
+    // Harmony patching is very sensitive regarding parameter names. Everything in this region should be hand crafted
+    // and not touched by well-meaning but clueless IDE optimizations.
+    // eg.
+    // __instance MUST be named with exactly two underscores.
+    // ___m_drops MUST be named with exactly three underscores.
+    //
+    // This is because all of this has a special meaning to Harmony.
+    
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     class CharacterDrop_Patches
     {
         [HarmonyPrefix]
         static void addBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
         {
-            if (SkeletonWand.boneFragmentsDroppedAmountMin.Value >= 0
-                && SkeletonWand.boneFragmentsDroppedAmountMax.Value > 0)
+            if (SkeletonWand.BoneFragmentsDroppedAmountMin.Value >= 0
+                && SkeletonWand.BoneFragmentsDroppedAmountMax.Value > 0)
             {
                 CharacterDrop.Drop bones = new CharacterDrop.Drop();
                 bones.m_prefab = ZNetScene.instance.GetPrefab("BoneFragments");
                 bones.m_onePerPlayer = true;
-                bones.m_amountMin = SkeletonWand.boneFragmentsDroppedAmountMin.Value;
-                bones.m_amountMax = SkeletonWand.boneFragmentsDroppedAmountMax.Value;
+                bones.m_amountMin = SkeletonWand.BoneFragmentsDroppedAmountMin.Value;
+                bones.m_amountMax = SkeletonWand.BoneFragmentsDroppedAmountMax.Value;
                 bones.m_chance = 1f;
                 ___m_drops.Add(bones);
             }
@@ -538,15 +553,15 @@ namespace ChebsNecromancy
                 }
 
                 if (undeadMinion is SkeletonMinion
-                    && SkeletonMinion.dropOnDeath.Value != UndeadMinion.DropType.Nothing
-                    && SkeletonMinion.packDropItemsIntoCargoCrate.Value)
+                    && SkeletonMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
+                    && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     PackDropsIntoCrate();
                     return false; // deny base method completion
                 }
                 if (undeadMinion is DraugrMinion
-                    && DraugrMinion.dropOnDeath.Value != UndeadMinion.DropType.Nothing
-                    && DraugrMinion.packDropItemsIntoCargoCrate.Value)
+                    && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
+                    && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     PackDropsIntoCrate();
                     return false; // deny base method completion
@@ -663,7 +678,7 @@ namespace ChebsNecromancy
                     bodyArmor += humanoid.m_helmetItem != null
                         ? humanoid.m_helmetItem.m_shared.m_armor : 0;
                 }
-                bodyArmor *= SkeletonWand.skeletonArmorValueMultiplier.Value;
+                bodyArmor *= SkeletonWand.SkeletonArmorValueMultiplier.Value;
                 hit.ApplyArmor(bodyArmor);
                 //Jotunn.Logger.LogInfo($"{__instance.name} applied body armor {bodyArmor}");
                 // // //
@@ -723,7 +738,7 @@ namespace ChebsNecromancy
                     return false; // deny base method completion
                 }
 
-                if (!UndeadMinion.commandable.Value)
+                if (!UndeadMinion.Commandable.Value)
                 {
                     return false; // deny base method completion
                 }

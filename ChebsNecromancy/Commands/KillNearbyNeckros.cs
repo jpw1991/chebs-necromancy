@@ -13,23 +13,20 @@ namespace ChebsNecromancy.Commands
     {
         public override string Name => "chebgonaz_killallneckros";
 
-        public override string Help => "Kills Neckros (won't kill other players' minions)";
+        public override string Help => "Kills Neckros (won't kill other players' minions). Admins can ignore ownership with f";
 
         public override void Run(string[] args)
         {
             List<Character> allCharacters = Character.GetAllCharacters();
             List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
 
+            bool force = args.Length > 0 && args[0].Equals("f");
+            
             foreach (Character item in allCharacters)
             {
-                if (item.IsDead())
-                {
-                    continue;
-                }
-
-                NeckroGathererMinion minion = item.GetComponent<NeckroGathererMinion>();
-                if (minion != null
-                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
+                if (item.IsDead()) continue;
+                if (!item.TryGetComponent(out NeckroGathererMinion minion)) continue;
+                if (force || minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 {
                     item.SetHealth(0);
                 }

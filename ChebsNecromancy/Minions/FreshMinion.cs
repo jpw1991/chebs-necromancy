@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Minions
 {
     internal class FreshMinion : MonoBehaviour
     {

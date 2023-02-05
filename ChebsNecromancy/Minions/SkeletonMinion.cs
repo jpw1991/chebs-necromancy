@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
-using Jotunn.Managers;
+using ChebsNecromancy.Items;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Minions
 {
@@ -18,19 +19,19 @@ namespace ChebsNecromancy.Minions
         };
 
         // for limits checking
-        private static int createdOrderIncrementer;
+        private static int _createdOrderIncrementer;
         public int createdOrder;
 
-        public static ConfigEntry<DropType> dropOnDeath;
-        public static ConfigEntry<bool> packDropItemsIntoCargoCrate;
+        public static ConfigEntry<DropType> DropOnDeath;
+        public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
 
-        public static new void CreateConfigs(BaseUnityPlugin plugin)
+        public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            dropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", "DropOnDeath",
+            DropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", "DropOnDeath",
                 DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            packDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
+            PackDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
                 true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
@@ -39,8 +40,8 @@ namespace ChebsNecromancy.Minions
         {
             base.Awake();
 
-            createdOrderIncrementer++;
-            createdOrder = createdOrderIncrementer;
+            _createdOrderIncrementer++;
+            createdOrder = _createdOrderIncrementer;
 
             StartCoroutine(WaitForLocalPlayer());
         }
@@ -54,7 +55,7 @@ namespace ChebsNecromancy.Minions
             // by the time player arrives, ZNet stuff is certainly ready
             if (!TryGetComponent(out Humanoid humanoid))
             {
-                Jotunn.Logger.LogError("Humanoid component missing!");
+                Logger.LogError("Humanoid component missing!");
                 yield break;
             }
 
@@ -85,7 +86,7 @@ namespace ChebsNecromancy.Minions
             // FreshMinion.cs file.
             FreshMinion freshMinion = GetComponent<FreshMinion>();
             MonsterAI monsterAI = GetComponent<MonsterAI>();
-            if (!Wand.followByDefault.Value || freshMinion == null)
+            if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
                 WaitAtRecordedPosition();
             }
@@ -93,7 +94,7 @@ namespace ChebsNecromancy.Minions
             if (freshMinion != null)
             {
                 // remove the component
-                GameObject.Destroy(freshMinion);
+                Destroy(freshMinion);
             }
         }
 
@@ -102,14 +103,14 @@ namespace ChebsNecromancy.Minions
             Character character = GetComponent<Character>();
             if (character == null)
             {
-                Jotunn.Logger.LogError("ScaleStats: Character component is null!");
+                Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
 
             // only scale player's skeletons, not other ppls
             if (!BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) return;
 
-            float health = SkeletonWand.skeletonBaseHealth.Value + necromancyLevel * SkeletonWand.skeletonHealthMultiplier.Value;
+            float health = SkeletonWand.SkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.SkeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
@@ -121,7 +122,7 @@ namespace ChebsNecromancy.Minions
             Humanoid humanoid = GetComponent<Humanoid>();
             if (humanoid == null)
             {
-                Jotunn.Logger.LogError("ScaleEquipment: humanoid is null!");
+                Logger.LogError("ScaleEquipment: humanoid is null!");
                 return;
             }
 
@@ -159,7 +160,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageLeather.Value; }
+                if (SkeletonWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageLeather.Value; }
             }
             else if (bronzeArmor)
             {
@@ -169,7 +170,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageBronze.Value; }
+                if (SkeletonWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageBronze.Value; }
             }
             else if (ironArmor)
             {
@@ -179,7 +180,7 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ArmorIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageIron.Value; }
+                if (SkeletonWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageIron.Value; }
             }
             else if (blackIronArmor)
             {
@@ -189,28 +190,28 @@ namespace ChebsNecromancy.Minions
                     ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
                     ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (SkeletonWand.durabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageBlackIron.Value; }
+                if (SkeletonWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageBlackIron.Value; }
             }
 
             humanoid.m_defaultItems = defaultItems.ToArray();
 
             humanoid.GiveDefaultItems();
 
-            if (SkeletonWand.durabilityDamage.Value)
+            if (SkeletonWand.DurabilityDamage.Value)
             {
                 switch (skeletonType)
                 {
                     case SkeletonType.Archer:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageArcher.Value;
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageArcher.Value;
                         break;
                     case SkeletonType.Mage:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageMage.Value;
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageMage.Value;
                         break;
                     case SkeletonType.Poison:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamagePoison.Value;
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamagePoison.Value;
                         break;
                     default:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.durabilityDamageWarrior.Value;
+                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageWarrior.Value;
                         break;
                 }
             }

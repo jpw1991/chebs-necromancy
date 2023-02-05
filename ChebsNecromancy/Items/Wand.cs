@@ -1,20 +1,16 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using BepInEx;
 using BepInEx.Configuration;
+using ChebsNecromancy.Minions;
 using Jotunn.Configs;
-using Jotunn.Entities;
 using Jotunn.Managers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Items
 {
     internal class Wand : Item
     {
-        public static ConfigEntry<bool> followByDefault;
+        public static ConfigEntry<bool> FollowByDefault;
 
         public ConfigEntry<KeyCode> CreateMinionConfig;
         public ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;
@@ -49,7 +45,7 @@ namespace ChebsNecromancy
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
-            followByDefault = plugin.Config.Bind("Wands (Client)", "FollowByDefault",
+            FollowByDefault = plugin.Config.Bind("Wands (Client)", "FollowByDefault",
                 false, new ConfigDescription("Whether minions will automatically be set to follow upon being created or not."));
 
             CreateMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateMinion",
@@ -110,7 +106,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_create",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateMinionButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, CreateMinionButton);
             }
 
             if (CreateArcherMinionConfig.Value != KeyCode.None)
@@ -123,7 +119,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_create_archer",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, CreateArcherMinionButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, CreateArcherMinionButton);
             }
 
             if (FollowConfig.Value != KeyCode.None)
@@ -136,7 +132,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_follow",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, FollowButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, FollowButton);
             }
 
             if (WaitConfig.Value != KeyCode.None)
@@ -149,7 +145,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_wait",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, WaitButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, WaitButton);
             }
 
             if (TeleportConfig.Value != KeyCode.None)
@@ -162,7 +158,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_teleport",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, TeleportButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, TeleportButton);
             }
 
             if (AttackTargetConfig.Value != KeyCode.None)
@@ -175,7 +171,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_attacktarget",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, AttackTargetButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, AttackTargetButton);
             }
 
             if (UnlockExtraResourceConsumptionConfig.Value != KeyCode.None)
@@ -188,7 +184,7 @@ namespace ChebsNecromancy
                     HintToken = "$friendlyskeletonwand_unlockextraresourceconsumption",
                     BlockOtherInputs = false
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGUID, UnlockExtraResourceConsumptionButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, UnlockExtraResourceConsumptionButton);
             }
         }
 
@@ -216,28 +212,25 @@ namespace ChebsNecromancy
                 }
 
                 UndeadMinion minion = item.GetComponent<UndeadMinion>();
-                if (minion != null && minion.canBeCommanded
-                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
+                if (minion == null || !minion.canBeCommanded
+                                   || !minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) continue;
+                
+                float distance = Vector3.Distance(item.transform.position, player.transform.position);
+                // if within radius OR it's set to the targetObject so you can recall those you've commanded
+                // to be somewhere that's beyond the radius
+                if (!(distance < radius)
+                    && (item.GetComponent<MonsterAI>().GetFollowTarget() != targetObject
+                        || item.GetComponent<MonsterAI>().GetFollowTarget() == null)) continue;
+                
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
+                if (follow)
                 {
-                    float distance = Vector3.Distance(item.transform.position, player.transform.position);
-                    // if within radius OR it's set to the targetObject so you can recall those you've commanded
-                    // to be somewhere that's beyond the radius
-                    if (distance < radius
-                        || (item.GetComponent<MonsterAI>().GetFollowTarget() == targetObject
-                        && item.GetComponent<MonsterAI>().GetFollowTarget() != null
-                        ))
-                    {
-                        MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                                follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
-                        if (follow)
-                        {
-                            minion.Follow(player.gameObject);
-                        }
-                        else
-                        {
-                            minion.Wait(player.transform.position);
-                        }
-                    }
+                    minion.Follow(player.gameObject);
+                }
+                else
+                {
+                    minion.Wait(player.transform.position);
                 }
             }
         }
@@ -270,18 +263,18 @@ namespace ChebsNecromancy
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f))
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                                "$friendlyskeletonwand_targetfound");
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_targetfound");
                 targetObject = GameObject.Instantiate(ZNetScene.instance.GetPrefab("Stone"));
-                targetObject.transform.position = hit.transform.position;
-                targetObject.transform.position += new Vector3(0, 10, 0);
+                var position = targetObject.transform.position;
+                position = hit.transform.position;
+                position += new Vector3(0, 10, 0);
+                targetObject.transform.position = position;
                 targetObject.transform.localScale = Vector3.one * 5;
                 targetObject.name = "ChebsNecromancyTarget";
             }
             else
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                                "$friendlyskeletonwand_notargetfound");
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notargetfound");
                 return;
             }
 

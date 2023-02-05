@@ -1,51 +1,51 @@
-﻿using BepInEx;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Jotunn.Configs;
-using BepInEx.Configuration;
+﻿using System.Collections;
 using System.Linq;
+using BepInEx;
+using BepInEx.Configuration;
+using Jotunn.Configs;
 using Jotunn.Entities;
+using UnityEngine;
+using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Minions
 {
     internal class NeckroGathererPylon : MonoBehaviour
     {
-        public static ConfigEntry<bool> allowed;
-        public static ConfigEntry<string> craftingCost;
-        public static ConfigEntry<float> spawnInterval;
-        public static ConfigEntry<int> neckTailsConsumedPerSpawn;
+        public static ConfigEntry<bool> Allowed;
+        public static ConfigEntry<string> CraftingCost;
+        public static ConfigEntry<float> SpawnInterval;
+        public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
 
-        public static string PrefabName = "ChebGonaz_NeckroGathererPylon.prefab";
-        public static string PieceTable = "Hammer";
-        public static string IconName = "chebgonaz_neckrogathererpylon_icon.png";
+        public const string PrefabName = "ChebGonaz_NeckroGathererPylon.prefab";
+        public const string PieceTable = "Hammer";
+        public const string IconName = "chebgonaz_neckrogathererpylon_icon.png";
 
         protected const string DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1";
 
-        protected Container container;
+        protected Container Container;
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            allowed = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererPylonAllowed",
+            Allowed = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererPylonAllowed",
                 true, new ConfigDescription("Whether making a the pylon is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererPylonBuildCosts",
+            CraftingCost = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererPylonBuildCosts",
                 DefaultRecipe, new ConfigDescription("Materials needed to build the pylon. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            spawnInterval = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererSpawnInterval",
+            SpawnInterval = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererSpawnInterval",
                 60f, new ConfigDescription("How often the pylon will attempt to create a Neckro Gatherer.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            neckTailsConsumedPerSpawn = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererCreationCost",
+            NeckTailsConsumedPerSpawn = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererCreationCost",
                 1, new ConfigDescription("How many Neck Tails get consumed when creating a Neckro Gatherer.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         private void Awake()
         {
-            container = GetComponent<Container>();
+            Container = GetComponent<Container>();
             StartCoroutine(SpawnNeckros());
         }
 
@@ -55,14 +55,14 @@ namespace ChebsNecromancy
             config.Name = "$chebgonaz_neckrogathererpylon_name";
             config.Description = "$chebgonaz_neckrogathererpylon_desc";
 
-            if (allowed.Value)
+            if (Allowed.Value)
             {
-                if (string.IsNullOrEmpty(craftingCost.Value))
+                if (string.IsNullOrEmpty(CraftingCost.Value))
                 {
-                    craftingCost.Value = DefaultRecipe;
+                    CraftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
-                SetRecipeReqs(config, craftingCost);
+                SetRecipeReqs(config, CraftingCost);
             }
             else
             {
@@ -76,12 +76,12 @@ namespace ChebsNecromancy
             CustomPiece customPiece = new CustomPiece(prefab, false, config);
             if (customPiece == null)
             {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
+                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
                 return null;
             }
             if (customPiece.PiecePrefab == null)
             {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
+                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
                 return null;
             }
 
@@ -92,7 +92,7 @@ namespace ChebsNecromancy
         public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
         {
             // function to add a single material to the recipe
-            void addMaterial(string material)
+            void AddMaterial(string material)
             {
                 string[] materialSplit = material.Split(':');
                 string materialName = materialSplit[0];
@@ -107,16 +107,16 @@ namespace ChebsNecromancy
 
                 foreach (string material in materialList)
                 {
-                    addMaterial(material);
+                    AddMaterial(material);
                 }
             }
             else
             {
-                addMaterial(craftingCost.Value);
+                AddMaterial(craftingCost.Value);
             }
         }
 
-        IEnumerator SpawnNeckros()
+        private IEnumerator SpawnNeckros()
         {
             yield return new WaitWhile(() => ZInput.instance == null);
 
@@ -127,7 +127,7 @@ namespace ChebsNecromancy
 
             while (true)
             {
-                yield return new WaitForSeconds(spawnInterval.Value);
+                yield return new WaitForSeconds(SpawnInterval.Value);
 
                 SpawnNeckro();
             }
@@ -135,10 +135,10 @@ namespace ChebsNecromancy
 
         protected GameObject SpawnNeckro()
         {
-            int neckTailsInInventory = container.GetInventory().CountItems("$item_necktail");
-            if (neckTailsInInventory < neckTailsConsumedPerSpawn.Value) return null;
+            int neckTailsInInventory = Container.GetInventory().CountItems("$item_necktail");
+            if (neckTailsInInventory < NeckTailsConsumedPerSpawn.Value) return null;
 
-            container.GetInventory().RemoveItem("$item_necktail", neckTailsConsumedPerSpawn.Value);
+            Container.GetInventory().RemoveItem("$item_necktail", NeckTailsConsumedPerSpawn.Value);
 
             int quality = 1;
 
@@ -146,7 +146,7 @@ namespace ChebsNecromancy
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Jotunn.Logger.LogError($"spawning {prefabName} failed!");
+                Logger.LogError($"spawning {prefabName} failed!");
                 return null;
             }
 
