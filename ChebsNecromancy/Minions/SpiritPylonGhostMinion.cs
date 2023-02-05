@@ -10,7 +10,7 @@ namespace ChebsNecromancy.Minions
         {
             base.Awake();
             canBeCommanded = false;
-            killAt = Time.time + SpiritPylon.ghostDuration.Value;
+            killAt = Time.time + SpiritPylon.GhostDuration.Value;
         }
 
         private void Update()

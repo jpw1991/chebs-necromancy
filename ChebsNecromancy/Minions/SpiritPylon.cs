@@ -1,28 +1,29 @@
-﻿using BepInEx;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Jotunn.Configs;
-using BepInEx.Configuration;
 using System.Linq;
+using BepInEx;
+using BepInEx.Configuration;
+using Jotunn.Configs;
 using Jotunn.Entities;
+using UnityEngine;
+using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Minions
 {
     internal class SpiritPylon : MonoBehaviour
     {
-        public static ConfigEntry<bool> allowed;
+        public static ConfigEntry<bool> Allowed;
         
-        public static ConfigEntry<string> craftingCost;
-        public static ConfigEntry<float> sightRadius;
-        public static ConfigEntry<float> ghostDuration;
-        public static ConfigEntry<float> delayBetweenGhosts;
-        public static ConfigEntry<int> maxGhosts;
+        public static ConfigEntry<string> CraftingCost;
+        public static ConfigEntry<float> SightRadius;
+        public static ConfigEntry<float> GhostDuration;
+        public static ConfigEntry<float> DelayBetweenGhosts;
+        public static ConfigEntry<int> MaxGhosts;
 
-        public static string PrefabName = "ChebGonaz_SpiritPylon.prefab";
-        public static string PieceTable = "Hammer";
-        public static string IconName = "chebgonaz_spiritpylon_icon.png";
-        protected List<GameObject> spawnedGhosts = new List<GameObject>();
+        public const string PrefabName = "ChebGonaz_SpiritPylon.prefab";
+        public const string PieceTable = "Hammer";
+        public const string IconName = "chebgonaz_spiritpylon_icon.png";
+        protected List<GameObject> SpawnedGhosts = new List<GameObject>();
 
         protected const string DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
 
@@ -30,27 +31,27 @@ namespace ChebsNecromancy
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            allowed = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonAllowed",
+            Allowed = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonAllowed",
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
+            CraftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
                 DefaultRecipe, new ConfigDescription("Materials needed to build Spirit Pylon. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            sightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
+            SightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
                 30f, new ConfigDescription("How far a Spirit Pylon can see enemies.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            ghostDuration = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonGhostDuration",
+            GhostDuration = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonGhostDuration",
                 30f, new ConfigDescription("How long a Spirit Pylon's ghost persists.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            delayBetweenGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonDelayBetweenGhosts",
+            DelayBetweenGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonDelayBetweenGhosts",
                 5f, new ConfigDescription("How long a Spirit Pylon must wait before being able to spawn another ghost.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            maxGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonMaxGhosts",
+            MaxGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonMaxGhosts",
                 3, new ConfigDescription("The maximum number of ghosts that a Spirit Pylon can spawn.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
@@ -66,14 +67,14 @@ namespace ChebsNecromancy
             config.Name = "$chebgonaz_spiritpylon_name";
             config.Description = "$chebgonaz_spiritpylon_desc";
 
-            if (allowed.Value)
+            if (Allowed.Value)
             {
-                if (craftingCost.Value == null || craftingCost.Value == "")
+                if (string.IsNullOrEmpty(CraftingCost.Value))
                 {
-                    craftingCost.Value = DefaultRecipe;
+                    CraftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
-                SetRecipeReqs(config, craftingCost);
+                SetRecipeReqs(config, CraftingCost);
             }
             else
             {
@@ -87,12 +88,12 @@ namespace ChebsNecromancy
             CustomPiece customPiece = new CustomPiece(prefab, false, config);
             if (customPiece == null)
             {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
+                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
                 return null;
             }
             if (customPiece.PiecePrefab == null)
             {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
+                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
                 return null;
             }
 
@@ -103,7 +104,7 @@ namespace ChebsNecromancy
         public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
         {
             // function to add a single material to the recipe
-            void addMaterial(string material)
+            void AddMaterial(string material)
             {
                 string[] materialSplit = material.Split(':');
                 string materialName = materialSplit[0];
@@ -118,12 +119,12 @@ namespace ChebsNecromancy
 
                 foreach (string material in materialList)
                 {
-                    addMaterial(material);
+                    AddMaterial(material);
                 }
             }
             else
             {
-                addMaterial(craftingCost.Value);
+                AddMaterial(craftingCost.Value);
             }
         }
 
@@ -148,31 +149,28 @@ namespace ChebsNecromancy
                 yield return new WaitForSeconds(2);
 
                 // clear out any dead/destroyed ghosts
-                for (int i=spawnedGhosts.Count-1; i>=0; i--)
+                for (int i=SpawnedGhosts.Count-1; i>=0; i--)
                 {
-                    if (spawnedGhosts[i] == null)
+                    if (SpawnedGhosts[i] == null)
                     {
-                        spawnedGhosts.RemoveAt(i);
+                        SpawnedGhosts.RemoveAt(i);
                     }
                 }
 
-                if (Player.m_localPlayer != null)
+                if (Player.m_localPlayer == null) continue;
+                if (!EnemiesNearby(out Character characterInRange)) continue;
+                
+                // spawn ghosts up until the limit
+                if (SpawnedGhosts.Count < MaxGhosts.Value)
                 {
-                    if (EnemiesNearby(out Character characterInRange))
+                    if (Time.time > ghostLastSpawnedAt + DelayBetweenGhosts.Value)
                     {
-                        // spawn ghosts up until the limit
-                        if (spawnedGhosts.Count < maxGhosts.Value)
-                        {
-                            if (Time.time > ghostLastSpawnedAt + delayBetweenGhosts.Value)
-                            {
-                                ghostLastSpawnedAt = Time.time;
+                        ghostLastSpawnedAt = Time.time;
 
-                                GameObject friendlyGhost = SpawnFriendlyGhost();
-                                friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
-                                spawnedGhosts.Add(friendlyGhost);
-                            }
-                        }
-                    }  
+                        GameObject friendlyGhost = SpawnFriendlyGhost();
+                        friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
+                        SpawnedGhosts.Add(friendlyGhost);
+                    }
                 }
             }
         }
@@ -182,16 +180,13 @@ namespace ChebsNecromancy
             List<Character> charactersInRange = new List<Character>();
             Character.GetCharactersInRange(
                 transform.position,
-                sightRadius.Value,
+                SightRadius.Value,
                 charactersInRange
                 );
-            foreach (Character character in charactersInRange)
+            foreach (var character in charactersInRange.Where(character => character != null && character.m_faction != Character.Faction.Players))
             {
-                if (character != null && character.m_faction != Character.Faction.Players)
-                {
-                    characterInRange = character;
-                    return true;
-                }
+                characterInRange = character;
+                return true;
             }
             characterInRange = null;
             return false;
@@ -205,7 +200,7 @@ namespace ChebsNecromancy
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Jotunn.Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed!");
+                Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed!");
                 return null;
             }
 

@@ -1,28 +1,28 @@
-﻿using BepInEx;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Jotunn.Configs;
-using BepInEx.Configuration;
 using System.Linq;
+using BepInEx;
+using BepInEx.Configuration;
+using Jotunn.Configs;
 using Jotunn.Entities;
+using UnityEngine;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Minions
 {
     internal class BatBeacon : MonoBehaviour
     {
-        public static ConfigEntry<bool> allowed;
+        public static ConfigEntry<bool> Allowed;
 
-        public static ConfigEntry<string> craftingCost;
-        public static ConfigEntry<float> sightRadius;
-        public static ConfigEntry<float> batDuration;
-        public static ConfigEntry<float> delayBetweenBats;
-        public static ConfigEntry<int> maxBats;
+        public static ConfigEntry<string> CraftingCost;
+        public static ConfigEntry<float> SightRadius;
+        public static ConfigEntry<float> BatDuration;
+        public static ConfigEntry<float> DelayBetweenBats;
+        public static ConfigEntry<int> MaxBats;
 
-        public static string PrefabName = "ChebGonaz_BatBeacon.prefab";
-        public static string PieceTable = "Hammer";
-        public static string IconName = "chebgonaz_batbeacon_icon.png";
-        protected List<GameObject> spawnedBats = new List<GameObject>();
+        public const string PrefabName = "ChebGonaz_BatBeacon.prefab";
+        public const string PieceTable = "Hammer";
+        public const string IconName = "chebgonaz_batbeacon_icon.png";
+        protected List<GameObject> SpawnedBats = new List<GameObject>();
 
         protected const string DefaultRecipe = "FineWood:10,Silver:5,Guck:15";
 
@@ -30,27 +30,27 @@ namespace ChebsNecromancy
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            allowed = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconAllowed",
+            Allowed = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconAllowed",
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            craftingCost = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconBuildCosts",
+            CraftingCost = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconBuildCosts",
                 DefaultRecipe, new ConfigDescription("Materials needed to build the bat beacon. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            sightRadius = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconSightRadius",
+            SightRadius = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconSightRadius",
                 30f, new ConfigDescription("How far a bat beacon can see enemies.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            batDuration = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconGhostDuration",
+            BatDuration = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconGhostDuration",
                 30f, new ConfigDescription("How long a bat persists.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            delayBetweenBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconDelayBetweenBats",
+            DelayBetweenBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconDelayBetweenBats",
                 .5f, new ConfigDescription("How long a bat beacon wait before being able to spawn another bat.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            maxBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconMaxBats",
+            MaxBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconMaxBats",
                 15, new ConfigDescription("The maximum number of bats that a bat beacon can spawn.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
@@ -66,14 +66,14 @@ namespace ChebsNecromancy
             config.Name = "$chebgonaz_batbeacon_name";
             config.Description = "$chebgonaz_batbeacon_desc";
 
-            if (allowed.Value)
+            if (Allowed.Value)
             {
-                if (string.IsNullOrEmpty(craftingCost.Value))
+                if (string.IsNullOrEmpty(CraftingCost.Value))
                 {
-                    craftingCost.Value = DefaultRecipe;
+                    CraftingCost.Value = DefaultRecipe;
                 }
                 // set recipe requirements
-                SetRecipeReqs(config, craftingCost);
+                SetRecipeReqs(config, CraftingCost);
             }
             else
             {
@@ -103,7 +103,7 @@ namespace ChebsNecromancy
         public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
         {
             // function to add a single material to the recipe
-            void addMaterial(string material)
+            void AddMaterial(string material)
             {
                 string[] materialSplit = material.Split(':');
                 string materialName = materialSplit[0];
@@ -118,12 +118,12 @@ namespace ChebsNecromancy
 
                 foreach (string material in materialList)
                 {
-                    addMaterial(material);
+                    AddMaterial(material);
                 }
             }
             else
             {
-                addMaterial(craftingCost.Value);
+                AddMaterial(craftingCost.Value);
             }
         }
 
@@ -141,27 +141,26 @@ namespace ChebsNecromancy
                 yield return new WaitForSeconds(2);
 
                 // clear out any dead/destroyed bats
-                for (int i = spawnedBats.Count - 1; i >= 0; i--)
+                for (int i = SpawnedBats.Count - 1; i >= 0; i--)
                 {
-                    if (spawnedBats[i] == null)
+                    if (SpawnedBats[i] == null)
                     {
-                        spawnedBats.RemoveAt(i);
+                        SpawnedBats.RemoveAt(i);
                     }
                 }
 
-                if (EnemiesNearby(out Character characterInRange))
+                if (!EnemiesNearby(out Character characterInRange)) continue;
+                
+                // spawn up until the limit
+                if (SpawnedBats.Count < MaxBats.Value)
                 {
-                    // spawn up until the limit
-                    if (spawnedBats.Count < maxBats.Value)
+                    if (Time.time > batLastSpawnedAt + DelayBetweenBats.Value)
                     {
-                        if (Time.time > batLastSpawnedAt + delayBetweenBats.Value)
-                        {
-                            batLastSpawnedAt = Time.time;
+                        batLastSpawnedAt = Time.time;
 
-                            GameObject friendlyBat = SpawnFriendlyBat();
-                            friendlyBat.GetComponent<MonsterAI>().SetTarget(characterInRange);
-                            spawnedBats.Add(friendlyBat);
-                        }
+                        GameObject friendlyBat = SpawnFriendlyBat();
+                        friendlyBat.GetComponent<MonsterAI>().SetTarget(characterInRange);
+                        SpawnedBats.Add(friendlyBat);
                     }
                 }
             }
@@ -172,16 +171,13 @@ namespace ChebsNecromancy
             List<Character> charactersInRange = new List<Character>();
             Character.GetCharactersInRange(
                 transform.position,
-                sightRadius.Value,
+                SightRadius.Value,
                 charactersInRange
                 );
-            foreach (Character character in charactersInRange)
+            foreach (var character in charactersInRange.Where(character => character != null && character.m_faction != Character.Faction.Players))
             {
-                if (character != null && character.m_faction != Character.Faction.Players)
-                {
-                    characterInRange = character;
-                    return true;
-                }
+                characterInRange = character;
+                return true;
             }
             characterInRange = null;
             return false;

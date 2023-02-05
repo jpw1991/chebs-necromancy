@@ -42,7 +42,7 @@ namespace ChebsNecromancy.Commands
                 return;
             }
 
-            float playerNecromancyLevel = Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill);
+            float playerNecromancyLevel = Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
 
             List<Character> characters = new List<Character>();
             Character.GetCharactersInRange(Player.m_localPlayer.transform.position, radius, characters);

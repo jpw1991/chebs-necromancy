@@ -1,21 +1,21 @@
-﻿using BepInEx;
+﻿using System.Linq;
+using BepInEx;
 using BepInEx.Configuration;
-using Jotunn.Managers;
+using ChebsNecromancy.CustomPrefabs;
 using UnityEngine;
-using System.Linq;
 
 namespace ChebsNecromancy.Minions
 {
     internal class NeckroGathererMinion : UndeadMinion
     {
         // for limits checking
-        private static int createdOrderIncrementer;
+        private static int _createdOrderIncrementer;
         public int createdOrder;
 
         private float lastUpdate;
 
-        public static ConfigEntry<bool> allowed;
-        public static ConfigEntry<float> updateDelay, lookRadius, pickupRadius, dropoffPointRadius;
+        public static ConfigEntry<bool> Allowed;
+        public static ConfigEntry<float> UpdateDelay, LookRadius, PickupRadius, DropoffPointRadius;
 
         private int autoPickupMask, pieceMask;
 
@@ -25,19 +25,19 @@ namespace ChebsNecromancy.Minions
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
+            Allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
                 true, new ConfigDescription("Whether the Neckro Gatherer is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            lookRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
+            LookRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
                 500f, new ConfigDescription("The radius in which the Neckro Gatherer can see items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            pickupRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupRadius",
+            PickupRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupRadius",
                 10f, new ConfigDescription("The radius in which the Neckro Gatherer can pickup items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            dropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
+            DropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
                 1000f, new ConfigDescription("The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            updateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
+            UpdateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
                 3f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
@@ -45,59 +45,57 @@ namespace ChebsNecromancy.Minions
         public override void Awake()
         {
             base.Awake(); 
-            createdOrderIncrementer++;
-            createdOrder = createdOrderIncrementer;
+            _createdOrderIncrementer++;
+            createdOrder = _createdOrderIncrementer;
 
             container = GetComponent<Container>();
 
-            container.m_height = LargeCargoCrate.containerHeight.Value;
-            container.m_width = LargeCargoCrate.containerWidth.Value;
+            container.m_height = LargeCargoCrate.ContainerHeight.Value;
+            container.m_width = LargeCargoCrate.ContainerWidth.Value;
 
-            autoPickupMask = LayerMask.GetMask(new string[1] { "item" });
-            pieceMask = LayerMask.GetMask(new string[1] { "piece" });
+            autoPickupMask = LayerMask.GetMask("item");
+            pieceMask = LayerMask.GetMask("piece");
 
             canBeCommanded = false;
         }
 
         private void Update()
         {
-            if (ZNet.instance != null && Time.time > lastUpdate)
+            if (ZNet.instance == null || !(Time.time > lastUpdate)) return;
+            if (ReturnHome())
             {
-                if (ReturnHome())
+                dropoffTarget = GetNearestDropOffPoint();
+                if (dropoffTarget == null)
                 {
-                    dropoffTarget = GetNearestDropOffPoint();
-                    if (dropoffTarget == null)
-                    {
-                        Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", "Can't find a container", true);
-                    }
-                    else
-                    {
-                        Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", $"Moving toward {dropoffTarget.name}", true);
-                        if (CloseToDropoffPoint())
-                        {
-                            DepositItems();
-                        }
-                    }
+                    Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", "Can't find a container", true);
                 }
                 else
                 {
-                    LookForNearbyItems();
-                    PickupNearbyItems();
-                    //todo: loot dead gatherers
+                    Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", $"Moving toward {dropoffTarget.name}", true);
+                    if (CloseToDropoffPoint())
+                    {
+                        DepositItems();
+                    }
                 }
-
-                lastUpdate = Time.time + updateDelay.Value;
             }
+            else
+            {
+                LookForNearbyItems();
+                PickupNearbyItems();
+                //todo: loot dead gatherers
+            }
+
+            lastUpdate = Time.time + UpdateDelay.Value;
         }
 
         private void LookForNearbyItems()
         {
             // get all nearby items
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, lookRadius.Value, autoPickupMask);
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, LookRadius.Value, autoPickupMask);
             if (hitColliders.Length < 1) return;
             // order items from closest to furthest, then take closest one
             Collider closest = hitColliders
-                .OrderBy(collider => Vector3.Distance(transform.position, collider.transform.position))
+                .OrderBy(col => Vector3.Distance(transform.position, col.transform.position))
                 .FirstOrDefault();
             if (closest != null)
             {
@@ -116,7 +114,7 @@ namespace ChebsNecromancy.Minions
 
         private void PickupNearbyItems()
         {
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, pickupRadius.Value, autoPickupMask);
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, PickupRadius.Value, autoPickupMask);
             foreach (var hitCollider in hitColliders)
             {
                 ItemDrop itemDrop = hitCollider.GetComponentInParent<ItemDrop>();
@@ -177,7 +175,7 @@ namespace ChebsNecromancy.Minions
             //Piece.GetAllPiecesInRadius(transform.position, dropoffPointRadius.Value, nearbyPieces);
             //
             //if (nearbyPieces.Count < 1) return false;
-            Collider[] nearbyPieces = Physics.OverlapSphere(transform.position + Vector3.up, dropoffPointRadius.Value, pieceMask);
+            Collider[] nearbyPieces = Physics.OverlapSphere(transform.position + Vector3.up, DropoffPointRadius.Value, pieceMask);
             if (nearbyPieces.Length < 1) return null;
 
             // order piece from closest to furthest, then take closest container

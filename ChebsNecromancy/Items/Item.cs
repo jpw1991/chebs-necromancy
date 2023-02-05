@@ -1,19 +1,20 @@
-﻿using BepInEx.Configuration;
-using BepInEx;
-using System;
-using Jotunn.Configs;
-using System.Reflection;
+﻿using System;
 using System.Linq;
+using System.Reflection;
+using BepInEx;
+using BepInEx.Configuration;
+using Jotunn.Configs;
 using Jotunn.Entities;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Items
 {
 
     public class InternalName : Attribute
     {
-        public readonly string internalName;
-        public InternalName(string internalName) => this.internalName = internalName;
+        public readonly string Name;
+        public InternalName(string internalName) => Name = internalName;
     }
 
     public enum CraftingTable
@@ -28,22 +29,22 @@ namespace ChebsNecromancy
 
     internal class Item
     {
-        public ConfigEntry<bool> allowed;
+        public ConfigEntry<bool> Allowed;
 
-        public virtual string ItemName { get { return ""; } }
-        public virtual string PrefabName { get { return ""; } }
+        public virtual string ItemName => "";
+        public virtual string PrefabName => "";
 
-        public virtual string NameLocalization { get { return ""; } }
-        public virtual string DescriptionLocalization { get { return ""; } }
+        public virtual string NameLocalization => "";
+        public virtual string DescriptionLocalization => "";
 
         public virtual void CreateConfigs(BaseUnityPlugin plugin) {}
 
-        protected virtual string DefaultRecipe { get { return ""; } }
+        protected virtual string DefaultRecipe => "";
 
         //
         // Summary:
         //      Method SetRecipeReqs sets the material requirements needed to craft the item via a recipe.
-        public void SetRecipeReqs(
+        protected void SetRecipeReqs(
             ItemConfig recipeConfig,
             ConfigEntry<string> craftingCost, 
             ConfigEntry<CraftingTable> craftingStationRequired,
@@ -52,7 +53,7 @@ namespace ChebsNecromancy
         {
 
             // function to add a single material to the recipe
-            void addMaterial(string material)
+            void AddMaterial(string material)
             {
                 string[] materialSplit = material.Split(':');
                 string materialName = materialSplit[0];
@@ -61,7 +62,7 @@ namespace ChebsNecromancy
             }
 
             // set the crafting station to craft it on
-            recipeConfig.CraftingStation = ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First()).internalName;
+            recipeConfig.CraftingStation = ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0].GetCustomAttributes(typeof(InternalName)).First()).Name;
 
             // build the recipe. material config format ex: Wood:5,Stone:1,Resin:1
             if (craftingCost.Value.Contains(','))
@@ -69,24 +70,22 @@ namespace ChebsNecromancy
                 string[] materialList = craftingCost.Value.Split(',');
                 foreach (string material in materialList)
                 {
-                    addMaterial(material);
+                    AddMaterial(material);
                 }
             }
             else
             {
-                addMaterial(craftingCost.Value);
+                AddMaterial(craftingCost.Value);
             }
 
             // Set the minimum required crafting station level to craft
             recipeConfig.MinStationLevel = craftingStationLevel.Value;
-
-            return;
         }
 
 
         // coroutines cause problems and this is not a monobehavior, but we
         // may still want some stuff to happen during update.
-        protected float doOnUpdateDelay;
+        protected float DoOnUpdateDelay;
         public virtual void DoOnUpdate()
         {
 
@@ -101,12 +100,12 @@ namespace ChebsNecromancy
             CustomItem customItem = new CustomItem(prefab, false, config);
             if (customItem == null)
             {
-                Jotunn.Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s CustomItem is null!");
+                Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s CustomItem is null!");
                 return null;
             }
             if (customItem.ItemPrefab == null)
             {
-                Jotunn.Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s ItemPrefab is null!");
+                Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s ItemPrefab is null!");
                 return null;
             }
 

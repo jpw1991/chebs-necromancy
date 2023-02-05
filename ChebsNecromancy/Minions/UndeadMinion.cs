@@ -1,12 +1,11 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Managers;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy
+namespace ChebsNecromancy.Minions
 {
     internal class UndeadMinion : MonoBehaviour
     {
@@ -35,32 +34,32 @@ namespace ChebsNecromancy
 
         public bool canBeCommanded = true;
 
-        public static ConfigEntry<CleanupType> cleanupAfter;
-        public static ConfigEntry<int> cleanupDelay;
-        public static ConfigEntry<bool> commandable;
+        public static ConfigEntry<CleanupType> CleanupAfter;
+        public static ConfigEntry<int> CleanupDelay;
+        public static ConfigEntry<bool> Commandable;
 
-        protected float cleanupAt;
+        protected float CleanupAt;
 
-        public const string minionOwnershipZDOKey = "UndeadMinionMaster";
-        public const string minionDropsZDOKey = "UndeadMinionDrops";
-        public const string minionWaitPosZDOKey = "UndeadMinionWaitPosition";
-        public const string minionWaitObjectName = "UndeadMinionWaitPositionObject";
-        public const string minionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
+        public const string MinionOwnershipZdoKey = "UndeadMinionMaster";
+        public const string MinionDropsZdoKey = "UndeadMinionDrops";
+        public const string MinionWaitPosZdoKey = "UndeadMinionWaitPosition";
+        public const string MinionWaitObjectName = "UndeadMinionWaitPositionObject";
+        public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
 
         #region CleanupAfterLogout
-        private const float nextPlayerOnlineCheckInterval = 15f;
+        private const float NextPlayerOnlineCheckInterval = 15f;
         private float nextPlayerOnlineCheckAt;
         #endregion
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            cleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
+            CleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
                 CleanupType.None, new ConfigDescription("Whether a minion should be cleaned up or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            cleanupDelay = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupDelay",
+            CleanupDelay = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupDelay",
                 300, new ConfigDescription("The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
+            Commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
                 true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
         }
 
@@ -70,19 +69,19 @@ namespace ChebsNecromancy
             if (tameable != null)
             {
                 // let the minions generate a little necromancy XP for their master
-                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.necromancySkillIdentifier).m_skill;
+                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill;
 
-                tameable.m_commandable = commandable.Value;
+                tameable.m_commandable = Commandable.Value;
             }
 
-            if (cleanupAfter.Value == CleanupType.Time)
+            if (CleanupAfter.Value == CleanupType.Time)
             {
-                cleanupAt = Time.time + cleanupDelay.Value;
+                CleanupAt = Time.time + CleanupDelay.Value;
             }
-            else if (cleanupAfter.Value == CleanupType.Logout)
+            else if (CleanupAfter.Value == CleanupType.Logout)
             {
                 // check if player is still online every X seconds
-                nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
+                nextPlayerOnlineCheckAt = Time.time + NextPlayerOnlineCheckInterval;
             }
         }
 
@@ -102,16 +101,16 @@ namespace ChebsNecromancy
 
         private void Update()
         {
-            if (cleanupAt > 0
-                && Time.time > cleanupAt 
-                && cleanupAfter.Value != CleanupType.None)
+            if (CleanupAt > 0
+                && Time.time > CleanupAt 
+                && CleanupAfter.Value != CleanupType.None)
             {
                 //Jotunn.Logger.LogInfo($"Cleaning up {name} because current time {Time.time} > {cleanupAt}");
                 Kill();
 
                 // check again in 5 seconds rather than spamming every frame with Kill requests. In
                 // 99.9% of cases the 2nd check will never occur because the character will be dead
-                cleanupAt += 5;
+                CleanupAt += 5;
             }
 
             if (nextPlayerOnlineCheckAt > 0
@@ -120,13 +119,13 @@ namespace ChebsNecromancy
                 bool playerOnline = Player.GetAllPlayers().Find(player => BelongsToPlayer(player.GetPlayerName()));
                 if (!playerOnline)
                 {
-                    cleanupAt = Time.time + cleanupDelay.Value;
+                    CleanupAt = Time.time + CleanupDelay.Value;
                 }
                 else
                 {
-                    cleanupAt = 0;
+                    CleanupAt = 0;
                 }
-                nextPlayerOnlineCheckAt = Time.time + nextPlayerOnlineCheckInterval;
+                nextPlayerOnlineCheckAt = Time.time + NextPlayerOnlineCheckInterval;
             }
         }
 
@@ -138,7 +137,7 @@ namespace ChebsNecromancy
             }
             else
             {
-                Jotunn.Logger.LogError($"Cannot kill {name} because it has no Character component.");
+                Logger.LogError($"Cannot kill {name} because it has no Character component.");
             }
         }
 
@@ -147,18 +146,18 @@ namespace ChebsNecromancy
         {
             if (TryGetComponent(out ZNetView zNetView))
             {
-                zNetView.GetZDO().Set(minionOwnershipZDOKey, playerName);
+                zNetView.GetZDO().Set(MinionOwnershipZdoKey, playerName);
             }
             else
             {
-                Jotunn.Logger.LogError($"Cannot SetUndeadMinionMaster to {playerName} because it has no ZNetView component.");
+                Logger.LogError($"Cannot SetUndeadMinionMaster to {playerName} because it has no ZNetView component.");
             }
         }
 
         public bool BelongsToPlayer(string playerName)
         {
             return TryGetComponent(out ZNetView zNetView) 
-                && zNetView.GetZDO().GetString(minionOwnershipZDOKey, "")
+                && zNetView.GetZDO().GetString(MinionOwnershipZdoKey, "")
                 .Equals(playerName);
         }
         #endregion
@@ -176,11 +175,11 @@ namespace ChebsNecromancy
                 characterDrop.m_drops.ForEach(drop => drops.Add($"{drop.m_prefab.name}:{drop.m_amountMax}"));
                 dropsList = string.Join(",", drops);
                 //Jotunn.Logger.LogInfo($"Drops list: {dropsList}");
-                zNetView.GetZDO().Set(minionDropsZDOKey, string.Join(",", dropsList));
+                zNetView.GetZDO().Set(MinionDropsZdoKey, string.Join(",", dropsList));
             }
             else
             {
-                Jotunn.Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
+                Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
             }
         }
 
@@ -198,15 +197,15 @@ namespace ChebsNecromancy
                     return;
                 }
 
-                string minionDropsZDOValue = zNetView.GetZDO().GetString(minionDropsZDOKey, "");
-                if (minionDropsZDOValue == "")
+                string minionDropsZdoValue = zNetView.GetZDO().GetString(MinionDropsZdoKey, "");
+                if (minionDropsZdoValue == "")
                 {
                     // abort - there's no drops record -> naked minion
                     return;
                 }
 
                 CharacterDrop characterDrop = gameObject.AddComponent<CharacterDrop>();
-                List<string> dropsList = new List<string>(minionDropsZDOValue.Split(','));
+                List<string> dropsList = new List<string>(minionDropsZdoValue.Split(','));
                 dropsList.ForEach(dropString =>
                 {
                     string[] splut = dropString.Split(':');
@@ -226,7 +225,7 @@ namespace ChebsNecromancy
             }
             else
             {
-                Jotunn.Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
+                Logger.LogError($"Cannot record drops because {name} has no ZNetView component.");
             }
         }
         #endregion
@@ -235,11 +234,11 @@ namespace ChebsNecromancy
         {
             if (TryGetComponent(out ZNetView zNetView))
             {
-                zNetView.GetZDO().Set(minionWaitPosZDOKey, waitPos);
+                zNetView.GetZDO().Set(MinionWaitPosZdoKey, waitPos);
             }
             else
             {
-                Jotunn.Logger.LogError($"Cannot RecordWaitPosition {waitPos} because it has no ZNetView component.");
+                Logger.LogError($"Cannot RecordWaitPosition {waitPos} because it has no ZNetView component.");
             }
         }
 
@@ -247,10 +246,10 @@ namespace ChebsNecromancy
         {
             if (TryGetComponent(out ZNetView zNetView))
             {
-                return zNetView.GetZDO().GetVec3(minionWaitPosZDOKey, Vector3.negativeInfinity);
+                return zNetView.GetZDO().GetVec3(MinionWaitPosZdoKey, Vector3.negativeInfinity);
             }
 
-            Jotunn.Logger.LogError($"Cannot GetWaitPosition because it has no ZNetView component.");
+            Logger.LogError($"Cannot GetWaitPosition because it has no ZNetView component.");
             return Vector3.negativeInfinity;
         }
 
@@ -266,7 +265,7 @@ namespace ChebsNecromancy
             {
                 // create a temporary object. This has no ZDO so will be cleaned up
                 // after the session ends
-                GameObject waitObject = new GameObject(minionWaitObjectName);
+                GameObject waitObject = new GameObject(MinionWaitObjectName);
                 waitObject.transform.position = waitPos;
                 monsterAI.SetFollowTarget(waitObject);
             }
@@ -277,14 +276,14 @@ namespace ChebsNecromancy
         {
             if (!TryGetComponent(out MonsterAI monsterAI))
             {
-                Jotunn.Logger.LogError($"Cannot Follow because it has no MonsterAI component.");
+                Logger.LogError($"Cannot Follow because it has no MonsterAI component.");
                 return;
             }
             // clear out current wait object if it exists
             GameObject currentFollowTarget = monsterAI.GetFollowTarget();
-            if (currentFollowTarget != null && currentFollowTarget.name == minionWaitObjectName)
+            if (currentFollowTarget != null && currentFollowTarget.name == MinionWaitObjectName)
             {
-                GameObject.Destroy(currentFollowTarget);
+                Destroy(currentFollowTarget);
             }
             // follow
             monsterAI.SetFollowTarget(followObject);
@@ -303,16 +302,16 @@ namespace ChebsNecromancy
             // correctly in the Awake function
             if (!TryGetComponent(out ZNetView zNetView))
             {
-                Jotunn.Logger.LogError($"Cannot SetCreatedAtLevel to {necromancyLevel} because it has no ZNetView component.");
+                Logger.LogError($"Cannot SetCreatedAtLevel to {necromancyLevel} because it has no ZNetView component.");
                 return;
             }
-            zNetView.GetZDO().Set(minionCreatedAtLevelKey, necromancyLevel);
+            zNetView.GetZDO().Set(MinionCreatedAtLevelKey, necromancyLevel);
         }
 
         public float GetCreatedAtLevel()
         {
             return TryGetComponent(out ZNetView zNetView)
-                ? zNetView.GetZDO().GetFloat(minionCreatedAtLevelKey, 1f)
+                ? zNetView.GetZDO().GetFloat(MinionCreatedAtLevelKey, 1f)
                 : 1f;
         }
         #endregion

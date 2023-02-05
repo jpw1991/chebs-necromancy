@@ -1,4 +1,7 @@
 ﻿
+using ChebsNecromancy.Items;
+using Jotunn;
+
 namespace ChebsNecromancy.Minions
 {
     internal class PoisonSkeletonMinion : SkeletonMinion
@@ -8,10 +11,10 @@ namespace ChebsNecromancy.Minions
             Character character = GetComponent<Character>();
             if (character == null)
             {
-                Jotunn.Logger.LogError("ScaleStats: Character component is null!");
+                Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
-            float health = SkeletonWand.poisonSkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.skeletonHealthMultiplier.Value;
+            float health = SkeletonWand.PoisonSkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.SkeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }

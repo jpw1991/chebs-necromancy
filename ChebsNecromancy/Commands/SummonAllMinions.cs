@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using ChebsNecromancy.Minions;
 using Jotunn.Entities;
 
 namespace ChebsNecromancy.Commands
