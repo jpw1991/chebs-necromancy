@@ -37,6 +37,7 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<CleanupType> CleanupAfter;
         public static ConfigEntry<int> CleanupDelay;
         public static ConfigEntry<bool> Commandable;
+        public static ConfigEntry<float> RoamRange;
 
         protected float CleanupAt;
 
@@ -61,6 +62,8 @@ namespace ChebsNecromancy.Minions
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             Commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
                 true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
+            RoamRange = plugin.Config.Bind("UndeadMinion (Client)", "RoamRange",
+                10f, new ConfigDescription("How far a unit is allowed to roam from its current position."));
         }
 
         public virtual void Awake()
@@ -256,9 +259,12 @@ namespace ChebsNecromancy.Minions
         protected void WaitAtRecordedPosition()
         {
             Vector3 waitPos = GetWaitPosition();
-            if (waitPos == Vector3.negativeInfinity)
+            // we cant compare negative infinity with == because unity's == returns true for vectors that are almost
+            // equal.
+            if (waitPos.Equals(Vector3.negativeInfinity))
             {
-                // either error, or more likely, simply unset
+                // either error, or more likely, simply unset eg. roaming
+                Roam();
                 return;
             }
             if (TryGetComponent(out MonsterAI monsterAI))
@@ -267,6 +273,7 @@ namespace ChebsNecromancy.Minions
                 // after the session ends
                 GameObject waitObject = new GameObject(MinionWaitObjectName);
                 waitObject.transform.position = waitPos;
+                monsterAI.m_randomMoveRange = 0;
                 monsterAI.SetFollowTarget(waitObject);
             }
         }
@@ -293,6 +300,20 @@ namespace ChebsNecromancy.Minions
         {
             RecordWaitPosition(waitPosition);
             WaitAtRecordedPosition();
+        }
+
+        public void Roam()
+        {
+            RecordWaitPosition(Vector3.negativeInfinity);
+            if (!TryGetComponent(out MonsterAI monsterAI)) return;
+            // clear out current wait object if it exists
+            GameObject currentFollowTarget = monsterAI.GetFollowTarget();
+            if (currentFollowTarget != null && currentFollowTarget.name == MinionWaitObjectName)
+            {
+                Destroy(currentFollowTarget);
+            }
+            monsterAI.m_randomMoveRange = RoamRange.Value;
+            monsterAI.SetFollowTarget(null);
         }
 
         #region CreatedAtLevelZDO

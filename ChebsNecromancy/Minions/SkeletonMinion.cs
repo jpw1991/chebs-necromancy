@@ -86,6 +86,7 @@ namespace ChebsNecromancy.Minions
             // FreshMinion.cs file.
             FreshMinion freshMinion = GetComponent<FreshMinion>();
             MonsterAI monsterAI = GetComponent<MonsterAI>();
+            monsterAI.m_randomMoveRange = RoamRange.Value;
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
                 WaitAtRecordedPosition();

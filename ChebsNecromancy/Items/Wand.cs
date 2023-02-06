@@ -5,6 +5,7 @@ using ChebsNecromancy.Minions;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items
 {
@@ -200,6 +201,25 @@ namespace ChebsNecromancy.Items
 
         public virtual bool HandleInputs() { return false; }
 
+        public void MakeNearbyMinionsRoam(Player player, float radius)
+        {
+            List<Character> allCharacters = new();
+            Character.GetCharactersInRange(player.transform.position, radius, allCharacters);
+            foreach (var character in allCharacters)
+            {
+                if (character.IsDead()) continue;
+                
+                UndeadMinion minion = character.GetComponent<UndeadMinion>();
+                if (minion == null || !minion.canBeCommanded
+                                   || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
+                
+                if (character.GetComponent<MonsterAI>().GetFollowTarget() != player.gameObject) continue;
+
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$chebgonaz_roaming");
+                minion.Roam();
+            }
+        }
+        
         public void MakeNearbyMinionsFollow(Player player, float radius, bool follow)
         {
             // based off BaseAI.FindClosestCreature

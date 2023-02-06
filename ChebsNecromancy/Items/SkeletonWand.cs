@@ -329,7 +329,14 @@ namespace ChebsNecromancy.Items
             }
             if (WaitButton != null && ZInput.GetButton(WaitButton.Name))
             {
-                MakeNearbyMinionsFollow(Player.m_localPlayer, SkeletonSetFollowRange.Value, false);
+                if (ExtraResourceConsumptionUnlocked)
+                {
+                    MakeNearbyMinionsRoam(Player.m_localPlayer, SkeletonSetFollowRange.Value);
+                }
+                else
+                {
+                    MakeNearbyMinionsFollow(Player.m_localPlayer, SkeletonSetFollowRange.Value, false);   
+                }
                 return true;
             }
             if (TeleportButton != null && ZInput.GetButton(TeleportButton.Name))
