@@ -189,6 +189,7 @@ namespace ChebsNecromancy
                     new SkeletonHelmetBlackIronPoison(),
                     new SkeletonHelmetLeatherPoison(),
                     new SkeletonHelmetBronzePoison(),
+                    new SkeletonWoodAxe()
                 };
                 minionWornItems.ForEach((minionItem) =>
                 {
@@ -268,6 +269,8 @@ namespace ChebsNecromancy
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
                 }
+                
+                prefabNames.a
 
                 prefabNames.ForEach(prefabName =>
                 {

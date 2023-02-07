@@ -134,6 +134,9 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Items\SkeletonWoodAxe.cs" />
+    <Compile Include="Minions\AI\WoodcutterAI.cs" />
+    <Compile Include="Minions\SkeletonWoodcutter.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
