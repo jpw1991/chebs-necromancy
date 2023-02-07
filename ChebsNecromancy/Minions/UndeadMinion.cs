@@ -52,6 +52,9 @@ namespace ChebsNecromancy.Minions
         private float nextPlayerOnlineCheckAt;
         #endregion
 
+        private Vector3 StatusRoaming => Vector3.negativeInfinity;
+        private Vector3 StatusFollowing => Vector3.positiveInfinity;
+
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
             CleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
@@ -235,6 +238,9 @@ namespace ChebsNecromancy.Minions
         #region WaitPositionZDO
         protected void RecordWaitPosition(Vector3 waitPos)
         {
+            // waitPos == some position = wait at that position
+            // waitPos == StatusFollow = follow owner
+            // waitPos == StatusRoam = roam
             if (TryGetComponent(out ZNetView zNetView))
             {
                 zNetView.GetZDO().Set(MinionWaitPosZdoKey, waitPos);
@@ -249,33 +255,49 @@ namespace ChebsNecromancy.Minions
         {
             if (TryGetComponent(out ZNetView zNetView))
             {
-                return zNetView.GetZDO().GetVec3(MinionWaitPosZdoKey, Vector3.negativeInfinity);
+                return zNetView.GetZDO().GetVec3(MinionWaitPosZdoKey, StatusRoaming);
             }
 
             Logger.LogError($"Cannot GetWaitPosition because it has no ZNetView component.");
-            return Vector3.negativeInfinity;
+            return StatusRoaming;
         }
 
-        protected void WaitAtRecordedPosition()
+        protected void RoamFollowOrWait()
         {
             Vector3 waitPos = GetWaitPosition();
             // we cant compare negative infinity with == because unity's == returns true for vectors that are almost
             // equal.
-            if (waitPos.Equals(Vector3.negativeInfinity))
+            if (waitPos.Equals(StatusFollowing))
             {
-                // either error, or more likely, simply unset eg. roaming
+                Player player = Player.GetAllPlayers().Find(p => BelongsToPlayer(p.GetPlayerName()));
+                if (player == null)
+                {
+                    Logger.LogError($"{name} should be following but has no associated player. Roaming instead.");
+                    Roam();
+                    return;
+                }
+                Follow(player.gameObject);
+                return;
+            }
+            
+            if (waitPos.Equals(StatusRoaming))
+            {
                 Roam();
                 return;
             }
-            if (TryGetComponent(out MonsterAI monsterAI))
+
+            if (!TryGetComponent(out MonsterAI monsterAI))
             {
-                // create a temporary object. This has no ZDO so will be cleaned up
-                // after the session ends
-                GameObject waitObject = new GameObject(MinionWaitObjectName);
-                waitObject.transform.position = waitPos;
-                monsterAI.m_randomMoveRange = 0;
-                monsterAI.SetFollowTarget(waitObject);
+                Logger.LogError($"{name} cannot WaitAtRecordedPosition because it has no MonsterAI component.");
+                return;
             }
+
+            // create a temporary object. This has no ZDO so will be cleaned up
+            // after the session ends
+            GameObject waitObject = new GameObject(MinionWaitObjectName);
+            waitObject.transform.position = waitPos;
+            monsterAI.m_randomMoveRange = 0;
+            monsterAI.SetFollowTarget(waitObject);
         }
         #endregion
 
@@ -293,18 +315,19 @@ namespace ChebsNecromancy.Minions
                 Destroy(currentFollowTarget);
             }
             // follow
+            RecordWaitPosition(StatusFollowing);
             monsterAI.SetFollowTarget(followObject);
         }
 
         public void Wait(Vector3 waitPosition)
         {
             RecordWaitPosition(waitPosition);
-            WaitAtRecordedPosition();
+            RoamFollowOrWait();
         }
 
         public void Roam()
         {
-            RecordWaitPosition(Vector3.negativeInfinity);
+            RecordWaitPosition(StatusRoaming);
             if (!TryGetComponent(out MonsterAI monsterAI)) return;
             // clear out current wait object if it exists
             GameObject currentFollowTarget = monsterAI.GetFollowTarget();

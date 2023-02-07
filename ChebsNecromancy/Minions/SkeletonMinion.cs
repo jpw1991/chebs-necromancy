@@ -89,7 +89,7 @@ namespace ChebsNecromancy.Minions
             monsterAI.m_randomMoveRange = RoamRange.Value;
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
-                WaitAtRecordedPosition();
+                RoamFollowOrWait();
             }
 
             if (freshMinion != null)
