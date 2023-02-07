@@ -96,10 +96,13 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 ## Special Thanks
 
-- **Dracbjorn** for development help & testing.
+- [**Dracbjorn**](https://github.com/Dracbjorn) for development help & testing.
 - **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
+- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
+
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
 ## Changelog
 
@@ -108,6 +111,8 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+06/02/2023 | 1.7.3 | minions remember if they were following a player after player logs off, then continue following when player returns
+05/02/2023 | 1.7.2 | allow minions to roam when holding shift+T; fix bug in ZDO comparison
 05/02/2023 | 1.7.1 | allow admins to ignore ownership with commands; fix bug where players wouldnt be found by command; lint the entire project; catch and fix a few instances of MonoBehaviours accidently being instantiated with new -> a big no-no
 03/02/2023 | 1.7.0 | minions now remember the necromancy level with which they're created and scale to that; refactor SkeletonWand and DraugrWand code to be more uniform to make diffing easier; fix a bug where minions set to follow automatically would have bugged AI with the 1.6.4 improvements; minion commandability exposed to config; commands issued via E also update ZDO; hover text for interact patched
 01/02/2023 | 1.6.4 | minions can be configured to drop their crafting requirements on death; hold position now works in that minions no longer wander around; wait positions are now recorded and stored so that minions return to where they were last waiting after chasing something off

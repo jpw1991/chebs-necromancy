@@ -96,10 +96,13 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 ## Special Thanks
 
-- **Dracbjorn** for development help & testing.
+- [**Dracbjorn**](https://github.com/Dracbjorn) for development help & testing.
 - **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
+- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
+
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
 ## Changelog
 
