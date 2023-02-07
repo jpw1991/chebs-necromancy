@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
@@ -146,25 +147,34 @@ namespace ChebsNecromancy.Minions
             {
                 yield return new WaitForSeconds(RefuelerUpdateInterval.Value);
 
-                GetNearbySmelters().ForEach(ManageSmelter);
+                Tuple<List<Smelter>, List<Fireplace>> tuple = GetNearbySmeltersAndFireplaces();
+
+                List<Smelter> smelters = tuple.Item1;
+                smelters.ForEach(ManageSmelter);
+                List<Fireplace> fireplaces = tuple.Item2;
+                fireplaces.ForEach(ManageFireplace);
+                
             }
         }
 
-        private List<Smelter> GetNearbySmelters()
+        private Tuple<List<Smelter>, List<Fireplace>> GetNearbySmeltersAndFireplaces()
         {
-            // find and return smelters in range
+            // find and return smelters and fireplaces in range
 
             Collider[] nearbyColliders = Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, PieceMask);
             if (nearbyColliders.Length < 1) return null;
 
-            List<Smelter> result = new List<Smelter>();
-            nearbyColliders.ToList().ForEach(collider =>
+            List<Smelter> smelters = new();
+            List<Fireplace> fireplaces = new();
+            nearbyColliders.ToList().ForEach(nearbyCollider =>
             {
-                Smelter smelter = collider.GetComponentInParent<Smelter>();
-                if (smelter != null) { result.Add(smelter); }
+                Smelter smelter = nearbyCollider.GetComponentInParent<Smelter>();
+                if (smelter != null) smelters.Add(smelter);
+                Fireplace fireplace = nearbyCollider.GetComponentInParent<Fireplace>();
+                if (fireplace != null) fireplaces.Add(fireplace);
             });
 
-            return result;
+            return new Tuple<List<Smelter>, List<Fireplace>>(smelters, fireplaces);
         }
 
         private void ManageSmelter(Smelter smelter)
@@ -232,6 +242,25 @@ namespace ChebsNecromancy.Minions
                 {
                     smelter.SetAnimation(true);
                 }
+            }
+        }
+
+        private void ManageFireplace(Fireplace fireplace)
+        {
+            float currentFuel = fireplace.m_nview.GetZDO().GetFloat("fuel");
+            // fuel is always an incomplete number like 5.98/6.00 because the moment you add the fuel
+            // it begins decreasing. So minus 1 from the max so we only add fuel if it is something like
+            // 4.98/6.00
+            if (currentFuel >= fireplace.m_maxFuel-1) return;
+            
+            Inventory inventory = Container.GetInventory();
+
+            if (inventory == null) return;
+
+            if (inventory.HaveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name))
+            {
+                fireplace.m_nview.InvokeRPC("AddFuel");
+                inventory.RemoveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name, 1);
             }
         }
     }
