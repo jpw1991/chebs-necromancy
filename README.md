@@ -84,7 +84,8 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 - Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
 	+ `DraugrAllowed = false`
-	+ `SpectralShroudSpawnWraith = false`
+	+ `SpectralShroudSpawnWraith = false`	
+- Pylons won't show inventory unless you open a normal container first.
 
 ## Future Ideas
 
@@ -111,6 +112,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+07/02/2023 | 1.7.4 | refueler pylons can now refuel fireplaces eg. torches, bonfires, etc.
 06/02/2023 | 1.7.3 | minions remember if they were following a player after player logs off, then continue following when player returns
 05/02/2023 | 1.7.2 | allow minions to roam when holding shift+T; fix bug in ZDO comparison
 05/02/2023 | 1.7.1 | allow admins to ignore ownership with commands; fix bug where players wouldnt be found by command; lint the entire project; catch and fix a few instances of MonoBehaviours accidently being instantiated with new -> a big no-no
