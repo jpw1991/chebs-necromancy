@@ -315,8 +315,8 @@ namespace ChebsNecromancy
                 GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
                 SpiritPylon spiritPylon = spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
-                    Structures.SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(Structures.SpiritPylon.ChebsRecipeConfig.IconName))
+                    SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.ChebsRecipeConfig.IconName))
                     );
 
                 GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
