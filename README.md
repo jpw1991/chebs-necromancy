@@ -112,6 +112,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+09/02/2023 | 1.7.5 | Neckro messages hideable; Neckro messages improved
 07/02/2023 | 1.7.4 | refueler pylons can now refuel fireplaces eg. torches, bonfires, etc.
 06/02/2023 | 1.7.3 | minions remember if they were following a player after player logs off, then continue following when player returns
 05/02/2023 | 1.7.2 | allow minions to roam when holding shift+T; fix bug in ZDO comparison

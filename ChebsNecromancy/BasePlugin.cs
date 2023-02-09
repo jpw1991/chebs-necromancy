@@ -31,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.7.4";
+        public const string PluginVersion = "1.7.5";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -771,23 +771,22 @@ namespace ChebsNecromancy
         [HarmonyPrefix]
         static bool Prefix(Tameable __instance, ref string __result)
         {
-            if (!__instance.m_nview.IsValid()
-                || !__instance.m_commandable
-                || !__instance.TryGetComponent(out MonsterAI monsterAI)
-                || Player.m_localPlayer == null)
-            {
-                __result = "";
-            }
-            else
+            if (__instance.m_nview.IsValid()
+                && __instance.m_commandable
+                && __instance.TryGetComponent(out UndeadMinion _)
+                && __instance.TryGetComponent(out MonsterAI monsterAI)
+                && Player.m_localPlayer != null)
             {
                 __result = monsterAI.GetFollowTarget() == Player.m_localPlayer.gameObject
-                ? Localization.instance.Localize("$chebgonaz_wait")
-                : Localization.instance.Localize("$chebgonaz_follow");
+                    ? Localization.instance.Localize("$chebgonaz_wait")
+                    : Localization.instance.Localize("$chebgonaz_follow");
+                return false; // deny base method completion
             }
 
-            return false; // deny base method completion
+            return true; // allow base method completion
         }
     }
+
     #endregion
 }
 

@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
+using HarmonyLib;
 using UnityEngine;
 
 namespace ChebsNecromancy.Minions
@@ -14,8 +16,10 @@ namespace ChebsNecromancy.Minions
 
         private float lastUpdate;
 
-        public static ConfigEntry<bool> Allowed;
+        public static ConfigEntry<bool> Allowed, ShowMessages;
         public static ConfigEntry<float> UpdateDelay, LookRadius, PickupRadius, DropoffPointRadius;
+
+        public string NeckroStatus { get; set; }
 
         private int autoPickupMask, pieceMask;
 
@@ -40,6 +44,8 @@ namespace ChebsNecromancy.Minions
             UpdateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
                 3f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ShowMessages = plugin.Config.Bind("NeckroGatherer (Client)", "NeckroGathererShowMessages",
+                true, new ConfigDescription("Whether the Neckro Gatherer talks or not."));
         }
 
         public override void Awake()
@@ -67,11 +73,11 @@ namespace ChebsNecromancy.Minions
                 dropoffTarget = GetNearestDropOffPoint();
                 if (dropoffTarget == null)
                 {
-                    Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", "Can't find a container", true);
+                    NeckroStatus = "Can't find a container";
                 }
                 else
                 {
-                    Chat.instance.SetNpcText(gameObject, Vector3.up * 1.5f, 30f, 2f, "", $"Moving toward {dropoffTarget.name}", true);
+                    NeckroStatus = $"Moving toward {dropoffTarget.name}";
                     if (CloseToDropoffPoint())
                     {
                         DepositItems();
@@ -83,6 +89,13 @@ namespace ChebsNecromancy.Minions
                 LookForNearbyItems();
                 PickupNearbyItems();
                 //todo: loot dead gatherers
+            }
+            
+            if (ShowMessages.Value
+                && NeckroStatus != ""
+                && Vector3.Distance(Player.m_localPlayer.transform.position, transform.position) < 5)
+            {
+                Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", NeckroStatus, false);   
             }
 
             lastUpdate = Time.time + UpdateDelay.Value;
@@ -105,6 +118,7 @@ namespace ChebsNecromancy.Minions
                     if (TryGetComponent(out MonsterAI monsterAI))
                     {
                         // move toward that item
+                        NeckroStatus = $"Moving toward {itemDrop.m_itemData.m_shared.m_name}";
                         monsterAI.SetFollowTarget(itemDrop.gameObject);
                         return;
                     }
@@ -114,6 +128,7 @@ namespace ChebsNecromancy.Minions
 
         private void PickupNearbyItems()
         {
+            List<string> itemNames = new();
             Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, PickupRadius.Value, autoPickupMask);
             foreach (var hitCollider in hitColliders)
             {
@@ -122,14 +137,21 @@ namespace ChebsNecromancy.Minions
                 {
                     if (itemDrop.CanPickup())
                     {
+                        itemNames.Add(itemDrop.m_itemData.m_shared.m_name);
                         StoreItem(itemDrop, container);
                     }
                 }
             }
+
+            NeckroStatus = itemNames.Count > 0
+                ? $"Picking up {string.Join(", ", itemNames)}"
+                : "Looking for items...";
         }
 
         private void StoreItem(ItemDrop itemDrop, Container depositContainer)
         {
+            NeckroStatus = $"Storing {itemDrop.m_itemData.m_shared.m_name} in {depositContainer.m_name}";
+            
             ItemDrop.ItemData itemData = itemDrop.m_itemData;
             if (itemData == null) return;
 
