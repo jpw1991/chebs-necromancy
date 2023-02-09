@@ -36,7 +36,7 @@ namespace ChebsNecromancy.Structures
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonAllowed", true,
                 "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Spirit Pylon Build Costs",
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonBuildCosts",
                 ChebsRecipeConfig.DefaultRecipe,
                 "Materials needed to build Spirit Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
                 null, true);
