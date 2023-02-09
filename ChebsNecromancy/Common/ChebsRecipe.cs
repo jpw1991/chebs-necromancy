@@ -3,12 +3,13 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using System.Linq;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Common
 {
     public class ChebsRecipe
     {
-        public AcceptableValueList<string> RecipeValue = new("<Prefab1>:<quantity>[[,<PreFab2>:<quantity>], ...]");
+        public string RecipeValue = "<Prefab1>:<quantity>[[,<PreFab2>:<quantity>], ...]";
         public ConfigEntry<bool> Allowed { get; set; }
         public ConfigEntry<string> CraftingCost { get; set; }
         public string DefaultRecipe { get; set; }
@@ -18,12 +19,15 @@ namespace ChebsNecromancy.Common
         public string PieceDescription { get; set; }
         public string PrefabName { get; set; }
         public string IconName { get; set; }
-                
+        public string ObjectName { get; set; }
+
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {
-            PieceConfig config = new PieceConfig();
-            config.Name = PieceName;
-            config.Description = PieceDescription;
+            PieceConfig config = new()
+            {
+                Name = PieceName,
+                Description = PieceDescription
+            };
 
             if (Allowed.Value)
             {
@@ -43,15 +47,15 @@ namespace ChebsNecromancy.Common
             config.PieceTable = PieceTable;
             config.Category = PieceCategory;
 
-            CustomPiece customPiece = new CustomPiece(prefab, false, config);
+            CustomPiece customPiece = new(prefab, false, config);
             if (customPiece == null)
             {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
+                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
                 return null;
             }
             if (customPiece.PiecePrefab == null)
             {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
+                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
                 return null;
             }
 

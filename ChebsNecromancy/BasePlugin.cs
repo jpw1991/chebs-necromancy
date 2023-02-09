@@ -54,10 +54,9 @@ namespace ChebsNecromancy
         public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
 
         // Global Config Acceptable Values
-        public AcceptableValueRange<int> DistanceValue = new(1,1000);
-        public AcceptableValueRange<int> TimeValue = new(1, 1000);
         public AcceptableValueList<bool> BoolValue = new(true, false);
-        public AcceptableValueRange<int> QuantityValue = new(1, 1000);
+        public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
+        public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
 
 #pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
@@ -313,32 +312,32 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Structures   
-                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(Structures.SpiritPylon.ChebsRecipeConfig.PrefabName);
-                Structures.SpiritPylon spiritPylon = spiritPylonPrefab.AddComponent<Structures.SpiritPylon>();
+                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
+                SpiritPylon spiritPylon = spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
                     Structures.SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(Structures.SpiritPylon.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(Structures.RefuelerPylon.ChebsRecipeConfig.PrefabName);
-                Structures.RefuelerPylon refuelerPylon = refuelerPylonPrefab.AddComponent<Structures.RefuelerPylon>();
+                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
+                RefuelerPylon refuelerPylon = refuelerPylonPrefab.AddComponent<RefuelerPylon>();
                 PieceManager.Instance.AddPiece(
-                    Structures.RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(refuelerPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(Structures.RefuelerPylon.ChebsRecipeConfig.IconName))
+                    RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(refuelerPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(Structures.NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
-                Structures.NeckroGathererPylon neckroGathererPylon = neckroGathererPylonPrefab.AddComponent<Structures.NeckroGathererPylon>();
+                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
+                NeckroGathererPylon neckroGathererPylon = neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
                 PieceManager.Instance.AddPiece(
-                    Structures.RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(Structures.NeckroGathererPylon.ChebsRecipeConfig.IconName))
+                    RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(Structures.BatBeacon.ChebsRecipeConfig.PrefabName);
-                Structures.BatBeacon batBeacon = batBeaconPrefab.AddComponent<Structures.BatBeacon>();
+                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.ChebsRecipeConfig.PrefabName);
+                BatBeacon batBeacon = batBeaconPrefab.AddComponent<BatBeacon>();
                 PieceManager.Instance.AddPiece(
-                    Structures.BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(Structures.BatBeacon.ChebsRecipeConfig.IconName))
+                    BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
                     );
                 #endregion
             }

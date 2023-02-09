@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using UnityEngine;
@@ -24,27 +25,36 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_refuelerpylon_name",
             PieceDescription = "$chebgonaz_refuelerpylon_desc",
             PrefabName = "ChebGonaz_RefuelerPylon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
         };
 
         public static void CreateConfigs(BasePlugin plugin)
         {
-            ChebsRecipeConfig.Allowed = plugin.ModConfig($"{ChebsRecipeConfig.PrefabName}", "RefuelerPylonAllowed", true,
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
                 "Whether making a Refueler Pylon is allowed or not.", plugin.BoolValue, true);
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig($"{ChebsRecipeConfig.PrefabName}", "RefuelerPylonBuildCosts", 
-                ChebsRecipeConfig.DefaultRecipe, "Materials needed to build a Refueler Pylon. None or Blank will use Default settings.",
-                ChebsRecipeConfig.RecipeValue, true);
-            SightRadius = plugin.ModConfig($"{ChebsRecipeConfig.PrefabName}", "RefuelerPylonSightRadius", 30f,
-                "How far a Refueler Pylon can reach containers.", plugin.DistanceValue, true);
-            RefuelerUpdateInterval = plugin.ModConfig($"{ChebsRecipeConfig.PrefabName}", "RefuelerPylonUpdateInterval", 5f,
+
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonBuildCosts", 
+                ChebsRecipeConfig.DefaultRecipe, 
+                "Materials needed to build a Refueler Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
+                null, true);
+
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonSightRadius", 30f,
+                "How far a Refueler Pylon can reach containers.", plugin.FloatQuantityValue, true);
+
+            RefuelerUpdateInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonUpdateInterval", 5f,
                 "How long a Refueler Pylon waits between checking containers (lower values may negatively impact performance).",
-                plugin.TimeValue, true);
-            RefuelerContainerWidth = plugin.ModConfig($"{ChebsRecipeConfig.PrefabName}", "RefuelerPylonContainerWidth", 4,
+                plugin.FloatQuantityValue, true);
+
+            RefuelerContainerWidth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonContainerWidth", 4,
                 "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(2, 10), true);
-            RefuelerContainerHeight = plugin.ModConfig($"{ChebsRecipeConfig.PrefabName}", "RefuelerPylonContainerHeight", 4,
+
+            RefuelerContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonContainerHeight", 4,
                 "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             PieceMask = LayerMask.GetMask("piece");
 
@@ -80,7 +90,7 @@ namespace ChebsNecromancy.Structures
             Collider[] nearbyColliders = Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, PieceMask);
             if (nearbyColliders.Length < 1) return null;
 
-            List<Smelter> result = new List<Smelter>();
+            List<Smelter> result = new();
             nearbyColliders.ToList().ForEach(collider =>
             {
                 Smelter smelter = collider.GetComponentInParent<Smelter>();

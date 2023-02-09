@@ -21,24 +21,29 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_neckrogathererpylon_name",
             PieceDescription = "$chebgonaz_neckrogathererpylon_desc",
             PrefabName = "ChebGonaz_NeckroGathererPylon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
         };
 
         public static void CreateConfigs(BasePlugin plugin)
         {
-            ChebsRecipeConfig.Allowed = plugin.ModConfig("NeckroGathererPylon", "NeckroGathererPylonAllowed", true,
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonAllowed", true,
                 "Whether making a the pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig("NeckroGathererPylon", "NeckroGathererPylonBuildCosts", ChebsRecipeConfig.DefaultRecipe,
-                "Materials needed to build the pylon. None or Blank will use Default settings.", ChebsRecipeConfig.RecipeValue, true);
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonBuildCosts", 
+                ChebsRecipeConfig.DefaultRecipe, 
+                "Materials needed to build the pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+                null, true);
 
-            SpawnInterval = plugin.ModConfig("NeckroGathererPylon", "NeckroGathererSpawnInterval", 60f,
-                "How often the pylon will attempt to create a Neckro Gatherer.", plugin.TimeValue, true);
+            SpawnInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererSpawnInterval", 60f,
+                "How often the pylon will attempt to create a Neckro Gatherer.", plugin.FloatQuantityValue, true);
 
-            NeckTailsConsumedPerSpawn = plugin.ModConfig("NeckroGathererPylon", "NeckroGathererCreationCost", 1,
-                "How many Neck Tails get consumed when creating a Neckro Gatherer.", plugin.QuantityValue, true);
+            NeckTailsConsumedPerSpawn = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererCreationCost", 1,
+                "How many Neck Tails get consumed when creating a Neckro Gatherer.", plugin.IntQuantityValue, true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             Container = GetComponent<Container>();
             StartCoroutine(SpawnNeckros());

@@ -25,25 +25,33 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_batbeacon_name",
             PieceDescription = "$chebgonaz_batbeacon_desc",
             PrefabName = "ChebGonaz_BatBeacon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
         };
 
         public static void CreateConfigs(BasePlugin plugin)
-        {
-            ChebsRecipeConfig.Allowed = plugin.ModConfig("BatBeacon", "BatBeaconAllowed", true,
+        {         
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconAllowed", true,
                 "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig("BatBeacon", "BatBeaconBuildCosts", ChebsRecipeConfig.DefaultRecipe, 
-                "Materials needed to build the bat beacon. None or Blank will use Default settings.", ChebsRecipeConfig.RecipeValue, true);
-            SightRadius = plugin.ModConfig("BatBeacon", "BatBeaconSightRadius",
-                30f, "How far a bat beacon can see enemies.", plugin.DistanceValue,
+
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconBuildCosts", 
+                ChebsRecipeConfig.DefaultRecipe, 
+                "Materials needed to build the bat beacon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+                null, true);
+
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconSightRadius",
+                30f, "How far a bat beacon can see enemies.", plugin.FloatQuantityValue,
                 true);
-            BatDuration = plugin.ModConfig("BatBeacon", "BatBeaconGhostDuration",
-                30f, "How long a bat persists.", plugin.TimeValue,
+
+            BatDuration = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconGhostDuration",
+                30f, "How long a bat persists.", plugin.FloatQuantityValue,
                 true);
-            DelayBetweenBats = plugin.ModConfig("BatBeacon", "BatBeaconDelayBetweenBats",
-                .5f, "How long a bat beacon wait before being able to spawn another bat.", plugin.TimeValue,
+
+            DelayBetweenBats = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconDelayBetweenBats",
+                .5f, "How long a bat beacon wait before being able to spawn another bat.", plugin.FloatQuantityValue,
                 true);
-            MaxBats = plugin.ModConfig("BatBeacon", "BatBeaconMaxBats",
-                15, "The maximum number of bats that a bat beacon can spawn.", plugin.QuantityValue,
+
+            MaxBats = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconMaxBats",
+                15, "The maximum number of bats that a bat beacon can spawn.", plugin.IntQuantityValue,
                 true);
         }
 

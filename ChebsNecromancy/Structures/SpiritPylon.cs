@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using UnityEngine;
@@ -15,7 +16,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> DelayBetweenGhosts;
         public static ConfigEntry<int> MaxGhosts;
 
-        protected static List<GameObject> SpawnedGhosts = new List<GameObject>();
+        protected static List<GameObject> SpawnedGhosts = new();
         private static float ghostLastSpawnedAt;
 
         public static ChebsRecipe ChebsRecipeConfig = new()
@@ -27,28 +28,36 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_spiritpylon_name",
             PieceDescription = "$chebgonaz_spiritpylon_desc",
             PrefabName = "ChebGonaz_SpiritPylon.prefab",
-        };
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+    };
 
         public static void CreateConfigs(BasePlugin plugin)
-        {            
-            ChebsRecipeConfig.Allowed = plugin.ModConfig("SpiritPylon", "SpiritPylonAllowed", true,
-                "Whether making a Spirit Pylon is allowed or not.", plugin.DistanceValue, true);
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig("SpiritPylon", "Spirit Pylon Build Costs",
-                ChebsRecipeConfig.DefaultRecipe, 
-                "Materials needed to build Spirit Pylon. None or Blank will use Default settings.",
-                ChebsRecipeConfig.RecipeValue, true);
-            SightRadius = plugin.ModConfig("SpiritPylon", "SpiritPylonSightRadius", 30f,
-                "How far a Spirit Pylon can see enemies.", plugin.QuantityValue, true);
-            GhostDuration = plugin.ModConfig("SpiritPylon", "SpiritPylonGhostDuration", 30f,
-                "How long a Spirit Pylon's ghost persists.", plugin.TimeValue, true);
-            DelayBetweenGhosts = plugin.ModConfig("SpiritPylon", "SpiritPylonDelayBetweenGhosts", 5f,
+        {
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonAllowed", true,
+                "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
+
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Spirit Pylon Build Costs",
+                ChebsRecipeConfig.DefaultRecipe,
+                "Materials needed to build Spirit Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
+                null, true);
+
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonSightRadius", 30f,
+                "How far a Spirit Pylon can see enemies.", plugin.FloatQuantityValue, true);
+
+            GhostDuration = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonGhostDuration", 30f,
+                "How long a Spirit Pylon's ghost persists.", plugin.FloatQuantityValue, true);
+
+            DelayBetweenGhosts = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonDelayBetweenGhosts", 5f,
                 "How long a Spirit Pylon must wait before being able to spawn another ghost.",
-                plugin.TimeValue, true);
-            MaxGhosts = plugin.ModConfig("SpiritPylon", "SpiritPylonMaxGhosts", 3,
-                "The maximum number of ghosts that a Spirit Pylon can spawn.", plugin.QuantityValue, true);
+                plugin.FloatQuantityValue, true);
+
+            MaxGhosts = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonMaxGhosts", 3,
+                "The maximum number of ghosts that a Spirit Pylon can spawn.", plugin.IntQuantityValue, true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             StartCoroutine(LookForEnemies());
         }
@@ -102,7 +111,7 @@ namespace ChebsNecromancy.Structures
 
         protected bool EnemiesNearby(out Character characterInRange)
         {
-            List<Character> charactersInRange = new List<Character>();
+            List<Character> charactersInRange = new();
             Character.GetCharactersInRange(
                 transform.position,
                 SightRadius.Value,
