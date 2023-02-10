@@ -16,8 +16,8 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> DelayBetweenGhosts;
         public static ConfigEntry<int> MaxGhosts;
 
-        protected static List<GameObject> SpawnedGhosts = new();
-        private static float ghostLastSpawnedAt;
+        protected List<GameObject> SpawnedGhosts = new();
+        private float ghostLastSpawnedAt;
 
         public static ChebsRecipe ChebsRecipeConfig = new()
         {

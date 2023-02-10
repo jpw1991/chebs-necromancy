@@ -13,8 +13,8 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
         public static ConfigEntry<int> RefuelerContainerWidth, RefuelerContainerHeight;
-        protected static int PieceMask;
-        protected static Container Container;
+        protected readonly int PieceMask = LayerMask.GetMask("piece");
+        protected Container Container;
 
         public static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -56,7 +56,6 @@ namespace ChebsNecromancy.Structures
         private void Awake()
 #pragma warning restore IDE0051 // Remove unused private members
         {
-            PieceMask = LayerMask.GetMask("piece");
 
             Container = GetComponent<Container>();
 

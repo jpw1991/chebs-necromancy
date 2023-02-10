@@ -10,7 +10,7 @@ namespace ChebsNecromancy.Structures
     {
         public static ConfigEntry<float> SpawnInterval;
         public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
-        protected static Container Container;
+        protected Container Container;
         
         public static ChebsRecipe ChebsRecipeConfig = new()
         {
