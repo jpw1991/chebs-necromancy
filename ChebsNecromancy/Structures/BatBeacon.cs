@@ -13,8 +13,9 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> BatDuration;
         public static ConfigEntry<float> DelayBetweenBats;
         public static ConfigEntry<int> MaxBats;
-        protected static List<GameObject> SpawnedBats = new();
-        private static float batLastSpawnedAt;
+
+        protected List<GameObject> SpawnedBats = new();
+        private float batLastSpawnedAt;
 
         public static ChebsRecipe ChebsRecipeConfig = new()
         {

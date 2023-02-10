@@ -13,6 +13,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
         public static ConfigEntry<int> RefuelerContainerWidth, RefuelerContainerHeight;
+
         protected readonly int PieceMask = LayerMask.GetMask("piece");
         protected Container Container;
 
