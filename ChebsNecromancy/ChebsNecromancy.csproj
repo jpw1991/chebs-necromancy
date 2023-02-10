@@ -146,7 +146,6 @@
     <Compile Include="Items\SkeletonWand.cs" />
     <Compile Include="Items\SpectralShroud.cs" />
     <Compile Include="Minions\GuardianWraithMinion.cs" />
-    <Compile Include="Minions\SpiritPylon.cs" />
     <Compile Include="Minions\UndeadMinion.cs" />
     <Compile Include="Minions\SkeletonMinion.cs" />
     <Compile Include="Minions\DraugrMinion.cs" />
@@ -169,9 +168,6 @@
     <Compile Include="Items\BlackIronHelmet.cs" />
     <Compile Include="Minions\NeckroGathererMinion.cs" />
     <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
-    <Compile Include="Minions\RefuelerPylon.cs" />
-    <Compile Include="Minions\NeckroGathererPylon.cs" />
-    <Compile Include="Minions\BatBeacon.cs" />
     <Compile Include="Minions\BatBeaconBatMinion.cs" />
     <Compile Include="Items\SkeletonMace.cs" />
     <Compile Include="Items\SkeletonMace2.cs" />
@@ -183,6 +179,10 @@
     <Compile Include="Commands\KillNearbyNeckros.cs" />
     <Compile Include="Commands\SetMinionOwnership.cs" />
     <Compile Include="Minions\FreshMinion.cs" />
+    <Compile Include="Structures\BatBeacon.cs" />
+    <Compile Include="Structures\NeckroGathererPylon.cs" />
+    <Compile Include="Structures\RefuelerPylon.cs" />
+    <Compile Include="Structures\SpiritPylon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

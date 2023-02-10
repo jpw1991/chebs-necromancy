@@ -9,7 +9,7 @@ using Jotunn.Entities;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Minions
+namespace ChebsNecromancy.Structures
 {
     internal class RefuelerPylon : MonoBehaviour
     {

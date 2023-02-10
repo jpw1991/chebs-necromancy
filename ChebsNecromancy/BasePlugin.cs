@@ -11,6 +11,7 @@ using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Structures;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;

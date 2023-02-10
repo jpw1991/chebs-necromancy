@@ -6,53 +6,52 @@ using BepInEx.Configuration;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using UnityEngine;
-using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Minions
+namespace ChebsNecromancy.Structures
 {
-    internal class SpiritPylon : MonoBehaviour
+    internal class BatBeacon : MonoBehaviour
     {
         public static ConfigEntry<bool> Allowed;
-        
+
         public static ConfigEntry<string> CraftingCost;
         public static ConfigEntry<float> SightRadius;
-        public static ConfigEntry<float> GhostDuration;
-        public static ConfigEntry<float> DelayBetweenGhosts;
-        public static ConfigEntry<int> MaxGhosts;
+        public static ConfigEntry<float> BatDuration;
+        public static ConfigEntry<float> DelayBetweenBats;
+        public static ConfigEntry<int> MaxBats;
 
-        public const string PrefabName = "ChebGonaz_SpiritPylon.prefab";
+        public const string PrefabName = "ChebGonaz_BatBeacon.prefab";
         public const string PieceTable = "Hammer";
-        public const string IconName = "chebgonaz_spiritpylon_icon.png";
-        protected List<GameObject> SpawnedGhosts = new List<GameObject>();
+        public const string IconName = "chebgonaz_batbeacon_icon.png";
+        protected List<GameObject> SpawnedBats = new List<GameObject>();
 
-        protected const string DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
+        protected const string DefaultRecipe = "FineWood:10,Silver:5,Guck:15";
 
-        private float ghostLastSpawnedAt;
+        private float batLastSpawnedAt;
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            Allowed = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonAllowed",
+            Allowed = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconAllowed",
                 true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
-                DefaultRecipe, new ConfigDescription("Materials needed to build Spirit Pylon. None or Blank will use Default settings.", null,
+            CraftingCost = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconBuildCosts",
+                DefaultRecipe, new ConfigDescription("Materials needed to build the bat beacon. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
-                30f, new ConfigDescription("How far a Spirit Pylon can see enemies.", null,
+            SightRadius = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconSightRadius",
+                30f, new ConfigDescription("How far a bat beacon can see enemies.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            GhostDuration = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonGhostDuration",
-                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists.", null,
+            BatDuration = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconGhostDuration",
+                30f, new ConfigDescription("How long a bat persists.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DelayBetweenGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonDelayBetweenGhosts",
-                5f, new ConfigDescription("How long a Spirit Pylon must wait before being able to spawn another ghost.", null,
+            DelayBetweenBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconDelayBetweenBats",
+                .5f, new ConfigDescription("How long a bat beacon wait before being able to spawn another bat.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            MaxGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonMaxGhosts",
-                3, new ConfigDescription("The maximum number of ghosts that a Spirit Pylon can spawn.", null,
+            MaxBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconMaxBats",
+                15, new ConfigDescription("The maximum number of bats that a bat beacon can spawn.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
@@ -64,8 +63,8 @@ namespace ChebsNecromancy.Minions
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {
             PieceConfig config = new PieceConfig();
-            config.Name = "$chebgonaz_spiritpylon_name";
-            config.Description = "$chebgonaz_spiritpylon_desc";
+            config.Name = "$chebgonaz_batbeacon_name";
+            config.Description = "$chebgonaz_batbeacon_desc";
 
             if (Allowed.Value)
             {
@@ -88,12 +87,12 @@ namespace ChebsNecromancy.Minions
             CustomPiece customPiece = new CustomPiece(prefab, false, config);
             if (customPiece == null)
             {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
+                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
                 return null;
             }
             if (customPiece.PiecePrefab == null)
             {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
+                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
                 return null;
             }
 
@@ -130,46 +129,38 @@ namespace ChebsNecromancy.Minions
 
         IEnumerator LookForEnemies()
         {
-            while (ZInput.instance == null)
-            {
-                yield return new WaitForSeconds(2);
-            }
+            yield return new WaitWhile(() => ZInput.instance == null);
 
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
             Piece piece = GetComponent<Piece>();
-            while (!piece.IsPlacedByPlayer())
-            {
-                //Jotunn.Logger.LogInfo("Waiting for player to place pylon...");
-                yield return new WaitForSeconds(2);
-            }
+            yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
 
             while (true)
             {
                 yield return new WaitForSeconds(2);
 
-                // clear out any dead/destroyed ghosts
-                for (int i=SpawnedGhosts.Count-1; i>=0; i--)
+                // clear out any dead/destroyed bats
+                for (int i = SpawnedBats.Count - 1; i >= 0; i--)
                 {
-                    if (SpawnedGhosts[i] == null)
+                    if (SpawnedBats[i] == null)
                     {
-                        SpawnedGhosts.RemoveAt(i);
+                        SpawnedBats.RemoveAt(i);
                     }
                 }
 
-                if (Player.m_localPlayer == null) continue;
                 if (!EnemiesNearby(out Character characterInRange)) continue;
                 
-                // spawn ghosts up until the limit
-                if (SpawnedGhosts.Count < MaxGhosts.Value)
+                // spawn up until the limit
+                if (SpawnedBats.Count < MaxBats.Value)
                 {
-                    if (Time.time > ghostLastSpawnedAt + DelayBetweenGhosts.Value)
+                    if (Time.time > batLastSpawnedAt + DelayBetweenBats.Value)
                     {
-                        ghostLastSpawnedAt = Time.time;
+                        batLastSpawnedAt = Time.time;
 
-                        GameObject friendlyGhost = SpawnFriendlyGhost();
-                        friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
-                        SpawnedGhosts.Add(friendlyGhost);
+                        GameObject friendlyBat = SpawnFriendlyBat();
+                        friendlyBat.GetComponent<MonsterAI>().SetTarget(characterInRange);
+                        SpawnedBats.Add(friendlyBat);
                     }
                 }
             }
@@ -192,15 +183,15 @@ namespace ChebsNecromancy.Minions
             return false;
         }
 
-        protected GameObject SpawnFriendlyGhost()
+        protected GameObject SpawnFriendlyBat()
         {
             int quality = 1;
 
-            string prefabName = "ChebGonaz_SpiritPylonGhost";
+            string prefabName = "ChebGonaz_Bat";
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed!");
+                Jotunn.Logger.LogError($"spawning {prefabName} failed!");
                 return null;
             }
 
