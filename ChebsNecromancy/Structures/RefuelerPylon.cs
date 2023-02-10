@@ -1,64 +1,63 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
+using System.Runtime.CompilerServices;
 using BepInEx.Configuration;
-using Jotunn.Configs;
-using Jotunn.Entities;
+using ChebsNecromancy.Common;
 using UnityEngine;
-using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
     internal class RefuelerPylon : MonoBehaviour
     {
-        public static ConfigEntry<bool> Allowed;
-        public static ConfigEntry<string> CraftingCost;
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
         public static ConfigEntry<int> RefuelerContainerWidth, RefuelerContainerHeight;
-
-        public const string PrefabName = "ChebGonaz_RefuelerPylon.prefab";
-        public const string PieceTable = "Hammer";
-        public const string IconName = "chebgonaz_refuelerpylon_icon.png";
-
-        protected const string DefaultRecipe = "Stone:15,Coal:15,BoneFragments:15,SurtlingCore:1";
-
-        protected int PieceMask;
+        
+        protected readonly int PieceMask = LayerMask.GetMask("piece");
         protected Container Container;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public static ChebsRecipe ChebsRecipeConfig = new()
         {
-            Allowed = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonAllowed",
-                true, new ConfigDescription("Whether making a Refueler Pylon is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DefaultRecipe = "Stone:15,Coal:15,BoneFragments:15,SurtlingCore:1",
+            IconName = "chebgonaz_refuelerpylon_icon.png",
+            PieceTable = "_HammerPieceTable",
+            PieceCategory = "Misc",
+            PieceName = "$chebgonaz_refuelerpylon_name",
+            PieceDescription = "$chebgonaz_refuelerpylon_desc",
+            PrefabName = "ChebGonaz_RefuelerPylon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+        };
 
-            CraftingCost = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonBuildCosts",
-                DefaultRecipe, new ConfigDescription("Materials needed to build a Refueler Pylon. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        public static void CreateConfigs(BasePlugin plugin)
+        {
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
+                "Whether making a Refueler Pylon is allowed or not.", plugin.BoolValue, true);
 
-            SightRadius = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonSightRadius",
-                30f, new ConfigDescription("How far a Refueler Pylon can reach containers.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonBuildCosts", 
+                ChebsRecipeConfig.DefaultRecipe, 
+                "Materials needed to build a Refueler Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
+                null, true);
 
-            RefuelerUpdateInterval = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonUpdateInterval",
-                5f, new ConfigDescription("How long a Refueler Pylon waits between checking containers (lower values may negatively impact performance).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonSightRadius", 30f,
+                "How far a Refueler Pylon can reach containers.", plugin.FloatQuantityValue, true);
 
-            RefuelerContainerWidth = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonContainerWidth",
-                4, new ConfigDescription("Inventory size = width * height = 4 * 4 = 16.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            RefuelerUpdateInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonUpdateInterval", 5f,
+                "How long a Refueler Pylon waits between checking containers (lower values may negatively impact performance).",
+                plugin.FloatQuantityValue, true);
 
-            RefuelerContainerHeight = plugin.Config.Bind($"{PrefabName} (Server Synced)", "RefuelerPylonContainerHeight",
-                4, new ConfigDescription("Inventory size = width * height = 4 * 4 = 16.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            RefuelerContainerWidth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonContainerWidth", 4,
+                "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(2, 10), true);
+
+            RefuelerContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonContainerHeight", 4,
+                "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
-            PieceMask = LayerMask.GetMask("piece");
-
             Container = GetComponent<Container>();
 
             Container.m_width = RefuelerContainerWidth.Value;
@@ -66,74 +65,7 @@ namespace ChebsNecromancy.Structures
 
             StartCoroutine(LookForFurnaces());
         }
-
-        public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
-        {
-            PieceConfig config = new PieceConfig();
-            config.Name = "$chebgonaz_refuelerpylon_name";
-            config.Description = "$chebgonaz_refuelerpylon_desc";
-
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                SetRecipeReqs(config, CraftingCost);
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            config.Icon = icon;
-            config.PieceTable = "_HammerPieceTable";
-            config.Category = "Misc";
-
-            CustomPiece customPiece = new CustomPiece(prefab, false, config);
-            if (customPiece == null)
-            {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
-                return null;
-            }
-            if (customPiece.PiecePrefab == null)
-            {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
-                return null;
-            }
-
-            return customPiece;
-        }
-
-
-        public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
-        {
-            // function to add a single material to the recipe
-            void AddMaterial(string material)
-            {
-                string[] materialSplit = material.Split(':');
-                string materialName = materialSplit[0];
-                int materialAmount = int.Parse(materialSplit[1]);
-                config.AddRequirement(new RequirementConfig(materialName, materialAmount, 0, true));
-            }
-
-            // build the recipe. material config format ex: Wood:5,Stone:1,Resin:1
-            if (craftingCost.Value.Contains(','))
-            {
-                string[] materialList = craftingCost.Value.Split(',');
-
-                foreach (string material in materialList)
-                {
-                    AddMaterial(material);
-                }
-            }
-            else
-            {
-                AddMaterial(craftingCost.Value);
-            }
-        }
-
+        
         IEnumerator LookForFurnaces()
         {
             yield return new WaitWhile(() => ZInput.instance == null);
@@ -146,7 +78,7 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RefuelerUpdateInterval.Value);
-
+                
                 Tuple<List<Smelter>, List<Fireplace>> tuple = GetNearbySmeltersAndFireplaces();
 
                 List<Smelter> smelters = tuple.Item1;
@@ -160,10 +92,9 @@ namespace ChebsNecromancy.Structures
         private Tuple<List<Smelter>, List<Fireplace>> GetNearbySmeltersAndFireplaces()
         {
             // find and return smelters and fireplaces in range
-
             Collider[] nearbyColliders = Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, PieceMask);
             if (nearbyColliders.Length < 1) return null;
-
+            
             List<Smelter> smelters = new();
             List<Fireplace> fireplaces = new();
             nearbyColliders.ToList().ForEach(nearbyCollider =>

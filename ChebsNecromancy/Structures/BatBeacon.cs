@@ -1,132 +1,68 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
 using BepInEx.Configuration;
-using Jotunn.Configs;
-using Jotunn.Entities;
+using ChebsNecromancy.Common;
 using UnityEngine;
 
 namespace ChebsNecromancy.Structures
 {
     internal class BatBeacon : MonoBehaviour
     {
-        public static ConfigEntry<bool> Allowed;
-
-        public static ConfigEntry<string> CraftingCost;
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> BatDuration;
         public static ConfigEntry<float> DelayBetweenBats;
         public static ConfigEntry<int> MaxBats;
-
-        public const string PrefabName = "ChebGonaz_BatBeacon.prefab";
-        public const string PieceTable = "Hammer";
-        public const string IconName = "chebgonaz_batbeacon_icon.png";
-        protected List<GameObject> SpawnedBats = new List<GameObject>();
-
-        protected const string DefaultRecipe = "FineWood:10,Silver:5,Guck:15";
-
+        
+        protected List<GameObject> SpawnedBats = new();
         private float batLastSpawnedAt;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public static ChebsRecipe ChebsRecipeConfig = new()
         {
-            Allowed = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconAllowed",
-                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DefaultRecipe = "FineWood:10,Silver:5,Guck:15",
+            IconName = "chebgonaz_batbeacon_icon.png",
+            PieceTable = "_HammerPieceTable",
+            PieceCategory = "Misc",
+            PieceName = "$chebgonaz_batbeacon_name",
+            PieceDescription = "$chebgonaz_batbeacon_desc",
+            PrefabName = "ChebGonaz_BatBeacon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+        };
 
-            CraftingCost = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconBuildCosts",
-                DefaultRecipe, new ConfigDescription("Materials needed to build the bat beacon. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        public static void CreateConfigs(BasePlugin plugin)
+        {         
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconAllowed", true,
+                "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
 
-            SightRadius = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconSightRadius",
-                30f, new ConfigDescription("How far a bat beacon can see enemies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconBuildCosts", 
+                ChebsRecipeConfig.DefaultRecipe, 
+                "Materials needed to build the bat beacon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+                null, true);
 
-            BatDuration = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconGhostDuration",
-                30f, new ConfigDescription("How long a bat persists.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconSightRadius",
+                30f, "How far a bat beacon can see enemies.", plugin.FloatQuantityValue,
+                true);
 
-            DelayBetweenBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconDelayBetweenBats",
-                .5f, new ConfigDescription("How long a bat beacon wait before being able to spawn another bat.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BatDuration = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconGhostDuration",
+                30f, "How long a bat persists.", plugin.FloatQuantityValue,
+                true);
 
-            MaxBats = plugin.Config.Bind("BatBeacon (Server Synced)", "BatBeaconMaxBats",
-                15, new ConfigDescription("The maximum number of bats that a bat beacon can spawn.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DelayBetweenBats = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconDelayBetweenBats",
+                .5f, "How long a bat beacon wait before being able to spawn another bat.", plugin.FloatQuantityValue,
+                true);
+
+            MaxBats = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconMaxBats",
+                15, "The maximum number of bats that a bat beacon can spawn.", plugin.IntQuantityValue,
+                true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             StartCoroutine(LookForEnemies());
         }
-
-        public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
-        {
-            PieceConfig config = new PieceConfig();
-            config.Name = "$chebgonaz_batbeacon_name";
-            config.Description = "$chebgonaz_batbeacon_desc";
-
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                SetRecipeReqs(config, CraftingCost);
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            config.Icon = icon;
-            config.PieceTable = "_HammerPieceTable";
-            config.Category = "Misc";
-
-            CustomPiece customPiece = new CustomPiece(prefab, false, config);
-            if (customPiece == null)
-            {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
-                return null;
-            }
-            if (customPiece.PiecePrefab == null)
-            {
-                Jotunn.Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
-                return null;
-            }
-
-            return customPiece;
-        }
-
-
-        public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
-        {
-            // function to add a single material to the recipe
-            void AddMaterial(string material)
-            {
-                string[] materialSplit = material.Split(':');
-                string materialName = materialSplit[0];
-                int materialAmount = int.Parse(materialSplit[1]);
-                config.AddRequirement(new RequirementConfig(materialName, materialAmount, 0, true));
-            }
-
-            // build the recipe. material config format ex: Wood:5,Stone:1,Resin:1
-            if (craftingCost.Value.Contains(','))
-            {
-                string[] materialList = craftingCost.Value.Split(',');
-
-                foreach (string material in materialList)
-                {
-                    AddMaterial(material);
-                }
-            }
-            else
-            {
-                AddMaterial(craftingCost.Value);
-            }
-        }
-
+        
         IEnumerator LookForEnemies()
         {
             yield return new WaitWhile(() => ZInput.instance == null);
@@ -168,7 +104,7 @@ namespace ChebsNecromancy.Structures
 
         protected bool EnemiesNearby(out Character characterInRange)
         {
-            List<Character> charactersInRange = new List<Character>();
+            List<Character> charactersInRange = new();
             Character.GetCharactersInRange(
                 transform.position,
                 SightRadius.Value,

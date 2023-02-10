@@ -1,9 +1,6 @@
 ﻿using System.Collections;
-using System.Linq;
-using BepInEx;
 using BepInEx.Configuration;
-using Jotunn.Configs;
-using Jotunn.Entities;
+using ChebsNecromancy.Common;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -11,111 +8,48 @@ namespace ChebsNecromancy.Structures
 {
     internal class NeckroGathererPylon : MonoBehaviour
     {
-        public static ConfigEntry<bool> Allowed;
-        public static ConfigEntry<string> CraftingCost;
         public static ConfigEntry<float> SpawnInterval;
         public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
 
-        public const string PrefabName = "ChebGonaz_NeckroGathererPylon.prefab";
-        public const string PieceTable = "Hammer";
-        public const string IconName = "chebgonaz_neckrogathererpylon_icon.png";
-
-        protected const string DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1";
-
         protected Container Container;
-
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        
+        public static ChebsRecipe ChebsRecipeConfig = new()
         {
-            Allowed = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererPylonAllowed",
-                true, new ConfigDescription("Whether making a the pylon is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1",
+            IconName = "chebgonaz_neckrogathererpylon_icon.png",
+            PieceTable = "_HammerPieceTable",
+            PieceCategory = "Misc",
+            PieceName = "$chebgonaz_neckrogathererpylon_name",
+            PieceDescription = "$chebgonaz_neckrogathererpylon_desc",
+            PrefabName = "ChebGonaz_NeckroGathererPylon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+        };
 
-            CraftingCost = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererPylonBuildCosts",
-                DefaultRecipe, new ConfigDescription("Materials needed to build the pylon. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        public static void CreateConfigs(BasePlugin plugin)
+        {
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonAllowed", true,
+                "Whether making a the pylon is allowed or not.", plugin.BoolValue, true);
 
-            SpawnInterval = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererSpawnInterval",
-                60f, new ConfigDescription("How often the pylon will attempt to create a Neckro Gatherer.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonBuildCosts", 
+                ChebsRecipeConfig.DefaultRecipe, 
+                "Materials needed to build the pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+                null, true);
 
-            NeckTailsConsumedPerSpawn = plugin.Config.Bind("NeckroGathererPylon (Server Synced)", "NeckroGathererCreationCost",
-                1, new ConfigDescription("How many Neck Tails get consumed when creating a Neckro Gatherer.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SpawnInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererSpawnInterval", 60f,
+                "How often the pylon will attempt to create a Neckro Gatherer.", plugin.FloatQuantityValue, true);
+
+            NeckTailsConsumedPerSpawn = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererCreationCost", 1,
+                "How many Neck Tails get consumed when creating a Neckro Gatherer.", plugin.IntQuantityValue, true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             Container = GetComponent<Container>();
             StartCoroutine(SpawnNeckros());
         }
-
-        public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
-        {
-            PieceConfig config = new PieceConfig();
-            config.Name = "$chebgonaz_neckrogathererpylon_name";
-            config.Description = "$chebgonaz_neckrogathererpylon_desc";
-
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                SetRecipeReqs(config, CraftingCost);
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            config.Icon = icon;
-            config.PieceTable = "_HammerPieceTable";
-            config.Category = "Misc";
-
-            CustomPiece customPiece = new CustomPiece(prefab, false, config);
-            if (customPiece == null)
-            {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
-                return null;
-            }
-            if (customPiece.PiecePrefab == null)
-            {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
-                return null;
-            }
-
-            return customPiece;
-        }
-
-
-        public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
-        {
-            // function to add a single material to the recipe
-            void AddMaterial(string material)
-            {
-                string[] materialSplit = material.Split(':');
-                string materialName = materialSplit[0];
-                int materialAmount = int.Parse(materialSplit[1]);
-                config.AddRequirement(new RequirementConfig(materialName, materialAmount, 0, true));
-            }
-
-            // build the recipe. material config format ex: Wood:5,Stone:1,Resin:1
-            if (craftingCost.Value.Contains(','))
-            {
-                string[] materialList = craftingCost.Value.Split(',');
-
-                foreach (string material in materialList)
-                {
-                    AddMaterial(material);
-                }
-            }
-            else
-            {
-                AddMaterial(craftingCost.Value);
-            }
-        }
-
+        
         private IEnumerator SpawnNeckros()
         {
             yield return new WaitWhile(() => ZInput.instance == null);

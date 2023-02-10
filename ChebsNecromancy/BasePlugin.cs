@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using BepInEx;
+using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
@@ -38,21 +39,28 @@ namespace ChebsNecromancy
 
         private readonly Harmony harmony = new(PluginGuid);
 
-        private List<Wand> wands = new()
+        private readonly List<Wand> wands = new()
         {
             new SkeletonWand(),
             new DraugrWand(),
         };
         public const string NecromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
-        private SpectralShroud spectralShroudItem = new();
-        private NecromancerHood necromancersHoodItem = new();
+        private readonly SpectralShroud spectralShroudItem = new();
+        private readonly NecromancerHood necromancersHoodItem = new();
 
         private float inputDelay = 0;
 
         public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
 
+        // Global Config Acceptable Values
+        public AcceptableValueList<bool> BoolValue = new(true, false);
+        public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
+        public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
+
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             CreateConfigValues();
 
@@ -68,6 +76,28 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
 
             SetupWatcher();
+        }
+        public ConfigEntry<T> ModConfig<T>(
+            string group,
+            string name,
+            T default_value,
+            string description = "",
+            AcceptableValueBase acceptableValues = null,
+            bool serverSync = false,
+            params object[] tags)
+        {
+            // Create extended description with list of valid values and server sync
+            ConfigDescription extendedDescription = new(
+                description + (serverSync
+                    ? " [Synced with Server]"
+                    : " [Not Synced with Server]"),
+                acceptableValues,
+                new ConfigurationManagerAttributes { IsAdminOnly = serverSync },
+                tags);
+
+            var configEntry = Config.Bind(group, name, default_value, extendedDescription);
+
+            return configEntry;
         }
 
         private void CreateConfigValues()
@@ -97,7 +127,7 @@ namespace ChebsNecromancy
 
         private void SetupWatcher()
         {
-            FileSystemWatcher watcher = new FileSystemWatcher(Paths.ConfigPath, ConfigFileName);
+            FileSystemWatcher watcher = new(Paths.ConfigPath, ConfigFileName);
             watcher.Changed += ReadConfigValues;
             watcher.Created += ReadConfigValues;
             watcher.Renamed += ReadConfigValues;
@@ -166,7 +196,7 @@ namespace ChebsNecromancy
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
                 // minion worn items
-                List<Item> minionWornItems = new List<Item>
+                List<Item> minionWornItems = new()
                 {
                     new SkeletonClub(),
                     new SkeletonBow(),
@@ -223,7 +253,7 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Creatures
-                List<string> prefabNames = new List<string>();
+                List<string> prefabNames = new();
 
                 if (DraugrWand.DraugrAllowed.Value)
                 {
@@ -255,7 +285,7 @@ namespace ChebsNecromancy
                     prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
                 }
 
-                if (SpiritPylon.Allowed.Value)
+                if (SpiritPylon.ChebsRecipeConfig.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 }
@@ -265,7 +295,7 @@ namespace ChebsNecromancy
                     prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 }
 
-                if (BatBeacon.Allowed.Value)
+                if (BatBeacon.ChebsRecipeConfig.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
                 }
@@ -282,32 +312,32 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Structures   
-                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.PrefabName);
+                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
                 SpiritPylon spiritPylon = spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
-                    spiritPylon.GetCustomPieceFromPrefab(spiritPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.IconName))
+                    SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.PrefabName);
+                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
                 RefuelerPylon refuelerPylon = refuelerPylonPrefab.AddComponent<RefuelerPylon>();
                 PieceManager.Instance.AddPiece(
-                    refuelerPylon.GetCustomPieceFromPrefab(refuelerPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.IconName))
+                    RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(refuelerPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.PrefabName);
+                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
                 NeckroGathererPylon neckroGathererPylon = neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
                 PieceManager.Instance.AddPiece(
-                    neckroGathererPylon.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.IconName))
+                    RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.PrefabName);
+                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.ChebsRecipeConfig.PrefabName);
                 BatBeacon batBeacon = batBeaconPrefab.AddComponent<BatBeacon>();
                 PieceManager.Instance.AddPiece(
-                    batBeacon.GetCustomPieceFromPrefab(batBeaconPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.IconName))
+                    BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
                     );
                 #endregion
             }
@@ -326,7 +356,7 @@ namespace ChebsNecromancy
         private void AddNecromancy()
         {
             string iconPath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "necromancy_icon.png");
-            SkillConfig skill = new SkillConfig
+            SkillConfig skill = new()
             {
                 Name = "$friendlyskeletonwand_necromancy",
                 Description = "$friendlyskeletonwand_necromancy_desc",
@@ -344,7 +374,9 @@ namespace ChebsNecromancy
             SetEffectNecromancyArmor2.m_skillLevelModifier = NecromancerHood.NecromancySkillBonus.Value;
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Update()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             if (ZInput.instance != null)
             {
@@ -377,17 +409,21 @@ namespace ChebsNecromancy
     class CharacterDrop_Patches
     {
         [HarmonyPrefix]
-        static void addBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
+#pragma warning disable IDE0051 // Remove unused private members
+        static void AddBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             if (SkeletonWand.BoneFragmentsDroppedAmountMin.Value >= 0
                 && SkeletonWand.BoneFragmentsDroppedAmountMax.Value > 0)
             {
-                CharacterDrop.Drop bones = new CharacterDrop.Drop();
-                bones.m_prefab = ZNetScene.instance.GetPrefab("BoneFragments");
-                bones.m_onePerPlayer = true;
-                bones.m_amountMin = SkeletonWand.BoneFragmentsDroppedAmountMin.Value;
-                bones.m_amountMax = SkeletonWand.BoneFragmentsDroppedAmountMax.Value;
-                bones.m_chance = 1f;
+                CharacterDrop.Drop bones = new()
+                {
+                    m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
+                    m_onePerPlayer = true,
+                    m_amountMin = SkeletonWand.BoneFragmentsDroppedAmountMin.Value,
+                    m_amountMax = SkeletonWand.BoneFragmentsDroppedAmountMax.Value,
+                    m_chance = 1f
+                };
                 ___m_drops.Add(bones);
             }
         }
@@ -486,13 +522,15 @@ namespace ChebsNecromancy
     static class ArrowImpactPatch
     {
         // stop minions from damaging player structures
+#pragma warning disable IDE0051 // Remove unused private members
         static void Prefix(ref HitData hit, Piece ___m_piece)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             if (hit != null)
             {
                 Character attacker = hit.GetAttacker();
                 if (attacker != null 
-                    && attacker.TryGetComponent(out UndeadMinion undeadMinion))
+                    && attacker.TryGetComponent(out UndeadMinion _))
                 {
                     if (___m_piece.IsPlacedByPlayer())
                     {
@@ -516,7 +554,9 @@ namespace ChebsNecromancy
     [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
     static class OnDeathDropPatch
     {
+#pragma warning disable IDE0051 // Remove unused private members
         static bool Prefix(CharacterDrop __instance)
+#pragma warning restore IDE0051 // Remove unused private members
         {
             // Although Container component is on the Neckro, its OnDestroyed
             // isn't called on the death of the creature. So instead, implement
@@ -582,7 +622,11 @@ namespace ChebsNecromancy
         // stuff cuz that doesn't matter for NPCs.
         //
         // I also pruned some player stuff out.
+#pragma warning disable IDE0051 // Remove unused private members
+#pragma warning disable IDE0060 // Remove unused parameter
         static bool Prefix(ref long sender, ref HitData hit, Character __instance)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore IDE0051 // Remove unused private members
         {
             if (__instance.TryGetComponent(out UndeadMinion minion)
                 && (minion is SkeletonMinion || minion is DraugrMinion))
@@ -705,9 +749,13 @@ namespace ChebsNecromancy
     static class SharpStakesMinionPatch
     {
         // bool OnHit(Collider collider, Vector3 hitPoint)
+#pragma warning disable IDE0051 // Remove unused private members
+#pragma warning disable IDE0060 // Remove unused parameter
         static bool Prefix(Collider collider, Vector3 hitPoint, Aoe __instance)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore IDE0051 // Remove unused private members
         {
-            if (collider.TryGetComponent(out UndeadMinion minion))
+            if (collider.TryGetComponent(out UndeadMinion _))
             {
                 Piece piece = __instance.GetComponentInParent<Piece>();
                 if (piece != null && piece.IsPlacedByPlayer())
@@ -725,7 +773,11 @@ namespace ChebsNecromancy
     static class TameablePatch1
     {
         [HarmonyPrefix]
+#pragma warning disable IDE0051 // Remove unused private members
+#pragma warning disable IDE0060 // Remove unused parameter
         static bool InteractPrefix(Humanoid user, bool hold, bool alt, Tameable __instance)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore IDE0051 // Remove unused private members
         {
             // Stop players that aren't the owner of a minion from interacting
             // with it. Also call UndeadMinion wait/follow methods to

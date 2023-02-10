@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
+using System.Security.AccessControl;
 using BepInEx.Configuration;
-using Jotunn.Configs;
-using Jotunn.Entities;
+using ChebsNecromancy.Common;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -12,122 +11,57 @@ namespace ChebsNecromancy.Structures
 {
     internal class SpiritPylon : MonoBehaviour
     {
-        public static ConfigEntry<bool> Allowed;
-        
-        public static ConfigEntry<string> CraftingCost;
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> GhostDuration;
         public static ConfigEntry<float> DelayBetweenGhosts;
         public static ConfigEntry<int> MaxGhosts;
-
-        public const string PrefabName = "ChebGonaz_SpiritPylon.prefab";
-        public const string PieceTable = "Hammer";
-        public const string IconName = "chebgonaz_spiritpylon_icon.png";
-        protected List<GameObject> SpawnedGhosts = new List<GameObject>();
-
-        protected const string DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
-
+        
+        protected List<GameObject> SpawnedGhosts = new();
         private float ghostLastSpawnedAt;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public static ChebsRecipe ChebsRecipeConfig = new()
         {
-            Allowed = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonAllowed",
-                true, new ConfigDescription("Whether making a Spirit Pylon is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1",
+            IconName = "chebgonaz_spiritpylon_icon.png",
+            PieceTable = "_HammerPieceTable",
+            PieceCategory = "Misc",
+            PieceName = "$chebgonaz_spiritpylon_name",
+            PieceDescription = "$chebgonaz_spiritpylon_desc",
+            PrefabName = "ChebGonaz_SpiritPylon.prefab",
+            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+    };
 
-            CraftingCost = plugin.Config.Bind("SpiritPylon (Server Synced)", "Spirit Pylon Build Costs",
-                DefaultRecipe, new ConfigDescription("Materials needed to build Spirit Pylon. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        public static void CreateConfigs(BasePlugin plugin)
+        {
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonAllowed", true,
+                "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
 
-            SightRadius = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonSightRadius",
-                30f, new ConfigDescription("How far a Spirit Pylon can see enemies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonBuildCosts",
+                ChebsRecipeConfig.DefaultRecipe,
+                "Materials needed to build Spirit Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
+                null, true);
 
-            GhostDuration = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonGhostDuration",
-                30f, new ConfigDescription("How long a Spirit Pylon's ghost persists.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonSightRadius", 30f,
+                "How far a Spirit Pylon can see enemies.", plugin.FloatQuantityValue, true);
 
-            DelayBetweenGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonDelayBetweenGhosts",
-                5f, new ConfigDescription("How long a Spirit Pylon must wait before being able to spawn another ghost.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GhostDuration = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonGhostDuration", 30f,
+                "How long a Spirit Pylon's ghost persists.", plugin.FloatQuantityValue, true);
 
-            MaxGhosts = plugin.Config.Bind("SpiritPylon (Server Synced)", "SpiritPylonMaxGhosts",
-                3, new ConfigDescription("The maximum number of ghosts that a Spirit Pylon can spawn.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DelayBetweenGhosts = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonDelayBetweenGhosts", 5f,
+                "How long a Spirit Pylon must wait before being able to spawn another ghost.",
+                plugin.FloatQuantityValue, true);
+
+            MaxGhosts = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonMaxGhosts", 3,
+                "The maximum number of ghosts that a Spirit Pylon can spawn.", plugin.IntQuantityValue, true);
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             StartCoroutine(LookForEnemies());
         }
-
-        public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
-        {
-            PieceConfig config = new PieceConfig();
-            config.Name = "$chebgonaz_spiritpylon_name";
-            config.Description = "$chebgonaz_spiritpylon_desc";
-
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                SetRecipeReqs(config, CraftingCost);
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            config.Icon = icon;
-            config.PieceTable = "_HammerPieceTable";
-            config.Category = "Misc";
-
-            CustomPiece customPiece = new CustomPiece(prefab, false, config);
-            if (customPiece == null)
-            {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s CustomPiece is null!");
-                return null;
-            }
-            if (customPiece.PiecePrefab == null)
-            {
-                Logger.LogError($"AddCustomPieces: {PrefabName}'s PiecePrefab is null!");
-                return null;
-            }
-
-            return customPiece;
-        }
-
-
-        public void SetRecipeReqs(PieceConfig config, ConfigEntry<string> craftingCost)
-        {
-            // function to add a single material to the recipe
-            void AddMaterial(string material)
-            {
-                string[] materialSplit = material.Split(':');
-                string materialName = materialSplit[0];
-                int materialAmount = int.Parse(materialSplit[1]);
-                config.AddRequirement(new RequirementConfig(materialName, materialAmount, 0, true));
-            }
-
-            // build the recipe. material config format ex: Wood:5,Stone:1,Resin:1
-            if (craftingCost.Value.Contains(','))
-            {
-                string[] materialList = craftingCost.Value.Split(',');
-
-                foreach (string material in materialList)
-                {
-                    AddMaterial(material);
-                }
-            }
-            else
-            {
-                AddMaterial(craftingCost.Value);
-            }
-        }
-
+        
         IEnumerator LookForEnemies()
         {
             while (ZInput.instance == null)
@@ -177,7 +111,7 @@ namespace ChebsNecromancy.Structures
 
         protected bool EnemiesNearby(out Character characterInRange)
         {
-            List<Character> charactersInRange = new List<Character>();
+            List<Character> charactersInRange = new();
             Character.GetCharactersInRange(
                 transform.position,
                 SightRadius.Value,
