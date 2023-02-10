@@ -85,6 +85,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\assembly_valheim_publicized.dll</HintPath>
     </Reference>
+    <Reference Include="Jotunn, Version=2.10.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\duplicate\chebs-necromancy\packages\JotunnLib.2.10.4\lib\net462\Jotunn.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -118,9 +122,6 @@
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>..\packages\HarmonyX.2.10.1\lib\net45\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Jotunn">
-      <HintPath>G:\My Drive\Documents\Games-Documents\Valheim\ModDevelopment\ValheimModding-Jotunn-2.10.3\plugins\Jotunn.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
