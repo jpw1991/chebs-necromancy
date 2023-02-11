@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
@@ -26,7 +28,7 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_batbeacon_name",
             PieceDescription = "$chebgonaz_batbeacon_desc",
             PrefabName = "ChebGonaz_BatBeacon.prefab",
-            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+            ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
         };
 
         public static void CreateConfigs(BasePlugin plugin)
@@ -127,7 +129,7 @@ namespace ChebsNecromancy.Structures
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
-                Jotunn.Logger.LogError($"spawning {prefabName} failed!");
+                Logger.LogError($"spawning {prefabName} failed!");
                 return null;
             }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using UnityEngine;
@@ -22,7 +23,7 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_neckrogathererpylon_name",
             PieceDescription = "$chebgonaz_neckrogathererpylon_desc",
             PrefabName = "ChebGonaz_NeckroGathererPylon.prefab",
-            ObjectName = System.Reflection.MethodBase.GetCurrentMethod().DeclaringType.Name
+            ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
         };
 
         public static void CreateConfigs(BasePlugin plugin)

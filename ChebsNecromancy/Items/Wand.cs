@@ -5,7 +5,6 @@ using ChebsNecromancy.Minions;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using UnityEngine;
-using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items
 {

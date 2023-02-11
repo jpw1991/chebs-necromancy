@@ -3,7 +3,6 @@ using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
-using HarmonyLib;
 using UnityEngine;
 
 namespace ChebsNecromancy.Minions

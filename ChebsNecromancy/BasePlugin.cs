@@ -21,6 +21,7 @@ using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
 using Paths = BepInEx.Paths;
+
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
 
@@ -33,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.7.5";
+        public const string PluginVersion = "1.7.6";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
