@@ -328,7 +328,11 @@ namespace ChebsNecromancy.Minions
         public void Roam()
         {
             RecordWaitPosition(StatusRoaming);
-            if (!TryGetComponent(out MonsterAI monsterAI)) return;
+            if (!TryGetComponent(out MonsterAI monsterAI))
+            {
+                Logger.LogError($"Cannot Roam because {name} has no MonsterAI component!");
+                return;
+            }
             // clear out current wait object if it exists
             GameObject currentFollowTarget = monsterAI.GetFollowTarget();
             if (currentFollowTarget != null && currentFollowTarget.name == MinionWaitObjectName)
@@ -352,11 +356,15 @@ namespace ChebsNecromancy.Minions
             zNetView.GetZDO().Set(MinionCreatedAtLevelKey, necromancyLevel);
         }
 
-        public float GetCreatedAtLevel()
+        protected float GetCreatedAtLevel()
         {
-            return TryGetComponent(out ZNetView zNetView)
-                ? zNetView.GetZDO().GetFloat(MinionCreatedAtLevelKey, 1f)
-                : 1f;
+            if (!TryGetComponent(out ZNetView zNetView))
+            {
+                Logger.LogError($"Cannot read {MinionCreatedAtLevelKey} because it has no ZNetView component.");
+                return 1f;
+            }
+
+            return zNetView.GetZDO().GetFloat(MinionCreatedAtLevelKey, 1f);
         }
         #endregion
     }
