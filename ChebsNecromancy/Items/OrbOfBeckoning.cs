@@ -11,6 +11,7 @@ namespace ChebsNecromancy.Items
     {
         public override string ItemName => "ChebGonaz_OrbOfBeckoning";
         public override string PrefabName => "ChebGonaz_OrbOfBeckoning.prefab";
+        public string ProjectilePrefabName => "ChebGonaz_OrbOfBeckoningProjectile.prefab";
         public override string NameLocalization => "$item_chebgonaz_orbofbeckoning";
         public override string DescriptionLocalization => "$item_chebgonaz_orbofbeckoning_desc";
         

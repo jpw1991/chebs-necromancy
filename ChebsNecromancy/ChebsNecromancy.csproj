@@ -134,6 +134,7 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
     <Compile Include="Items\OrbOfBeckoning.cs" />
     <Compile Include="Items\SkeletonWoodAxe.cs" />
     <Compile Include="Minions\AI\WoodcutterAI.cs" />

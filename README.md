@@ -101,6 +101,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 - **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
+- **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell).
 - **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
 
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
@@ -112,6 +113,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+12/02/2023 | 1.8.0 | Orb of Beckoning working
 11/02/2023 | 1.7.7 | Neckro pylons only spawn neckros if a player is nearby and that player takes ownership of the Neckro; fix bug that permitted non-admins to use some commands; optimise draugr & skeleton Awake scaling
 10/02/2023 | 1.7.6 | Dracbjorn's config overhaul; optimise imports
 09/02/2023 | 1.7.5 | Neckro messages hideable; Neckro messages improved

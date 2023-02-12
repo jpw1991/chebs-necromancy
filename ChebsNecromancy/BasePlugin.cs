@@ -196,10 +196,21 @@ namespace ChebsNecromancy
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
-                GameObject attackTargetItemPrefab =
+                // // //
+                // Orb of Beckoning
+                //
+                // Add custom projectile script and amke sure the item is using it as its projectile object.
+                GameObject orbOfBeckoningProjectilePrefab = 
+                    LoadPrefabFromBundle(orbOfBeckoningItem.ProjectilePrefabName, chebgonazAssetBundle);
+                orbOfBeckoningProjectilePrefab.AddComponent<OrbOfBeckoningProjectile>();
+                
+                GameObject orbOfBeckoningItemPrefab =
                     LoadPrefabFromBundle(orbOfBeckoningItem.PrefabName, chebgonazAssetBundle);
-                ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(attackTargetItemPrefab));
-
+                orbOfBeckoningItemPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
+                    orbOfBeckoningProjectilePrefab;
+                ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(orbOfBeckoningItemPrefab));
+                // // //
+                
                 // minion worn items
                 List<Item> minionWornItems = new()
                 {
@@ -227,7 +238,7 @@ namespace ChebsNecromancy
                     new SkeletonHelmetBronzePoison(),
                     new SkeletonWoodAxe()
                 };
-                minionWornItems.ForEach((minionItem) =>
+                minionWornItems.ForEach(minionItem =>
                 {
                     GameObject minionItemPrefab = LoadPrefabFromBundle(minionItem.PrefabName, chebgonazAssetBundle);
                     ItemManager.Instance.AddItem(minionItem.GetCustomItemFromPrefab(minionItemPrefab));
@@ -313,8 +324,7 @@ namespace ChebsNecromancy
                     if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
 
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
-                }
-                    );
+                });
                 #endregion
 
                 #region Structures   
