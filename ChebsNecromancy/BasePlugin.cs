@@ -122,6 +122,7 @@ namespace ChebsNecromancy
             RefuelerPylon.CreateConfigs(this);
             NeckroGathererPylon.CreateConfigs(this);
             BatBeacon.CreateConfigs(this);
+            BatLantern.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -329,32 +330,34 @@ namespace ChebsNecromancy
 
                 #region Structures   
                 GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
-                spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
                     SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.ChebsRecipeConfig.IconName))
                     );
 
                 GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
-                refuelerPylonPrefab.AddComponent<RefuelerPylon>();
                 PieceManager.Instance.AddPiece(
                     RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(refuelerPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.ChebsRecipeConfig.IconName))
                     );
 
                 GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
-                neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
                 PieceManager.Instance.AddPiece(
                     NeckroGathererPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.ChebsRecipeConfig.IconName))
                     );
 
                 GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.ChebsRecipeConfig.PrefabName);
-                batBeaconPrefab.AddComponent<BatBeacon>();
                 PieceManager.Instance.AddPiece(
                     BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
                     );
+                
+                GameObject batLanternPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatLantern.ChebsRecipeConfig.PrefabName);
+                PieceManager.Instance.AddPiece(
+                    BatLantern.ChebsRecipeConfig.GetCustomPieceFromPrefab(batLanternPrefab,
+                        chebgonazAssetBundle.LoadAsset<Sprite>(BatLantern.ChebsRecipeConfig.IconName))
+                );
                 #endregion
             }
             catch (Exception ex)
@@ -366,8 +369,6 @@ namespace ChebsNecromancy
                 chebgonazAssetBundle.Unload(false);
             }
         }
-
-
 
         private void AddNecromancy()
         {
@@ -480,6 +481,13 @@ namespace ChebsNecromancy
                     if (__instance.GetComponent<BatBeacon>() == null)
                     {
                         __instance.gameObject.AddComponent<BatBeacon>();
+                    }
+                }
+                else if (__instance.name.Contains("BatLantern"))
+                {
+                    if (__instance.GetComponent<BatLantern>() == null)
+                    {
+                        __instance.gameObject.AddComponent<BatLantern>();
                     }
                 }
             }
