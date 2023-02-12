@@ -113,7 +113,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
-12/02/2023 | 1.8.0 | Orb of Beckoning working
+12/02/2023 | 1.8.0 | Orb of Beckoning working; remove old attack target code from wand
 11/02/2023 | 1.7.7 | Neckro pylons only spawn neckros if a player is nearby and that player takes ownership of the Neckro; fix bug that permitted non-admins to use some commands; optimise draugr & skeleton Awake scaling
 10/02/2023 | 1.7.6 | Dracbjorn's config overhaul; optimise imports
 09/02/2023 | 1.7.5 | Neckro messages hideable; Neckro messages improved
