@@ -84,7 +84,8 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 - Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
 	+ `DraugrAllowed = false`
-	+ `SpectralShroudSpawnWraith = false`
+	+ `SpectralShroudSpawnWraith = false`	
+- Pylons won't show inventory unless you open a normal container first.
 
 ## Future Ideas
 
@@ -96,10 +97,13 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 ## Special Thanks
 
-- **Dracbjorn** for development help & testing.
+- [**Dracbjorn**](https://github.com/Dracbjorn) for development help & testing.
 - **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
+- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
+
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
 ## Changelog
 
@@ -108,7 +112,13 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
-04/02/2023 | 1.7.1 | lint the entire project; catch and fix a few instances of MonoBehaviours accidently being instantiated with new -> a big no-no
+11/02/2023 | 1.7.7 | Neckro pylons only spawn neckros if a player is nearby and that player takes ownership of the Neckro; fix bug that permitted non-admins to use some commands; optimise draugr & skeleton Awake scaling
+10/02/2023 | 1.7.6 | Dracbjorn's config overhaul; optimise imports
+09/02/2023 | 1.7.5 | Neckro messages hideable; Neckro messages improved
+07/02/2023 | 1.7.4 | refueler pylons can now refuel fireplaces eg. torches, bonfires, etc.
+06/02/2023 | 1.7.3 | minions remember if they were following a player after player logs off, then continue following when player returns
+05/02/2023 | 1.7.2 | allow minions to roam when holding shift+T; fix bug in ZDO comparison
+05/02/2023 | 1.7.1 | allow admins to ignore ownership with commands; fix bug where players wouldnt be found by command; lint the entire project; catch and fix a few instances of MonoBehaviours accidently being instantiated with new -> a big no-no
 03/02/2023 | 1.7.0 | minions now remember the necromancy level with which they're created and scale to that; refactor SkeletonWand and DraugrWand code to be more uniform to make diffing easier; fix a bug where minions set to follow automatically would have bugged AI with the 1.6.4 improvements; minion commandability exposed to config; commands issued via E also update ZDO; hover text for interact patched
 01/02/2023 | 1.6.4 | minions can be configured to drop their crafting requirements on death; hold position now works in that minions no longer wander around; wait positions are now recorded and stored so that minions return to where they were last waiting after chasing something off
 28/01/2023 | 1.6.3 | add optional timer to kill any minion after X seconds; overhaul minion ownership checks to accurately store and retrieve the minion's creator; minions will only obey commands from their creators and ignore others

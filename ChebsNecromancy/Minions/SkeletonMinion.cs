@@ -43,16 +43,15 @@ namespace ChebsNecromancy.Minions
             _createdOrderIncrementer++;
             createdOrder = _createdOrderIncrementer;
 
-            StartCoroutine(WaitForLocalPlayer());
+            StartCoroutine(WaitForZNet());
         }
 
-        IEnumerator WaitForLocalPlayer()
+        IEnumerator WaitForZNet()
         {
-            yield return new WaitUntil(() => Player.m_localPlayer != null);
-
+            yield return new WaitUntil(() => ZNetScene.instance != null);
+            
             ScaleStats(GetCreatedAtLevel());
-
-            // by the time player arrives, ZNet stuff is certainly ready
+            
             if (!TryGetComponent(out Humanoid humanoid))
             {
                 Logger.LogError("Humanoid component missing!");
@@ -63,11 +62,11 @@ namespace ChebsNecromancy.Minions
             // Exploit this to reapply the armor so the armor values work
             // again.
             List<int> equipmentHashes = new List<int>()
-                {
-                    humanoid.m_visEquipment.m_currentChestItemHash,
-                    humanoid.m_visEquipment.m_currentLegItemHash,
-                    humanoid.m_visEquipment.m_currentHelmetItemHash
-                };
+            {
+                humanoid.m_visEquipment.m_currentChestItemHash,
+                humanoid.m_visEquipment.m_currentLegItemHash,
+                humanoid.m_visEquipment.m_currentHelmetItemHash
+            };
             equipmentHashes.ForEach(hash =>
             {
                 ZNetScene.instance.GetPrefab(hash);
@@ -75,7 +74,6 @@ namespace ChebsNecromancy.Minions
                 GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
                 if (equipmentPrefab != null)
                 {
-                    //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
                     humanoid.GiveDefaultItem(equipmentPrefab);
                 }
             });
@@ -86,9 +84,10 @@ namespace ChebsNecromancy.Minions
             // FreshMinion.cs file.
             FreshMinion freshMinion = GetComponent<FreshMinion>();
             MonsterAI monsterAI = GetComponent<MonsterAI>();
+            monsterAI.m_randomMoveRange = RoamRange.Value;
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
-                WaitAtRecordedPosition();
+                RoamFollowOrWait();
             }
 
             if (freshMinion != null)
@@ -106,9 +105,6 @@ namespace ChebsNecromancy.Minions
                 Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
-
-            // only scale player's skeletons, not other ppls
-            if (!BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) return;
 
             float health = SkeletonWand.SkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.SkeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);

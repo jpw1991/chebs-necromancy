@@ -41,12 +41,12 @@ namespace ChebsNecromancy.Minions
             _createdOrderIncrementer++;
             createdOrder = _createdOrderIncrementer;
 
-            StartCoroutine(WaitForLocalPlayer());
+            StartCoroutine(WaitForZNet());
         }
 
-        IEnumerator WaitForLocalPlayer()
+        IEnumerator WaitForZNet()
         {
-            yield return new WaitUntil(() => Player.m_localPlayer != null);
+            yield return new WaitUntil(() => ZNetScene.instance != null);
 
             ScaleStats(GetCreatedAtLevel());
 
@@ -84,9 +84,10 @@ namespace ChebsNecromancy.Minions
             // FreshMinion.cs file.
             FreshMinion freshMinion = GetComponent<FreshMinion>();
             MonsterAI monsterAI = GetComponent<MonsterAI>();
+            monsterAI.m_randomMoveRange = RoamRange.Value;
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
-                WaitAtRecordedPosition();
+                RoamFollowOrWait();
             }
 
             if (freshMinion != null)

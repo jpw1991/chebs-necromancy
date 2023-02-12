@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using Jotunn.Entities;
+using Jotunn.Managers;
 
 namespace ChebsNecromancy.Commands
 {
@@ -18,9 +19,14 @@ namespace ChebsNecromancy.Commands
         public override void Run(string[] args)
         {
             List<Character> allCharacters = Character.GetAllCharacters();
-            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
-
+            
+            bool admin = SynchronizationManager.Instance.PlayerIsAdmin;
             bool force = args.Length > 0 && args[0].Equals("f");
+            if (force && !admin)
+            {
+                Console.instance.Print("Only admins can use the force argument with this command.");
+                return;
+            }
             
             foreach (Character item in allCharacters)
             {

@@ -37,6 +37,7 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<CleanupType> CleanupAfter;
         public static ConfigEntry<int> CleanupDelay;
         public static ConfigEntry<bool> Commandable;
+        public static ConfigEntry<float> RoamRange;
 
         protected float CleanupAt;
 
@@ -51,6 +52,9 @@ namespace ChebsNecromancy.Minions
         private float nextPlayerOnlineCheckAt;
         #endregion
 
+        private Vector3 StatusRoaming => Vector3.negativeInfinity;
+        private Vector3 StatusFollowing => Vector3.positiveInfinity;
+
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
             CleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
@@ -61,6 +65,8 @@ namespace ChebsNecromancy.Minions
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             Commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
                 true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
+            RoamRange = plugin.Config.Bind("UndeadMinion (Client)", "RoamRange",
+                10f, new ConfigDescription("How far a unit is allowed to roam from its current position."));
         }
 
         public virtual void Awake()
@@ -232,6 +238,9 @@ namespace ChebsNecromancy.Minions
         #region WaitPositionZDO
         protected void RecordWaitPosition(Vector3 waitPos)
         {
+            // waitPos == some position = wait at that position
+            // waitPos == StatusFollow = follow owner
+            // waitPos == StatusRoam = roam
             if (TryGetComponent(out ZNetView zNetView))
             {
                 zNetView.GetZDO().Set(MinionWaitPosZdoKey, waitPos);
@@ -246,29 +255,49 @@ namespace ChebsNecromancy.Minions
         {
             if (TryGetComponent(out ZNetView zNetView))
             {
-                return zNetView.GetZDO().GetVec3(MinionWaitPosZdoKey, Vector3.negativeInfinity);
+                return zNetView.GetZDO().GetVec3(MinionWaitPosZdoKey, StatusRoaming);
             }
 
             Logger.LogError($"Cannot GetWaitPosition because it has no ZNetView component.");
-            return Vector3.negativeInfinity;
+            return StatusRoaming;
         }
 
-        protected void WaitAtRecordedPosition()
+        protected void RoamFollowOrWait()
         {
             Vector3 waitPos = GetWaitPosition();
-            if (waitPos == Vector3.negativeInfinity)
+            // we cant compare negative infinity with == because unity's == returns true for vectors that are almost
+            // equal.
+            if (waitPos.Equals(StatusFollowing))
             {
-                // either error, or more likely, simply unset
+                Player player = Player.GetAllPlayers().Find(p => BelongsToPlayer(p.GetPlayerName()));
+                if (player == null)
+                {
+                    Logger.LogError($"{name} should be following but has no associated player. Roaming instead.");
+                    Roam();
+                    return;
+                }
+                Follow(player.gameObject);
                 return;
             }
-            if (TryGetComponent(out MonsterAI monsterAI))
+            
+            if (waitPos.Equals(StatusRoaming))
             {
-                // create a temporary object. This has no ZDO so will be cleaned up
-                // after the session ends
-                GameObject waitObject = new GameObject(MinionWaitObjectName);
-                waitObject.transform.position = waitPos;
-                monsterAI.SetFollowTarget(waitObject);
+                Roam();
+                return;
             }
+
+            if (!TryGetComponent(out MonsterAI monsterAI))
+            {
+                Logger.LogError($"{name} cannot WaitAtRecordedPosition because it has no MonsterAI component.");
+                return;
+            }
+
+            // create a temporary object. This has no ZDO so will be cleaned up
+            // after the session ends
+            GameObject waitObject = new GameObject(MinionWaitObjectName);
+            waitObject.transform.position = waitPos;
+            monsterAI.m_randomMoveRange = 0;
+            monsterAI.SetFollowTarget(waitObject);
         }
         #endregion
 
@@ -286,13 +315,32 @@ namespace ChebsNecromancy.Minions
                 Destroy(currentFollowTarget);
             }
             // follow
+            RecordWaitPosition(StatusFollowing);
             monsterAI.SetFollowTarget(followObject);
         }
 
         public void Wait(Vector3 waitPosition)
         {
             RecordWaitPosition(waitPosition);
-            WaitAtRecordedPosition();
+            RoamFollowOrWait();
+        }
+
+        public void Roam()
+        {
+            RecordWaitPosition(StatusRoaming);
+            if (!TryGetComponent(out MonsterAI monsterAI))
+            {
+                Logger.LogError($"Cannot Roam because {name} has no MonsterAI component!");
+                return;
+            }
+            // clear out current wait object if it exists
+            GameObject currentFollowTarget = monsterAI.GetFollowTarget();
+            if (currentFollowTarget != null && currentFollowTarget.name == MinionWaitObjectName)
+            {
+                Destroy(currentFollowTarget);
+            }
+            monsterAI.m_randomMoveRange = RoamRange.Value;
+            monsterAI.SetFollowTarget(null);
         }
 
         #region CreatedAtLevelZDO
@@ -308,11 +356,15 @@ namespace ChebsNecromancy.Minions
             zNetView.GetZDO().Set(MinionCreatedAtLevelKey, necromancyLevel);
         }
 
-        public float GetCreatedAtLevel()
+        protected float GetCreatedAtLevel()
         {
-            return TryGetComponent(out ZNetView zNetView)
-                ? zNetView.GetZDO().GetFloat(MinionCreatedAtLevelKey, 1f)
-                : 1f;
+            if (!TryGetComponent(out ZNetView zNetView))
+            {
+                Logger.LogError($"Cannot read {MinionCreatedAtLevelKey} because it has no ZNetView component.");
+                return 1f;
+            }
+
+            return zNetView.GetZDO().GetFloat(MinionCreatedAtLevelKey, 1f);
         }
         #endregion
     }
