@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using ChebsNecromancy.Structures;
+using UnityEngine;
 
 namespace ChebsNecromancy.Minions
 {
