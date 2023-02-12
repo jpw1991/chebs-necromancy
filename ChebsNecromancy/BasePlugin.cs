@@ -34,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.7.6";
+        public const string PluginVersion = "1.8.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -49,6 +49,7 @@ namespace ChebsNecromancy
 
         private readonly SpectralShroud spectralShroudItem = new();
         private readonly NecromancerHood necromancersHoodItem = new();
+        private readonly OrbOfBeckoning orbOfBeckoningItem = new();
 
         private float inputDelay = 0;
 
@@ -115,6 +116,7 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
+            orbOfBeckoningItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
@@ -188,13 +190,15 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Items
-                // by great Cthulhu, this needs refactoring!
-                //
                 GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
+
+                GameObject attackTargetItemPrefab =
+                    LoadPrefabFromBundle(orbOfBeckoningItem.PrefabName, chebgonazAssetBundle);
+                ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(attackTargetItemPrefab));
 
                 // minion worn items
                 List<Item> minionWornItems = new()
@@ -301,8 +305,6 @@ namespace ChebsNecromancy
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
                 }
-                
-                prefabNames.a
 
                 prefabNames.ForEach(prefabName =>
                 {
