@@ -2,6 +2,7 @@
 using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
+using ChebsNecromancy.Minions;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -68,10 +69,18 @@ namespace ChebsNecromancy.Structures
             }
         }
 
-        protected GameObject SpawnNeckro()
+        protected void SpawnNeckro()
         {
+            // find nearest player and make them the owner
+            var player = Player.GetClosestPlayer(transform.position, NeckroGathererMinion.LookRadius.Value);
+            if (!player)
+            {
+                // no master? no neckro
+                return;
+            }
+            
             int neckTailsInInventory = Container.GetInventory().CountItems("$item_necktail");
-            if (neckTailsInInventory < NeckTailsConsumedPerSpawn.Value) return null;
+            if (neckTailsInInventory < NeckTailsConsumedPerSpawn.Value) return;
 
             Container.GetInventory().RemoveItem("$item_necktail", NeckTailsConsumedPerSpawn.Value);
 
@@ -82,7 +91,7 @@ namespace ChebsNecromancy.Structures
             if (!prefab)
             {
                 Logger.LogError($"spawning {prefabName} failed!");
-                return null;
+                return;
             }
 
             GameObject spawnedChar = Instantiate(
@@ -92,8 +101,8 @@ namespace ChebsNecromancy.Structures
 
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
-
-            return spawnedChar;
+            
+            spawnedChar.GetComponent<NeckroGathererMinion>().SetUndeadMinionMaster(player.GetPlayerName());
         }
     }
 }

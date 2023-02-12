@@ -41,12 +41,12 @@ namespace ChebsNecromancy.Minions
             _createdOrderIncrementer++;
             createdOrder = _createdOrderIncrementer;
 
-            StartCoroutine(WaitForLocalPlayer());
+            StartCoroutine(WaitForZNet());
         }
 
-        IEnumerator WaitForLocalPlayer()
+        IEnumerator WaitForZNet()
         {
-            yield return new WaitUntil(() => Player.m_localPlayer != null);
+            yield return new WaitUntil(() => ZNetScene.instance != null);
 
             ScaleStats(GetCreatedAtLevel());
 

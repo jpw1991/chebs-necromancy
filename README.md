@@ -112,6 +112,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+11/02/2023 | 1.7.7 | Neckro pylons only spawn neckros if a player is nearby and that player takes ownership of the Neckro; fix bug that permitted non-admins to use some commands; optimise draugr & skeleton Awake scaling
 10/02/2023 | 1.7.6 | Dracbjorn's config overhaul; optimise imports
 09/02/2023 | 1.7.5 | Neckro messages hideable; Neckro messages improved
 07/02/2023 | 1.7.4 | refueler pylons can now refuel fireplaces eg. torches, bonfires, etc.
