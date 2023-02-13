@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 4059283135
+CRC: 1336517061
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 834234ff5af20e599fa2029c7936598c
+    Hash: 53d4a5440ec45c8b431def4ce2121efe
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e5a5fdaf42e1ae883332b1ba516d29a8
+    Hash: 6eb219295a5db1ca965c92437463daa2
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -50,11 +50,13 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
   Script: {fileID: 1109157524, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 927819712, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
+  Script: {fileID: 2053127972, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 825357479, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -96,8 +98,6 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1404409730, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
-  Script: {fileID: 2053127972, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
   Script: {fileID: -585565762, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 829610738, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -136,6 +136,8 @@ ClassTypes:
 - Class: 137
   Script: {instanceID: 0}
 - Class: 144
+  Script: {instanceID: 0}
+- Class: 153
   Script: {instanceID: 0}
 - Class: 165
   Script: {instanceID: 0}
@@ -189,17 +191,20 @@ Assets:
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWarriorTier2.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonClub.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_drop.mat
+- Assets/_ChebGonaz/SkeletonWoodcutter/ChebGonaz_SkeletonWoodAxe.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetBronze.mat
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_FireballLevel1.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetLeatherPoison.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylonGhost.prefab
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherTier3.prefab
+- Assets/_ChebGonaz/SkeletonWoodcutter/ChebGonaz_SkeletonWoodcutter.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetLeather.prefab
 - Assets/_ChebGonaz/chebgonaz_batpylon_icon.png
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonBow2.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWarriorTier3.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcher.prefab
 - Assets/_ChebGonaz/ChebGonaz_BatBeacon.prefab
+- Assets/_ChebGonaz/ChebGonaz_OrbOfBeckoningProjectile.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrMat.mat
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor.asset
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherTier2.prefab
@@ -216,6 +221,8 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_Bat.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_SkeletonMageCirclet.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronChest.prefab
+- Assets/_ChebGonaz/ChebGonaz_OrbOfBeckoningProjectile.mat
+- Assets/_ChebGonaz/sfx_orbofbeckoning_launch.prefab
 - Assets/_ChebGonaz/Neckro/ChebGonaz_Neckro.mat
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGatherer.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_ArmorBlackIronLegs.prefab
@@ -232,6 +239,7 @@ Assets:
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWarrior.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_mat.mat
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetIron.prefab
+- Assets/_ChebGonaz/ChebGonaz_OrbOfBeckoning.prefab
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/draugr_staff_icon.png
@@ -244,9 +252,11 @@ Assets:
 - Assets/_ChebGonaz/ChebGonaz_SpectralShroud.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.mat
 - Assets/_ChebGonaz/ChebGonaz_RefuelerPylon.mat
+- Assets/_ChebGonaz/chebgonaz_batlantern_icon.png
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetLeather.mat
 - Assets/_ChebGonaz/chebgonaz_spiritpylon_icon.png
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_SkeletonMageCircletStone.mat
+- Assets/_ChebGonaz/ChebGonaz_BatLantern.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_FireballLevel2.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_SkeletonMage.prefab
 - Assets/_ChebGonaz/skeleton_staff_icon.png

@@ -286,7 +286,6 @@ namespace ChebsNecromancy.Items
             if (FollowButton != null) buttonConfigs.Add(FollowButton);
             if (WaitButton != null) buttonConfigs.Add(WaitButton);
             if (TeleportButton != null) buttonConfigs.Add(TeleportButton);
-            if (AttackTargetButton != null) buttonConfigs.Add(AttackTargetButton);
 
             return new KeyHintConfig
             {
@@ -342,11 +341,6 @@ namespace ChebsNecromancy.Items
             if (TeleportButton != null && ZInput.GetButton(TeleportButton.Name))
             {
                 TeleportFollowingMinionsToPlayer(Player.m_localPlayer);
-                return true;
-            }
-            if (AttackTargetButton != null && ZInput.GetButton(AttackTargetButton.Name))
-            {
-                MakeFollowingMinionsAttackTarget(Player.m_localPlayer);
                 return true;
             }
 

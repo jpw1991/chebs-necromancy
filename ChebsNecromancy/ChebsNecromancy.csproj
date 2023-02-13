@@ -134,6 +134,11 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
+    <Compile Include="Items\OrbOfBeckoning.cs" />
+    <Compile Include="Items\SkeletonWoodAxe.cs" />
+    <Compile Include="Minions\AI\WoodcutterAI.cs" />
+    <Compile Include="Minions\SkeletonWoodcutter.cs" />
     <Compile Include="Common\ChebsRecipe.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />
@@ -181,6 +186,7 @@
     <Compile Include="Commands\SetMinionOwnership.cs" />
     <Compile Include="Minions\FreshMinion.cs" />
     <Compile Include="Structures\BatBeacon.cs" />
+    <Compile Include="Structures\BatLantern.cs" />
     <Compile Include="Structures\NeckroGathererPylon.cs" />
     <Compile Include="Structures\RefuelerPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />

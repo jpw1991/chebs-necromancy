@@ -34,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.7.9";
+        public const string PluginVersion = "1.8.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -49,6 +49,7 @@ namespace ChebsNecromancy
 
         private readonly SpectralShroud spectralShroudItem = new();
         private readonly NecromancerHood necromancersHoodItem = new();
+        private readonly OrbOfBeckoning orbOfBeckoningItem = new();
 
         private float inputDelay = 0;
 
@@ -115,11 +116,13 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
+            orbOfBeckoningItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
             NeckroGathererPylon.CreateConfigs(this);
             BatBeacon.CreateConfigs(this);
+            BatLantern.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -188,14 +191,27 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Items
-                // by great Cthulhu, this needs refactoring!
-                //
                 GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
+                // // //
+                // Orb of Beckoning
+                //
+                // Add custom projectile script and amke sure the item is using it as its projectile object.
+                GameObject orbOfBeckoningProjectilePrefab = 
+                    LoadPrefabFromBundle(orbOfBeckoningItem.ProjectilePrefabName, chebgonazAssetBundle);
+                orbOfBeckoningProjectilePrefab.AddComponent<OrbOfBeckoningProjectile>();
+                
+                GameObject orbOfBeckoningItemPrefab =
+                    LoadPrefabFromBundle(orbOfBeckoningItem.PrefabName, chebgonazAssetBundle);
+                orbOfBeckoningItemPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
+                    orbOfBeckoningProjectilePrefab;
+                ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(orbOfBeckoningItemPrefab));
+                // // //
+                
                 // minion worn items
                 List<Item> minionWornItems = new()
                 {
@@ -221,8 +237,9 @@ namespace ChebsNecromancy
                     new SkeletonHelmetBlackIronPoison(),
                     new SkeletonHelmetLeatherPoison(),
                     new SkeletonHelmetBronzePoison(),
+                    new SkeletonWoodAxe()
                 };
-                minionWornItems.ForEach((minionItem) =>
+                minionWornItems.ForEach(minionItem =>
                 {
                     GameObject minionItemPrefab = LoadPrefabFromBundle(minionItem.PrefabName, chebgonazAssetBundle);
                     ItemManager.Instance.AddItem(minionItem.GetCustomItemFromPrefab(minionItemPrefab));
@@ -308,8 +325,7 @@ namespace ChebsNecromancy
                     if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
 
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
-                }
-                    );
+                });
                 #endregion
 
                 #region Structures   
@@ -336,6 +352,12 @@ namespace ChebsNecromancy
                     BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
                     chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
                     );
+                
+                GameObject batLanternPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatLantern.ChebsRecipeConfig.PrefabName);
+                PieceManager.Instance.AddPiece(
+                    BatLantern.ChebsRecipeConfig.GetCustomPieceFromPrefab(batLanternPrefab,
+                        chebgonazAssetBundle.LoadAsset<Sprite>(BatLantern.ChebsRecipeConfig.IconName))
+                );
                 #endregion
             }
             catch (Exception ex)
@@ -347,8 +369,6 @@ namespace ChebsNecromancy
                 chebgonazAssetBundle.Unload(false);
             }
         }
-
-
 
         private void AddNecromancy()
         {
@@ -461,6 +481,13 @@ namespace ChebsNecromancy
                     if (__instance.GetComponent<BatBeacon>() == null)
                     {
                         __instance.gameObject.AddComponent<BatBeacon>();
+                    }
+                }
+                else if (__instance.name.Contains("BatLantern"))
+                {
+                    if (__instance.GetComponent<BatLantern>() == null)
+                    {
+                        __instance.gameObject.AddComponent<BatLantern>();
                     }
                 }
             }

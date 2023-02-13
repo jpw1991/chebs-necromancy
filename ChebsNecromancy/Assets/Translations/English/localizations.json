@@ -11,6 +11,9 @@
   
   "item_chebgonaz_necromancerhood": "Necromancer's Hood",
   "item_chebgonaz_necromancerhood_desc": "This hood smells earthy; of gravedust, and blood.",
+  
+  "item_chebgonaz_orbofbeckoning": "Orb of Beckoning",
+  "item_chebgonaz_orbofbeckoning_desc": "Tar infused with wails of the dead - minions are drawn to its call.",
 
   "chebgonaz_guardianwraith": "Guardian Wraith",
   
@@ -26,6 +29,9 @@
   
   "chebgonaz_batbeacon_name": "Bat Beacon",
   "chebgonaz_batbeacon_desc": "Enemies that approach this baleful flame will find themselves beset upon by winged flappers.",
+  
+  "chebgonaz_batlantern_name": "Bat Lantern",
+  "chebgonaz_batlantern_desc": "Enemies that approach this baleful flame will find themselves beset upon by winged flappers.",
   
   "chebgonaz_notyourminion": "You don't own this minion and it ignores you.",
   "chebgonaz_wait": "Wait",
