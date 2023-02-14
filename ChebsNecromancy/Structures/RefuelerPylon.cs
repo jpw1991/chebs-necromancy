@@ -4,12 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
-using ChebsNecromancy.Common;
 using UnityEngine;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class RefuelerPylon : MonoBehaviour
+    internal class RefuelerPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
@@ -18,20 +17,17 @@ namespace ChebsNecromancy.Structures
         protected readonly int PieceMask = LayerMask.GetMask("piece");
         protected Container Container;
 
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public override void CreateConfigs(BasePlugin plugin)
         {
-            DefaultRecipe = "Stone:15,Coal:15,BoneFragments:15,SurtlingCore:1",
-            IconName = "chebgonaz_refuelerpylon_icon.png",
-            PieceTable = "_HammerPieceTable",
-            PieceCategory = "Misc",
-            PieceName = "$chebgonaz_refuelerpylon_name",
-            PieceDescription = "$chebgonaz_refuelerpylon_desc",
-            PrefabName = "ChebGonaz_RefuelerPylon.prefab",
-            ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
-        };
+            ChebsRecipeConfig.DefaultRecipe = "Stone:15,Coal:15,BoneFragments:15,SurtlingCore:1";
+            ChebsRecipeConfig.IconName = "chebgonaz_refuelerpylon_icon.png";
+            ChebsRecipeConfig.PieceTable = "_HammerPieceTable";
+            ChebsRecipeConfig.PieceCategory = "Misc";
+            ChebsRecipeConfig.RecipeName = "$chebgonaz_refuelerpylon_name";
+            ChebsRecipeConfig.RecipeDescription = "$chebgonaz_refuelerpylon_desc";
+            ChebsRecipeConfig.PrefabName = "ChebGonaz_RefuelerPylon.prefab";
+            ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
 
-        public static void CreateConfigs(BasePlugin plugin)
-        {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
                 "Whether making a Refueler Pylon is allowed or not.", plugin.BoolValue, true);
 

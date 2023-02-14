@@ -11,18 +11,18 @@ namespace ChebsNecromancy.CustomPrefabs
         public static ConfigEntry<bool> Allowed;
         public static ConfigEntry<int> ContainerHeight, ContainerWidth;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
 
-            Allowed = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "LargeCargoCrateAllowed",
+            Allowed = plugin.ModConfig("NecroNeckGatherer (Server Synced)", "LargeCargoCrateAllowed",
                 true, new ConfigDescription("Disallowing this will cause the ChebGonaz_LargeCargoCrate to not be loaded. Attention: it is essential for the correct functioning of the NecroNeck Gatherer minion.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            ContainerHeight = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "LargeCargoCrateHeight",
+            ContainerHeight = plugin.ModConfig("NecroNeckGatherer (Server Synced)", "LargeCargoCrateHeight",
                 2, new ConfigDescription("Container slots = containerHeight * containerWidth = 5*5 = 25", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            ContainerWidth = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "LargeCargoCrateWidth",
+            ContainerWidth = plugin.ModConfig("NecroNeckGatherer (Server Synced)", "LargeCargoCrateWidth",
                 2, new ConfigDescription("Container slots = containerHeight * containerWidth = 5*5 = 25", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }

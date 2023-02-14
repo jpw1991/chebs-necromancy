@@ -1,28 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
+using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Common;
 using Jotunn;
 using Jotunn.Configs;
-using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.PlayerItems
 {
     internal class DraugrWand : Wand
     {
         #region ConfigEntries
         public static ConfigEntry<int> MaxDraugr;
-
-        public static ConfigEntry<CraftingTable> CraftingStationRequired;
-        public static ConfigEntry<int> CraftingStationLevel;
-
-        public static ConfigEntry<string> CraftingCost;
-
         public static ConfigEntry<bool> DraugrAllowed;
 
         public static ConfigEntry<float> DraugrBaseHealth;
@@ -47,109 +41,93 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<int> DraugrBoneFragmentsRequiredConfig;
         public static ConfigEntry<int> DraugrMeatRequiredConfig;
         #endregion
-
-        public override string ItemName => "ChebGonaz_DraugrWand";
-        public override string PrefabName => "ChebGonaz_DraugrWand.prefab";
-        protected override string DefaultRecipe => "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1";
-
-        public override void CreateConfigs(BaseUnityPlugin plugin)
+        public override void CreateConfigs(BasePlugin plugin)
         {
+
+            ChebsRecipeConfig.DefaultRecipe = "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1";
+            ChebsRecipeConfig.RecipeName = "$item_friendlyskeletonwand_DraugrWand";
+            ChebsRecipeConfig.ItemName = "ChebGonaz_DraugrWand";
+            ChebsRecipeConfig.RecipeDescription = "$item_friendlyskeletonwand_draugrWand_desc";
+            ChebsRecipeConfig.PrefabName = "ChebGonaz_DraugrWand.prefab";
+            ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
+
             base.CreateConfigs(plugin);
+                      
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "Allowed",
+                true, "Whether crafting a Draugr Wand is allowed or not.", plugin.BoolValue, true);
 
-            DraugrSetFollowRange = plugin.Config.Bind("DraugrWand (Client)", "DraugrCommandRange",
-                10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
+            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingStation",
+                ChebsRecipe.EcraftingTable.Forge, "Crafting station where Draugr Wand is available", null, true);
 
-            Allowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandAllowed",
-                true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingStationLevel",
+                1, "Crafting station level required to craft Draugr Wand", plugin.IntQuantityValue, true);
 
-            CraftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStation",
-                CraftingTable.Forge, new ConfigDescription("Crafting station where Draugr Wand is available", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingCosts",
+               ChebsRecipeConfig.DefaultRecipe, "Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null, true);
 
-            CraftingStationLevel = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStationLevel",
-                1, new ConfigDescription("Crafting station level required to craft Draugr Wand", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrSetFollowRange = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrCommandRange",
+                10f, "The range from which nearby Draugr will hear your command.", plugin.FloatQuantityValue);
 
-            CraftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingCosts",
-               DefaultRecipe, new ConfigDescription("Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrAllowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrAllowed",
+                true, "If false, draugr aren't loaded at all and can't be summoned.", null, true);
 
-            DraugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",
-                true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrBaseHealth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrBaseHealth",
+                100f, "HP = BaseHealth + NecromancyLevel * HealthMultiplier", plugin.FloatQuantityValue, true);
 
-            DraugrBaseHealth = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBaseHealth",
-                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrHealthMultiplier = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrHealthMultiplier",
+                5f, "HP = BaseHealth + NecromancyLevel * HealthMultiplier", plugin.FloatQuantityValue, true);
 
-            DraugrHealthMultiplier = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrHealthMultiplier",
-                5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrTierOneQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrTierOneQuality",
+                1, "Star Quality of tier 1 Draugr minions", plugin.IntQuantityValue, true);
 
-            DraugrTierOneQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierOneQuality",
-                1, new ConfigDescription("Star Quality of tier 1 Draugr minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrTierTwoQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrTierTwoQuality",
+                2, "Star Quality of tier 2 Draugr minions", plugin.IntQuantityValue, true);
 
-            DraugrTierTwoQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoQuality",
-                2, new ConfigDescription("Star Quality of tier 2 Draugr minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrTierTwoLevelReq = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrTierTwoLevelReq",
+                35, "Necromancy skill level required to summon Tier 2 Draugr", plugin.IntQuantityValue, true);
 
-            DraugrTierTwoLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoLevelReq",
-                35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Draugr", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrTierThreeQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrTierThreeQuality",
+                3, "Star Quality of tier 3 Draugr minions", plugin.IntQuantityValue, true);
 
-            DraugrTierThreeQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeQuality",
-                3, new ConfigDescription("Star Quality of tier 3 Draugr minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrTierThreeLevelReq = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrTierThreeLevelReq",
+                70, "Necromancy skill level required to summon Tier 3 Draugr", plugin.IntQuantityValue, true);
 
-            DraugrTierThreeLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeLevelReq",
-                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Draugr", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrMeatRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrMeatRequired",
+                1, "How many pieces of meat it costs to make a Draugr.", plugin.IntQuantityValue, true);
 
-            DraugrMeatRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrMeatRequired",
-                1, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrBoneFragmentsRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrBoneFragmentsRequired",
+                3, "How many bone fragments it costs to make a Draugr.", plugin.IntQuantityValue, true);
 
-            DraugrBoneFragmentsRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBoneFragmentsRequired",
-                3, new ConfigDescription("How many bone fragments it costs to make a Draugr.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            necromancyLevelIncrease = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DraugrNecromancyLevelIncrease",
+                1.5f, "How much creating a Draugr contributes to your Necromancy level increasing.", plugin.FloatQuantityValue, true);
 
-            necromancyLevelIncrease = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrNecromancyLevelIncrease",
-                1.5f, new ConfigDescription("How much creating a Draugr contributes to your Necromancy level increasing.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            MaxDraugr = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "MaximumDraugr",
+                0, "The maximum Draugr allowed to be created (0 = unlimited).", plugin.IntQuantityValue, true);
 
-            MaxDraugr = plugin.Config.Bind("DraugrWand (Server Synced)", "MaximumDraugr",
-                0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamage",
+                true, "Whether using a Draugr Wand damages its durability.", null, true);
 
-            DurabilityDamage = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamage",
-                true, new ConfigDescription("Whether using a Draugr Wand damages its durability.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageWarrior = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageWarrior",
+                1f, "How much creating a warrior damages the wand.", plugin.FloatQuantityValue, true);
 
-            DurabilityDamageWarrior = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageWarrior",
-                1f, new ConfigDescription("How much creating a warrior damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageArcher = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageArcher",
+                3f, "How much creating an archer damages the wand.", plugin.FloatQuantityValue, true);
 
-            DurabilityDamageArcher = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageArcher",
-                3f, new ConfigDescription("How much creating an archer damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageLeather = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageLeather",
+                1f, "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamageLeather = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageLeather",
-                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageBronze = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBronze",
+                1f, "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamageBronze = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageBronze",
-                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageIron",
+                1f, "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamageIron = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageIron",
-                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageBlackIron = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageBlackIron",
-                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageBlackIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBlackIron",
+                1f, "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", 
+                plugin.FloatQuantityValue, true);
         }
 
         public override void CreateButtons()
@@ -161,51 +139,9 @@ namespace ChebsNecromancy.Items
 
         }
 
-        public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
-        {
-            ItemConfig config = new ItemConfig();
-            config.Name = "$item_friendlyskeletonwand_draugrwand";
-            config.Description = "$item_friendlyskeletonwand_draugrwand_desc";
-
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                SetRecipeReqs(
-                    config,
-                    CraftingCost,
-                    CraftingStationRequired,
-                    CraftingStationLevel
-                );
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            CustomItem customItem = new CustomItem(prefab, false, config);
-            if (customItem == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
-            if (customItem.ItemPrefab == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
-                return null;
-            }
-            // make sure the set effect is applied
-            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = BasePlugin.SetEffectNecromancyArmor;
-
-            return customItem;
-        }
-
         public override KeyHintConfig GetKeyHint()
         {
-            List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
+            List<ButtonConfig> buttonConfigs = new();
 
             if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
             if (CreateArcherMinionButton != null) buttonConfigs.Add(CreateArcherMinionButton);
@@ -226,7 +162,7 @@ namespace ChebsNecromancy.Items
             if (MessageHud.instance != null
                     && Player.m_localPlayer != null
                     && Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
-                        equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_draugrwand")
+                        equippedItem => equippedItem.TokenName().Equals(ChebsRecipeConfig.RecipeName)
                         ) != null
                     )
             {
@@ -239,7 +175,6 @@ namespace ChebsNecromancy.Items
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         DraugrBoneFragmentsRequiredConfig.Value,
                         DraugrMeatRequiredConfig.Value,
-                        necromancyLevelIncrease.Value,
                         false
                         );
                     return true;
@@ -249,7 +184,6 @@ namespace ChebsNecromancy.Items
                     SpawnFriendlyDraugr(Player.m_localPlayer,
                         DraugrBoneFragmentsRequiredConfig.Value,
                         DraugrMeatRequiredConfig.Value,
-                        necromancyLevelIncrease.Value,
                         true
                         );
                     return true;
@@ -285,7 +219,7 @@ namespace ChebsNecromancy.Items
             return false;
         }
 
-        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
+        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, bool archer)
         {
             if (!DraugrAllowed.Value) return;
 
@@ -302,7 +236,7 @@ namespace ChebsNecromancy.Items
 
             if (meatRequired > 0)
             {
-                List<string> allowedMeatTypes = new List<string>()
+                List<string> allowedMeatTypes = new()
                 {
                     "$item_meat_rotten",
                     "$item_boar_meat",
@@ -315,7 +249,7 @@ namespace ChebsNecromancy.Items
                     "$item_chicken_meat",
                     "$item_hare_meat",
                 };
-                Dictionary<string, int> meatTypesFound = new Dictionary<string, int>();
+                Dictionary<string, int> meatTypesFound = new();
                 int meatInInventory = 0;
                 allowedMeatTypes.ForEach(meatTypeStr =>
                 {
@@ -339,7 +273,7 @@ namespace ChebsNecromancy.Items
 
                 // consume the meat
                 int meatConsumed = 0;
-                Stack<Tuple<string, int>> meatToConsume = new Stack<Tuple<string, int>>();
+                Stack<Tuple<string, int>> meatToConsume = new();
                 foreach (string key in meatTypesFound.Keys)
                 {
                     if (meatConsumed >= meatRequired) { break; }
@@ -575,7 +509,7 @@ namespace ChebsNecromancy.Items
             int result = 0;
             // based off BaseAI.FindClosestCreature
             List<Character> allCharacters = Character.GetAllCharacters();
-            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
+            List<Tuple<int, Character>> minionsFound = new();
 
             foreach (Character item in allCharacters)
             {

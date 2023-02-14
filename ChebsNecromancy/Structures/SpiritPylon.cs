@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
-using ChebsNecromancy.Common;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class SpiritPylon : MonoBehaviour
+    internal class SpiritPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> GhostDuration;
@@ -19,20 +18,17 @@ namespace ChebsNecromancy.Structures
         protected List<GameObject> SpawnedGhosts = new();
         private float ghostLastSpawnedAt;
 
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public override void CreateConfigs(BasePlugin plugin)
         {
-            DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1",
-            IconName = "chebgonaz_spiritpylon_icon.png",
-            PieceTable = "_HammerPieceTable",
-            PieceCategory = "Misc",
-            PieceName = "$chebgonaz_spiritpylon_name",
-            PieceDescription = "$chebgonaz_spiritpylon_desc",
-            PrefabName = "ChebGonaz_SpiritPylon.prefab",
-            ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
-    };
+            ChebsRecipeConfig.DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1";
+            ChebsRecipeConfig.IconName = "chebgonaz_spiritpylon_icon.png";
+            ChebsRecipeConfig.PieceTable = "_HammerPieceTable";
+            ChebsRecipeConfig.PieceCategory = "Misc";
+            ChebsRecipeConfig.RecipeName = "$chebgonaz_spiritpylon_name";
+            ChebsRecipeConfig.RecipeDescription = "$chebgonaz_spiritpylon_desc";
+            ChebsRecipeConfig.PrefabName = "ChebGonaz_SpiritPylon.prefab";
+            ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
 
-        public static void CreateConfigs(BasePlugin plugin)
-        {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonAllowed", true,
                 "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
 

@@ -1,33 +1,32 @@
 ﻿using System.Collections;
 using System.Reflection;
+using System.Security.AccessControl;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using UnityEngine;
+using static Piece;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class NeckroGathererPylon : MonoBehaviour
+    internal class NeckroGathererPylon : Structure
     {
         public static ConfigEntry<float> SpawnInterval;
         public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
 
         protected Container Container;
         
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public override void CreateConfigs(BasePlugin plugin)
         {
-            DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1",
-            IconName = "chebgonaz_neckrogathererpylon_icon.png",
-            PieceTable = "_HammerPieceTable",
-            PieceCategory = "Misc",
-            PieceName = "$chebgonaz_neckrogathererpylon_name",
-            PieceDescription = "$chebgonaz_neckrogathererpylon_desc",
-            PrefabName = "ChebGonaz_NeckroGathererPylon.prefab",
-            ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
-        };
+            ChebsRecipeConfig.DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1";
+            ChebsRecipeConfig.IconName = "chebgonaz_neckrogathererpylon_icon.png";
+            ChebsRecipeConfig.PieceTable = "_HammerPieceTable";
+            ChebsRecipeConfig.PieceCategory = "Misc";
+            ChebsRecipeConfig.RecipeName = "$chebgonaz_neckrogathererpylon_name";
+            ChebsRecipeConfig.RecipeDescription = "$chebgonaz_neckrogathererpylon_desc";
+            ChebsRecipeConfig.PrefabName = "ChebGonaz_NeckroGathererPylon.prefab";
+            ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
 
-        public static void CreateConfigs(BasePlugin plugin)
-        {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonAllowed", true,
                 "Whether making a the pylon is allowed or not.", plugin.BoolValue, true);
 

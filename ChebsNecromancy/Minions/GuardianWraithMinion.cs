@@ -11,12 +11,12 @@ namespace ChebsNecromancy.Minions
 
         private float killAt;
 
-        public new static void CreateConfigs(BaseUnityPlugin plugin)
+        public new static void CreateConfigs(BasePlugin plugin)
         {
-            GuardianWraithLevelRequirement = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithLevelRequirement",
+            GuardianWraithLevelRequirement = plugin.ModConfig("SpectralShroud (Server Synced)", "GuardianWraithLevelRequirement",
                 25, new ConfigDescription("The Necromancy level required to control a Guardian Wraith.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            GuardianWraithDuration = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithDuration",
+            GuardianWraithDuration = plugin.ModConfig("SpectralShroud (Server Synced)", "GuardianWraithDuration",
                 10, new ConfigDescription("The lifetime of a Guardian Wraith.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }

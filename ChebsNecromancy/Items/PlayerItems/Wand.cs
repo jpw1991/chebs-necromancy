@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
-using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
 using Jotunn.Configs;
+using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.PlayerItems
 {
     internal class Wand : Item
     {
+        #region ConfigEntries
         public static ConfigEntry<bool> FollowByDefault;
 
         public ConfigEntry<KeyCode> CreateMinionConfig;
@@ -38,60 +39,62 @@ namespace ChebsNecromancy.Items
 
         public ConfigEntry<KeyCode> UnlockExtraResourceConsumptionConfig;
         public ButtonConfig UnlockExtraResourceConsumptionButton;
+        #endregion ConfigEntries
 
         public bool ExtraResourceConsumptionUnlocked = false;
-
         private GameObject targetObject;
 
-        public override void CreateConfigs(BaseUnityPlugin plugin)
+        public override void CreateConfigs(BasePlugin plugin)
         {
-            FollowByDefault = plugin.Config.Bind("Wands (Client)", "FollowByDefault",
-                false, new ConfigDescription("Whether minions will automatically be set to follow upon being created or not."));
+            FollowByDefault = plugin.ModConfig("Wands", "FollowByDefault",
+                false,"Whether minions will automatically be set to follow upon being created or not.", plugin.BoolValue);
 
-            CreateMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateMinion",
-                KeyCode.B, new ConfigDescription("The key to create a warrior minion with."));
+            CreateMinionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "CreateMinion",
+                KeyCode.B, "The key to create a warrior minion with.");
 
-            CreateMinionGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateMinionGamepad",
-                InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("The key to gamepad button to create a warrior minion with."));
+            CreateMinionGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "CreateMinionGamepad",
+                InputManager.GamepadButton.ButtonSouth, "The key to gamepad button to create a warrior minion with.");
 
-            CreateArcherMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateArcher",
-                KeyCode.H, new ConfigDescription("The key to create an archer minion with."));
+            CreateArcherMinionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"CreateArcher",
+                KeyCode.H, "The key to create an archer minion with.");
 
-            CreateArcherMinionGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateArcherGamepad",
-                InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("The key to gamepad button to create an archer minion with."));
+            CreateArcherMinionGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"CreateArcherGamepad",
+                InputManager.GamepadButton.ButtonSouth, "The key to gamepad button to create an archer minion with.");
 
-            FollowConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Follow",
-                KeyCode.F, new ConfigDescription("The key to tell minions to follow."));
+            FollowConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Follow",
+                KeyCode.F, "The key to tell minions to follow.");
 
-            FollowGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"FollowGamepad",
-                InputManager.GamepadButton.ButtonWest,
-                new ConfigDescription("The gamepad button to tell minions to follow."));
+            FollowGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"FollowGamepad",
+                InputManager.GamepadButton.ButtonWest, "The gamepad button to tell minions to follow.");
 
-            WaitConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Wait",
-                KeyCode.T, new ConfigDescription("The key to tell minions to wait."));
+            WaitConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Wait",
+                KeyCode.T, "The key to tell minions to wait.");
 
-            WaitGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"WaitGamepad",
-                InputManager.GamepadButton.ButtonEast,
-                new ConfigDescription("The gamepad button to tell minions to wait."));
+            WaitGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"WaitGamepad",
+                InputManager.GamepadButton.ButtonEast, "The gamepad button to tell minions to wait.");
 
-            TeleportConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Teleport",
-                KeyCode.G, new ConfigDescription("The key to teleport following minions to you."));
+            TeleportConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Teleport",
+                KeyCode.G, "The key to teleport following minions to you.");
 
-            TeleportGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"TeleportGamepad",
-                InputManager.GamepadButton.SelectButton,
-                new ConfigDescription("The gamepad button to teleport following minions to you."));
+            TeleportGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"TeleportGamepad",
+                InputManager.GamepadButton.SelectButton, "The gamepad button to teleport following minions to you.");
 
-            AttackTargetConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Target",
-                KeyCode.R, new ConfigDescription("The key to tell minions to go to a specific target."));
+            AttackTargetConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Target",
+                KeyCode.R, "The key to tell minions to go to a specific target.");
 
-            AttackTargetGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"TargetGamepad",
-                InputManager.GamepadButton.StartButton,
-                new ConfigDescription("The gamepad button to tell minions to go to a specific target."));
+            AttackTargetGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"TargetGamepad",
+                InputManager.GamepadButton.StartButton, "The gamepad button to tell minions to go to a specific target.");
 
-            UnlockExtraResourceConsumptionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName + "UnlockExtraResourceConsumption",
-                KeyCode.LeftShift, new ConfigDescription("The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton."));
+            UnlockExtraResourceConsumptionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "UnlockExtraResourceConsumption",
+                KeyCode.LeftShift, "The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton.");
+        }
+        public CustomItem GetCustomItemFromPrefab(GameObject prefab)
+        {
+            CustomItem customItem = ChebsRecipeConfig.GetCustomItemFromPrefab<CustomItem>(prefab);
+
+            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = BasePlugin.SetEffectNecromancyArmor;
+
+            return customItem;
         }
 
         public virtual void CreateButtons()
@@ -100,7 +103,7 @@ namespace ChebsNecromancy.Items
             {
                 CreateMinionButton = new ButtonConfig
                 {
-                    Name = ItemName + "CreateMinion",
+                    Name = ChebsRecipeConfig.ObjectName + "CreateMinion",
                     Config = CreateMinionConfig,
                     GamepadConfig = CreateMinionGamepadConfig,
                     HintToken = "$friendlyskeletonwand_create",
@@ -113,7 +116,7 @@ namespace ChebsNecromancy.Items
             {
                 CreateArcherMinionButton = new ButtonConfig
                 {
-                    Name = ItemName + "CreateArcherMinion",
+                    Name = ChebsRecipeConfig.ObjectName + "CreateArcherMinion",
                     Config = CreateArcherMinionConfig,
                     GamepadConfig = CreateArcherMinionGamepadConfig,
                     HintToken = "$friendlyskeletonwand_create_archer",
@@ -126,7 +129,7 @@ namespace ChebsNecromancy.Items
             {
                 FollowButton = new ButtonConfig
                 {
-                    Name = ItemName + "Follow",
+                    Name = ChebsRecipeConfig.ObjectName + "Follow",
                     Config = FollowConfig,
                     GamepadConfig = FollowGamepadConfig,
                     HintToken = "$friendlyskeletonwand_follow",
@@ -139,7 +142,7 @@ namespace ChebsNecromancy.Items
             {
                 WaitButton = new ButtonConfig
                 {
-                    Name = ItemName + "Wait",
+                    Name = ChebsRecipeConfig.ObjectName + "Wait",
                     Config = WaitConfig,
                     GamepadConfig = WaitGamepadConfig,
                     HintToken = "$friendlyskeletonwand_wait",
@@ -152,7 +155,7 @@ namespace ChebsNecromancy.Items
             {
                 TeleportButton = new ButtonConfig
                 {
-                    Name = ItemName + "Teleport",
+                    Name = ChebsRecipeConfig.ObjectName + "Teleport",
                     Config = TeleportConfig,
                     GamepadConfig = TeleportGamepadConfig,
                     HintToken = "$friendlyskeletonwand_teleport",
@@ -165,7 +168,7 @@ namespace ChebsNecromancy.Items
             {
                 AttackTargetButton = new ButtonConfig
                 {
-                    Name = ItemName + "AttackTarget",
+                    Name = ChebsRecipeConfig.ObjectName + "AttackTarget",
                     Config = AttackTargetConfig,
                     GamepadConfig = AttackTargetGamepadConfig,
                     HintToken = "$friendlyskeletonwand_attacktarget",
@@ -178,7 +181,7 @@ namespace ChebsNecromancy.Items
             {
                 UnlockExtraResourceConsumptionButton = new ButtonConfig
                 {
-                    Name = ItemName + "UnlockExtraResourceConsumption",
+                    Name = ChebsRecipeConfig.ObjectName + "UnlockExtraResourceConsumption",
                     Config = UnlockExtraResourceConsumptionConfig,
                     //GamepadConfig = AttackTargetGamepadConfig,
                     HintToken = "$friendlyskeletonwand_unlockextraresourceconsumption",

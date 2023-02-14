@@ -55,17 +55,17 @@ namespace ChebsNecromancy.Minions
         private Vector3 StatusRoaming => Vector3.negativeInfinity;
         private Vector3 StatusFollowing => Vector3.positiveInfinity;
 
-        public static void CreateConfigs(BaseUnityPlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
-            CleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
+            CleanupAfter = plugin.ModConfig("UndeadMinion (Server Synced)", "CleanupAfter",
                 CleanupType.None, new ConfigDescription("Whether a minion should be cleaned up or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            CleanupDelay = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupDelay",
+            CleanupDelay = plugin.ModConfig("UndeadMinion (Server Synced)", "CleanupDelay",
                 300, new ConfigDescription("The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            Commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
+            Commandable = plugin.ModConfig("UndeadMinion (Client)", "Commandable",
                 true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
-            RoamRange = plugin.Config.Bind("UndeadMinion (Client)", "RoamRange",
+            RoamRange = plugin.ModConfig("UndeadMinion (Client)", "RoamRange",
                 10f, new ConfigDescription("How far a unit is allowed to roam from its current position."));
         }
 

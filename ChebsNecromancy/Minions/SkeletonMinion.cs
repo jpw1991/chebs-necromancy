@@ -25,13 +25,13 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<DropType> DropOnDeath;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
 
-        public new static void CreateConfigs(BaseUnityPlugin plugin)
+        public new static void CreateConfigs(BasePlugin plugin)
         {
-            DropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", "DropOnDeath",
+            DropOnDeath = plugin.ModConfig("SkeletonMinion (Server Synced)", "DropOnDeath",
                 DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PackDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
+            PackDropItemsIntoCargoCrate = plugin.ModConfig("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
                 true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }

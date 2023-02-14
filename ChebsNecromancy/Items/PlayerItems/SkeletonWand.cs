@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
+using System.Reflection;
 using BepInEx.Configuration;
+using ChebsNecromancy.Common;
 using ChebsNecromancy.Minions;
 using Jotunn;
 using Jotunn.Configs;
@@ -11,7 +12,7 @@ using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.PlayerItems
 {
     internal class SkeletonWand : Wand
     {
@@ -32,11 +33,8 @@ namespace ChebsNecromancy.Items
         public const string PoisonSkeleton2PrefabName = "ChebGonaz_PoisonSkeleton2";
         public const string PoisonSkeleton3PrefabName = "ChebGonaz_PoisonSkeleton3";
         #endregion
-        #region ConfigEntries
-        public static ConfigEntry<CraftingTable> CraftingStationRequired;
-        public static ConfigEntry<int> CraftingStationLevel;
-        public static ConfigEntry<string> CraftingCost;
 
+        #region ConfigEntries
         public static ConfigEntry<bool> SkeletonsAllowed;
 
         public static ConfigEntry<int> MaxSkeletons;
@@ -78,208 +76,142 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
         #endregion
-
-        public override string ItemName => "ChebGonaz_SkeletonWand";
-        public override string PrefabName => "ChebGonaz_SkeletonWand.prefab";
-        protected override string DefaultRecipe => "Wood:5,Stone:1";
-
-        public override void CreateConfigs(BaseUnityPlugin plugin)
+               
+        public override void CreateConfigs(BasePlugin plugin)
         {
+            ChebsRecipeConfig.DefaultRecipe = "Wood:5,Stone:1";
+            ChebsRecipeConfig.RecipeName = "$item_friendlyskeletonwand";
+            ChebsRecipeConfig.ItemName = "ChebGonaz_SkeletonWand";
+            ChebsRecipeConfig.RecipeDescription = "$item_friendlyskeletonwand_desc";
+            ChebsRecipeConfig.PrefabName = "ChebGonaz_SkeletonWand.prefab";
+            ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
+
             base.CreateConfigs(plugin);
 
-            SkeletonSetFollowRange = plugin.Config.Bind("SkeletonWand (Client)", "SkeletonCommandRange",
-                20f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"Allowed",
+                true, "Whether crafting a Skeleton Wand is allowed or not.", null, true);
 
-            Allowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandAllowed",
-                true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"CraftingStation",
+                ChebsRecipe.EcraftingTable.Workbench, "Crafting station where Skeleton Wand is available", null, true);
 
-            CraftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
-                CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"CraftingStationLevel",
+                1, "Crafting station level required to craft Skeleton Wand", plugin.IntQuantityValue, true);
 
-            CraftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStationLevel",
-                1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"CraftingCosts",
+                ChebsRecipeConfig.DefaultRecipe, "Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", 
+                null, true);
 
-            CraftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingCosts",
-                DefaultRecipe, new ConfigDescription("Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonSetFollowRange = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.RecipeName+"CommandRange",
+                20f, "The distance which nearby skeletons will hear your commands.", plugin.IntQuantityValue);                    
 
-            SkeletonsAllowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonsAllowed",
-                true, new ConfigDescription("If false, skeletons aren't loaded at all and can't be summoned.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonsAllowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonsAllowed",
+                true, "If false, skeletons aren't loaded at all and can't be summoned.", plugin.BoolValue, true);
 
-            SkeletonBaseHealth = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonBaseHealth",
-                20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonBaseHealth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonBaseHealth",
+                20f, "HP = BaseHealth + NecromancyLevel * HealthMultiplier", plugin.FloatQuantityValue, true);
 
-            SkeletonHealthMultiplier = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonHealthMultiplier",
-                2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonHealthMultiplier = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonHealthMultiplier",
+                2.5f, "HP = BaseHealth + NecromancyLevel * HealthMultiplier", plugin.FloatQuantityValue, true);
 
-            SkeletonTierOneQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierOneQuality",
-                1, new ConfigDescription("Star Quality of tier 1 Skeleton minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonTierOneQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonTierOneQuality",
+                1, "Star Quality of tier 1 Skeleton minions", plugin.IntQuantityValue, true);
 
-            SkeletonTierTwoQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoQuality",
-                2, new ConfigDescription("Star Quality of tier 2 Skeleton minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonTierTwoQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonTierTwoQuality",
+                2, "Star Quality of tier 2 Skeleton minions", plugin.IntQuantityValue, true);
 
-            SkeletonTierTwoLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoLevelReq",
-                35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Skeleton", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonTierTwoLevelReq = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonTierTwoLevelReq",
+                35, "Necromancy skill level required to summon Tier 2 Skeleton", plugin.IntQuantityValue, true);
 
-            SkeletonTierThreeQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeQuality",
-                3, new ConfigDescription("Star Quality of tier 3 Skeleton minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonTierThreeQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonTierThreeQuality",
+                3, "Star Quality of tier 3 Skeleton minions", plugin.IntQuantityValue, true);
 
-            SkeletonTierThreeLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeLevelReq",
-                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Skeleton", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonTierThreeLevelReq = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonTierThreeLevelReq",
+                70, "Necromancy skill level required to summon Tier 3 Skeleton", plugin.IntQuantityValue, true);
 
-            BoneFragmentsRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsRequired",
-                3, new ConfigDescription("The amount of Bone Fragments required to craft a skeleton.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BoneFragmentsRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BoneFragmentsRequired",
+                3, "The amount of Bone Fragments required to craft a skeleton.", plugin.IntQuantityValue, true);
 
-            BoneFragmentsDroppedAmountMin = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedAmountMin",
-                1, new ConfigDescription("The minimum amount of bones dropped by creatures.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BoneFragmentsDroppedAmountMin = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BoneFragmentsDroppedAmountMin",
+                1, "The minimum amount of bones dropped by creatures.", plugin.IntQuantityValue, true);
 
-            BoneFragmentsDroppedAmountMax = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedAmountMax",
-                3, new ConfigDescription("The maximum amount of bones dropped by creautres.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            BoneFragmentsDroppedAmountMax = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BoneFragmentsDroppedAmountMax",
+                3, "The maximum amount of bones dropped by creautres.", plugin.IntQuantityValue, true);
 
-            _necromancyLevelIncrease = plugin.Config.Bind("SkeletonWand (Server Synced)", "NecromancyLevelIncrease",
-                1f, new ConfigDescription("How much crafting a skeleton contributes to your Necromancy level increasing.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            _necromancyLevelIncrease = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NecromancyLevelIncrease",
+                1f, "How much crafting a skeleton contributes to your Necromancy level increasing.", 
+                plugin.FloatQuantityValue, true);
 
-            MaxSkeletons = plugin.Config.Bind("SkeletonWand (Server Synced)", "MaximumSkeletons",
-                0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            MaxSkeletons = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "MaximumSkeletons",
+                0, "The maximum amount of skeletons that can be made (0 = unlimited).", null, true);
 
-            ArmorLeatherScrapsRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "ArmoredSkeletonLeatherScrapsRequired",
-                5, new ConfigDescription("The amount of LeatherScraps required to craft a skeleton in leather armor.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ArmorLeatherScrapsRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonLeatherScrapsRequired",
+                5, "The amount of LeatherScraps required to craft a skeleton in leather armor.", null, true);
 
-            ArmorBronzeRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "ArmoredSkeletonBronzeRequired",
-                1, new ConfigDescription("The amount of Bronze required to craft a skeleton in bronze armor.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ArmorBronzeRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonBronzeRequired",
+                1, "The amount of Bronze required to craft a skeleton in bronze armor.", null, true);
 
-            ArmorIronRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "ArmoredSkeletonIronRequired",
-                1, new ConfigDescription("The amount of Iron required to craft a skeleton in iron armor.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ArmorIronRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonIronRequired",
+                1, "The amount of Iron required to craft a skeleton in iron armor.", null, true);
 
-            SurtlingCoresRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonMageSurtlingCoresRequired",
-                1, new ConfigDescription("The amount of surtling cores required to craft a skeleton mage.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SurtlingCoresRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonMageSurtlingCoresRequired",
+                1, "The amount of surtling cores required to craft a skeleton mage.", null, true);
 
-            ArmorBlackIronRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "ArmoredSkeletonBlackIronRequired",
-                1, new ConfigDescription("The amount of Black Metal required to craft a skeleton in black iron armor.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ArmorBlackIronRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonBlackIronRequired",
+                1, "The amount of Black Metal required to craft a skeleton in black iron armor.", null, true);
 
-            PoisonSkeletonBaseHealth = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonBaseHealth",
-                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PoisonSkeletonBaseHealth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonBaseHealth",
+                100f, "HP = BaseHealth + NecromancyLevel * HealthMultiplier", plugin.FloatQuantityValue, true);
 
-            PoisonSkeletonLevelRequirementConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonLevelRequired",
-                50, new ConfigDescription("The Necromancy level needed to summon a Poison Skeleton.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PoisonSkeletonLevelRequirementConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonLevelRequired",
+                50, "The Necromancy level needed to summon a Poison Skeleton.", null, true);
 
-            PoisonSkeletonGuckRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonGuckRequired",
-                1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PoisonSkeletonGuckRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonGuckRequired",
+                1, "The amount of Guck required to craft a Poison Skeleton.", null, true);
 
-            PoisonSkeletonNecromancyLevelIncrease = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonNecromancyLevelIncrease",
-                3f, new ConfigDescription("How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PoisonSkeletonNecromancyLevelIncrease = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonNecromancyLevelIncrease",
+                3f, "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", 
+                plugin.FloatQuantityValue, true);
 
-            SkeletonArmorValueMultiplier = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonArmorValueMultiplier",
-                1f, new ConfigDescription("If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SkeletonArmorValueMultiplier = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonArmorValueMultiplier",
+                1f, "If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing " + 
+                "iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamage = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamage",
-                true, new ConfigDescription("Whether using a Skeleton Wand damages its durability.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamage",
+                true, "Whether using a Skeleton Wand damages its durability.", plugin.BoolValue, true);
 
-            DurabilityDamageWarrior = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageWarrior",
-                1f, new ConfigDescription("How much creating a warrior damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageWarrior = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageWarrior",
+                1f, "How much creating a warrior damages the wand.", plugin.FloatQuantityValue, true);
 
-            DurabilityDamageArcher = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageArcher",
-                3f, new ConfigDescription("How much creating an archer damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageArcher = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageArcher",
+                3f, "How much creating an archer damages the wand.", plugin.FloatQuantityValue, true);
 
-            DurabilityDamageMage = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageMage",
-                5f, new ConfigDescription("How much creating a mage damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageMage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageMage",
+                5f, "How much creating a mage damages the wand.", plugin.FloatQuantityValue, true);
 
-            DurabilityDamagePoison = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamagePoison",
-                5f, new ConfigDescription("How much creating a poison skeleton damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamagePoison = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamagePoison",
+                5f, "How much creating a poison skeleton damages the wand.", plugin.FloatQuantityValue, true);
 
-            DurabilityDamageLeather = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageLeather",
-                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageLeather = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageLeather",
+                1f, "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamageBronze = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageBronze",
-                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageBronze = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBronze",
+                1f, "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamageIron = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageIron",
-                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DurabilityDamageIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageIron",
+                1f, "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", 
+                plugin.FloatQuantityValue, true);
 
-            DurabilityDamageBlackIron = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageBlackIron",
-                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-        }
-
-        public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
-        {
-            ItemConfig config = new ItemConfig();
-            config.Name = "$item_friendlyskeletonwand";
-            config.Description = "$item_friendlyskeletonwand_desc";
-
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                this.SetRecipeReqs(
-                    config,
-                    CraftingCost,
-                    CraftingStationRequired,
-                    CraftingStationLevel
-                );
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            CustomItem customItem = new CustomItem(prefab, false, config);
-            if (customItem == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
-            if (customItem.ItemPrefab == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
-                return null;
-            }
-            // make sure the set effect is applied
-            customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = BasePlugin.SetEffectNecromancyArmor;
-
-            return customItem;
+            DurabilityDamageBlackIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBlackIron",
+                1f, "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", 
+                plugin.FloatQuantityValue, true);
         }
 
         public override KeyHintConfig GetKeyHint()
         {
-            List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
+            List<ButtonConfig> buttonConfigs = new();
 
             if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
             if (CreateArcherMinionButton != null) buttonConfigs.Add(CreateArcherMinionButton);
@@ -290,7 +222,7 @@ namespace ChebsNecromancy.Items
 
             return new KeyHintConfig
             {
-                Item = ItemName,
+                Item = ChebsRecipeConfig.RecipeName,
                 ButtonConfigs = buttonConfigs.ToArray()
             };
         }
@@ -604,7 +536,7 @@ namespace ChebsNecromancy.Items
             int result = 0;
             // based off BaseAI.FindClosestCreature
             List<Character> allCharacters = Character.GetAllCharacters();
-            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
+            List<Tuple<int, Character>> minionsFound = new();
 
             foreach (Character item in allCharacters)
             {
@@ -656,7 +588,8 @@ namespace ChebsNecromancy.Items
 
         private string PrefabFromNecromancyLevel(float necromancyLevel, SkeletonMinion.SkeletonType skeletonType)
         {
-            string result = "";
+            string result;
+
             switch (skeletonType)
             {
                 case SkeletonMinion.SkeletonType.Archer:

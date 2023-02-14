@@ -11,6 +11,8 @@ using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.MinionItems;
+using ChebsNecromancy.Items.PlayerItems;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Structures;
 using HarmonyLib;
@@ -45,6 +47,12 @@ namespace ChebsNecromancy
             new SkeletonWand(),
             new DraugrWand(),
         };
+
+        private readonly BatBeacon BatBeaconStructure = new();
+        private readonly NeckroGathererPylon NeckroGathererPylonStructure = new();
+        private readonly RefuelerPylon RefuelerPylonStructure = new();
+        private readonly SpiritPylon SpiritPylonStructure = new();
+
         public const string NecromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private readonly SpectralShroud spectralShroudItem = new();
@@ -59,9 +67,7 @@ namespace ChebsNecromancy
         public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
         public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
 
-#pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
-#pragma warning restore IDE0051 // Remove unused private members
         {
             CreateConfigValues();
 
@@ -78,6 +84,7 @@ namespace ChebsNecromancy
 
             SetupWatcher();
         }
+
         public ConfigEntry<T> ModConfig<T>(
             string group,
             string name,
@@ -116,10 +123,10 @@ namespace ChebsNecromancy
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
 
-            SpiritPylon.CreateConfigs(this);
-            RefuelerPylon.CreateConfigs(this);
-            NeckroGathererPylon.CreateConfigs(this);
-            BatBeacon.CreateConfigs(this);
+            BatBeaconStructure.CreateConfigs(this);
+            NeckroGathererPylonStructure.CreateConfigs(this);
+            RefuelerPylonStructure.CreateConfigs(this);
+            SpiritPylonStructure.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -190,10 +197,10 @@ namespace ChebsNecromancy
                 #region Items
                 // by great Cthulhu, this needs refactoring!
                 //
-                GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
+                GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.ChebsRecipeConfig.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
-                GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
+                GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.ChebsRecipeConfig.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
 
                 // minion worn items
@@ -224,15 +231,15 @@ namespace ChebsNecromancy
                 };
                 minionWornItems.ForEach((minionItem) =>
                 {
-                    GameObject minionItemPrefab = LoadPrefabFromBundle(minionItem.PrefabName, chebgonazAssetBundle);
-                    ItemManager.Instance.AddItem(minionItem.GetCustomItemFromPrefab(minionItemPrefab));
+                    GameObject minionItemPrefab = LoadPrefabFromBundle(minionItem.ChebsRecipeConfig.PrefabName, chebgonazAssetBundle);
+                    ItemManager.Instance.AddItem(minionItem.ChebsRecipeConfig.GetCustomItemFromPrefab<GameObject>(minionItemPrefab));
                 });
 
                 wands.ForEach(wand =>
                 {
                     // we do the keyhints later after vanilla items are available
                     // so we can override what's in the prefab
-                    GameObject wandPrefab = LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle);
+                    GameObject wandPrefab = LoadPrefabFromBundle(wand.ChebsRecipeConfig.PrefabName, chebgonazAssetBundle);
                     wand.CreateButtons();
                     KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
                     ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
@@ -286,17 +293,17 @@ namespace ChebsNecromancy
                     prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
                 }
 
-                if (SpiritPylon.ChebsRecipeConfig.Allowed.Value)
+                if (SpiritPylonStructure.ChebsRecipeConfig.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
-                }
+                } 
 
                 if (NeckroGathererMinion.Allowed.Value && LargeCargoCrate.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 }
 
-                if (BatBeacon.ChebsRecipeConfig.Allowed.Value)
+                if (BatBeaconStructure.ChebsRecipeConfig.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
                 }
@@ -308,37 +315,36 @@ namespace ChebsNecromancy
                     if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
 
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
-                }
-                    );
+                });
                 #endregion
 
                 #region Structures   
-                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
+                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylonStructure.ChebsRecipeConfig.PrefabName);
                 SpiritPylon spiritPylon = spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
-                    SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.ChebsRecipeConfig.IconName))
+                    SpiritPylonStructure.ChebsRecipeConfig.GetCustomPieceFromPrefab<CustomPiece>(spiritPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylonStructure.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
+                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylonStructure.ChebsRecipeConfig.PrefabName);
                 RefuelerPylon refuelerPylon = refuelerPylonPrefab.AddComponent<RefuelerPylon>();
                 PieceManager.Instance.AddPiece(
-                    RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(refuelerPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.ChebsRecipeConfig.IconName))
+                    RefuelerPylonStructure.ChebsRecipeConfig.GetCustomPieceFromPrefab<CustomPiece>(refuelerPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylonStructure.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
+                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylonStructure.ChebsRecipeConfig.PrefabName);
                 NeckroGathererPylon neckroGathererPylon = neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
                 PieceManager.Instance.AddPiece(
-                    RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.ChebsRecipeConfig.IconName))
+                    NeckroGathererPylonStructure.ChebsRecipeConfig.GetCustomPieceFromPrefab<CustomPiece>(neckroGathererPylonPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylonStructure.ChebsRecipeConfig.IconName))
                     );
 
-                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.ChebsRecipeConfig.PrefabName);
+                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeaconStructure.ChebsRecipeConfig.PrefabName);
                 BatBeacon batBeacon = batBeaconPrefab.AddComponent<BatBeacon>();
                 PieceManager.Instance.AddPiece(
-                    BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
+                    BatBeaconStructure.ChebsRecipeConfig.GetCustomPieceFromPrefab<CustomPiece>(batBeaconPrefab,
+                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeaconStructure.ChebsRecipeConfig.IconName))
                     );
                 #endregion
             }

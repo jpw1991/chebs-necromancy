@@ -26,24 +26,24 @@ namespace ChebsNecromancy.Minions
 
         private Container dropoffTarget;
 
-        public new static void CreateConfigs(BaseUnityPlugin plugin)
+        public new static void CreateConfigs(BasePlugin plugin)
         {
-            Allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
+            Allowed = plugin.ModConfig("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
                 true, new ConfigDescription("Whether the Neckro Gatherer is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            LookRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
+            LookRadius = plugin.ModConfig("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
                 500f, new ConfigDescription("The radius in which the Neckro Gatherer can see items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            PickupRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupRadius",
+            PickupRadius = plugin.ModConfig("NeckroGatherer (Server Synced)", "NeckroGathererPickupRadius",
                 10f, new ConfigDescription("The radius in which the Neckro Gatherer can pickup items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            DropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
+            DropoffPointRadius = plugin.ModConfig("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
                 1000f, new ConfigDescription("The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            UpdateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
+            UpdateDelay = plugin.ModConfig("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
                 3f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            ShowMessages = plugin.Config.Bind("NeckroGatherer (Client)", "NeckroGathererShowMessages",
+            ShowMessages = plugin.ModConfig("NeckroGatherer (Client)", "NeckroGathererShowMessages",
                 true, new ConfigDescription("Whether the Neckro Gatherer talks or not."));
         }
 

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
+using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Common;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -10,14 +11,10 @@ using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.PlayerItems
 {
     internal class SpectralShroud : Item
     {
-        public override string ItemName => "ChebGonaz_SpectralShroud";
-        public override string PrefabName => "ChebGonaz_SpectralShroud.prefab";
-        protected override string DefaultRecipe => "Chain:5,TrollHide:10";
-
         public static ConfigEntry<bool> SpawnWraith;
         public static ConfigEntry<int> NecromancySkillBonus;
         public static ConfigEntry<int> DelayBetweenWraithSpawns;
@@ -28,102 +25,63 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<int> GuardianWraithTierThreeQuality;
         public static ConfigEntry<int> GuardianWraithTierThreeLevelReq;
 
-        public static ConfigEntry<CraftingTable> CraftingStationRequired;
-        public static ConfigEntry<int> CraftingStationLevel;
-
-        public static ConfigEntry<string> CraftingCost;
-
         private float wraithLastSpawnedAt;
 
-        public override void CreateConfigs(BaseUnityPlugin plugin)
+        public override void CreateConfigs(BasePlugin plugin)
         {
+            ChebsRecipeConfig.DefaultRecipe = "Chain:5,TrollHide:10";
+            ChebsRecipeConfig.RecipeName = "$item_friendlyskeletonwand_spectralshroud";
+            ChebsRecipeConfig.ItemName = "ChebGonaz_SpectralShroud";
+            ChebsRecipeConfig.RecipeDescription = "$item_friendlyskeletonwand_spectralshroud_desc";
+            ChebsRecipeConfig.PrefabName = "ChebGonaz_SpectralShroud.prefab";
+            ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
+
             base.CreateConfigs(plugin);
 
-            Allowed = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudAllowed",
-                true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "Allowed",
+                true, "Whether crafting a Spectral Shroud is allowed or not.", plugin.BoolValue, true);
 
-            CraftingStationRequired = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStation",
-                CraftingTable.Workbench, new ConfigDescription("Crafting station where Spectral Shroud is available", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName, 
+                ChebsRecipeConfig.ObjectName + "CraftingStation", ChebsRecipe.EcraftingTable.Workbench, 
+                "Crafting station where Spectral Shroud is available", null, true);
 
-            CraftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
-                1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName, 
+                ChebsRecipeConfig.ObjectName + "CraftingStationLevel", 1, "Crafting station level required to craft Spectral Shroud", 
+                plugin.IntQuantityValue, true);
 
-            CraftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingCosts",
-                DefaultRecipe, new ConfigDescription("Materials needed to craft Spectral Shroud. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingCosts",
+                ChebsRecipeConfig.DefaultRecipe, "Materials needed to craft Spectral Shroud. None or Blank will use Default settings.", null, true);
 
-            SpawnWraith = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSpawnWraith",
-                true, new ConfigDescription("Whether wraiths spawn or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            SpawnWraith = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "SpawnWraith",
+                true, "Whether wraiths spawn or not.", plugin.BoolValue, true);
 
-            NecromancySkillBonus = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSkillBonus",
-                10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            NecromancySkillBonus = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "SkillBonus",
+                10, "How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", 
+                plugin.IntQuantityValue, true);
 
-            DelayBetweenWraithSpawns = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudWraithDelay",
-                30, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DelayBetweenWraithSpawns = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "WraithDelay",
+                30, "How much time must pass after a wraith spawns before a new one is able to spawn.", plugin.IntQuantityValue, true);
 
-            GuardianWraithTierOneQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierOneQuality",
-               1, new ConfigDescription("Star Quality of tier 1 GuardianWraith minions", null,
-               new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GuardianWraithTierOneQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "GuardianWraithTierOneQuality",
+               1, "Star Quality of tier 1 GuardianWraith minions", plugin.IntQuantityValue, true);
 
-            GuardianWraithTierTwoQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierTwoQuality",
-                2, new ConfigDescription("Star Quality of tier 2 GuardianWraith minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GuardianWraithTierTwoQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "GuardianWraithTierTwoQuality",
+                2, "Star Quality of tier 2 GuardianWraith minions", plugin.IntQuantityValue, true);
 
-            GuardianWraithTierTwoLevelReq = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierTwoLevelReq",
-                35, new ConfigDescription("Necromancy skill level required to summon Tier 2 GuardianWraith", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GuardianWraithTierTwoLevelReq = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "GuardianWraithTierTwoLevelReq",
+                35, "Necromancy skill level required to summon Tier 2 GuardianWraith", plugin.IntQuantityValue, true);
 
-            GuardianWraithTierThreeQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierThreeQuality",
-                3, new ConfigDescription("Star Quality of tier 3 GuardianWraith minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GuardianWraithTierThreeQuality = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "GuardianWraithTierThreeQuality",
+                3, "Star Quality of tier 3 GuardianWraith minions", plugin.IntQuantityValue, true);
 
-            GuardianWraithTierThreeLevelReq = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierThreeLevelReq",
-                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 GuardianWraith", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GuardianWraithTierThreeLevelReq = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "GuardianWraithTierThreeLevelReq",
+                70, "Necromancy skill level required to summon Tier 3 GuardianWraith", plugin.IntQuantityValue, true);
         }
 
-        public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
+        public CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
-            ItemConfig config = new ItemConfig();
-            config.Name = "$item_friendlyskeletonwand_spectralshroud";
-            config.Description = "$item_friendlyskeletonwand_spectralshroud_desc";
+            CustomItem customItem = ChebsRecipeConfig.GetCustomItemFromPrefab<CustomItem>(prefab);
 
-            if (Allowed.Value)
-            {
-                if (string.IsNullOrEmpty(CraftingCost.Value))
-                {
-                    CraftingCost.Value = DefaultRecipe;
-                }
-                // set recipe requirements
-                SetRecipeReqs(
-                    config,
-                    CraftingCost,
-                    CraftingStationRequired,
-                    CraftingStationLevel
-                );
-            }
-            else
-            {
-                config.Enabled = false;
-            }
-
-            CustomItem customItem = new CustomItem(prefab, false, config);
-            if (customItem == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
-            if (customItem.ItemPrefab == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
-                return null;
-            }
             // make sure the set effect is applied or removed according
             // to config values
             customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect =
