@@ -138,7 +138,7 @@
     <Compile Include="Items\OrbOfBeckoning.cs" />
     <Compile Include="Items\SkeletonWoodAxe.cs" />
     <Compile Include="Minions\AI\WoodcutterAI.cs" />
-    <Compile Include="Minions\SkeletonWoodcutter.cs" />
+    <Compile Include="Minions\SkeletonWoodcutterMinion.cs" />
     <Compile Include="Common\ChebsRecipe.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />

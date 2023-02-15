@@ -79,9 +79,6 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 
 ## Known issues
 
-- Skeletons can't follow you into/out of dungeons
-	+ This might be fixable via mods like **Teleport Everything** ([Nexus](https://www.nexusmods.com/valheim/mods/1806), [Thunderstore](https://valheim.thunderstore.io/package/OdinPlus/TeleportEverything/)).
-- Telling minions to attack what you're looking at (by spawning a big stone there - dumb but will be replaced with something more appropriate later)
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
 	+ `DraugrAllowed = false`
 	+ `SpectralShroudSpawnWraith = false`	

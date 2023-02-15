@@ -20,6 +20,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
+using Logger = UnityEngine.Logger;
 using Paths = BepInEx.Paths;
 
 // ReSharper disable InconsistentNaming
@@ -111,6 +112,7 @@ namespace ChebsNecromancy
             SkeletonMinion.CreateConfigs(this);
             DraugrMinion.CreateConfigs(this);
             GuardianWraithMinion.CreateConfigs(this);
+            SkeletonWoodcutterMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
 
@@ -297,6 +299,8 @@ namespace ChebsNecromancy
                     prefabNames.Add(SkeletonWand.PoisonSkeleton2PrefabName + ".prefab");
                     prefabNames.Add(SkeletonWand.PoisonSkeleton3PrefabName + ".prefab");
                 }
+                
+                prefabNames.Add("ChebGonaz_SkeletonWoodcutter.prefab");
 
                 if (SpectralShroud.SpawnWraith.Value)
                 {
@@ -508,14 +512,18 @@ namespace ChebsNecromancy
                     __instance.gameObject.AddComponent<GuardianWraithMinion>();
                 }
                 else
-                if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<SpiritPylonGhostMinion>() == null)
+                if (__instance.name.Contains("SpiritPylonGhost") && !__instance.TryGetComponent(out SpiritPylonGhostMinion _))
                 {
                     __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
                 }
                 else
                 {
-                    if (__instance.GetComponent<UndeadMinion>() == null)
+                    if (!__instance.TryGetComponent(out UndeadMinion _))
                     {
+                        if (__instance.name.Contains("Woodcutter"))
+                        {
+                            __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();
+                        }
                         if (__instance.name.Contains("PoisonSkeleton"))
                         {
                             __instance.gameObject.AddComponent<PoisonSkeletonMinion>();
@@ -857,6 +865,37 @@ namespace ChebsNecromancy
                 __result = monsterAI.GetFollowTarget() == Player.m_localPlayer.gameObject
                     ? Localization.instance.Localize("$chebgonaz_wait")
                     : Localization.instance.Localize("$chebgonaz_follow");
+                return false; // deny base method completion
+            }
+
+            return true; // allow base method completion
+        }
+    }
+    
+    [HarmonyPatch(typeof(BaseAI))]
+    class BaseAIPatch
+    {
+        [HarmonyPatch(nameof(BaseAI.Follow))]
+        [HarmonyPrefix]
+        static bool Prefix(GameObject go, float dt, BaseAI __instance)
+        {
+            if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
+            {
+                // use our custom implementation with custom follow distance
+                float num = Vector3.Distance(go.transform.position, __instance.transform.position);
+                // todo: expose to config
+                bool run = num > 10f;
+                // todo: expose to config
+                var approachRange = undeadMinion is SkeletonWoodcutterMinion ? 0.5f : 3f;
+                if (num < approachRange)
+                {
+                    __instance.StopMoving();
+                }
+                else
+                {
+                    __instance.MoveTo(dt, go.transform.position, 0f, run);
+                }
+                
                 return false; // deny base method completion
             }
 
