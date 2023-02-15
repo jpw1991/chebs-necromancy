@@ -7,15 +7,22 @@ using UnityEngine;
 
 namespace ChebsNecromancy.Minions
 {
-    internal class SkeletonWoodcutterMinion : UndeadMinion
+    internal class SkeletonWoodcutterMinion : SkeletonMinion
     {
         public static ConfigEntry<int> ToolTier;
+        public static ConfigEntry<bool> ShowMessages;
+        public static ConfigEntry<float> UpdateDelay;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
             ToolTier = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "ToolTier",
                 3, new ConfigDescription("The tier of the skeleton's tool: 0 (stone), 1 (flint), 2 (bronze), 3 (iron) or 4 (black metal).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            UpdateDelay = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "SkeletonWoodcutterUpdateDelay",
+                6f, new ConfigDescription("The delay, in seconds, between wood searching attempts. Attention: small values may impact performance.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ShowMessages = plugin.Config.Bind("SkeletonWoodcutter (Client)", "SkeletonWoodcutterShowMessages",
+                false, new ConfigDescription("Whether the woodcutter talks or not."));
         }
 
         public override void Awake()

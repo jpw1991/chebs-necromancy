@@ -8,18 +8,18 @@ namespace ChebsNecromancy.Minions.AI
     internal class WoodcutterAI : MonoBehaviour
     {
         const float LookRadius = 100;
-
-        private const float NextCheckInterval = 5f;
+        
         private float nextCheck;
 
         private MonsterAI _monsterAI;
 
         private readonly int defaultMask = LayerMask.GetMask("Default");
 
+        private string _status;
+
         private void Awake()
         {
             _monsterAI = GetComponent<MonsterAI>();
-            
         }
 
         public void LookForCuttableObjects()
@@ -41,6 +41,7 @@ namespace ChebsNecromancy.Minions.AI
                 if (destructible != null && destructible.GetDestructibleType() == DestructibleType.Tree)
                 {
                     _monsterAI.SetFollowTarget(destructible.gameObject);
+                    _status = "Moving to stump.";
                     return;
                 }
 
@@ -48,6 +49,7 @@ namespace ChebsNecromancy.Minions.AI
                 if (treeLog != null)
                 {
                     _monsterAI.SetFollowTarget(treeLog.gameObject);
+                    _status = "Moving to log.";
                     return;
                 }
 
@@ -55,10 +57,11 @@ namespace ChebsNecromancy.Minions.AI
                 if (tree != null)
                 {
                     _monsterAI.SetFollowTarget(tree.gameObject);
+                    _status = "Moving to tree.";
                     return;
                 }
-                
-                Logger.LogInfo("Nothing found");
+
+                _status = "Can't find wood.";
             }
         }
 
@@ -68,13 +71,18 @@ namespace ChebsNecromancy.Minions.AI
             if (followTarget != null) transform.LookAt(followTarget.transform.position + Vector3.down);
             if (Time.time > nextCheck)
             {
-                nextCheck += NextCheckInterval;
+                nextCheck += SkeletonWoodcutterMinion.UpdateDelay.Value;
                 
                 LookForCuttableObjects();
                 if (followTarget != null
                     && Vector3.Distance(followTarget.transform.position, transform.position) < 5)
                 {
                     _monsterAI.DoAttack(null, false);
+                }
+
+                if (SkeletonWoodcutterMinion.ShowMessages.Value)
+                {
+                    Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", _status, false);
                 }
             }
         }
