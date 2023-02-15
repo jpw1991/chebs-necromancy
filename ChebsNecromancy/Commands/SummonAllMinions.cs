@@ -2,10 +2,10 @@
 // console command to summon player's minions.
 // attention: only summons THEIR minions
 
-using System;
-using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using Jotunn.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace ChebsNecromancy.Commands
 {
@@ -18,7 +18,7 @@ namespace ChebsNecromancy.Commands
         public override void Run(string[] args)
         {
             List<Character> allCharacters = Character.GetAllCharacters();
-            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
+            List<Tuple<int, Character>> minionsFound = new();
 
             foreach (Character item in allCharacters)
             {

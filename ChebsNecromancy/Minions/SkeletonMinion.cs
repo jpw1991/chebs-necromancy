@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using BepInEx.Configuration;
+using ChebsNecromancy.Items.PlayerItems;
+using System.Collections;
 using System.Collections.Generic;
-using BepInEx;
-using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -27,13 +26,13 @@ namespace ChebsNecromancy.Minions
 
         public new static void CreateConfigs(BasePlugin plugin)
         {
-            DropOnDeath = plugin.ModConfig("SkeletonMinion (Server Synced)", "DropOnDeath",
-                DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DropOnDeath = plugin.ModConfig("SkeletonMinion", "DropOnDeath", DropType.JustResources,
+                "Whether a minion refunds anything when it dies.", null, true);
 
-            PackDropItemsIntoCargoCrate = plugin.ModConfig("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
-                true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PackDropItemsIntoCargoCrate = plugin.ModConfig("SkeletonMinion", "PackDroppedItemsIntoCargoCrate",
+                true, "If set to true, dropped items will be packed into a cargo crate. This means they won't " +
+                "sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
+                true);
         }
 
         public override void Awake()
@@ -62,7 +61,7 @@ namespace ChebsNecromancy.Minions
             // VisEquipment remembers what armor the skeleton is wearing.
             // Exploit this to reapply the armor so the armor values work
             // again.
-            List<int> equipmentHashes = new List<int>()
+            List<int> equipmentHashes = new()
                 {
                     humanoid.m_visEquipment.m_currentChestItemHash,
                     humanoid.m_visEquipment.m_currentLegItemHash,
@@ -118,7 +117,7 @@ namespace ChebsNecromancy.Minions
 
         public virtual void ScaleEquipment(float necromancyLevel, SkeletonType skeletonType, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
         {
-            List<GameObject> defaultItems = new List<GameObject>();
+            List<GameObject> defaultItems = new();
 
             Humanoid humanoid = GetComponent<Humanoid>();
             if (humanoid == null)
@@ -200,21 +199,13 @@ namespace ChebsNecromancy.Minions
 
             if (SkeletonWand.DurabilityDamage.Value)
             {
-                switch (skeletonType)
+                Player.m_localPlayer.GetRightItem().m_durability -= skeletonType switch
                 {
-                    case SkeletonType.Archer:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageArcher.Value;
-                        break;
-                    case SkeletonType.Mage:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageMage.Value;
-                        break;
-                    case SkeletonType.Poison:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamagePoison.Value;
-                        break;
-                    default:
-                        Player.m_localPlayer.GetRightItem().m_durability -= SkeletonWand.DurabilityDamageWarrior.Value;
-                        break;
-                }
+                    SkeletonType.Archer => SkeletonWand.DurabilityDamageArcher.Value,
+                    SkeletonType.Mage => SkeletonWand.DurabilityDamageMage.Value,
+                    SkeletonType.Poison => SkeletonWand.DurabilityDamagePoison.Value,
+                    _ => SkeletonWand.DurabilityDamageWarrior.Value,
+                };
             }
         }
     }

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using Jotunn.Managers;
+using System.Collections.Generic;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -57,16 +56,15 @@ namespace ChebsNecromancy.Minions
 
         public static void CreateConfigs(BasePlugin plugin)
         {
-            CleanupAfter = plugin.ModConfig("UndeadMinion (Server Synced)", "CleanupAfter",
-                CleanupType.None, new ConfigDescription("Whether a minion should be cleaned up or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            CleanupDelay = plugin.ModConfig("UndeadMinion (Server Synced)", "CleanupDelay",
-                300, new ConfigDescription("The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            Commandable = plugin.ModConfig("UndeadMinion (Client)", "Commandable",
-                true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
-            RoamRange = plugin.ModConfig("UndeadMinion (Client)", "RoamRange",
-                10f, new ConfigDescription("How far a unit is allowed to roam from its current position."));
+            CleanupAfter = plugin.ModConfig("UndeadMinion", "CleanupAfter", CleanupType.None,
+                "Whether a minion should be cleaned up or not.", null, true);
+            CleanupDelay = plugin.ModConfig("UndeadMinion", "CleanupDelay",
+                300, "The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.",
+                plugin.IntQuantityValue, true);
+            Commandable = plugin.ModConfig("UndeadMinion", "Commandable",
+                true, "If true, minions can be commanded individually with E (or equivalent) keybind.", plugin.BoolValue);
+            RoamRange = plugin.ModConfig("UndeadMinion", "RoamRange", 10f,
+                "How far a unit is allowed to roam from its current position.", plugin.FloatQuantityValue);
         }
 
         public virtual void Awake()
@@ -108,7 +106,7 @@ namespace ChebsNecromancy.Minions
         private void Update()
         {
             if (CleanupAt > 0
-                && Time.time > CleanupAt 
+                && Time.time > CleanupAt
                 && CleanupAfter.Value != CleanupType.None)
             {
                 //Jotunn.Logger.LogInfo($"Cleaning up {name} because current time {Time.time} > {cleanupAt}");
@@ -162,7 +160,7 @@ namespace ChebsNecromancy.Minions
 
         public bool BelongsToPlayer(string playerName)
         {
-            return TryGetComponent(out ZNetView zNetView) 
+            return TryGetComponent(out ZNetView zNetView)
                 && zNetView.GetZDO().GetString(MinionOwnershipZdoKey, "")
                 .Equals(playerName);
         }
@@ -177,7 +175,7 @@ namespace ChebsNecromancy.Minions
             if (TryGetComponent(out ZNetView zNetView))
             {
                 string dropsList = "";
-                List<string> drops = new List<string>();
+                List<string> drops = new();
                 characterDrop.m_drops.ForEach(drop => drops.Add($"{drop.m_prefab.name}:{drop.m_amountMax}"));
                 dropsList = string.Join(",", drops);
                 //Jotunn.Logger.LogInfo($"Drops list: {dropsList}");
@@ -211,7 +209,7 @@ namespace ChebsNecromancy.Minions
                 }
 
                 CharacterDrop characterDrop = gameObject.AddComponent<CharacterDrop>();
-                List<string> dropsList = new List<string>(minionDropsZdoValue.Split(','));
+                List<string> dropsList = new(minionDropsZdoValue.Split(','));
                 dropsList.ForEach(dropString =>
                 {
                     string[] splut = dropString.Split(':');
@@ -279,7 +277,7 @@ namespace ChebsNecromancy.Minions
                 Follow(player.gameObject);
                 return;
             }
-            
+
             if (waitPos.Equals(StatusRoaming))
             {
                 Roam();
@@ -294,7 +292,7 @@ namespace ChebsNecromancy.Minions
 
             // create a temporary object. This has no ZDO so will be cleaned up
             // after the session ends
-            GameObject waitObject = new GameObject(MinionWaitObjectName);
+            GameObject waitObject = new(MinionWaitObjectName);
             waitObject.transform.position = waitPos;
             monsterAI.m_randomMoveRange = 0;
             monsterAI.SetFollowTarget(waitObject);

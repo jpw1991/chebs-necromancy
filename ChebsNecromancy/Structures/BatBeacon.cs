@@ -1,12 +1,9 @@
-﻿using System.Collections;
+﻿using BepInEx.Configuration;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.AccessControl;
-using BepInEx.Configuration;
-using ChebsNecromancy.Common;
 using UnityEngine;
-using static Piece;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
@@ -17,7 +14,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> BatDuration;
         public static ConfigEntry<float> DelayBetweenBats;
         public static ConfigEntry<int> MaxBats;
-        
+
         protected List<GameObject> SpawnedBats = new();
         private float batLastSpawnedAt;
 
@@ -35,9 +32,9 @@ namespace ChebsNecromancy.Structures
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconAllowed", true,
                 "Whether making a Spirit Pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconBuildCosts", 
-                ChebsRecipeConfig.DefaultRecipe, 
-                "Materials needed to build the bat beacon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconBuildCosts",
+                ChebsRecipeConfig.DefaultRecipe,
+                "Materials needed to build the bat beacon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
                 null, true);
 
             SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "BatBeaconSightRadius",
@@ -63,7 +60,7 @@ namespace ChebsNecromancy.Structures
         {
             StartCoroutine(LookForEnemies());
         }
-        
+
         IEnumerator LookForEnemies()
         {
             yield return new WaitWhile(() => ZInput.instance == null);
@@ -87,7 +84,7 @@ namespace ChebsNecromancy.Structures
                 }
 
                 if (!EnemiesNearby(out Character characterInRange)) continue;
-                
+
                 // spawn up until the limit
                 if (SpawnedBats.Count < MaxBats.Value)
                 {

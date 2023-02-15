@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using BepInEx.Configuration;
-using ChebsNecromancy.Minions;
+﻿using BepInEx.Configuration;
 using ChebsNecromancy.Common;
+using ChebsNecromancy.Minions;
 using Jotunn;
-using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -41,12 +40,12 @@ namespace ChebsNecromancy.Items.PlayerItems
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "Allowed",
                 true, "Whether crafting a Spectral Shroud is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName, 
-                ChebsRecipeConfig.ObjectName + "CraftingStation", ChebsRecipe.EcraftingTable.Workbench, 
+            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName,
+                ChebsRecipeConfig.ObjectName + "CraftingStation", ChebsRecipe.EcraftingTable.Workbench,
                 "Crafting station where Spectral Shroud is available", null, true);
 
-            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName, 
-                ChebsRecipeConfig.ObjectName + "CraftingStationLevel", 1, "Crafting station level required to craft Spectral Shroud", 
+            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName,
+                ChebsRecipeConfig.ObjectName + "CraftingStationLevel", 1, "Crafting station level required to craft Spectral Shroud",
                 plugin.IntQuantityValue, true);
 
             ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingCosts",
@@ -56,7 +55,7 @@ namespace ChebsNecromancy.Items.PlayerItems
                 true, "Whether wraiths spawn or not.", plugin.BoolValue, true);
 
             NecromancySkillBonus = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "SkillBonus",
-                10, "How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", 
+                10, "How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).",
                 plugin.IntQuantityValue, true);
 
             DelayBetweenWraithSpawns = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "WraithDelay",
@@ -112,7 +111,7 @@ namespace ChebsNecromancy.Items.PlayerItems
         protected bool EnemiesNearby(out Character enemy)
         {
 
-            List<Character> charactersInRange = new List<Character>();
+            List<Character> charactersInRange = new();
             Character.GetCharactersInRange(
                 Player.m_localPlayer.transform.position,
                 30f,
@@ -141,7 +140,7 @@ namespace ChebsNecromancy.Items.PlayerItems
             if (playerNecromancyLevel >= GuardianWraithMinion.GuardianWraithLevelRequirement.Value)
             {
                 if (!EnemiesNearby(out Character enemy)) return;
-                
+
                 GameObject prefab = ZNetScene.instance.GetPrefab("ChebGonaz_GuardianWraith");
                 if (!prefab)
                 {

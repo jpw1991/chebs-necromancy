@@ -2,10 +2,10 @@
 // console command to kill all player's neckros.
 // attention: only kills THEIR minions
 
-using System;
-using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using Jotunn.Entities;
+using System;
+using System.Collections.Generic;
 
 namespace ChebsNecromancy.Commands
 {
@@ -18,10 +18,10 @@ namespace ChebsNecromancy.Commands
         public override void Run(string[] args)
         {
             List<Character> allCharacters = Character.GetAllCharacters();
-            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
+            //List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
 
             bool force = args.Length > 0 && args[0].Equals("f");
-            
+
             foreach (Character item in allCharacters)
             {
                 if (item.IsDead()) continue;

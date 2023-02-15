@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class Structure: MonoBehaviour
+    internal class Structure : MonoBehaviour
     {
         public virtual void CreateConfigs(BasePlugin plugin) { }
-        public ChebsRecipe ChebsRecipeConfig;
+        public ChebsRecipe ChebsRecipeConfig = new();
     }
 }

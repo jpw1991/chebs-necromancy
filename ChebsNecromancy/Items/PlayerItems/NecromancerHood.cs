@@ -1,7 +1,7 @@
 ﻿using BepInEx.Configuration;
+using ChebsNecromancy.Common;
 using Jotunn.Entities;
 using System.Reflection;
-using ChebsNecromancy.Common;
 using UnityEngine;
 
 namespace ChebsNecromancy.Items.PlayerItems
@@ -51,6 +51,6 @@ namespace ChebsNecromancy.Items.PlayerItems
 
             return customItem;
         }
-        
+
     }
 }

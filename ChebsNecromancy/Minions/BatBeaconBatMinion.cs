@@ -14,7 +14,9 @@ namespace ChebsNecromancy.Minions
             killAt = Time.time + BatBeacon.BatDuration.Value;
         }
 
+#pragma warning disable IDE0051 // Remove unused private members
         private void Update()
+#pragma warning restore IDE0051 // Remove unused private members
         {
             if (Time.time > killAt)
             {

@@ -2,10 +2,10 @@
 // console command to kill all player's minions.
 // attention: only kills THEIR minions
 
-using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using System.Collections.Generic;
 
 namespace ChebsNecromancy.Commands
 {
@@ -47,7 +47,7 @@ namespace ChebsNecromancy.Commands
 
             float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
 
-            List<Character> characters = new List<Character>();
+            List<Character> characters = new();
             Character.GetCharactersInRange(Player.m_localPlayer.transform.position, radius, characters);
             characters.ForEach(character =>
             {

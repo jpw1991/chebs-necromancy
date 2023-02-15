@@ -1,10 +1,7 @@
-﻿using System.Collections;
+﻿using BepInEx.Configuration;
+using System.Collections;
 using System.Reflection;
-using System.Security.AccessControl;
-using BepInEx.Configuration;
-using ChebsNecromancy.Common;
 using UnityEngine;
-using static Piece;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
@@ -15,7 +12,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
 
         protected Container Container;
-        
+
         public override void CreateConfigs(BasePlugin plugin)
         {
             ChebsRecipeConfig.DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1";
@@ -30,9 +27,9 @@ namespace ChebsNecromancy.Structures
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonAllowed", true,
                 "Whether making a the pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonBuildCosts", 
-                ChebsRecipeConfig.DefaultRecipe, 
-                "Materials needed to build the pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonBuildCosts",
+                ChebsRecipeConfig.DefaultRecipe,
+                "Materials needed to build the pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
                 null, true);
 
             SpawnInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererSpawnInterval", 60f,
@@ -49,7 +46,7 @@ namespace ChebsNecromancy.Structures
             Container = GetComponent<Container>();
             StartCoroutine(SpawnNeckros());
         }
-        
+
         private IEnumerator SpawnNeckros()
         {
             yield return new WaitWhile(() => ZInput.instance == null);

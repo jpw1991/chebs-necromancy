@@ -3,9 +3,6 @@
 // File:    ChebsNecromancy.cs
 // Project: ChebsNecromancy
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
@@ -21,6 +18,9 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Paths = BepInEx.Paths;
 
@@ -37,7 +37,7 @@ namespace ChebsNecromancy
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
         public const string PluginVersion = "1.7.6";
-        private const string ConfigFileName =  PluginGuid + ".cfg";
+        private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
         private readonly Harmony harmony = new(PluginGuid);
@@ -296,7 +296,7 @@ namespace ChebsNecromancy
                 if (SpiritPylonStructure.ChebsRecipeConfig.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
-                } 
+                }
 
                 if (NeckroGathererMinion.Allowed.Value && LargeCargoCrate.Allowed.Value)
                 {
@@ -389,7 +389,8 @@ namespace ChebsNecromancy
             {
                 if (Time.time > inputDelay)
                 {
-                    wands.ForEach(wand => {
+                    wands.ForEach(wand =>
+                    {
                         if (wand.HandleInputs())
                         {
                             inputDelay = Time.time + .5f;
@@ -411,7 +412,7 @@ namespace ChebsNecromancy
     // ___m_drops MUST be named with exactly three underscores.
     //
     // This is because all of this has a special meaning to Harmony.
-    
+
     [HarmonyPatch(typeof(CharacterDrop), "GenerateDropList")]
     class CharacterDrop_Patches
     {
@@ -536,7 +537,7 @@ namespace ChebsNecromancy
             if (hit != null)
             {
                 Character attacker = hit.GetAttacker();
-                if (attacker != null 
+                if (attacker != null
                     && attacker.TryGetComponent(out UndeadMinion _))
                 {
                     if (___m_piece.IsPlacedByPlayer())
@@ -641,8 +642,8 @@ namespace ChebsNecromancy
                 if (!__instance.m_nview.IsOwner()
                     || __instance.GetHealth() <= 0f
                     || __instance.IsDead()
-                    || __instance.IsTeleporting() 
-                    || __instance.InCutscene() 
+                    || __instance.IsTeleporting()
+                    || __instance.InCutscene()
                     || (hit.m_dodgeable && __instance.IsDodgeInvincible()))
                 {
                     return false; // deny base method completion
@@ -658,15 +659,15 @@ namespace ChebsNecromancy
                     hit.ApplyModifier(difficultyDamageScalePlayer);
                 }
                 __instance.m_seman.OnDamaged(hit, attacker);
-                if (__instance.m_baseAI !=null 
-                    && __instance.m_baseAI.IsAggravatable() 
+                if (__instance.m_baseAI != null
+                    && __instance.m_baseAI.IsAggravatable()
                     && !__instance.m_baseAI.IsAggravated())
                 {
                     BaseAI.AggravateAllInArea(__instance.transform.position, 20f, BaseAI.AggravatedReason.Damage);
                 }
-                if (__instance.m_baseAI != null 
-                    && !__instance.m_baseAI.IsAlerted() 
-                    && hit.m_backstabBonus > 1f 
+                if (__instance.m_baseAI != null
+                    && !__instance.m_baseAI.IsAlerted()
+                    && hit.m_backstabBonus > 1f
                     && Time.time - __instance.m_backstabTime > 300f)
                 {
                     __instance.m_backstabTime = Time.time;
@@ -689,9 +690,9 @@ namespace ChebsNecromancy
                     if (statusEffect == null)
                     {
                         statusEffect = __instance.m_seman.AddStatusEffect(
-                            hit.m_statusEffect, 
+                            hit.m_statusEffect,
                             false,
-                            hit.m_itemLevel, 
+                            hit.m_itemLevel,
                             hit.m_skillLevel);
                     }
                     else

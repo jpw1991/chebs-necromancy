@@ -1,5 +1,4 @@
-﻿using ChebsNecromancy.Common;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace ChebsNecromancy.Items.MinionItems
 {

@@ -1,12 +1,12 @@
-﻿using System.Linq;
-using System;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
+using ChebsNecromancy.Items;
 using Jotunn.Configs;
 using Jotunn.Entities;
+using System;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Logger = Jotunn.Logger;
-using ChebsNecromancy.Items;
-using System.Reflection;
 
 namespace ChebsNecromancy.Common
 {
@@ -16,7 +16,7 @@ namespace ChebsNecromancy.Common
         public ConfigEntry<bool> Allowed { get; set; }
         public ConfigEntry<string> CraftingCost { get; set; }
         public ConfigEntry<EcraftingTable> CraftingStationRequired { get; set; }
-        public ConfigEntry<int> CraftingStationLevel {  get; set; }
+        public ConfigEntry<int> CraftingStationLevel { get; set; }
 
         public enum EcraftingTable
         {
@@ -62,18 +62,24 @@ namespace ChebsNecromancy.Common
                     PieceTable = PieceTable,
                     Category = PieceCategory
                 };
-            } else if (config.GetType() == typeof(ItemConfig))
+            }
+            else if (config.GetType() == typeof(ItemConfig))
             {
                 config = new ItemConfig()
                 {
                     Name = RecipeName,
                     Description = RecipeDescription
                 };
-            } else
+            }
+            else
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
-
+            if (Allowed is null)
+            {
+                Allowed = Config.Bind(ObjectName, ObjectName + "Allowed",
+                false, "", null);
+            }
             if (Allowed.Value)
             {
                 if (string.IsNullOrEmpty(CraftingCost.Value))
@@ -88,7 +94,8 @@ namespace ChebsNecromancy.Common
                 if (config.GetType() == typeof(PieceConfig))
                 {
                     (config as PieceConfig).Enabled = false;
-                } else if (config.GetType() == typeof(ItemConfig))
+                }
+                else if (config.GetType() == typeof(ItemConfig))
                 {
                     (config as ItemConfig).Enabled = false;
                 }
@@ -104,7 +111,7 @@ namespace ChebsNecromancy.Common
             {
                 Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s customObjectFromPrefab is null!");
 
-                return (T) Convert.ChangeType(null, typeof(T));
+                return (T)Convert.ChangeType(null, typeof(T));
             }
 
             if (config.GetType() == typeof(PieceConfig))
@@ -113,21 +120,25 @@ namespace ChebsNecromancy.Common
                 {
                     Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s PiecePrefab is null!");
                     return (T)Convert.ChangeType(null, typeof(T));
-                } else
+                }
+                else
                 {
                     return (T)Convert.ChangeType(customObjectFromPrefab, typeof(T));
                 }
-            } else if (config.GetType() == typeof(ItemConfig))
+            }
+            else if (config.GetType() == typeof(ItemConfig))
             {
                 if ((customObjectFromPrefab as CustomItem).ItemPrefab == null)
                 {
                     Logger.LogError($"GetCustomItemFromPrefab: {PrefabName}'s ItemPrefab is null!");
                     return (T)Convert.ChangeType(null, typeof(T));
-                } else
+                }
+                else
                 {
                     return (T)Convert.ChangeType(customObjectFromPrefab, typeof(T));
                 }
-            } else
+            }
+            else
             {
                 return (T)Convert.ChangeType(null, typeof(T));
             }
@@ -158,7 +169,7 @@ namespace ChebsNecromancy.Common
 
             // Settings for item configs only
             if (craftingStationRequired is not null)
-            {              
+            {
                 (config as ItemConfig).CraftingStation = ((InternalName)typeof(EcraftingTable).GetMember(
                     craftingStationRequired.Value.ToString())[0].GetCustomAttributes(
                     typeof(InternalName)).First()).Name;

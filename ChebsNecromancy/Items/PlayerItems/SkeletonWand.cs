@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using ChebsNecromancy.Minions;
 using Jotunn;
 using Jotunn.Configs;
-using Jotunn.Entities;
 using Jotunn.Managers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -76,7 +75,7 @@ namespace ChebsNecromancy.Items.PlayerItems
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
         #endregion
-               
+
         public override void CreateConfigs(BasePlugin plugin)
         {
             ChebsRecipeConfig.DefaultRecipe = "Wood:5,Stone:1";
@@ -88,21 +87,21 @@ namespace ChebsNecromancy.Items.PlayerItems
 
             base.CreateConfigs(plugin);
 
-            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"Allowed",
-                true, "Whether crafting a Skeleton Wand is allowed or not.", null, true);
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "Allowed",
+                true, "Whether crafting a Skeleton Wand is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"CraftingStation",
+            ChebsRecipeConfig.CraftingStationRequired = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingStation",
                 ChebsRecipe.EcraftingTable.Workbench, "Crafting station where Skeleton Wand is available", null, true);
 
-            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"CraftingStationLevel",
+            ChebsRecipeConfig.CraftingStationLevel = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingStationLevel",
                 1, "Crafting station level required to craft Skeleton Wand", plugin.IntQuantityValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName+"CraftingCosts",
-                ChebsRecipeConfig.DefaultRecipe, "Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", 
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CraftingCosts",
+                ChebsRecipeConfig.DefaultRecipe, "Materials needed to craft Skeleton Wand. None or Blank will use Default settings.",
                 null, true);
 
-            SkeletonSetFollowRange = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.RecipeName+"CommandRange",
-                20f, "The distance which nearby skeletons will hear your commands.", plugin.IntQuantityValue);                    
+            SkeletonSetFollowRange = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "CommandRange",
+                20f, "The distance which nearby skeletons will hear your commands.", plugin.FloatQuantityValue);
 
             SkeletonsAllowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonsAllowed",
                 true, "If false, skeletons aren't loaded at all and can't be summoned.", plugin.BoolValue, true);
@@ -138,43 +137,43 @@ namespace ChebsNecromancy.Items.PlayerItems
                 3, "The maximum amount of bones dropped by creautres.", plugin.IntQuantityValue, true);
 
             _necromancyLevelIncrease = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NecromancyLevelIncrease",
-                1f, "How much crafting a skeleton contributes to your Necromancy level increasing.", 
+                1f, "How much crafting a skeleton contributes to your Necromancy level increasing.",
                 plugin.FloatQuantityValue, true);
 
             MaxSkeletons = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "MaximumSkeletons",
-                0, "The maximum amount of skeletons that can be made (0 = unlimited).", null, true);
+                0, "The maximum amount of skeletons that can be made (0 = unlimited).", plugin.IntQuantityValue, true);
 
             ArmorLeatherScrapsRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonLeatherScrapsRequired",
-                5, "The amount of LeatherScraps required to craft a skeleton in leather armor.", null, true);
+                5, "The amount of LeatherScraps required to craft a skeleton in leather armor.", plugin.IntQuantityValue, true);
 
             ArmorBronzeRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonBronzeRequired",
-                1, "The amount of Bronze required to craft a skeleton in bronze armor.", null, true);
+                1, "The amount of Bronze required to craft a skeleton in bronze armor.", plugin.IntQuantityValue, true);
 
             ArmorIronRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonIronRequired",
-                1, "The amount of Iron required to craft a skeleton in iron armor.", null, true);
+                1, "The amount of Iron required to craft a skeleton in iron armor.", plugin.IntQuantityValue, true);
 
             SurtlingCoresRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonMageSurtlingCoresRequired",
-                1, "The amount of surtling cores required to craft a skeleton mage.", null, true);
+                1, "The amount of surtling cores required to craft a skeleton mage.", plugin.IntQuantityValue, true);
 
             ArmorBlackIronRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ArmoredSkeletonBlackIronRequired",
-                1, "The amount of Black Metal required to craft a skeleton in black iron armor.", null, true);
+                1, "The amount of Black Metal required to craft a skeleton in black iron armor.", plugin.IntQuantityValue, true);
 
             PoisonSkeletonBaseHealth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonBaseHealth",
                 100f, "HP = BaseHealth + NecromancyLevel * HealthMultiplier", plugin.FloatQuantityValue, true);
 
             PoisonSkeletonLevelRequirementConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonLevelRequired",
-                50, "The Necromancy level needed to summon a Poison Skeleton.", null, true);
+                50, "The Necromancy level needed to summon a Poison Skeleton.", plugin.IntQuantityValue, true);
 
             PoisonSkeletonGuckRequiredConfig = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonGuckRequired",
-                1, "The amount of Guck required to craft a Poison Skeleton.", null, true);
+                1, "The amount of Guck required to craft a Poison Skeleton.", plugin.IntQuantityValue, true);
 
             PoisonSkeletonNecromancyLevelIncrease = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "PoisonSkeletonNecromancyLevelIncrease",
-                3f, "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", 
+                3f, "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.",
                 plugin.FloatQuantityValue, true);
 
             SkeletonArmorValueMultiplier = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SkeletonArmorValueMultiplier",
-                1f, "If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing " + 
-                "iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.", 
+                1f, "If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing " +
+                "iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamage",
@@ -193,19 +192,19 @@ namespace ChebsNecromancy.Items.PlayerItems
                 5f, "How much creating a poison skeleton damages the wand.", plugin.FloatQuantityValue, true);
 
             DurabilityDamageLeather = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageLeather",
-                1f, "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", 
+                1f, "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamageBronze = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBronze",
-                1f, "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", 
+                1f, "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamageIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageIron",
-                1f, "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", 
+                1f, "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamageBlackIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBlackIron",
-                1f, "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", 
+                1f, "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)",
                 plugin.FloatQuantityValue, true);
         }
 
@@ -234,7 +233,7 @@ namespace ChebsNecromancy.Items.PlayerItems
                 || Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
                     equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand")
                 ) == null) return false;
-            
+
             ExtraResourceConsumptionUnlocked =
                 UnlockExtraResourceConsumptionButton == null
                 || ZInput.GetButton(UnlockExtraResourceConsumptionButton.Name);
@@ -267,7 +266,7 @@ namespace ChebsNecromancy.Items.PlayerItems
                 }
                 else
                 {
-                    MakeNearbyMinionsFollow(Player.m_localPlayer, SkeletonSetFollowRange.Value, false);   
+                    MakeNearbyMinionsFollow(Player.m_localPlayer, SkeletonSetFollowRange.Value, false);
                 }
                 return true;
             }

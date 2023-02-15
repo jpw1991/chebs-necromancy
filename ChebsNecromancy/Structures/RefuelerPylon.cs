@@ -1,9 +1,9 @@
+using BepInEx.Configuration;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BepInEx.Configuration;
 using UnityEngine;
 
 namespace ChebsNecromancy.Structures
@@ -13,7 +13,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
         public static ConfigEntry<int> RefuelerContainerWidth, RefuelerContainerHeight;
-        
+
         protected readonly int PieceMask = LayerMask.GetMask("piece");
         protected Container Container;
 
@@ -31,8 +31,8 @@ namespace ChebsNecromancy.Structures
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
                 "Whether making a Refueler Pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonBuildCosts", 
-                ChebsRecipeConfig.DefaultRecipe, 
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonBuildCosts",
+                ChebsRecipeConfig.DefaultRecipe,
                 "Materials needed to build a Refueler Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
                 null, true);
 
@@ -61,7 +61,7 @@ namespace ChebsNecromancy.Structures
 
             StartCoroutine(LookForFurnaces());
         }
-        
+
         IEnumerator LookForFurnaces()
         {
             yield return new WaitWhile(() => ZInput.instance == null);
@@ -74,14 +74,14 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RefuelerUpdateInterval.Value);
-                
+
                 Tuple<List<Smelter>, List<Fireplace>> tuple = GetNearbySmeltersAndFireplaces();
 
                 List<Smelter> smelters = tuple.Item1;
                 smelters.ForEach(ManageSmelter);
                 List<Fireplace> fireplaces = tuple.Item2;
                 fireplaces.ForEach(ManageFireplace);
-                
+
             }
         }
 
@@ -90,7 +90,7 @@ namespace ChebsNecromancy.Structures
             // find and return smelters and fireplaces in range
             Collider[] nearbyColliders = Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, PieceMask);
             if (nearbyColliders.Length < 1) return null;
-            
+
             List<Smelter> smelters = new();
             List<Fireplace> fireplaces = new();
             nearbyColliders.ToList().ForEach(nearbyCollider =>
@@ -178,8 +178,8 @@ namespace ChebsNecromancy.Structures
             // fuel is always an incomplete number like 5.98/6.00 because the moment you add the fuel
             // it begins decreasing. So minus 1 from the max so we only add fuel if it is something like
             // 4.98/6.00
-            if (currentFuel >= fireplace.m_maxFuel-1) return;
-            
+            if (currentFuel >= fireplace.m_maxFuel - 1) return;
+
             Inventory inventory = Container.GetInventory();
 
             if (inventory == null) return;

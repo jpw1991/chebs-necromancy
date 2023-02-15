@@ -1,8 +1,7 @@
-﻿using System.Collections;
+﻿using BepInEx.Configuration;
+using ChebsNecromancy.Items.PlayerItems;
+using System.Collections;
 using System.Collections.Generic;
-using BepInEx;
-using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -24,14 +23,14 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
 
         public new static void CreateConfigs(BasePlugin plugin)
-        { 
-            DropOnDeath = plugin.ModConfig("DraugrMinion (Server Synced)", "DropOnDeath",
-                DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        {
+            DropOnDeath = plugin.ModConfig("DraugrMinion", "DropOnDeath",
+                DropType.JustResources, "Whether a minion refunds anything when it dies.", null,
+                true);
 
-            PackDropItemsIntoCargoCrate = plugin.ModConfig("DraugrMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
-                true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PackDropItemsIntoCargoCrate = plugin.ModConfig("DraugrMinion", "PackDroppedItemsIntoCargoCrate",
+                true, "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, " +
+                "which is useful for more valuable drops like Surtling Cores and metal ingots.", plugin.BoolValue, true);
         }
 
         public override void Awake()
@@ -60,7 +59,7 @@ namespace ChebsNecromancy.Minions
             // VisEquipment remembers what armor the draugr is wearing.
             // Exploit this to reapply the armor so the armor values work
             // again.
-            List<int> equipmentHashes = new List<int>()
+            List<int> equipmentHashes = new()
                 {
                     humanoid.m_visEquipment.m_currentChestItemHash,
                     humanoid.m_visEquipment.m_currentLegItemHash,
@@ -112,7 +111,7 @@ namespace ChebsNecromancy.Minions
 
         public virtual void ScaleEquipment(float necromancyLevel, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
         {
-            List<GameObject> defaultItems = new List<GameObject>();
+            List<GameObject> defaultItems = new();
 
             Humanoid humanoid = GetComponent<Humanoid>();
             if (humanoid == null)

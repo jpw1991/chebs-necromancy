@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using BepInEx.Configuration;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using BepInEx.Configuration;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -14,7 +14,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> GhostDuration;
         public static ConfigEntry<float> DelayBetweenGhosts;
         public static ConfigEntry<int> MaxGhosts;
-        
+
         protected List<GameObject> SpawnedGhosts = new();
         private float ghostLastSpawnedAt;
 
@@ -57,7 +57,7 @@ namespace ChebsNecromancy.Structures
         {
             StartCoroutine(LookForEnemies());
         }
-        
+
         IEnumerator LookForEnemies()
         {
             while (ZInput.instance == null)
@@ -79,7 +79,7 @@ namespace ChebsNecromancy.Structures
                 yield return new WaitForSeconds(2);
 
                 // clear out any dead/destroyed ghosts
-                for (int i=SpawnedGhosts.Count-1; i>=0; i--)
+                for (int i = SpawnedGhosts.Count - 1; i >= 0; i--)
                 {
                     if (SpawnedGhosts[i] == null)
                     {
@@ -89,7 +89,7 @@ namespace ChebsNecromancy.Structures
 
                 if (Player.m_localPlayer == null) continue;
                 if (!EnemiesNearby(out Character characterInRange)) continue;
-                
+
                 // spawn ghosts up until the limit
                 if (SpawnedGhosts.Count < MaxGhosts.Value)
                 {

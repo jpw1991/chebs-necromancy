@@ -1,5 +1,5 @@
 ﻿
-using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.PlayerItems;
 using Jotunn;
 
 namespace ChebsNecromancy.Minions

@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using UnityEngine;
 
 namespace ChebsNecromancy.Minions
@@ -13,12 +12,10 @@ namespace ChebsNecromancy.Minions
 
         public new static void CreateConfigs(BasePlugin plugin)
         {
-            GuardianWraithLevelRequirement = plugin.ModConfig("SpectralShroud (Server Synced)", "GuardianWraithLevelRequirement",
-                25, new ConfigDescription("The Necromancy level required to control a Guardian Wraith.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            GuardianWraithDuration = plugin.ModConfig("SpectralShroud (Server Synced)", "GuardianWraithDuration",
-                10, new ConfigDescription("The lifetime of a Guardian Wraith.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            GuardianWraithLevelRequirement = plugin.ModConfig("SpectralShroud", "GuardianWraithLevelRequirement",
+                25, "The Necromancy level required to control a Guardian Wraith.", plugin.IntQuantityValue, true);
+            GuardianWraithDuration = plugin.ModConfig("SpectralShroud", "GuardianWraithDuration",
+                10, "The lifetime of a Guardian Wraith.", plugin.IntQuantityValue, true);
         }
 
         public override void Awake()

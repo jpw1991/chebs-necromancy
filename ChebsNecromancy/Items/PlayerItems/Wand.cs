@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ChebsNecromancy.Items.PlayerItems
@@ -47,7 +47,7 @@ namespace ChebsNecromancy.Items.PlayerItems
         public override void CreateConfigs(BasePlugin plugin)
         {
             FollowByDefault = plugin.ModConfig("Wands", "FollowByDefault",
-                false,"Whether minions will automatically be set to follow upon being created or not.", plugin.BoolValue);
+                false, "Whether minions will automatically be set to follow upon being created or not.", plugin.BoolValue);
 
             CreateMinionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "CreateMinion",
                 KeyCode.B, "The key to create a warrior minion with.");
@@ -55,34 +55,34 @@ namespace ChebsNecromancy.Items.PlayerItems
             CreateMinionGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "CreateMinionGamepad",
                 InputManager.GamepadButton.ButtonSouth, "The key to gamepad button to create a warrior minion with.");
 
-            CreateArcherMinionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"CreateArcher",
+            CreateArcherMinionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "CreateArcher",
                 KeyCode.H, "The key to create an archer minion with.");
 
-            CreateArcherMinionGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"CreateArcherGamepad",
+            CreateArcherMinionGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "CreateArcherGamepad",
                 InputManager.GamepadButton.ButtonSouth, "The key to gamepad button to create an archer minion with.");
 
-            FollowConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Follow",
+            FollowConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "Follow",
                 KeyCode.F, "The key to tell minions to follow.");
 
-            FollowGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"FollowGamepad",
+            FollowGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "FollowGamepad",
                 InputManager.GamepadButton.ButtonWest, "The gamepad button to tell minions to follow.");
 
-            WaitConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Wait",
+            WaitConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "Wait",
                 KeyCode.T, "The key to tell minions to wait.");
 
-            WaitGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"WaitGamepad",
+            WaitGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "WaitGamepad",
                 InputManager.GamepadButton.ButtonEast, "The gamepad button to tell minions to wait.");
 
-            TeleportConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Teleport",
+            TeleportConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "Teleport",
                 KeyCode.G, "The key to teleport following minions to you.");
 
-            TeleportGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"TeleportGamepad",
+            TeleportGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "TeleportGamepad",
                 InputManager.GamepadButton.SelectButton, "The gamepad button to teleport following minions to you.");
 
-            AttackTargetConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"Target",
+            AttackTargetConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "Target",
                 KeyCode.R, "The key to tell minions to go to a specific target.");
 
-            AttackTargetGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName+"TargetGamepad",
+            AttackTargetGamepadConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "TargetGamepad",
                 InputManager.GamepadButton.StartButton, "The gamepad button to tell minions to go to a specific target.");
 
             UnlockExtraResourceConsumptionConfig = plugin.ModConfig("Keybinds", ChebsRecipeConfig.ObjectName + "UnlockExtraResourceConsumption",
@@ -210,18 +210,18 @@ namespace ChebsNecromancy.Items.PlayerItems
             foreach (var character in allCharacters)
             {
                 if (character.IsDead()) continue;
-                
+
                 UndeadMinion minion = character.GetComponent<UndeadMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
-                
+
                 if (character.GetComponent<MonsterAI>().GetFollowTarget() != player.gameObject) continue;
 
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$chebgonaz_roaming");
                 minion.Roam();
             }
         }
-        
+
         public void MakeNearbyMinionsFollow(Player player, float radius, bool follow)
         {
             // based off BaseAI.FindClosestCreature
@@ -236,14 +236,14 @@ namespace ChebsNecromancy.Items.PlayerItems
                 UndeadMinion minion = item.GetComponent<UndeadMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) continue;
-                
+
                 float distance = Vector3.Distance(item.transform.position, player.transform.position);
                 // if within radius OR it's set to the targetObject so you can recall those you've commanded
                 // to be somewhere that's beyond the radius
                 if (!(distance < radius)
                     && (item.GetComponent<MonsterAI>().GetFollowTarget() != targetObject
                         || item.GetComponent<MonsterAI>().GetFollowTarget() == null)) continue;
-                
+
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
                     follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
                 if (follow)
@@ -282,8 +282,7 @@ namespace ChebsNecromancy.Items.PlayerItems
             // we also need to highlight the target somehow (dont know how yet)
             // eg. change its shader
             Ray ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 100f))
+            if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_targetfound");
                 targetObject = GameObject.Instantiate(ZNetScene.instance.GetPrefab("Stone"));

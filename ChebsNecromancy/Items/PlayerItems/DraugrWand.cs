@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using BepInEx.Configuration;
-using ChebsNecromancy.Minions;
+﻿using BepInEx.Configuration;
 using ChebsNecromancy.Common;
+using ChebsNecromancy.Minions;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Managers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -52,7 +52,7 @@ namespace ChebsNecromancy.Items.PlayerItems
             ChebsRecipeConfig.ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name;
 
             base.CreateConfigs(plugin);
-                      
+
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, ChebsRecipeConfig.ObjectName + "Allowed",
                 true, "Whether crafting a Draugr Wand is allowed or not.", plugin.BoolValue, true);
 
@@ -114,19 +114,19 @@ namespace ChebsNecromancy.Items.PlayerItems
                 3f, "How much creating an archer damages the wand.", plugin.FloatQuantityValue, true);
 
             DurabilityDamageLeather = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageLeather",
-                1f, "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", 
+                1f, "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamageBronze = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBronze",
-                1f, "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", 
+                1f, "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamageIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageIron",
-                1f, "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", 
+                1f, "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)",
                 plugin.FloatQuantityValue, true);
 
             DurabilityDamageBlackIron = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "DurabilityDamageBlackIron",
-                1f, "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", 
+                1f, "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)",
                 plugin.FloatQuantityValue, true);
         }
 
@@ -152,7 +152,7 @@ namespace ChebsNecromancy.Items.PlayerItems
 
             return new KeyHintConfig
             {
-                Item = ItemName,
+                Item = ChebsRecipeConfig.ItemName,
                 ButtonConfigs = buttonConfigs.ToArray()
             };
         }
@@ -201,7 +201,7 @@ namespace ChebsNecromancy.Items.PlayerItems
                     }
                     else
                     {
-                        MakeNearbyMinionsFollow(Player.m_localPlayer, DraugrSetFollowRange.Value, false);   
+                        MakeNearbyMinionsFollow(Player.m_localPlayer, DraugrSetFollowRange.Value, false);
                     }
                     return true;
                 }

@@ -1,5 +1,5 @@
-﻿using System;
-using ChebsNecromancy.Common;
+﻿using ChebsNecromancy.Common;
+using System;
 
 namespace ChebsNecromancy.Items
 {
@@ -11,8 +11,8 @@ namespace ChebsNecromancy.Items
 
     internal class Item
     {
-        public virtual void CreateConfigs(BasePlugin plugin) {}
-        public ChebsRecipe ChebsRecipeConfig;
+        public virtual void CreateConfigs(BasePlugin plugin) { }
+        public ChebsRecipe ChebsRecipeConfig = new();
 
         // coroutines cause problems and this is not a monobehavior, but we
         // may still want some stuff to happen during update.
