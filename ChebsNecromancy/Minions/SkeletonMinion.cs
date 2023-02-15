@@ -16,6 +16,7 @@ namespace ChebsNecromancy.Minions
             Archer,
             Mage,
             Poison,
+            Woodcutter,
         };
 
         // for limits checking
