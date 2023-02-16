@@ -29,15 +29,20 @@ namespace ChebsNecromancy.Patches
                 {
                     __instance.gameObject.AddComponent<GuardianWraithMinion>();
                 }
-                else
-                if (__instance.name.Contains("SpiritPylonGhost") && __instance.GetComponent<SpiritPylonGhostMinion>() == null)
+                else if (__instance.name.Contains("SpiritPylonGhost") &&
+                         !__instance.TryGetComponent(out SpiritPylonGhostMinion _))
                 {
                     __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
                 }
                 else
                 {
-                    if (__instance.GetComponent<UndeadMinion>() == null)
+                    if (!__instance.TryGetComponent(out UndeadMinion _))
                     {
+                        if (__instance.name.Contains("Woodcutter"))
+                        {
+                            __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();
+                        }
+
                         if (__instance.name.Contains("PoisonSkeleton"))
                         {
                             __instance.gameObject.AddComponent<PoisonSkeletonMinion>();

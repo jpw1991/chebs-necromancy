@@ -53,6 +53,13 @@ namespace ChebsNecromancy.Patches
                         __instance.gameObject.AddComponent<BatBeacon>();
                     }
                 }
+                else if (__instance.name.Contains("BatLantern"))
+                {
+                    if (__instance.GetComponent<BatLantern>() == null)
+                    {
+                        __instance.gameObject.AddComponent<BatLantern>();
+                    }
+                }
             }
         }
     }

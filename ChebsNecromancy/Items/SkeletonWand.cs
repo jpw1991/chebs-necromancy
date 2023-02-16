@@ -31,6 +31,8 @@ namespace ChebsNecromancy.Items
         public const string PoisonSkeletonPrefabName = "ChebGonaz_PoisonSkeleton";
         public const string PoisonSkeleton2PrefabName = "ChebGonaz_PoisonSkeleton2";
         public const string PoisonSkeleton3PrefabName = "ChebGonaz_PoisonSkeleton3";
+
+        public const string SkeletonWoodcutterPrefabName = "ChebGonaz_SkeletonWoodcutter";
         #endregion
         #region ConfigEntries
         public static ConfigEntry<CraftingTable> CraftingStationRequired;
@@ -67,6 +69,7 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<int> PoisonSkeletonGuckRequiredConfig;
         public static ConfigEntry<float> PoisonSkeletonNecromancyLevelIncrease;
         public static ConfigEntry<float> SkeletonArmorValueMultiplier;
+        public static ConfigEntry<int> WoodcutterSkeletonFlintRequiredConfig;
 
         public static ConfigEntry<bool> DurabilityDamage;
         public static ConfigEntry<float> DurabilityDamageWarrior;
@@ -189,6 +192,10 @@ namespace ChebsNecromancy.Items
             PoisonSkeletonGuckRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonGuckRequired",
                 1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            WoodcutterSkeletonFlintRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "WoodcutterSkeletonFlintRequired",
+                1, new ConfigDescription("The amount of Flint required to craft a Woodcutter Skeleton.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             PoisonSkeletonNecromancyLevelIncrease = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonNecromancyLevelIncrease",
                 3f, new ConfigDescription("How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
@@ -286,7 +293,6 @@ namespace ChebsNecromancy.Items
             if (FollowButton != null) buttonConfigs.Add(FollowButton);
             if (WaitButton != null) buttonConfigs.Add(WaitButton);
             if (TeleportButton != null) buttonConfigs.Add(TeleportButton);
-            if (AttackTargetButton != null) buttonConfigs.Add(AttackTargetButton);
 
             return new KeyHintConfig
             {
@@ -344,11 +350,6 @@ namespace ChebsNecromancy.Items
                 TeleportFollowingMinionsToPlayer(Player.m_localPlayer);
                 return true;
             }
-            if (AttackTargetButton != null && ZInput.GetButton(AttackTargetButton.Name))
-            {
-                MakeFollowingMinionsAttackTarget(Player.m_localPlayer);
-                return true;
-            }
 
             return false;
         }
@@ -371,9 +372,24 @@ namespace ChebsNecromancy.Items
                 // consume the fragments
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
+            
+            bool createWoodcutter = false;
+            if (ExtraResourceConsumptionUnlocked
+                && !archer
+                && WoodcutterSkeletonFlintRequiredConfig.Value > 0)
+            {
+                int flintInInventory = player.GetInventory().CountItems("$item_flint");
+                if (flintInInventory >= WoodcutterSkeletonFlintRequiredConfig.Value)
+                {
+                    createWoodcutter = true;
+                    player.GetInventory().RemoveItem("$item_flint", WoodcutterSkeletonFlintRequiredConfig.Value);
+                }
+            }
 
             bool createArmoredLeather = false;
-            if (ExtraResourceConsumptionUnlocked && ArmorLeatherScrapsRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked
+                && !createWoodcutter
+                && ArmorLeatherScrapsRequiredConfig.Value > 0)
             {
                 int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
                 if (leatherScrapsInInventory >= ArmorLeatherScrapsRequiredConfig.Value)
@@ -394,7 +410,10 @@ namespace ChebsNecromancy.Items
             }
 
             bool createArmoredBronze = false;
-            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && ArmorBronzeRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked 
+                && !createWoodcutter
+                && !createArmoredLeather 
+                && ArmorBronzeRequiredConfig.Value > 0)
             {
                 int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
                 if (bronzeInInventory >= ArmorBronzeRequiredConfig.Value)
@@ -405,7 +424,11 @@ namespace ChebsNecromancy.Items
             }
 
             bool createArmoredIron = false;
-            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && !createArmoredBronze && ArmorIronRequiredConfig.Value > 0)
+            if (ExtraResourceConsumptionUnlocked
+                && !createWoodcutter
+                && !createArmoredLeather 
+                && !createArmoredBronze
+                && ArmorIronRequiredConfig.Value > 0)
             {
                 int ironInInventory = player.GetInventory().CountItems("$item_iron");
                 if (ironInInventory >= ArmorIronRequiredConfig.Value)
@@ -417,6 +440,7 @@ namespace ChebsNecromancy.Items
 
             bool createArmoredBlackIron = false;
             if (ExtraResourceConsumptionUnlocked
+                && !createWoodcutter
                 && !createArmoredLeather
                 && !createArmoredBronze
                 && !createArmoredIron
@@ -432,6 +456,7 @@ namespace ChebsNecromancy.Items
 
             bool createMage = false;
             if (ExtraResourceConsumptionUnlocked
+                && !createWoodcutter
                 && !archer
                 && SurtlingCoresRequiredConfig.Value > 0)
             {
@@ -460,6 +485,7 @@ namespace ChebsNecromancy.Items
 
             SkeletonMinion.SkeletonType skeletonType = SkeletonMinion.SkeletonType.Warrior;
             if (archer) { skeletonType = SkeletonMinion.SkeletonType.Archer; }
+            else if (createWoodcutter) { skeletonType = SkeletonMinion.SkeletonType.Woodcutter; }
             else if (createMage) { skeletonType = SkeletonMinion.SkeletonType.Mage; }
             else if (playerNecromancyLevel >= PoisonSkeletonLevelRequirementConfig.Value
                 && ConsumeGuckIfAvailable(player))
@@ -491,20 +517,26 @@ namespace ChebsNecromancy.Items
 
             spawnedChar.AddComponent<FreshMinion>();
 
-            SkeletonMinion minion = skeletonType == SkeletonMinion.SkeletonType.Poison
-                ? spawnedChar.AddComponent<PoisonSkeletonMinion>()
-                : spawnedChar.AddComponent<SkeletonMinion>();
+            SkeletonMinion minion = skeletonType switch
+            {
+                SkeletonMinion.SkeletonType.Poison => spawnedChar.AddComponent<PoisonSkeletonMinion>(),
+                SkeletonMinion.SkeletonType.Woodcutter => spawnedChar.AddComponent<SkeletonWoodcutterMinion>(),
+                _ => spawnedChar.AddComponent<SkeletonMinion>()
+            };
             minion.SetCreatedAtLevel(playerNecromancyLevel);
             minion.ScaleEquipment(playerNecromancyLevel, skeletonType, leatherArmor, bronzeArmor, ironArmor, blackIronArmor);
-            minion.ScaleStats(playerNecromancyLevel);
+            minion.ScaleStats(playerNecromancyLevel); 
 
-            if (FollowByDefault.Value)
+            if (skeletonType != SkeletonMinion.SkeletonType.Woodcutter)
             {
-                minion.Follow(player.gameObject);
-            }
-            else
-            {
-                minion.Wait(player.transform.position);
+                if (FollowByDefault.Value)
+                {
+                    minion.Follow(player.gameObject);
+                }
+                else
+                {
+                    minion.Wait(player.transform.position);
+                }                
             }
 
             player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill, _necromancyLevelIncrease.Value);
@@ -526,6 +558,18 @@ namespace ChebsNecromancy.Items
                         m_onePerPlayer = true,
                         m_amountMin = BoneFragmentsRequiredConfig.Value,
                         m_amountMax = BoneFragmentsRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                if (skeletonType == SkeletonMinion.SkeletonType.Woodcutter)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("Flint"),
+                        m_onePerPlayer = true,
+                        m_amountMin = WoodcutterSkeletonFlintRequiredConfig.Value,
+                        m_amountMax = WoodcutterSkeletonFlintRequiredConfig.Value,
                         m_chance = 1f
                     });
                 }
@@ -659,6 +703,10 @@ namespace ChebsNecromancy.Items
             string result = "";
             switch (skeletonType)
             {
+                case SkeletonMinion.SkeletonType.Woodcutter:
+                    result = SkeletonWoodcutterPrefabName;
+                    break;
+                
                 case SkeletonMinion.SkeletonType.Archer:
                     if (necromancyLevel >= 75)
                     {
