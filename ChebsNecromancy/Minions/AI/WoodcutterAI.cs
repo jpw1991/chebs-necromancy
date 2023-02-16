@@ -7,11 +7,10 @@ namespace ChebsNecromancy.Minions.AI
 {
     internal class WoodcutterAI : MonoBehaviour
     {
-        const float LookRadius = 100;
-        
         private float nextCheck;
 
         private MonsterAI _monsterAI;
+        private Humanoid _humanoid;
 
         private readonly int defaultMask = LayerMask.GetMask("Default");
 
@@ -20,6 +19,10 @@ namespace ChebsNecromancy.Minions.AI
         private void Awake()
         {
             _monsterAI = GetComponent<MonsterAI>();
+            _humanoid = GetComponent<Humanoid>();
+
+            _monsterAI.m_alertRange = 1f; // don't attack unless something comes super close - focus on the wood
+            _monsterAI.m_randomMoveRange = SkeletonWoodcutterMinion.RoamRange.Value;
         }
 
         public void LookForCuttableObjects()
@@ -28,7 +31,7 @@ namespace ChebsNecromancy.Minions.AI
             // Stumps: Destructible with type Tree
             // Logs: TreeLog
 
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, LookRadius, defaultMask);
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask);
             if (hitColliders.Length < 1) return;
             // order items from closest to furthest, then take closest one
             Collider closest = hitColliders
@@ -80,10 +83,7 @@ namespace ChebsNecromancy.Minions.AI
                     _monsterAI.DoAttack(null, false);
                 }
 
-                if (SkeletonWoodcutterMinion.ShowMessages.Value)
-                {
-                    Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", _status, false);
-                }
+                _humanoid.m_name = _status;
             }
         }
     }

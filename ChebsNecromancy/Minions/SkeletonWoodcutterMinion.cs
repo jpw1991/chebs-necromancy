@@ -1,17 +1,13 @@
-using System.Collections;
 using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Minions.AI;
-using UnityEngine;
 
 namespace ChebsNecromancy.Minions
 {
     internal class SkeletonWoodcutterMinion : SkeletonMinion
     {
         public static ConfigEntry<int> ToolTier;
-        public static ConfigEntry<bool> ShowMessages;
-        public static ConfigEntry<float> UpdateDelay;
+        public static ConfigEntry<float> UpdateDelay, LookRadius, RoamRange;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -21,8 +17,12 @@ namespace ChebsNecromancy.Minions
             UpdateDelay = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "SkeletonWoodcutterUpdateDelay",
                 6f, new ConfigDescription("The delay, in seconds, between wood searching attempts. Attention: small values may impact performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            ShowMessages = plugin.Config.Bind("SkeletonWoodcutter (Client)", "SkeletonWoodcutterShowMessages",
-                false, new ConfigDescription("Whether the woodcutter talks or not."));
+            LookRadius = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "LookRadius",
+                50f, new ConfigDescription("How far it can see wood. High values may damage performance.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            RoamRange = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "RoamRange",
+                50f, new ConfigDescription("How far it will randomly run to in search of wood.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void Awake()

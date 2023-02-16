@@ -41,7 +41,7 @@ namespace ChebsNecromancy.Minions
                 1000f, new ConfigDescription("The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             UpdateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
-                3f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
+                6f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             ShowMessages = plugin.Config.Bind("NeckroGatherer (Client)", "NeckroGathererShowMessages",
                 true, new ConfigDescription("Whether the Neckro Gatherer talks or not."));
