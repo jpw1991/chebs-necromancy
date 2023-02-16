@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
@@ -14,9 +13,13 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
         public static ConfigEntry<int> RefuelerContainerWidth, RefuelerContainerHeight;
-        
-        protected readonly int PieceMask = LayerMask.GetMask("piece");
-        protected Container Container;
+        public static ConfigEntry<bool> ManageFireplaces, ManageSmelters, ManageCookingStations;
+
+        private readonly int pieceMask = LayerMask.GetMask("piece");
+        private readonly int pieceMaskNonSolid = LayerMask.GetMask("piece_nonsolid");
+
+        private Container _container;
+        private Inventory _inventory;
 
         public static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -35,9 +38,10 @@ namespace ChebsNecromancy.Structures
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
                 "Whether making a Refueler Pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonBuildCosts", 
-                ChebsRecipeConfig.DefaultRecipe, 
-                "Materials needed to build a Refueler Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonBuildCosts",
+                ChebsRecipeConfig.DefaultRecipe,
+                "Materials needed to build a Refueler Pylon. None or Blank will use Default settings. Format: " +
+                ChebsRecipeConfig.RecipeValue,
                 null, true);
 
             SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonSightRadius", 30f,
@@ -52,60 +56,93 @@ namespace ChebsNecromancy.Structures
 
             RefuelerContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonContainerHeight", 4,
                 "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
+
+            ManageFireplaces = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ManageFireplaces", true,
+                "Whether making a Refueler Pylon will manage fireplaces.", plugin.BoolValue, true);
+
+            ManageSmelters = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ManageSmelters", true,
+                "Whether making a Refueler Pylon will manage smelters.", plugin.BoolValue, true);
+
+            ManageCookingStations = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ManageCookingStations", true,
+                "Whether making a Refueler Pylon will manage cooking stations.", plugin.BoolValue, true);
         }
 
 #pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
 #pragma warning restore IDE0051 // Remove unused private members
         {
-            Container = GetComponent<Container>();
+            _container = GetComponent<Container>();
+            _inventory = _container.GetInventory();
 
-            Container.m_width = RefuelerContainerWidth.Value;
-            Container.m_height = RefuelerContainerHeight.Value;
+            _container.m_width = RefuelerContainerWidth.Value;
+            _container.m_height = RefuelerContainerHeight.Value;
 
-            StartCoroutine(LookForFurnaces());
+            StartCoroutine(LookForPieces());
         }
-        
-        IEnumerator LookForFurnaces()
+
+        IEnumerator LookForPieces()
         {
             yield return new WaitWhile(() => ZInput.instance == null);
 
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
-            Piece piece = GetComponent<Piece>();
+            var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
 
             while (true)
             {
                 yield return new WaitForSeconds(RefuelerUpdateInterval.Value);
-                
-                Tuple<List<Smelter>, List<Fireplace>> tuple = GetNearbySmeltersAndFireplaces();
+
+                Tuple<List<Smelter>, List<Fireplace>, List<CookingStation>> tuple = GetNearbySmeltersAndFireplaces();
 
                 List<Smelter> smelters = tuple.Item1;
-                smelters.ForEach(ManageSmelter);
+                if (smelters != null) smelters.ForEach(ManageSmelter);
+
                 List<Fireplace> fireplaces = tuple.Item2;
-                fireplaces.ForEach(ManageFireplace);
-                
+                if (fireplaces != null) fireplaces.ForEach(ManageFireplace);
+
+                var cookingStations = tuple.Item3;
+                if (cookingStations != null) cookingStations.ForEach(ManageCookingStation);
             }
         }
 
-        private Tuple<List<Smelter>, List<Fireplace>> GetNearbySmeltersAndFireplaces()
+        private Tuple<List<Smelter>, List<Fireplace>, List<CookingStation>> GetNearbySmeltersAndFireplaces()
         {
             // find and return smelters and fireplaces in range
-            Collider[] nearbyColliders = Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, PieceMask);
+            var nearbyColliders = Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, pieceMask);
             if (nearbyColliders.Length < 1) return null;
-            
+
             List<Smelter> smelters = new();
             List<Fireplace> fireplaces = new();
-            nearbyColliders.ToList().ForEach(nearbyCollider =>
+            List<CookingStation> cookingStations = new();
+            foreach (var nearbyCollider in nearbyColliders)
             {
-                Smelter smelter = nearbyCollider.GetComponentInParent<Smelter>();
-                if (smelter != null) smelters.Add(smelter);
-                Fireplace fireplace = nearbyCollider.GetComponentInParent<Fireplace>();
-                if (fireplace != null) fireplaces.Add(fireplace);
-            });
+                if (ManageSmelters.Value)
+                {
+                    Smelter smelter = nearbyCollider.GetComponentInParent<Smelter>();
+                    if (smelter != null) smelters.Add(smelter);
+                }
 
-            return new Tuple<List<Smelter>, List<Fireplace>>(smelters, fireplaces);
+                if (ManageFireplaces.Value)
+                {
+                    Fireplace fireplace = nearbyCollider.GetComponentInParent<Fireplace>();
+                    if (fireplace != null) fireplaces.Add(fireplace);
+                }
+            }
+
+            if (ManageCookingStations.Value)
+            {
+                var nearbyPieceNonSolidColliders = Physics.OverlapSphere(transform.position + Vector3.up,
+                    SightRadius.Value, pieceMaskNonSolid);
+                foreach (var nearbyPieceNonSolidCollider in nearbyPieceNonSolidColliders)
+                {
+                    CookingStation cookingStation = nearbyPieceNonSolidCollider.GetComponentInParent<CookingStation>();
+                    if (cookingStation != null) cookingStations.Add(cookingStation);
+                }
+            }
+
+            return new Tuple<List<Smelter>, List<Fireplace>, List<CookingStation>>(smelters, fireplaces,
+                cookingStations);
         }
 
         private void ManageSmelter(Smelter smelter)
@@ -120,19 +157,15 @@ namespace ChebsNecromancy.Structures
 
             if (smelter == null) return;
 
-            Inventory inventory = Container.GetInventory();
-
-            if (inventory == null) return;
-
             void LoadSmelterWithFuel(string fuel)
             {
-                while (inventory.CountItems(fuel) > 0)
+                while (_inventory.CountItems(fuel) > 0)
                 {
                     float currentFuel = smelter.GetFuel();
                     if (currentFuel < smelter.m_maxFuel)
                     {
                         smelter.SetFuel(currentFuel + 1);
-                        inventory.RemoveItem(fuel, 1);
+                        _inventory.RemoveItem(fuel, 1);
                     }
                     else
                     {
@@ -153,7 +186,7 @@ namespace ChebsNecromancy.Structures
             // eg.
             // copper ore --> copper
             // wood --> coal
-            ItemDrop.ItemData itemData = smelter.FindCookableItem(inventory);
+            ItemDrop.ItemData itemData = smelter.FindCookableItem(_inventory);
             if (itemData != null)
             {
                 // adapted from Smelter.OnAddOre
@@ -162,11 +195,13 @@ namespace ChebsNecromancy.Structures
                 {
                     return;
                 }
+
                 if (smelter.GetQueueSize() >= smelter.m_maxOre)
                 {
                     return;
                 }
-                inventory.RemoveItem(itemData, 1);
+
+                _inventory.RemoveItem(itemData, 1);
                 smelter.m_nview.InvokeRPC("AddOre", itemData.m_dropPrefab.name);
                 smelter.m_addedOreTime = Time.time;
                 if (smelter.m_addOreAnimationDuration > 0f)
@@ -182,16 +217,33 @@ namespace ChebsNecromancy.Structures
             // fuel is always an incomplete number like 5.98/6.00 because the moment you add the fuel
             // it begins decreasing. So minus 1 from the max so we only add fuel if it is something like
             // 4.98/6.00
-            if (currentFuel >= fireplace.m_maxFuel-1) return;
-            
-            Inventory inventory = Container.GetInventory();
+            if (currentFuel >= fireplace.m_maxFuel - 1) return;
 
-            if (inventory == null) return;
-
-            if (inventory.HaveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name))
+            if (_inventory.HaveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name))
             {
                 fireplace.m_nview.InvokeRPC("AddFuel");
-                inventory.RemoveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name, 1);
+                _inventory.RemoveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name, 1);
+            }
+        }
+
+        private void ManageCookingStation(CookingStation cookingStation)
+        {
+            //remove cooked items
+            if (cookingStation.HaveDoneItem())
+            {
+                cookingStation.m_nview.InvokeRPC("RemoveDoneItem", transform.position);
+            }
+
+            // add cookable items
+            var freeSlot = cookingStation.GetFreeSlot();
+            if (freeSlot == -1) return;
+
+            var cookableItem = cookingStation.FindCookableItem(_inventory);
+            if (cookableItem != null)
+            {
+                var cookableItemName = cookableItem.m_dropPrefab.name;
+                cookingStation.m_nview.InvokeRPC("AddItem", cookableItemName);
+                _inventory.RemoveOneItem(cookableItem);
             }
         }
     }

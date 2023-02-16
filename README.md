@@ -66,6 +66,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
   - Black Metal -> Black Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
+  - Flint - skeleton lumberjack
 - As of 1.5.0 you can create a Neckro Pylon which spawns undead Necks from Neck Tails with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
 1.5.0 also introduces a refueler pylon, that fills your smelters with ores and coal or wood, and a Bat Beacon which spawns bats to defend your base.
 
@@ -110,7 +111,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
-15/02/2023 | 1.8.2 | Skeleton woodcutters can be crafted using flint
+15/02/2023 | 1.8.2 | Skeleton woodcutters can be crafted using flint; Refueler pylon optimized and can now also cook
 14/02/2023 | 1.8.1 | Skeleton woodcutters added
 12/02/2023 | 1.8.0 | Orb of Beckoning working; remove old attack target code from wand
 12/02/2023 | 1.7.9 | Fix bug that caused coroutines to occur twice on pylons - resulting in performance impacts and limits bypass.
