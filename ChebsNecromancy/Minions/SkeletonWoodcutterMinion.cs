@@ -10,7 +10,6 @@ namespace ChebsNecromancy.Minions
     internal class SkeletonWoodcutterMinion : SkeletonMinion
     {
         public static ConfigEntry<int> ToolTier;
-        public static ConfigEntry<bool> ShowMessages;
         public static ConfigEntry<float> UpdateDelay;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
@@ -21,8 +20,6 @@ namespace ChebsNecromancy.Minions
             UpdateDelay = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "SkeletonWoodcutterUpdateDelay",
                 6f, new ConfigDescription("The delay, in seconds, between wood searching attempts. Attention: small values may impact performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            ShowMessages = plugin.Config.Bind("SkeletonWoodcutter (Client)", "SkeletonWoodcutterShowMessages",
-                false, new ConfigDescription("Whether the woodcutter talks or not."));
         }
 
         public override void Awake()

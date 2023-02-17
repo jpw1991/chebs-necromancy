@@ -12,6 +12,7 @@ namespace ChebsNecromancy.Minions.AI
         private float nextCheck;
 
         private MonsterAI _monsterAI;
+        private Humanoid _humanoid;
 
         private readonly int defaultMask = LayerMask.GetMask("Default");
 
@@ -20,6 +21,7 @@ namespace ChebsNecromancy.Minions.AI
         private void Awake()
         {
             _monsterAI = GetComponent<MonsterAI>();
+            _humanoid = GetComponent<Humanoid>();
         }
 
         public void LookForCuttableObjects()
@@ -80,10 +82,7 @@ namespace ChebsNecromancy.Minions.AI
                     _monsterAI.DoAttack(null, false);
                 }
 
-                if (SkeletonWoodcutterMinion.ShowMessages.Value)
-                {
-                    Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", _status, false);
-                }
+                _humanoid.m_name = _status;
             }
         }
     }
