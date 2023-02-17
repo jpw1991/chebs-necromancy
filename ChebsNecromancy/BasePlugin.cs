@@ -35,7 +35,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "1.8.2";
+        public const string PluginVersion = "1.8.4";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -60,6 +60,9 @@ namespace ChebsNecromancy
         public AcceptableValueList<bool> BoolValue = new(true, false);
         public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
         public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
+        
+        // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
+        public static ConfigEntry<bool> RadeonFriendly;
 
 #pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
@@ -107,6 +110,13 @@ namespace ChebsNecromancy
         {
             Config.SaveOnConfigSet = true;
 
+            RadeonFriendly = Config.Bind("General (Client)", "RadeonFriendly",
+                false, new ConfigDescription("ONLY set this to true if you have graphical issues with " +
+                                             "the mod. It will disable all particle effects for the mod's prefabs " +
+                                             "which seem to give users with Radeon cards trouble for unknown " +
+                                             "reasons. If you have problems with lag it might also help to switch" +
+                                             "this setting on."));
+            
             UndeadMinion.CreateConfigs(this);
 
             SkeletonMinion.CreateConfigs(this);
@@ -171,8 +181,34 @@ namespace ChebsNecromancy
                     GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
                     if (prefab == null)
                     {
-                        Jotunn.Logger.LogError($"AddCustomItems: {prefabName} is null!");
+                        Jotunn.Logger.LogFatal($"AddCustomItems: {prefabName} is null!");
                     }
+
+                    if (RadeonFriendly.Value)
+                    {
+                        foreach (var child in prefab.GetComponentsInChildren<ParticleSystem>())
+                        {
+                            //Logger.LogInfo($"Prefab name: {prefabName}: Destroying ParticleSystem {child.name}");
+                            Destroy(child);
+                        }
+
+                        if (prefab.TryGetComponent(out Humanoid humanoid))
+                        {
+                            humanoid.m_deathEffects = new EffectList();
+                            humanoid.m_dropEffects = new EffectList();
+                            humanoid.m_equipEffects = new EffectList();
+                            humanoid.m_pickupEffects = new EffectList();
+                            humanoid.m_consumeItemEffects = new EffectList();
+                            humanoid.m_hitEffects = new EffectList();
+                            humanoid.m_jumpEffects = new EffectList();
+                            humanoid.m_slideEffects = new EffectList();
+                            humanoid.m_perfectBlockEffect = new EffectList();
+                            humanoid.m_tarEffects = new EffectList();
+                            humanoid.m_waterEffects = new EffectList();
+                            humanoid.m_flyingContinuousEffect = new EffectList();
+                        }
+                    }
+                    
                     return prefab;
                 }
 
@@ -324,8 +360,9 @@ namespace ChebsNecromancy
                 prefabNames.ForEach(prefabName =>
                 {
                     //Jotunn.Logger.LogInfo($"Loading {prefabName}...");
-                    GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
-                    if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
+                    //GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
+                    //if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
+                    var prefab = LoadPrefabFromBundle(prefabName, chebgonazAssetBundle);
 
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 });

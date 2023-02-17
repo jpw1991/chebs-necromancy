@@ -98,6 +98,9 @@
     <Reference Include="UnityEngine.AssetBundleModule">
       <HintPath>libs\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>libs\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>libs\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>

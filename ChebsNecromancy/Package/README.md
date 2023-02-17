@@ -111,6 +111,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+16/02/2023 | 1.8.4 | Add optional Radeon Friendly switch to the config which disables all effects to permit Radeon users to play without graphical glitches.
 15/02/2023 | 1.8.2 | Skeleton woodcutters can be crafted using flint; Refueler pylon optimized and can now also cook
 14/02/2023 | 1.8.1 | Skeleton woodcutters added
 12/02/2023 | 1.8.0 | Orb of Beckoning working; remove old attack target code from wand
