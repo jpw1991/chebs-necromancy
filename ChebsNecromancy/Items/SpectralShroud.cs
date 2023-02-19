@@ -175,9 +175,18 @@ namespace ChebsNecromancy.Items
             float playerNecromancyLevel = player.GetSkillLevel(
                 SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
 
-            if (Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
-                    equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud")
-                ) == null) return;
+            bool shroudEquipped = false, backpackEquipped = false;
+            foreach (var equippedItem in player.GetInventory().GetEquipedtems())
+            {
+                if (!shroudEquipped
+                    && equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud"))
+                    shroudEquipped = true;
+                if (!backpackEquipped
+                    && equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud_backpack"))
+                    backpackEquipped = true;
+            }
+
+            if (!shroudEquipped && !backpackEquipped) return;
 
             if (!(Time.time > wraithLastSpawnedAt + DelayBetweenWraithSpawns.Value)) return;
             if (playerNecromancyLevel >= GuardianWraithMinion.GuardianWraithLevelRequirement.Value)
