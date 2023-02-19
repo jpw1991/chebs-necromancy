@@ -143,6 +143,14 @@
     <Compile Include="Minions\AI\WoodcutterAI.cs" />
     <Compile Include="Minions\SkeletonWoodcutterMinion.cs" />
     <Compile Include="Common\ChebsRecipe.cs" />
+    <Compile Include="Patches\AoePatches.cs" />
+    <Compile Include="Patches\BaseAIPatches.cs" />
+    <Compile Include="Patches\CharacterDropPatches.cs" />
+    <Compile Include="Patches\CharacterPatches.cs" />
+    <Compile Include="Patches\MonsterAIPatches.cs" />
+    <Compile Include="Patches\PiecePatches.cs" />
+    <Compile Include="Patches\TameablePatches.cs" />
+    <Compile Include="Patches\WearNTearPatches.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
