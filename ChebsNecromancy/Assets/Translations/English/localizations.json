@@ -47,5 +47,6 @@
     "item_friendlyskeletonwand_draugrwand": "Friendly Draugr Wand",
     "item_friendlyskeletonwand_draugrwand_desc": "Spawn friendly draugr minions.",
     "item_friendlyskeletonwand_spectralshroud": "Spectral Shroud",
-    "item_friendlyskeletonwand_spectralshroud_desc": "Attracts spirits to you to serve you, provided you're skilled enough."
+    "item_friendlyskeletonwand_spectralshroud_desc": "Attracts spirits to you to serve you, provided you're skilled enough.",
+    "item_friendlyskeletonwand_spectralshroud_backpack": "Spectral Shroud of Holding"
 }
