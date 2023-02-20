@@ -57,6 +57,7 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<int> BoneFragmentsRequiredConfig;
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMax;
+        public static ConfigEntry<float> BoneFragmentsDroppedChance;
 
         public static ConfigEntry<int> ArmorLeatherScrapsRequiredConfig;
         public static ConfigEntry<int> ArmorBronzeRequiredConfig;
@@ -70,6 +71,8 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<float> PoisonSkeletonNecromancyLevelIncrease;
         public static ConfigEntry<float> SkeletonArmorValueMultiplier;
         public static ConfigEntry<int> WoodcutterSkeletonFlintRequiredConfig;
+
+        public static ConfigEntry<int> ArcherArrowsRequiredConfig;
 
         public static ConfigEntry<bool> DurabilityDamage;
         public static ConfigEntry<float> DurabilityDamageWarrior;
@@ -150,8 +153,12 @@ namespace ChebsNecromancy.Items
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             BoneFragmentsDroppedAmountMax = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedAmountMax",
-                3, new ConfigDescription("The maximum amount of bones dropped by creautres.", null,
+                3, new ConfigDescription("The maximum amount of bones dropped by creatures.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            BoneFragmentsDroppedChance = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedChance",
+                1f, new ConfigDescription("The chance of bones dropped by creatures (0 = 0%, 1 = 100%).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             _necromancyLevelIncrease = plugin.Config.Bind("SkeletonWand (Server Synced)", "NecromancyLevelIncrease",
                 1f, new ConfigDescription("How much crafting a skeleton contributes to your Necromancy level increasing.", null,
@@ -240,6 +247,10 @@ namespace ChebsNecromancy.Items
             DurabilityDamageBlackIron = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageBlackIron",
                 1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherArrowsRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "ArcherArrowsRequired",
+                20, new ConfigDescription("The amount of wood arrows required to craft a skeleton archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
@@ -357,6 +368,17 @@ namespace ChebsNecromancy.Items
         private void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, bool archer)
         {
             if (!SkeletonsAllowed.Value) return;
+            
+            if (archer && ArcherArrowsRequiredConfig.Value > 0)
+            {
+                var arrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
+
+                if (arrowsInInventory < ArcherArrowsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
+                    return;
+                }
+            }
 
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
@@ -368,10 +390,10 @@ namespace ChebsNecromancy.Items
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
                     return;
                 }
-
-                // consume the fragments
-                player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
+            
+            if (archer && ArcherArrowsRequiredConfig.Value > 0) player.GetInventory().RemoveItem("$item_arrow_wood", ArcherArrowsRequiredConfig.Value);
+            player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             
             bool createWoodcutter = false;
             if (ExtraResourceConsumptionUnlocked

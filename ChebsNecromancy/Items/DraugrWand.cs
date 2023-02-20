@@ -283,6 +283,17 @@ namespace ChebsNecromancy.Items
         {
             if (!DraugrAllowed.Value) return;
 
+            if (archer && SkeletonWand.ArcherArrowsRequiredConfig.Value > 0)
+            {
+                var arrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
+
+                if (arrowsInInventory < SkeletonWand.ArcherArrowsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
+                    return;
+                }
+            }
+
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
             {
@@ -330,6 +341,7 @@ namespace ChebsNecromancy.Items
 
                 // consume the fragments
                 player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
+                if (archer && SkeletonWand.ArcherArrowsRequiredConfig.Value > 0) player.GetInventory().RemoveItem("$item_arrow_wood", SkeletonWand.ArcherArrowsRequiredConfig.Value);
 
                 // consume the meat
                 int meatConsumed = 0;

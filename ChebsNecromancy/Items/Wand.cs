@@ -12,6 +12,8 @@ namespace ChebsNecromancy.Items
     internal class Wand : Item
     {
         public static ConfigEntry<bool> FollowByDefault;
+        public static ConfigEntry<float> FollowDistance;
+        public static ConfigEntry<float> RunDistance;
 
         public ConfigEntry<KeyCode> CreateMinionConfig;
         public ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;
@@ -42,6 +44,12 @@ namespace ChebsNecromancy.Items
         {
             FollowByDefault = plugin.Config.Bind("Wands (Client)", "FollowByDefault",
                 false, new ConfigDescription("Whether minions will automatically be set to follow upon being created or not."));
+            
+            FollowDistance = plugin.Config.Bind("Wands (Client)", "FollowDistance",
+                3f, new ConfigDescription("How closely a minion will follow you (0 = standing on top of you, 3 = default)."));
+            
+            RunDistance = plugin.Config.Bind("Wands (Client)", "RunDistance",
+                3f, new ConfigDescription("How close a following minion needs to be to you before it stops running and starts walking (0 = always running, 10 = default)."));
 
             CreateMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateMinion",
                 KeyCode.B, new ConfigDescription("The key to create a warrior minion with."));

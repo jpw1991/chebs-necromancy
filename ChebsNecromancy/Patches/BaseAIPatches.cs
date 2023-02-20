@@ -1,3 +1,4 @@
+using ChebsNecromancy.Items;
 using ChebsNecromancy.Minions;
 using HarmonyLib;
 using UnityEngine;
@@ -30,10 +31,8 @@ namespace ChebsNecromancy.Patches
                 {
                     // use our custom implementation with custom follow distance
                     float num = Vector3.Distance(go.transform.position, __instance.transform.position);
-                    // todo: expose to config
-                    bool run = num > 10f;
-                    // todo: expose to config
-                    var approachRange = undeadMinion is SkeletonWoodcutterMinion ? 0.5f : 3f;
+                    bool run = num > Wand.RunDistance.Value;
+                    var approachRange = undeadMinion is SkeletonWoodcutterMinion ? 0.5f : Wand.FollowDistance.Value;
                     if (num < approachRange)
                     {
                         __instance.StopMoving();
