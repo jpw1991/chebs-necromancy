@@ -57,6 +57,7 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<int> BoneFragmentsRequiredConfig;
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMax;
+        public static ConfigEntry<float> BoneFragmentsDroppedChance;
 
         public static ConfigEntry<int> ArmorLeatherScrapsRequiredConfig;
         public static ConfigEntry<int> ArmorBronzeRequiredConfig;
@@ -150,8 +151,12 @@ namespace ChebsNecromancy.Items
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             BoneFragmentsDroppedAmountMax = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedAmountMax",
-                3, new ConfigDescription("The maximum amount of bones dropped by creautres.", null,
+                3, new ConfigDescription("The maximum amount of bones dropped by creatures.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            BoneFragmentsDroppedChance = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsDroppedChance",
+                1f, new ConfigDescription("The chance of bones dropped by creatures (0 = 0%, 1 = 100%).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             _necromancyLevelIncrease = plugin.Config.Bind("SkeletonWand (Server Synced)", "NecromancyLevelIncrease",
                 1f, new ConfigDescription("How much crafting a skeleton contributes to your Necromancy level increasing.", null,

@@ -34,7 +34,7 @@ namespace ChebsNecromancy.Patches
                     m_onePerPlayer = true,
                     m_amountMin = SkeletonWand.BoneFragmentsDroppedAmountMin.Value,
                     m_amountMax = SkeletonWand.BoneFragmentsDroppedAmountMax.Value,
-                    m_chance = 1f
+                    m_chance = SkeletonWand.BoneFragmentsDroppedChance.Value
                 };
                 ___m_drops.Add(bones);
             }
