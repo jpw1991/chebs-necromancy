@@ -69,6 +69,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
   - Flint - skeleton lumberjack
 - As of 1.5.0 you can create a Neckro Pylon which spawns undead Necks from Neck Tails with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
 1.5.0 also introduces a refueler pylon, that fills your smelters with ores and coal or wood, and a Bat Beacon which spawns bats to defend your base.
+- As of 1.8.7 the mod has optional integration with **AdventureBackpacks** ([Nexus](https://www.nexusmods.com/valheim/mods/2204), [Thunderstore](https://valheim.thunderstore.io/package/Vapok/AdventureBackpacks/)), which offers a Necromancy backpack that doubles as a Spectral Shroud.
 
 ### Config
 
@@ -97,6 +98,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 - [**Dracbjorn**](https://github.com/Dracbjorn) for development help & testing.
 - **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
+- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
 - **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell).
