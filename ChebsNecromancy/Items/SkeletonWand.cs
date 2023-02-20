@@ -72,6 +72,8 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<float> SkeletonArmorValueMultiplier;
         public static ConfigEntry<int> WoodcutterSkeletonFlintRequiredConfig;
 
+        public static ConfigEntry<int> ArcherArrowsRequiredConfig;
+
         public static ConfigEntry<bool> DurabilityDamage;
         public static ConfigEntry<float> DurabilityDamageWarrior;
         public static ConfigEntry<float> DurabilityDamageMage;
@@ -245,6 +247,10 @@ namespace ChebsNecromancy.Items
             DurabilityDamageBlackIron = plugin.Config.Bind("SkeletonWand (Server Synced)", "DurabilityDamageBlackIron",
                 1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherArrowsRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "ArcherArrowsRequired",
+                20, new ConfigDescription("The amount of wood arrows required to craft a skeleton archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
@@ -362,6 +368,17 @@ namespace ChebsNecromancy.Items
         private void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, bool archer)
         {
             if (!SkeletonsAllowed.Value) return;
+            
+            if (archer && ArcherArrowsRequiredConfig.Value > 0)
+            {
+                var arrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
+
+                if (arrowsInInventory < ArcherArrowsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
+                    return;
+                }
+            }
 
             // check player inventory for requirements
             if (boneFragmentsRequired > 0)
@@ -373,10 +390,10 @@ namespace ChebsNecromancy.Items
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
                     return;
                 }
-
-                // consume the fragments
-                player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             }
+            
+            if (archer && ArcherArrowsRequiredConfig.Value > 0) player.GetInventory().RemoveItem("$item_arrow_wood", ArcherArrowsRequiredConfig.Value);
+            player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
             
             bool createWoodcutter = false;
             if (ExtraResourceConsumptionUnlocked
