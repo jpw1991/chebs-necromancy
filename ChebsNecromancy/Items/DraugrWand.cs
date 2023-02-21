@@ -478,7 +478,7 @@ namespace ChebsNecromancy.Items
                 minion.Wait(player.transform.position);
             }
 
-            minion.SetUndeadMinionMaster(player.GetPlayerName());
+            minion.UndeadMinionMaster = player.GetPlayerName();
 
             if (DurabilityDamage.Value)
             {

@@ -102,7 +102,7 @@ namespace ChebsNecromancy.Structures
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
             
-            spawnedChar.GetComponent<NeckroGathererMinion>().SetUndeadMinionMaster(player.GetPlayerName());
+            spawnedChar.GetComponent<NeckroGathererMinion>().UndeadMinionMaster = player.GetPlayerName();
         }
     }
 }

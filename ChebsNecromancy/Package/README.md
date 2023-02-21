@@ -113,6 +113,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+21/02/2023 | 1.8.8 | Add owner name to minion hover text
 20/02/2023 | 1.8.7 | configurable bones drop chance; configurable follow distance and run distance; archers now cost arrows
 19/02/2023 | 1.8.6 | Support for [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) by Vapok.
 16/02/2023 | 1.8.4 | Add optional Radeon Friendly switch to the config which disables all effects to permit Radeon users to play without graphical glitches.

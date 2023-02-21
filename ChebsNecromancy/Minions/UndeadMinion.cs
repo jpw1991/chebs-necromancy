@@ -148,15 +148,19 @@ namespace ChebsNecromancy.Minions
         }
 
         #region MinionMasterZDO
-        public void SetUndeadMinionMaster(string playerName)
+        public string UndeadMinionMaster
         {
-            if (TryGetComponent(out ZNetView zNetView))
+            get => TryGetComponent(out ZNetView zNetView) ? zNetView.GetZDO().GetString(MinionOwnershipZdoKey) : "";
+            set
             {
-                zNetView.GetZDO().Set(MinionOwnershipZdoKey, playerName);
-            }
-            else
-            {
-                Logger.LogError($"Cannot SetUndeadMinionMaster to {playerName} because it has no ZNetView component.");
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    zNetView.GetZDO().Set(MinionOwnershipZdoKey, value);
+                }
+                else
+                {
+                    Logger.LogError($"Cannot SetUndeadMinionMaster to {value} because it has no ZNetView component.");
+                }
             }
         }
 
@@ -269,6 +273,7 @@ namespace ChebsNecromancy.Minions
             // equal.
             if (waitPos.Equals(StatusFollowing))
             {
+                // Try to find player that minion belongs to. If found, follow. Otherwise roam
                 Player player = Player.GetAllPlayers().Find(p => BelongsToPlayer(p.GetPlayerName()));
                 if (player == null)
                 {

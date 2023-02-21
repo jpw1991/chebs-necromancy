@@ -563,7 +563,7 @@ namespace ChebsNecromancy.Items
 
             player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill, _necromancyLevelIncrease.Value);
 
-            minion.SetUndeadMinionMaster(player.GetPlayerName());
+            minion.UndeadMinionMaster = player.GetPlayerName();
 
             // handle refunding of resources on death
             if (SkeletonMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing)

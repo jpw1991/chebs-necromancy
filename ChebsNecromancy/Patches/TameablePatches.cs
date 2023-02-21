@@ -82,4 +82,22 @@ namespace ChebsNecromancy.Patches
             return true; // allow base method completion
         }
     }
+    
+    [HarmonyPatch(typeof(Tameable))]
+    class TameablePatch3
+    {
+        [HarmonyPatch(nameof(Tameable.GetHoverName))]
+        [HarmonyPrefix]
+        static bool Prefix(Tameable __instance, ref string __result)
+        {
+            if (__instance.m_nview.IsValid()
+                && __instance.TryGetComponent(out UndeadMinion undeadMinion))
+            {
+                __result = $"{Localization.instance.Localize("$chebgonaz_owner")}: {undeadMinion.UndeadMinionMaster}";
+                return false; // deny base method completion
+            }
+
+            return true; // allow base method completion
+        }
+    }
 }

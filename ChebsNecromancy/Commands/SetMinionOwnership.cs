@@ -53,7 +53,7 @@ namespace ChebsNecromancy.Commands
             {
                 if (!character.TryGetComponent(out UndeadMinion undeadMinion)) return;
                 Console.instance.Print($"Setting '{character.name}'s owner to '{args[0]}' and scaling to {playerNecromancyLevel}.");
-                undeadMinion.SetUndeadMinionMaster(player.GetPlayerName());
+                undeadMinion.UndeadMinionMaster = player.GetPlayerName();
                 undeadMinion.SetCreatedAtLevel(playerNecromancyLevel);
 
                 // also scale minion health to player's setup
