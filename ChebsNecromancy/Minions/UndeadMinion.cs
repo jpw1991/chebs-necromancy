@@ -32,6 +32,13 @@ namespace ChebsNecromancy.Minions
             Everything,
         }
 
+        public enum State
+        {
+            Waiting,
+            Roaming,
+            Following,
+        }
+
         public bool canBeCommanded = true;
 
         public static ConfigEntry<CleanupType> CleanupAfter;
@@ -240,6 +247,16 @@ namespace ChebsNecromancy.Minions
         }
         #endregion
         #region WaitPositionZDO
+
+        public State Status
+        {
+            get
+            {
+                var waitPos = GetWaitPosition();
+                if (waitPos.Equals(StatusFollowing)) return State.Following;
+                return waitPos.Equals(StatusRoaming) ? State.Roaming : State.Waiting;
+            }
+        }
         protected void RecordWaitPosition(Vector3 waitPos)
         {
             // waitPos == some position = wait at that position

@@ -93,7 +93,7 @@ namespace ChebsNecromancy.Patches
             if (__instance.m_nview.IsValid()
                 && __instance.TryGetComponent(out UndeadMinion undeadMinion))
             {
-                __result = $"{Localization.instance.Localize("$chebgonaz_owner")}: {undeadMinion.UndeadMinionMaster}";
+                __result = $"{Localization.instance.Localize("$chebgonaz_owner")}: {undeadMinion.UndeadMinionMaster} ({undeadMinion.Status})";
                 return false; // deny base method completion
             }
 
