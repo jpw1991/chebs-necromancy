@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1336517061
+CRC: 2580146320
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 53d4a5440ec45c8b431def4ce2121efe
+    Hash: 5b3cfdb254b4ea6d38b4dfd65fc6e24a
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 6eb219295a5db1ca965c92437463daa2
+    Hash: d40dc2226d414ca1047cd53aa48df9d3
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -72,6 +72,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1578695569, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: -291837180, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: -1044604064, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1137906148, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -120,6 +122,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1559923330, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: 1863081269, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: -2012497638, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -415060008, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -161,6 +165,10 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
+  ClassName: ArmorStand/ArmorStandSlot
+- AssemblyName: assembly_valheim
+  ClassName: ArmorStand/ArmorStandSupport
+- AssemblyName: assembly_valheim
   ClassName: Attack
 - AssemblyName: assembly_valheim
   ClassName: DropTable
@@ -184,6 +192,8 @@ SerializeReferenceClassIdentifiers:
   ClassName: Piece/Requirement
 - AssemblyName: assembly_valheim
   ClassName: Raven/RavenText
+- AssemblyName: assembly_valheim
+  ClassName: VisEquipment/PlayerModel
 Assets:
 - Assets/_ChebGonaz/SkeletonPoison/ChebGonaz_SkeletonMace2.prefab
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.mat
@@ -210,6 +220,7 @@ Assets:
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherTier2.prefab
 - Assets/_ChebGonaz/SkeletonPoison/ChebGonaz_PoisonSkeleton.prefab
 - Assets/_ChebGonaz/ChebGonaz_SpiritPylon.prefab
+- Assets/_ChebGonaz/FarmingPylon/ChebGonaz_FarmingPylon.prefab
 - Assets/_ChebGonaz/ChebGonaz_RefuelerPylon.prefab
 - Assets/_ChebGonaz/ChebGonaz_NecromancerHood.prefab
 - Assets/_ChebGonaz/SkeletonPoison/ChebGonaz_PoisonSkeleton3.prefab

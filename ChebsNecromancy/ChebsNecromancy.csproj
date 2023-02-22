@@ -198,6 +198,7 @@
     <Compile Include="Minions\FreshMinion.cs" />
     <Compile Include="Structures\BatBeacon.cs" />
     <Compile Include="Structures\BatLantern.cs" />
+    <Compile Include="Structures\FarmingPylon.cs" />
     <Compile Include="Structures\NeckroGathererPylon.cs" />
     <Compile Include="Structures\RefuelerPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />

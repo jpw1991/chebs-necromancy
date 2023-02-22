@@ -202,8 +202,11 @@ namespace ChebsNecromancy.Minions
             // order piece from closest to furthest, then take closest container
             Collider closest = nearbyPieces
                 .OrderBy(piece => Vector3.Distance(transform.position, piece.transform.position))
-                .FirstOrDefault(piece => piece.GetComponentInParent<Container>() != null
-                    && piece.GetComponentInParent<Container>().GetInventory().GetEmptySlots() > 0);
+                .FirstOrDefault(piece =>
+                {
+                    var pieceContainer = piece.GetComponentInParent<Container>();
+                    return pieceContainer != null && pieceContainer.GetInventory().GetEmptySlots() > 0;
+                });
             if (closest != null)
             {
                 Container closestContainer = closest.GetComponentInParent<Container>();
