@@ -66,7 +66,8 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
   - Black Metal -> Black Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
-  - Flint - skeleton lumberjack
+  - Flint -> skeleton lumberjack
+  - Hard Antler -> Skeleton MIner
 - As of 1.5.0 you can create a Neckro Pylon which spawns undead Necks from Neck Tails with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
 1.5.0 also introduces a refueler pylon, that fills your smelters with ores and coal or wood, and a Bat Beacon which spawns bats to defend your base.
 - As of 1.8.7 the mod has optional integration with **AdventureBackpacks** ([Nexus](https://www.nexusmods.com/valheim/mods/2204), [Thunderstore](https://valheim.thunderstore.io/package/Vapok/AdventureBackpacks/)), which offers a Necromancy backpack that doubles as a Spectral Shroud.
@@ -102,6 +103,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 - [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
+- [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) for making the Korean language localization.
 - **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell).
 - **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
 
