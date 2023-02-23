@@ -38,6 +38,11 @@ namespace ChebsNecromancy.Patches
                 {
                     if (!__instance.TryGetComponent(out UndeadMinion _))
                     {
+                        if (__instance.name.Contains("Miner"))
+                        {
+                            __instance.gameObject.AddComponent<SkeletonMinerMinion>();
+                        }
+                        
                         if (__instance.name.Contains("Woodcutter"))
                         {
                             __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();

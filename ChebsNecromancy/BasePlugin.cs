@@ -120,6 +120,7 @@ namespace ChebsNecromancy
             DraugrMinion.CreateConfigs(this);
             GuardianWraithMinion.CreateConfigs(this);
             SkeletonWoodcutterMinion.CreateConfigs(this);
+            SkeletonMinerMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
 
@@ -273,7 +274,8 @@ namespace ChebsNecromancy
                     new SkeletonHelmetBlackIronPoison(),
                     new SkeletonHelmetLeatherPoison(),
                     new SkeletonHelmetBronzePoison(),
-                    new SkeletonWoodAxe()
+                    new SkeletonWoodAxe(),
+                    new SkeletonPickaxe()
                 };
                 minionWornItems.ForEach(minionItem =>
                 {
@@ -333,6 +335,7 @@ namespace ChebsNecromancy
                     prefabNames.Add(SkeletonWand.PoisonSkeleton2PrefabName + ".prefab");
                     prefabNames.Add(SkeletonWand.PoisonSkeleton3PrefabName + ".prefab");
                     prefabNames.Add(SkeletonWand.SkeletonWoodcutterPrefabName + ".prefab");
+                    prefabNames.Add(SkeletonWand.SkeletonMinerPrefabName + ".prefab");
                 }
 
                 if (SpectralShroud.SpawnWraith.Value)

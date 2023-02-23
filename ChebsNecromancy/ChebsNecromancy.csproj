@@ -139,8 +139,11 @@
   <ItemGroup>
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
     <Compile Include="Items\OrbOfBeckoning.cs" />
+    <Compile Include="Items\SkeletonPickaxe.cs" />
     <Compile Include="Items\SkeletonWoodAxe.cs" />
+    <Compile Include="Minions\AI\MinerAI.cs" />
     <Compile Include="Minions\AI\WoodcutterAI.cs" />
+    <Compile Include="Minions\SkeletonMinerMinion.cs" />
     <Compile Include="Minions\SkeletonWoodcutterMinion.cs" />
     <Compile Include="Common\ChebsRecipe.cs" />
     <Compile Include="Patches\AoePatches.cs" />
