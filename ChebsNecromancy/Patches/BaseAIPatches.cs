@@ -32,7 +32,10 @@ namespace ChebsNecromancy.Patches
                     // use our custom implementation with custom follow distance
                     float num = Vector3.Distance(go.transform.position, __instance.transform.position);
                     bool run = num > Wand.RunDistance.Value;
-                    var approachRange = undeadMinion is SkeletonWoodcutterMinion ? 0.5f : Wand.FollowDistance.Value;
+                    var approachRange = 
+                        undeadMinion is SkeletonWoodcutterMinion || undeadMinion is SkeletonMinerMinion
+                            ? 0.5f
+                            : Wand.FollowDistance.Value;
                     if (num < approachRange)
                     {
                         __instance.StopMoving();
