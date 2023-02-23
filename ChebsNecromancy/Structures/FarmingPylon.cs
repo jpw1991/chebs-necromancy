@@ -15,9 +15,6 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> UpdateInterval;
         public static ConfigEntry<string> PickableList;
 
-        //private const string DefaultPickables =
-        //    "Pickable_Barley,Pickable_Barley_Wild,Pickable_Carrot,Pickable_Dandelion,Pickable_Flax,Pickable_Flax_Wild,Pickable_Mushroom,Pickable_Mushroom_blue,Pickable_Mushroom_JotunPuffs,Pickable_Mushroom_Magecap,Pickable_Mushroom_yellow,Pickable_Onion,Pickable_SeedCarrot,Pickable_SeedOnion,Pickable_SeedTurnip,Pickable_Thistle,Pickable_Turnip";
-        
         private const string DefaultPickables =
             "Pickable_Barley,Pickable_Barley_Wild,Pickable_Carrot,Pickable_Dandelion,Pickable_Flax,Pickable_Flax_Wild,Pickable_Mushroom,Pickable_Mushroom_blue,Pickable_Mushroom_JotunPuffs,Pickable_Mushroom_Magecap,Pickable_Mushroom_yellow,Pickable_Onion,Pickable_SeedCarrot,Pickable_SeedOnion,Pickable_SeedTurnip,Pickable_Thistle,Pickable_Turnip";
 

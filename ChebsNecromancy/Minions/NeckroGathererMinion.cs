@@ -66,7 +66,8 @@ namespace ChebsNecromancy.Minions
 
         private void Update()
         {
-            if (ZNet.instance == null || !(Time.time > lastUpdate)) return;
+            if (ZNet.instance == null
+                || !(Time.time > lastUpdate)) return;
             if (ReturnHome())
             {
                 dropoffTarget = GetNearestDropOffPoint();
@@ -92,6 +93,7 @@ namespace ChebsNecromancy.Minions
             
             if (ShowMessages.Value
                 && NeckroStatus != ""
+                && Player.m_localPlayer != null
                 && Vector3.Distance(Player.m_localPlayer.transform.position, transform.position) < 5)
             {
                 Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", NeckroStatus, false);   
