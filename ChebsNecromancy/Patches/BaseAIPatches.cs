@@ -24,8 +24,8 @@ namespace ChebsNecromancy.Patches
         class BaseAIPatch
         {
             [HarmonyPatch(nameof(BaseAI.Follow))]
-            [HarmonyPrefix]
-            static bool Prefix(GameObject go, float dt, BaseAI __instance)
+            [HarmonyPostfix]
+            static void Postfix(GameObject go, float dt, BaseAI __instance)
             {
                 if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
                 {
@@ -33,8 +33,8 @@ namespace ChebsNecromancy.Patches
                     float num = Vector3.Distance(go.transform.position, __instance.transform.position);
                     bool run = num > Wand.RunDistance.Value;
                     var approachRange = 
-                        undeadMinion is SkeletonWoodcutterMinion || undeadMinion is SkeletonMinerMinion
-                            ? 0.5f
+                        undeadMinion is SkeletonWoodcutterMinion or SkeletonMinerMinion or NeckroGathererMinion
+                            ? 0.25f
                             : Wand.FollowDistance.Value;
                     if (num < approachRange)
                     {
@@ -44,11 +44,7 @@ namespace ChebsNecromancy.Patches
                     {
                         __instance.MoveTo(dt, go.transform.position, 0f, run);
                     }
-                
-                    return false; // deny base method completion
                 }
-
-                return true; // allow base method completion
             }
         }
     }
