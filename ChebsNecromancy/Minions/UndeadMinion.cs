@@ -174,8 +174,10 @@ namespace ChebsNecromancy.Minions
         public bool BelongsToPlayer(string playerName)
         {
             return TryGetComponent(out ZNetView zNetView) 
-                && zNetView.GetZDO().GetString(MinionOwnershipZdoKey, "")
-                .Equals(playerName);
+                   && zNetView.GetZDO().GetString(MinionOwnershipZdoKey, "")
+                       .ToLower()
+                       .Trim()
+                       .Equals(playerName.ToLower().Trim());
         }
         #endregion
         #region DropsZDO
@@ -283,7 +285,7 @@ namespace ChebsNecromancy.Minions
             return StatusRoaming;
         }
 
-        protected void RoamFollowOrWait()
+        public void RoamFollowOrWait()
         {
             Vector3 waitPos = GetWaitPosition();
             // we cant compare negative infinity with == because unity's == returns true for vectors that are almost

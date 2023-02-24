@@ -183,8 +183,9 @@ namespace ChebsNecromancy.Items
 
         public virtual bool HandleInputs() { return false; }
 
-        public void MakeNearbyMinionsRoam(Player player, float radius)
+        public void MakeNearbyMinionsRoam(float radius)
         {
+            Player player = Player.m_localPlayer;
             List<Character> allCharacters = new();
             Character.GetCharactersInRange(player.transform.position, radius, allCharacters);
             foreach (var character in allCharacters)
@@ -202,8 +203,9 @@ namespace ChebsNecromancy.Items
             }
         }
         
-        public void MakeNearbyMinionsFollow(Player player, float radius, bool follow)
+        public void MakeNearbyMinionsFollow(float radius, bool follow)
         {
+            Player player = Player.m_localPlayer;
             // based off BaseAI.FindClosestCreature
             List<Character> allCharacters = Character.GetAllCharacters();
             foreach (Character item in allCharacters)
@@ -215,7 +217,7 @@ namespace ChebsNecromancy.Items
 
                 UndeadMinion minion = item.GetComponent<UndeadMinion>();
                 if (minion == null || !minion.canBeCommanded
-                                   || !minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName())) continue;
+                                   || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
                 
                 float distance = Vector3.Distance(item.transform.position, player.transform.position);
                 
@@ -225,8 +227,7 @@ namespace ChebsNecromancy.Items
                 bool minionFollowingOrb = minionFollowTarget != null &&
                                           minionFollowTarget.TryGetComponent(out OrbOfBeckoningProjectile _);
                 
-                if (distance > radius && !minionFollowingOrb
-                        || minionFollowTarget == null) continue;
+                if (distance > radius && !minionFollowingOrb) continue;
                 
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
                     follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
@@ -241,8 +242,9 @@ namespace ChebsNecromancy.Items
             }
         }
 
-        public void TeleportFollowingMinionsToPlayer(Player player)
+        public void TeleportFollowingMinionsToPlayer()
         {
+            Player player = Player.m_localPlayer;
             // based off BaseAI.FindClosestCreature
             List<Character> allCharacters = Character.GetAllCharacters();
             foreach (Character item in allCharacters)

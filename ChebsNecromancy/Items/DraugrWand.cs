@@ -235,8 +235,7 @@ namespace ChebsNecromancy.Items
 
                 if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
                 {
-                    SpawnFriendlyDraugr(Player.m_localPlayer,
-                        DraugrBoneFragmentsRequiredConfig.Value,
+                    SpawnFriendlyDraugr(DraugrBoneFragmentsRequiredConfig.Value,
                         DraugrMeatRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
                         false
@@ -245,8 +244,7 @@ namespace ChebsNecromancy.Items
                 }
                 else if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
                 {
-                    SpawnFriendlyDraugr(Player.m_localPlayer,
-                        DraugrBoneFragmentsRequiredConfig.Value,
+                    SpawnFriendlyDraugr(DraugrBoneFragmentsRequiredConfig.Value,
                         DraugrMeatRequiredConfig.Value,
                         necromancyLevelIncrease.Value,
                         true
@@ -255,33 +253,35 @@ namespace ChebsNecromancy.Items
                 }
                 else if (FollowButton != null && ZInput.GetButton(FollowButton.Name))
                 {
-                    MakeNearbyMinionsFollow(Player.m_localPlayer, DraugrSetFollowRange.Value, true);
+                    MakeNearbyMinionsFollow(DraugrSetFollowRange.Value, true);
                     return true;
                 }
                 else if (WaitButton != null && ZInput.GetButton(WaitButton.Name))
                 {
                     if (ExtraResourceConsumptionUnlocked)
                     {
-                        MakeNearbyMinionsRoam(Player.m_localPlayer, DraugrSetFollowRange.Value);
+                        MakeNearbyMinionsRoam(DraugrSetFollowRange.Value);
                     }
                     else
                     {
-                        MakeNearbyMinionsFollow(Player.m_localPlayer, DraugrSetFollowRange.Value, false);   
+                        MakeNearbyMinionsFollow(DraugrSetFollowRange.Value, false);   
                     }
                     return true;
                 }
                 else if (TeleportButton != null && ZInput.GetButton(TeleportButton.Name))
                 {
-                    TeleportFollowingMinionsToPlayer(Player.m_localPlayer);
+                    TeleportFollowingMinionsToPlayer();
                     return true;
                 }
             }
             return false;
         }
 
-        public void SpawnFriendlyDraugr(Player player, int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
+        public void SpawnFriendlyDraugr(int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
         {
             if (!DraugrAllowed.Value) return;
+            
+            Player player = Player.m_localPlayer;
 
             if (archer && SkeletonWand.ArcherArrowsRequiredConfig.Value > 0)
             {
