@@ -134,6 +134,7 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ChebsPrefab.cs" />
     <Compile Include="Common\ChebsRecipe.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
