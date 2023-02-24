@@ -333,48 +333,46 @@ namespace ChebsNecromancy.Items
 
             if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
             {
-                SpawnFriendlySkeleton(Player.m_localPlayer,
-                    BoneFragmentsRequiredConfig.Value,
-                    false);
+                SpawnFriendlySkeleton(BoneFragmentsRequiredConfig.Value, false);
                 return true;
             }
 
             if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
             {
-                SpawnFriendlySkeleton(Player.m_localPlayer,
-                    BoneFragmentsRequiredConfig.Value,
-                    true);
+                SpawnFriendlySkeleton(BoneFragmentsRequiredConfig.Value, true);
                 return true;
             }
             if (FollowButton != null && ZInput.GetButton(FollowButton.Name))
             {
-                MakeNearbyMinionsFollow(Player.m_localPlayer, SkeletonSetFollowRange.Value, true);
+                MakeNearbyMinionsFollow(SkeletonSetFollowRange.Value, true);
                 return true;
             }
             if (WaitButton != null && ZInput.GetButton(WaitButton.Name))
             {
                 if (ExtraResourceConsumptionUnlocked)
                 {
-                    MakeNearbyMinionsRoam(Player.m_localPlayer, SkeletonSetFollowRange.Value);
+                    MakeNearbyMinionsRoam(SkeletonSetFollowRange.Value);
                 }
                 else
                 {
-                    MakeNearbyMinionsFollow(Player.m_localPlayer, SkeletonSetFollowRange.Value, false);   
+                    MakeNearbyMinionsFollow(SkeletonSetFollowRange.Value, false);   
                 }
                 return true;
             }
             if (TeleportButton != null && ZInput.GetButton(TeleportButton.Name))
             {
-                TeleportFollowingMinionsToPlayer(Player.m_localPlayer);
+                TeleportFollowingMinionsToPlayer();
                 return true;
             }
 
             return false;
         }
 
-        private void SpawnFriendlySkeleton(Player player, int boneFragmentsRequired, bool archer)
+        private void SpawnFriendlySkeleton(int boneFragmentsRequired, bool archer)
         {
             if (!SkeletonsAllowed.Value) return;
+            
+            Player player = Player.m_localPlayer;
             
             if (archer && ArcherArrowsRequiredConfig.Value > 0)
             {

@@ -20,6 +20,7 @@ namespace ChebsNecromancy.Patches
     [HarmonyPatch(typeof(Aoe), "OnHit")]
     class SharpStakesMinionPatch
     {
+        [HarmonyPrefix]
         static bool Prefix(Collider collider, Vector3 hitPoint, Aoe __instance)
         {
             if (collider.TryGetComponent(out UndeadMinion _))
@@ -29,10 +30,13 @@ namespace ChebsNecromancy.Patches
                 {
                     // stop minion from receiving damage from stakes placed
                     // by a player
-                    return false; // deny base method completion
+                    __instance.m_damage.m_pierce = 0f;
+                    // also stop minions from damaging the stakes
+                    __instance.m_damageSelf = 0f;
                 }
             }
-            return true; // permit base method to complete
+
+            return true; // permit base method completion
         }
     }
 }

@@ -40,18 +40,16 @@ namespace ChebsNecromancy.Patches
                 }
 
                 // use the minion methods to ensure the ZDO is updated
-                if (__instance.TryGetComponent(out MonsterAI monsterAI))
+                if (undeadMinion.Status == UndeadMinion.State.Following)
                 {
-                    if (monsterAI.GetFollowTarget() == player.gameObject)
-                    {
-                        user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonwaiting");
-                        undeadMinion.Wait(player.transform.position);
-                    }
-                    else
-                    {
-                        user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonfollowing");
-                        undeadMinion.Follow(player.gameObject);
-                    }
+                    user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonwaiting");
+                    undeadMinion.Wait(player.transform.position);
+                    return false; // deny base method completion
+                }
+                else
+                {
+                    user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonfollowing");
+                    undeadMinion.Follow(player.gameObject);
                     return false; // deny base method completion
                 }
             }

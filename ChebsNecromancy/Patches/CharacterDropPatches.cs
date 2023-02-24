@@ -44,22 +44,22 @@ namespace ChebsNecromancy.Patches
     [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
     class OnDeathDropPatch
     {
-        static bool Prefix(CharacterDrop __instance)
+        [HarmonyPrefix]
+        static void Prefix(CharacterDrop __instance)
         {
             // Although Container component is on the Neckro, its OnDestroyed
             // isn't called on the death of the creature. So instead, implement
             // its same functionality in the creature's OnDeath instead.
-            if (__instance.TryGetComponent(out NeckroGathererMinion necroNeck))
+            if (__instance.TryGetComponent(out NeckroGathererMinion _))
             {
                 if (__instance.TryGetComponent(out Container container))
                 {
                     container.DropAllItems(container.m_destroyedLootPrefab);
-                    return false; // deny base method completion
                 }
             }
 
             // For all other minions, check if they're supposed to be dropping
-            // items and whether tehse should be packed into a crate or not.
+            // items and whether these should be packed into a crate or not.
             // We don't want ppls surtling cores and things to be claimed by davey jones
             else if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
             {
@@ -86,18 +86,14 @@ namespace ChebsNecromancy.Patches
                     && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     PackDropsIntoCrate();
-                    return false; // deny base method completion
                 }
-                if (undeadMinion is DraugrMinion
+                else if (undeadMinion is DraugrMinion
                     && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
                     && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     PackDropsIntoCrate();
-                    return false; // deny base method completion
                 }
             }
-
-            return true; // permit base method to complete
         }
     }
 }
