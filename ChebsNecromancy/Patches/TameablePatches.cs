@@ -64,8 +64,8 @@ namespace ChebsNecromancy.Patches
     class TameablePatch2
     {
         [HarmonyPatch(nameof(Tameable.GetHoverText))]
-        [HarmonyPrefix]
-        static bool Prefix(Tameable __instance, ref string __result)
+        [HarmonyPostfix]
+        static void Postfix(Tameable __instance, ref string __result)
         {
             if (__instance.m_nview.IsValid()
                 && __instance.m_commandable
@@ -76,10 +76,7 @@ namespace ChebsNecromancy.Patches
                 __result = monsterAI.GetFollowTarget() == Player.m_localPlayer.gameObject
                     ? Localization.instance.Localize("$chebgonaz_wait")
                     : Localization.instance.Localize("$chebgonaz_follow");
-                return false; // deny base method completion
             }
-
-            return true; // allow base method completion
         }
     }
     
@@ -87,17 +84,14 @@ namespace ChebsNecromancy.Patches
     class TameablePatch3
     {
         [HarmonyPatch(nameof(Tameable.GetHoverName))]
-        [HarmonyPrefix]
-        static bool Prefix(Tameable __instance, ref string __result)
+        [HarmonyPostfix]
+        static void Postfix(Tameable __instance, ref string __result)
         {
             if (__instance.m_nview.IsValid()
                 && __instance.TryGetComponent(out UndeadMinion undeadMinion))
             {
                 __result = $"{Localization.instance.Localize("$chebgonaz_owner")}: {undeadMinion.UndeadMinionMaster} ({undeadMinion.Status})";
-                return false; // deny base method completion
             }
-
-            return true; // allow base method completion
         }
     }
 }
