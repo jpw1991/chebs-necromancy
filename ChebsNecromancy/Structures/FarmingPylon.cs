@@ -18,7 +18,7 @@ namespace ChebsNecromancy.Structures
         private const string DefaultPickables =
             "Pickable_Barley,Pickable_Barley_Wild,Pickable_Carrot,Pickable_Dandelion,Pickable_Flax,Pickable_Flax_Wild,Pickable_Mushroom,Pickable_Mushroom_blue,Pickable_Mushroom_JotunPuffs,Pickable_Mushroom_Magecap,Pickable_Mushroom_yellow,Pickable_Onion,Pickable_SeedCarrot,Pickable_SeedOnion,Pickable_SeedTurnip,Pickable_Thistle,Pickable_Turnip";
 
-        //private int _pieceMask;
+        private int _itemMask;
         private int _pieceMaskNonSolid;
         private List<string> _pickableList;
 
@@ -60,7 +60,7 @@ namespace ChebsNecromancy.Structures
 
         private void Awake()
         {
-            //_pieceMask = LayerMask.GetMask("piece");
+            _itemMask = LayerMask.GetMask("item");
             _pieceMaskNonSolid = LayerMask.GetMask("piece_nonsolid");
             _pickableList = PickableList.Value.Split(',').ToList();
             StartCoroutine(LookForCrops());
@@ -113,8 +113,10 @@ namespace ChebsNecromancy.Structures
         private void PickPickables()
         {
             // pick all nearby pickables
+            var position = transform.position;
             var nearbyPickables =
-                Physics.OverlapSphere(transform.position, SightRadius.Value, _pieceMaskNonSolid);
+                Physics.OverlapSphere(position, SightRadius.Value, _pieceMaskNonSolid)
+                    .Concat(Physics.OverlapSphere(position, SightRadius.Value, _itemMask)).ToArray();
             if (nearbyPickables.Length < 1) return;
 
             foreach (var col in nearbyPickables)
