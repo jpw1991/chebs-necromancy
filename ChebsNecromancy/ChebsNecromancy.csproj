@@ -138,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
+    <Compile Include="InternalName.cs" />
     <Compile Include="Items\OrbOfBeckoning.cs" />
     <Compile Include="Items\SkeletonPickaxe.cs" />
     <Compile Include="Items\SkeletonWoodAxe.cs" />

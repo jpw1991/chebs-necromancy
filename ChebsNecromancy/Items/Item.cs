@@ -10,13 +10,6 @@ using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items
 {
-
-    public class InternalName : Attribute
-    {
-        public readonly string Name;
-        public InternalName(string internalName) => Name = internalName;
-    }
-
     public enum CraftingTable
     {
         None,

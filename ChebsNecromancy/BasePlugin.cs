@@ -60,6 +60,29 @@ namespace ChebsNecromancy
         
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
+        
+        public static ConfigEntry<int> BoneFragmentsDroppedAmountMin;
+        public static ConfigEntry<int> BoneFragmentsDroppedAmountMax;
+        public static ConfigEntry<float> BoneFragmentsDroppedChance;
+        
+        public static ConfigEntry<int> ArmorLeatherScrapsRequiredConfig;
+        public static ConfigEntry<int> ArmorBronzeRequiredConfig;
+        public static ConfigEntry<int> ArmorIronRequiredConfig;
+        public static ConfigEntry<int> ArmorBlackIronRequiredConfig;
+        public static ConfigEntry<int> SurtlingCoresRequiredConfig;
+        public static ConfigEntry<int> ArcherTier1ArrowsRequiredConfig;
+        public static ConfigEntry<int> ArcherTier2ArrowsRequiredConfig;
+        public static ConfigEntry<int> ArcherTier3ArrowsRequiredConfig;
+        
+        public static ConfigEntry<bool> DurabilityDamage;
+        public static ConfigEntry<float> DurabilityDamageWarrior;
+        public static ConfigEntry<float> DurabilityDamageMage;
+        public static ConfigEntry<float> DurabilityDamageArcher;
+        public static ConfigEntry<float> DurabilityDamagePoison;
+        public static ConfigEntry<float> DurabilityDamageLeather;
+        public static ConfigEntry<float> DurabilityDamageBronze;
+        public static ConfigEntry<float> DurabilityDamageIron;
+        public static ConfigEntry<float> DurabilityDamageBlackIron;
 
 #pragma warning disable IDE0051 // Remove unused private members
         private void Awake()
@@ -113,9 +136,92 @@ namespace ChebsNecromancy
                                              "which seem to give users with Radeon cards trouble for unknown " +
                                              "reasons. If you have problems with lag it might also help to switch" +
                                              "this setting on."));
+
+            #region BoneFragments
+            BoneFragmentsDroppedAmountMin = Config.Bind("General (Server Synced)", "BoneFragmentsDroppedAmountMin",
+                1, new ConfigDescription("The minimum amount of bones dropped by creatures.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            BoneFragmentsDroppedAmountMax = Config.Bind("General (Server Synced)", "BoneFragmentsDroppedAmountMax",
+                3, new ConfigDescription("The maximum amount of bones dropped by creatures.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            BoneFragmentsDroppedChance = Config.Bind("General (Server Synced)", "BoneFragmentsDroppedChance",
+                .25f, new ConfigDescription("The chance of bones dropped by creatures (0 = 0%, 1 = 100%).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            #endregion
+            #region MinionUpgrades
+            ArmorLeatherScrapsRequiredConfig = Config.Bind("General (Server Synced)", "ArmorLeatherScrapsRequired",
+                2, new ConfigDescription("The amount of LeatherScraps required to craft a minion in leather armor.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ArmorBronzeRequiredConfig = Config.Bind("General (Server Synced)", "ArmorBronzeRequired",
+                1, new ConfigDescription("The amount of Bronze required to craft a minion in bronze armor.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ArmorIronRequiredConfig = Config.Bind("General (Server Synced)", "ArmoredIronRequired",
+                1, new ConfigDescription("The amount of Iron required to craft a minion in iron armor.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            SurtlingCoresRequiredConfig = Config.Bind("General (Server Synced)", "MageSurtlingCoresRequired",
+                1, new ConfigDescription("The amount of surtling cores required to craft a mage.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ArmorBlackIronRequiredConfig = Config.Bind("General (Server Synced)", "ArmorBlackIronRequired",
+                1, new ConfigDescription("The amount of Black Metal required to craft a minion in black iron armor.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherTier1ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier1ArrowsRequired",
+                10, new ConfigDescription("The amount of wood arrows required to craft a tier 1 archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherTier2ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier2ArrowsRequired",
+                10, new ConfigDescription("The amount of bronze arrows required to craft a tier 2 archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherTier3ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier3ArrowsRequired",
+                10, new ConfigDescription("The amount of iron arrows required to craft a tier 3 archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            #endregion
+            #region Durability
+            DurabilityDamage = Config.Bind("General (Server Synced)", "DurabilityDamage",
+                true, new ConfigDescription("Whether using a wand damages its durability.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageWarrior = Config.Bind("General (Server Synced)", "DurabilityDamageWarrior",
+                1f, new ConfigDescription("How much creating a warrior damages a wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageArcher = Config.Bind("General (Server Synced)", "DurabilityDamageArcher",
+                3f, new ConfigDescription("How much creating an archer damages a wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageMage = Config.Bind("General (Server Synced)", "DurabilityDamageMage",
+                5f, new ConfigDescription("How much creating a mage damages a wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamagePoison = Config.Bind("General (Server Synced)", "DurabilityDamagePoison",
+                5f, new ConfigDescription("How much creating a poison skeleton damages a wand.", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageLeather = Config.Bind("General (Server Synced)", "DurabilityDamageLeather",
+                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageBronze = Config.Bind("General (Server Synced)", "DurabilityDamageBronze",
+                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageIron = Config.Bind("General (Server Synced)", "DurabilityDamageIron",
+                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            DurabilityDamageBlackIron = Config.Bind("General (Server Synced)", "DurabilityDamageBlackIron",
+                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
+                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            #endregion
             
             UndeadMinion.CreateConfigs(this);
-
             SkeletonMinion.CreateConfigs(this);
             DraugrMinion.CreateConfigs(this);
             GuardianWraithMinion.CreateConfigs(this);
@@ -322,20 +428,21 @@ namespace ChebsNecromancy
                     // 1.2.0: I had to make extra prefabs for each tier because
                     // the skeletons consistently forgot their weapons and became
                     // buggy (not attacking enemies) if dynamically set
-                    prefabNames.Add(SkeletonWand.SkeletonWarriorPrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonWarriorTier2PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonWarriorTier3PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonArcherPrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonArcherTier2PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonArcherTier3PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonMagePrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonMageTier2PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonMageTier3PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.PoisonSkeletonPrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.PoisonSkeleton2PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.PoisonSkeleton3PrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonWoodcutterPrefabName + ".prefab");
-                    prefabNames.Add(SkeletonWand.SkeletonMinerPrefabName + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier1) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier2) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier3) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier4) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.ArcherTier1) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.ArcherTier2) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.ArcherTier3) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.MageTier1) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.MageTier2) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.MageTier3) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.PoisonTier1) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.PoisonTier2) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.PoisonTier3) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.Woodcutter) + ".prefab");
+                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.Miner) + ".prefab");
                 }
 
                 if (SpectralShroud.SpawnWraith.Value)
