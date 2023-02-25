@@ -116,6 +116,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+24/02/2023 | 1.9.2 | fix issue about wand not commanding minions to follow reliably if they're roaming; include item layer when matching Pieceables for Farming Pylon; general code refactor/clean; Refactor harmony patches to be more friendly to other mods
 23/02/2023 | 1.9.1 | Change some Prefix patches to Postfix for better mod compatibility
 22/02/2023 | 1.9.0 | Add Farming Pylon; Add miner skeleton; Fix rare null object in Neckro update function
 21/02/2023 | 1.8.8 | Add owner name and status to minion hover text
