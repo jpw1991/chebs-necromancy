@@ -74,7 +74,7 @@ namespace ChebsNecromancy.Minions
         public static ArmorType DetermineArmorType()
         {
             Player player = Player.m_localPlayer;
-            
+
             int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
             if (leatherScrapsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
             {

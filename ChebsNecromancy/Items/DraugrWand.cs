@@ -298,8 +298,17 @@ namespace ChebsNecromancy.Items
             switch (armorType)
             {
                 case UndeadMinion.ArmorType.Leather:
-                    player.GetInventory().RemoveItem("$item_leatherscraps",
-                        BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
+                    if (leatherScrapsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                    {
+                        player.GetInventory().RemoveItem("$item_leatherscraps",
+                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    }
+                    else if (player.GetInventory().CountItems("$item_deerhide") >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                    {
+                        player.GetInventory().RemoveItem("$item_deerhide",
+                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    }
                     break;
                 case UndeadMinion.ArmorType.Bronze:
                     player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
@@ -318,37 +327,9 @@ namespace ChebsNecromancy.Items
         {
             // Determine type of archer to spawn and consume resources.
             // Return None if unable to determine archer type, or if necessary resources are missing.
-
-            var draugrType = DraugrMinion.DraugrType.None;
+            
             var player = Player.m_localPlayer;
-
-            // check for arrows
-            var woodArrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
-            var bronzeArrowsInInventory = player.GetInventory().CountItems("$item_arrow_bronze");
-            var ironArrowsInInventory = player.GetInventory().CountItems("$item_arrow_iron");
-
-            if (BasePlugin.ArcherTier3ArrowsRequiredConfig.Value <= 0
-                || BasePlugin.ArcherTier3ArrowsRequiredConfig.Value >= ironArrowsInInventory)
-            {
-                draugrType = DraugrMinion.DraugrType.ArcherTier3;
-            }
-            else if (BasePlugin.ArcherTier2ArrowsRequiredConfig.Value <= 0
-                     || BasePlugin.ArcherTier2ArrowsRequiredConfig.Value >= bronzeArrowsInInventory)
-            {
-                draugrType = DraugrMinion.DraugrType.ArcherTier2;
-            }
-            else if (BasePlugin.ArcherTier1ArrowsRequiredConfig.Value <= 0
-                     || BasePlugin.ArcherTier1ArrowsRequiredConfig.Value >= woodArrowsInInventory)
-            {
-                draugrType = DraugrMinion.DraugrType.ArcherTier1;
-            }
-
-            if (draugrType is DraugrMinion.DraugrType.None)
-            {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlydraugrwand_notenougharrows");
-                return draugrType;
-            }
-
+            
             // check for bones
             if (DraugrBoneFragmentsRequiredConfig.Value > 0)
             {
@@ -358,11 +339,33 @@ namespace ChebsNecromancy.Items
                 {
                     MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
                         "$friendlydraugrwand_notenoughbones");
-                    return draugrType;
+                    return DraugrMinion.DraugrType.None;
                 }
             }
 
-            return draugrType;
+            // check for arrows
+            var woodArrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
+            var bronzeArrowsInInventory = player.GetInventory().CountItems("$item_arrow_bronze");
+            var ironArrowsInInventory = player.GetInventory().CountItems("$item_arrow_iron");
+
+            if (BasePlugin.ArcherTier3ArrowsRequiredConfig.Value <= 0
+                || ironArrowsInInventory >= BasePlugin.ArcherTier3ArrowsRequiredConfig.Value)
+            {
+                return DraugrMinion.DraugrType.ArcherTier3;
+            }
+            if (BasePlugin.ArcherTier2ArrowsRequiredConfig.Value <= 0
+                     || bronzeArrowsInInventory >= BasePlugin.ArcherTier2ArrowsRequiredConfig.Value)
+            {
+                return DraugrMinion.DraugrType.ArcherTier2;
+            }
+            if (BasePlugin.ArcherTier1ArrowsRequiredConfig.Value <= 0
+                     || woodArrowsInInventory >= BasePlugin.ArcherTier1ArrowsRequiredConfig.Value)
+            {
+                return DraugrMinion.DraugrType.ArcherTier1;
+            }
+
+            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlydraugrwand_notenougharrows");
+            return DraugrMinion.DraugrType.None;
         }
 
 
@@ -384,9 +387,22 @@ namespace ChebsNecromancy.Items
                 }
             }
             
+            // check for bones
+            if (DraugrBoneFragmentsRequiredConfig.Value > 0)
+            {
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+
+                if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughbones");
+                    return;
+                }
+            }
+            
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = UndeadMinion.DetermineArmorType();
+            var armorType = ExtraResourceConsumptionUnlocked ? UndeadMinion.DetermineArmorType() : UndeadMinion.ArmorType.None;
 
             var draugrType = SpawnDraugrArcher();
 
@@ -490,10 +506,23 @@ namespace ChebsNecromancy.Items
                     return;
                 }
             }
+            
+            // check for bones
+            if (DraugrBoneFragmentsRequiredConfig.Value > 0)
+            {
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+
+                if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughbones");
+                    return;
+                }
+            }
 
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = UndeadMinion.DetermineArmorType();
+            var armorType = ExtraResourceConsumptionUnlocked ? UndeadMinion.DetermineArmorType() : UndeadMinion.ArmorType.None;
 
             var draugrType = SpawnDraugrWarriorMinion(armorType);
 
@@ -526,6 +555,8 @@ namespace ChebsNecromancy.Items
 
         protected void InstantiateDraugr(int quality, float playerNecromancyLevel, DraugrMinion.DraugrType draugrType, UndeadMinion.ArmorType armorType)
         {
+            if (draugrType is DraugrMinion.DraugrType.None) return;
+            
             Player player = Player.m_localPlayer;
             // go on to spawn draugr
             string prefabName = InternalName.GetName(draugrType);

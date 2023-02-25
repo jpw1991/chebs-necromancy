@@ -381,7 +381,15 @@ namespace ChebsNecromancy
                     new SkeletonHelmetLeatherPoison(),
                     new SkeletonHelmetBronzePoison(),
                     new SkeletonWoodAxe(),
-                    new SkeletonPickaxe()
+                    new SkeletonPickaxe(),
+                    new SkeletonAxeBlackMetal(),
+                    new SkeletonAxeBronze(),
+                    new SkeletonMaceBlackMetal(),
+                    new SkeletonMaceBronze(),
+                    new SkeletonMaceIron(),
+                    new SkeletonSwordBlackMetal(),
+                    new SkeletonSwordBronze(),
+                    new SkeletonSwordIron()
                 };
                 minionWornItems.ForEach(minionItem =>
                 {
