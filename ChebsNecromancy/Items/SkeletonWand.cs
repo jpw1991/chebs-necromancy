@@ -316,8 +316,9 @@ namespace ChebsNecromancy.Items
 
             Player player = Player.m_localPlayer;
 
-            if (ExtraResourceConsumptionUnlocked
-                && MinerSkeletonAntlerRequiredConfig.Value > 0)
+            if (!ExtraResourceConsumptionUnlocked) return SkeletonMinion.SkeletonType.None;
+
+            if (MinerSkeletonAntlerRequiredConfig.Value > 0)
             {
                 int antlerInInventory = player.GetInventory().CountItems("$item_hardantler");
                 if (antlerInInventory >= MinerSkeletonAntlerRequiredConfig.Value)
@@ -325,8 +326,7 @@ namespace ChebsNecromancy.Items
                     return SkeletonMinion.SkeletonType.Miner;
                 }
             }
-            else if (ExtraResourceConsumptionUnlocked
-                     && WoodcutterSkeletonFlintRequiredConfig.Value > 0)
+            if (WoodcutterSkeletonFlintRequiredConfig.Value > 0)
             {
                 int flintInInventory = player.GetInventory().CountItems("$item_flint");
                 if (flintInInventory >= WoodcutterSkeletonFlintRequiredConfig.Value)
@@ -362,7 +362,7 @@ namespace ChebsNecromancy.Items
             if (playerNecromancyLevel < PoisonSkeletonLevelRequirementConfig.Value)
                 return SkeletonMinion.SkeletonType.None;
 
-            // consume requirements
+            // check guck requirements
             if (ExtraResourceConsumptionUnlocked)
             {
                 int guckInInventory = player.GetInventory().CountItems("$item_guck");
@@ -370,6 +370,10 @@ namespace ChebsNecromancy.Items
                 {
                     return SkeletonMinion.SkeletonType.None;
                 }
+            }
+            else
+            {
+                return SkeletonMinion.SkeletonType.None;
             }
 
             // determine quality

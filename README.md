@@ -122,6 +122,8 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+25/02/2023 | 2.0.2 | Fix worker skeletons
+25/02/2023 | 2.0.1 | Fix poison skeleton
 25/02/2023 | 2.0.0 | Big refactor & reorganization of things
 24/02/2023 | 1.9.2 | fix issue about wand not commanding minions to follow reliably if they're roaming; include item layer when matching Pieceables for Farming Pylon; general code refactor/clean; Refactor harmony patches to be more friendly to other mods
 23/02/2023 | 1.9.1 | Change some Prefix patches to Postfix for better mod compatibility
