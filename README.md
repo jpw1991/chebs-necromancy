@@ -1,6 +1,6 @@
 # Cheb's Necromancy
 
-Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
+Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks like woodcutting, farming, mining.
 
 This mod was formerly called Friendly Skeleton Wand, but was renamed since it as grown into something so much more.
 
@@ -23,8 +23,11 @@ Thank you and I hope you enjoy the mod! If you have questions or need help pleas
 If you would like to report a bug or request a feature, the best way to do it (in order from most preferable to least preferable) is:
 
 a) Create an issue on my [GitHub](https://github.com/jpw1991/chebs-necromancy).
+
 b) Create a bug report on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=bugs).
+
 c) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
+
 d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
 
 ## Requirements
@@ -39,39 +42,43 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ## Features
 
-- Craftable wands at the workbench called **Skeleton Wand** and **Draugr Wand**.
-- These wands consume **Bone Fragments** to create minions.
-- **Bone Fragments** now drop from all creatures when they die.
-- With a wand equipped, the following is possible:
+Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). Here's the short version:
+
+- Almost everything is configurable. Minions too weak/overpowered? Tweak them.
+- Craftable items at the workbench and forge:
+	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_skeletonwand): Summons skeleton warriors, archers, miners, and woodcutters.
+	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_draugrwand): Summons draugr warriors and archers.
+	+ [**Orb of Beckoning**](https://github.com/jpw1991/chebs-necromancy/wiki/OrbOfBeckoning) Summons skeleton mages and can be thrown to direct minions to go somewhere. It also sticks to enemies so that minions will chase after an enemy.
+	+ [**Spectral Shroud**](https://github.com/jpw1991/chebs-necromancy/wiki/item_spectralshroud): A cloak that increases your Necromancy level, looks cool, and attracts spirits to it. If you're powerful enough, they will serve.
+	+ [**Necromancer Hood**](https://github.com/jpw1991/chebs-necromancy/wiki/item_necromancerhood): A cool hood to match the cloak.
+	+ [**Necromancer's Backpack**](https://github.com/jpw1991/chebs-necromancy/wiki/NecromancyBackpack): An optional integration with **AdventureBackpacks** ([Nexus](https://www.nexusmods.com/valheim/mods/2204), [Thunderstore](https://valheim.thunderstore.io/package/Vapok/AdventureBackpacks/)), which offers a Necromancy backpack that doubles as a Spectral Shroud.
+- While holding a Skeleton Wand, Draugr Wand, or Orb of Beckoning you can control the minions:
 	+ **B** will make a warrior.
 	+ **H** will make an archer.
 	+ **F** will make all nearby minions **follow** you.
 	+ **T** will make all nearby minions **wait**.
+	+ **Shift+T** will make minions **roam**.
 	+ **G** will teleport all following minions to your position (useful if stuck or to get them on boats)
-	+ **R** to tell minions to **attack** a specific target (this is relatively inaccurate).
-- A new **Necromancy Skill**.
-- Minion quality increases with **Necromancy Skill Level**:
-	+ 0 to 34: Level 1.
-	+ 35 to 69: Level 2.
-	+ 70+: Level 3.
-- Minion health increases with necromancy level.
-- Minions ignore collision with the player so you won't be trapped.
-- You can make a special cape called the Spectral Shroud which draws spirits to it. If you're powerful enough, they will serve (necromancy level 25). Removing the cape stops them from spawning.
-- Tweakable settings by editing the config file.
-- A Spirit Pylon which can be constructed to serve as static base defence. It detects nearby enemies and if any are found, it spawns temporary Ghosts to defend the base with.
-- Having additional items in your inventory can change your minions. As a safety measure to prevent you from accidently consuming stuff, hold Left Shift when creating a minion to permit these resources to be consumed (or set to None in the config if you want no checking whatsoever):
-  - Boar scraps or Deer Hide -> leather armor
+- A new **Necromancy Skill** which increases the quality of your minions and allows you to upgrade them.
+- Minion health increases with Necromancy level.
+- Minions **ignore collision** with the player so you won't be trapped.
+- Minions do not deal damage to player structures and are not affected by sharpened stakes.
+- Minions remember who created them and cannot be commanded by other players.
+- **Upgrades:** Having additional items in your inventory when you summon can create an upgraded version of a minion. As a safety measure to prevent you from accidentally consuming stuff, hold Left Shift when creating a minion to permit these resources to be consumed (or set to None in the config if you want no checking whatsoever):
+  - Boar scraps, Deer Hide, Troll Hide, Wolf Pelt, Lox Pelt, Scale Hide -> leather armor
   - Bronze -> Bronze armor
   - Iron -> Iron armor
   - Black Metal -> Black Iron armor
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
   - Flint -> skeleton lumberjack
-  - Hard Antler -> Skeleton MIner
-- As of 1.5.0 you can create a Neckro Pylon which spawns undead Necks from Neck Tails with a container on its back. It wanders around gathering up items for you. It's like a walking vacuum cleaner.
-1.5.0 also introduces a refueler pylon, that fills your smelters with ores and coal or wood, and a Bat Beacon which spawns bats to defend your base.
-- As of 1.8.7 the mod has optional integration with **AdventureBackpacks** ([Nexus](https://www.nexusmods.com/valheim/mods/2204), [Thunderstore](https://valheim.thunderstore.io/package/Vapok/AdventureBackpacks/)), which offers a Necromancy backpack that doubles as a Spectral Shroud.
-- 1.9.0: Farming Pylon harvests crops.
+  - Hard Antler -> Skeleton Miner
+- New craftable structures:
+	+ [**Neckro Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_neckropylon): Spawns undead Neckro Gatherers from Neck Tails. These have a container on its back and wander around gathering up items for you. It's like a walking vacuum cleaner. When full, the Neckro will find a nearby container and dump the items inside.
+	+ [**Refueler Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_refueler): Fills your smelters with ores/coal; kilns with wood; fireplaces with wood and meat; and torches etc. with resin, guck, eyeballs, whatever.
+	+ [**Bat Beacon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_batbeacon): Spawns bats to defend your base.
+	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_spiritpylon): Spawns spirits to defend your base.
+	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
 
 ### Config
 
@@ -83,14 +90,13 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 
 ## Known issues
 
-- Players with Radeon cards may experience weird issues. I don't know what's causing it, but turning off Draugr in the config may help because it seems related. If you encounter problems, try the following:
-	+ `DraugrAllowed = false`
-	+ `SpectralShroudSpawnWraith = false`	
+- Players with Radeon cards may experience weird issues. I don't know what's causing it, but it's linked to the particle effects. You can switch them off by turning `RadeonFriendly = true` in the config.
 - Pylons won't show inventory unless you open a normal container first.
 
 ## Future Ideas
 
 - Fully custom undead types.
+- Lichdom
 
 ## Source
 
@@ -116,6 +122,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+25/02/2023 | 2.0.0 | Big refactor & reorganization of things
 24/02/2023 | 1.9.2 | fix issue about wand not commanding minions to follow reliably if they're roaming; include item layer when matching Pieceables for Farming Pylon; general code refactor/clean; Refactor harmony patches to be more friendly to other mods
 23/02/2023 | 1.9.1 | Change some Prefix patches to Postfix for better mod compatibility
 22/02/2023 | 1.9.0 | Add Farming Pylon; Add miner skeleton; Fix rare null object in Neckro update function

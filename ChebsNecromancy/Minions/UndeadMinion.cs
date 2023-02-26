@@ -75,19 +75,26 @@ namespace ChebsNecromancy.Minions
         {
             Player player = Player.m_localPlayer;
 
-            int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
-            if (leatherScrapsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            // todo: expose these options to config
+            var leatherItemTypes = new List<string>()
             {
-                return ArmorType.Leather;
-            }
+                "$item_leatherscraps",
+                "$item_deerhide",
+                "$item_trollhide",
+                "$item_wolfpelt",
+                "$item_loxpelt",
+                "$item_scalehide"
+            };
             
-            // no leather scraps? Try some deer hide
-            int deerHideInInventory = player.GetInventory().CountItems("$item_deerhide");
-            if (deerHideInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            foreach (var leatherItem in leatherItemTypes)
             {
-                return ArmorType.Leather;
+                var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
+                if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                {
+                    return ArmorType.Leather;
+                }
             }
-            
+
             int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
             if (bronzeInInventory >= BasePlugin.ArmorBronzeRequiredConfig.Value)
             {

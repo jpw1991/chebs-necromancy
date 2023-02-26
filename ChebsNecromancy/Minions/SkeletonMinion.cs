@@ -502,16 +502,26 @@ namespace ChebsNecromancy.Minions
             switch (armorType)
             {
                 case ArmorType.Leather:
-                    var leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
-                    if (leatherScrapsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                    // todo: expose these options to config
+                    var leatherItemTypes = new List<string>()
                     {
-                        player.GetInventory().RemoveItem("$item_leatherscraps",
-                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
-                    }
-                    else if (player.GetInventory().CountItems("$item_deerhide") >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                        "$item_leatherscraps",
+                        "$item_deerhide",
+                        "$item_trollhide",
+                        "$item_wolfpelt",
+                        "$item_loxpelt",
+                        "$item_scalehide"
+                    };
+                    
+                    foreach (var leatherItem in leatherItemTypes)
                     {
-                        player.GetInventory().RemoveItem("$item_deerhide",
-                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                        var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
+                        if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                        {
+                            player.GetInventory().RemoveItem("$item_leatherscraps",
+                                BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                            break;
+                        }
                     }
                     break;
                 case ArmorType.Bronze:
