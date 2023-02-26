@@ -473,6 +473,10 @@ namespace ChebsNecromancy.Items
 
             var skeletonType = SpawnSkeletonWorkerMinion();
 
+            // don't give armor to workers
+            if (skeletonType is SkeletonMinion.SkeletonType.Miner or SkeletonMinion.SkeletonType.Woodcutter)
+                armorType = UndeadMinion.ArmorType.None;
+
             if (skeletonType is SkeletonMinion.SkeletonType.None)
                 skeletonType = SpawnPoisonSkeletonMinion(playerNecromancyLevel, armorType);
 
