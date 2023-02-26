@@ -518,7 +518,7 @@ namespace ChebsNecromancy.Minions
                         var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
                         if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
                         {
-                            player.GetInventory().RemoveItem("$item_leatherscraps",
+                            player.GetInventory().RemoveItem(leatherItem,
                                 BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                             break;
                         }

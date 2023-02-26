@@ -314,7 +314,7 @@ namespace ChebsNecromancy.Items
                         var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
                         if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
                         {
-                            player.GetInventory().RemoveItem("$item_leatherscraps",
+                            player.GetInventory().RemoveItem(leatherItem,
                                 BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                             break;
                         }
@@ -374,7 +374,7 @@ namespace ChebsNecromancy.Items
                 return DraugrMinion.DraugrType.ArcherTier1;
             }
 
-            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlydraugrwand_notenougharrows");
+            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
             return DraugrMinion.DraugrType.None;
         }
 

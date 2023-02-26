@@ -249,6 +249,13 @@ namespace ChebsNecromancy.Items
 
             var skeletonType = SpawnSkeletonMageMinion(armorType);
 
+            if (skeletonType is SkeletonMinion.SkeletonType.None)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_magesrequirearmor");
+                return;
+            }
+
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
             if (SkeletonWand.MaxSkeletons.Value > 0)
