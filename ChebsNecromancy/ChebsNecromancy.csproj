@@ -142,6 +142,7 @@
     <Compile Include="Items\OrbOfBeckoning.cs" />
     <Compile Include="Items\SkeletonAxeBlackMetal.cs" />
     <Compile Include="Items\SkeletonAxeBronze.cs" />
+    <Compile Include="Items\SkeletonBow3.cs" />
     <Compile Include="Items\SkeletonMaceBlackMetal.cs" />
     <Compile Include="Items\SkeletonMaceBronze.cs" />
     <Compile Include="Items\SkeletonMaceIron.cs" />

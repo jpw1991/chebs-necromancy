@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items;
+using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions
 {
@@ -36,16 +40,47 @@ namespace ChebsNecromancy.Minions
 
         public static ConfigEntry<DropType> DropOnDeath;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
+        
+        public static ConfigEntry<float> NecromancyLevelIncrease;
+        public static ConfigEntry<float> PoisonNecromancyLevelIncrease;
+        public static ConfigEntry<float> ArcherNecromancyLevelIncrease;
+        public static ConfigEntry<float> MageNecromancyLevelIncrease;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            DropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", "DropOnDeath",
+            DropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", 
+                "DropOnDeath",
                 DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PackDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
+            PackDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", 
+                "PackDroppedItemsIntoCargoCrate",
                 true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            NecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)", 
+                "NecromancyLevelIncrease",
+                .75f, new ConfigDescription(
+                    "How much crafting a skeleton contributes to your Necromancy level increasing.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            PoisonNecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+                "PoisonSkeletonNecromancyLevelIncrease",
+                1f, new ConfigDescription(
+                    "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherNecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+                "ArcherSkeletonNecromancyLevelIncrease",
+                1f, new ConfigDescription(
+                    "How much crafting an Archer Skeleton contributes to your Necromancy level increasing.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            MageNecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+                "MageSkeletonNecromancyLevelIncrease",
+                1f, new ConfigDescription(
+                    "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void Awake()
@@ -73,7 +108,7 @@ namespace ChebsNecromancy.Minions
             // VisEquipment remembers what armor the skeleton is wearing.
             // Exploit this to reapply the armor so the armor values work
             // again.
-            List<int> equipmentHashes = new List<int>()
+            var equipmentHashes = new List<int>()
             {
                 humanoid.m_visEquipment.m_currentChestItemHash,
                 humanoid.m_visEquipment.m_currentLegItemHash,
@@ -83,7 +118,7 @@ namespace ChebsNecromancy.Minions
             {
                 ZNetScene.instance.GetPrefab(hash);
 
-                GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
+                var equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
                 if (equipmentPrefab != null)
                 {
                     humanoid.GiveDefaultItem(equipmentPrefab);
@@ -94,8 +129,8 @@ namespace ChebsNecromancy.Minions
 
             // wondering what the code below does? Check comments in the
             // FreshMinion.cs file.
-            FreshMinion freshMinion = GetComponent<FreshMinion>();
-            MonsterAI monsterAI = GetComponent<MonsterAI>();
+            var freshMinion = GetComponent<FreshMinion>();
+            var monsterAI = GetComponent<MonsterAI>();
             monsterAI.m_randomMoveRange = RoamRange.Value;
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
@@ -113,23 +148,23 @@ namespace ChebsNecromancy.Minions
 
         public virtual void ScaleStats(float necromancyLevel)
         {
-            Character character = GetComponent<Character>();
+            var character = GetComponent<Character>();
             if (character == null)
             {
                 Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
 
-            float health = SkeletonWand.SkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.SkeletonHealthMultiplier.Value;
+            var health = SkeletonWand.SkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.SkeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
 
         public virtual void ScaleEquipment(float necromancyLevel, SkeletonType skeletonType, ArmorType armorType)
         {
-            List<GameObject> defaultItems = new List<GameObject>();
+            var defaultItems = new List<GameObject>();
 
-            Humanoid humanoid = GetComponent<Humanoid>();
+            var humanoid = GetComponent<Humanoid>();
             if (humanoid == null)
             {
                 Logger.LogError("ScaleEquipment: humanoid is null!");
@@ -235,6 +270,304 @@ namespace ChebsNecromancy.Minions
                         Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageWarrior.Value;
                         break;
                 }
+            }
+        }
+        
+        public static void InstantiateSkeleton(int quality, float playerNecromancyLevel,
+            SkeletonType skeletonType, ArmorType armorType)
+        {
+            if (skeletonType is SkeletonType.None) return;
+            
+            var player = Player.m_localPlayer;
+            var prefabName = InternalName.GetName(skeletonType);
+            var prefab = ZNetScene.instance.GetPrefab(prefabName);
+            if (!prefab)
+            {
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
+                Logger.LogError($"InstantiateSkeleton: spawning {prefabName} failed");
+                return;
+            }
+
+            var transform = player.transform;
+            var spawnedChar = Instantiate(prefab,
+                transform.position + transform.forward * 2f + Vector3.up, Quaternion.identity);
+            var character = spawnedChar.GetComponent<Character>();
+            character.SetLevel(quality);
+
+            spawnedChar.AddComponent<FreshMinion>();
+
+            var minion = skeletonType switch
+            {
+                SkeletonType.PoisonTier1
+                    or SkeletonType.PoisonTier2
+                    or SkeletonType.PoisonTier3 => spawnedChar.AddComponent<PoisonSkeletonMinion>(),
+                SkeletonType.Woodcutter => spawnedChar.AddComponent<SkeletonWoodcutterMinion>(),
+                SkeletonType.Miner => spawnedChar.AddComponent<SkeletonMinerMinion>(),
+                _ => spawnedChar.AddComponent<SkeletonMinion>()
+            };
+            minion.SetCreatedAtLevel(playerNecromancyLevel);
+            minion.ScaleEquipment(playerNecromancyLevel, skeletonType, armorType);
+            minion.ScaleStats(playerNecromancyLevel);
+
+            if (skeletonType != SkeletonType.Woodcutter
+                && skeletonType != SkeletonType.Miner)
+            {
+                if (Wand.FollowByDefault.Value)
+                {
+                    minion.Follow(player.gameObject);
+                }
+                else
+                {
+                    minion.Wait(player.transform.position);
+                }
+            }
+
+            var levelIncrease = skeletonType switch
+            {
+                SkeletonType.ArcherTier1
+                    or SkeletonType.ArcherTier2
+                    or SkeletonType.ArcherTier3 => ArcherNecromancyLevelIncrease.Value,
+                SkeletonType.MageTier1
+                    or SkeletonType.MageTier2
+                    or SkeletonType.MageTier3 => MageNecromancyLevelIncrease.Value,
+                SkeletonType.PoisonTier1
+                    or SkeletonType.PoisonTier2
+                    or SkeletonType.PoisonTier3 => PoisonNecromancyLevelIncrease.Value,
+                _ => NecromancyLevelIncrease.Value
+            };
+            
+            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill,
+                levelIncrease);
+
+            minion.UndeadMinionMaster = player.GetPlayerName();
+
+            // handle refunding of resources on death
+            if (DropOnDeath.Value != DropType.Nothing)
+            {
+                var characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
+
+                if (DropOnDeath.Value == DropType.Everything
+                    && SkeletonWand.BoneFragmentsRequiredConfig.Value > 0)
+                {
+                    // bones
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.BoneFragmentsRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.BoneFragmentsRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                if (skeletonType == SkeletonType.Miner)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("HardAntler"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.MinerSkeletonAntlerRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.MinerSkeletonAntlerRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                if (skeletonType == SkeletonType.Woodcutter)
+                {
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("Flint"),
+                        m_onePerPlayer = true,
+                        m_amountMin = SkeletonWand.WoodcutterSkeletonFlintRequiredConfig.Value,
+                        m_amountMax = SkeletonWand.WoodcutterSkeletonFlintRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                if (skeletonType is SkeletonType.MageTier1
+                    or SkeletonType.MageTier2
+                    or SkeletonType.MageTier3)
+                {
+                    // surtling core
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = ZNetScene.instance.GetPrefab("SurtlingCore"),
+                        m_onePerPlayer = true,
+                        m_amountMin = BasePlugin.SurtlingCoresRequiredConfig.Value,
+                        m_amountMax = BasePlugin.SurtlingCoresRequiredConfig.Value,
+                        m_chance = 1f
+                    });
+                }
+
+                switch (armorType)
+                {
+                    case ArmorType.Leather:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            // flip a coin for deer or scraps
+                            m_prefab = Random.value > .5f
+                                ? ZNetScene.instance.GetPrefab("DeerHide")
+                                : ZNetScene.instance.GetPrefab("LeatherScraps"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.Bronze:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("Bronze"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.Iron:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("Iron"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorIronRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorIronRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.BlackMetal:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("BlackMetal"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                }
+
+                // the component won't be remembered by the game on logout because
+                // only what is on the prefab is remembered. Even changes to the prefab
+                // aren't remembered. So we must write what we're dropping into
+                // the ZDO as well and then read & restore this on Awake
+                minion.RecordDrops(characterDrop);
+            }
+        }
+        
+        public static void ConsumeResources(SkeletonType skeletonType, ArmorType armorType)
+        {
+            var player = Player.m_localPlayer;
+
+            // consume bones
+            player.GetInventory().RemoveItem("$item_bonefragments", SkeletonWand.BoneFragmentsRequiredConfig.Value);
+
+            // consume other
+            switch (skeletonType)
+            {
+                case SkeletonType.Miner:
+                    player.GetInventory().RemoveItem("$item_hardantler", SkeletonWand.MinerSkeletonAntlerRequiredConfig.Value);
+                    break;
+                case SkeletonType.Woodcutter:
+                    player.GetInventory().RemoveItem("$item_flint", SkeletonWand.WoodcutterSkeletonFlintRequiredConfig.Value);
+                    break;
+
+                case SkeletonType.ArcherTier1:
+                    player.GetInventory()
+                        .RemoveItem("$item_arrow_wood", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+                case SkeletonType.ArcherTier2:
+                    player.GetInventory().RemoveItem("$item_arrow_bronze",
+                        BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+                case SkeletonType.ArcherTier3:
+                    player.GetInventory()
+                        .RemoveItem("$item_arrow_iron", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+
+                case SkeletonType.MageTier1:
+                case SkeletonType.MageTier2:
+                case SkeletonType.MageTier3:
+                    player.GetInventory()
+                        .RemoveItem("$item_surtlingcore", BasePlugin.SurtlingCoresRequiredConfig.Value);
+                    break;
+
+                case SkeletonType.PoisonTier1:
+                case SkeletonType.PoisonTier2:
+                case SkeletonType.PoisonTier3:
+                    player.GetInventory().RemoveItem("$item_guck", SkeletonWand.PoisonSkeletonGuckRequiredConfig.Value);
+                    break;
+            }
+
+            // consume armor materials
+            switch (armorType)
+            {
+                case ArmorType.Leather:
+                    var leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
+                    if (leatherScrapsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                    {
+                        player.GetInventory().RemoveItem("$item_leatherscraps",
+                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    }
+                    else if (player.GetInventory().CountItems("$item_deerhide") >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                    {
+                        player.GetInventory().RemoveItem("$item_deerhide",
+                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    }
+                    break;
+                case ArmorType.Bronze:
+                    player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
+                    break;
+                case ArmorType.Iron:
+                    player.GetInventory().RemoveItem("$item_iron", BasePlugin.ArmorIronRequiredConfig.Value);
+                    break;
+                case ArmorType.BlackMetal:
+                    player.GetInventory().RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
+                    break;
+            }
+        }
+        
+        public static void CountActiveSkeletonMinions()
+        {
+            //todo: this function is poorly designed. Return value is not
+            // important to its function; function has side effects, etc.
+            // Refactor sometime
+
+            int result = 0;
+            // based off BaseAI.FindClosestCreature
+            var allCharacters = Character.GetAllCharacters();
+            var minionsFound = new List<Tuple<int, Character>>();
+
+            foreach (var item in allCharacters)
+            {
+                if (item.IsDead())
+                {
+                    continue;
+                }
+
+                var minion = item.GetComponent<SkeletonMinion>();
+                if (minion != null
+                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
+                {
+                    minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
+                }
+            }
+
+            // reverse so that we get newest first, oldest last. This means
+            // when we kill off surplus, the oldest things are getting killed
+            // not the newest things
+            minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
+
+            foreach (var t in minionsFound)
+            {
+                // kill off surplus
+                if (result >= SkeletonWand.MaxSkeletons.Value - 1)
+                {
+                    Tuple<int, Character> tuple = t;
+                    tuple.Item2.SetHealth(0);
+                    continue;
+                }
+
+                result++;
             }
         }
     }

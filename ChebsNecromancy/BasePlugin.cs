@@ -42,12 +42,12 @@ namespace ChebsNecromancy
         {
             new SkeletonWand(),
             new DraugrWand(),
+            new OrbOfBeckoning()
         };
         public const string NecromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private readonly SpectralShroud spectralShroudItem = new();
         private readonly NecromancerHood necromancersHoodItem = new();
-        private readonly OrbOfBeckoning orbOfBeckoningItem = new();
 
         private float inputDelay = 0;
 
@@ -232,7 +232,6 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
-            orbOfBeckoningItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
@@ -286,7 +285,7 @@ namespace ChebsNecromancy
                     GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
                     if (prefab == null)
                     {
-                        Jotunn.Logger.LogFatal($"AddCustomItems: {prefabName} is null!");
+                        Jotunn.Logger.LogFatal($"LoadPrefabFromBundle: {prefabName} is null!");
                     }
 
                     if (RadeonFriendly.Value)
@@ -323,7 +322,7 @@ namespace ChebsNecromancy
                     SE_Stats seStat = bundle.LoadAsset<SE_Stats>(setEffectName);
                     if (seStat == null)
                     {
-                        Jotunn.Logger.LogError($"AddCustomItems: {setEffectName} is null!");
+                        Jotunn.Logger.LogError($"LoadSetEffectFromBundle: {setEffectName} is null!");
                     }
                     return seStat;
                 }
@@ -343,16 +342,15 @@ namespace ChebsNecromancy
                 // // //
                 // Orb of Beckoning
                 //
-                // Add custom projectile script and amke sure the item is using it as its projectile object.
                 GameObject orbOfBeckoningProjectilePrefab = 
-                    LoadPrefabFromBundle(orbOfBeckoningItem.ProjectilePrefabName, chebgonazAssetBundle);
+                    LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle);
                 orbOfBeckoningProjectilePrefab.AddComponent<OrbOfBeckoningProjectile>();
                 
-                GameObject orbOfBeckoningItemPrefab =
-                    LoadPrefabFromBundle(orbOfBeckoningItem.PrefabName, chebgonazAssetBundle);
-                orbOfBeckoningItemPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
-                    orbOfBeckoningProjectilePrefab;
-                ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(orbOfBeckoningItemPrefab));
+                // GameObject orbOfBeckoningItemPrefab =
+                //     LoadPrefabFromBundle(orbOfBeckoningItem.PrefabName, chebgonazAssetBundle);
+                // orbOfBeckoningItemPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
+                //     orbOfBeckoningProjectilePrefab;
+                // ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(orbOfBeckoningItemPrefab));
                 // // //
                 
                 // minion worn items
@@ -361,6 +359,7 @@ namespace ChebsNecromancy
                     new SkeletonClub(),
                     new SkeletonBow(),
                     new SkeletonBow2(),
+                    new SkeletonBow3(),
                     new SkeletonHelmetLeather(),
                     new SkeletonHelmetBronze(),
                     new SkeletonHelmetIron(),
@@ -404,6 +403,13 @@ namespace ChebsNecromancy
                     GameObject wandPrefab = LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle);
                     wand.CreateButtons();
                     KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
+                    
+                    // for orb of beckoning, make sure the custom projectile is set
+                    if (wand is OrbOfBeckoning)
+                    {
+                        wandPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile = orbOfBeckoningProjectilePrefab;                        
+                    }
+
                     ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
                 });
                 #endregion
@@ -427,8 +433,11 @@ namespace ChebsNecromancy
 
                 if (DraugrWand.DraugrAllowed.Value)
                 {
-                    prefabNames.Add("ChebGonaz_DraugrArcher.prefab");
-                    prefabNames.Add("ChebGonaz_DraugrWarrior.prefab");
+                    foreach (DraugrMinion.DraugrType value in Enum.GetValues(typeof(DraugrMinion.DraugrType)))
+                    {
+                        if (value is DraugrMinion.DraugrType.None) continue;
+                        prefabNames.Add(InternalName.GetName(value) + ".prefab");
+                    }
                 }
 
                 if (SkeletonWand.SkeletonsAllowed.Value)
@@ -436,21 +445,11 @@ namespace ChebsNecromancy
                     // 1.2.0: I had to make extra prefabs for each tier because
                     // the skeletons consistently forgot their weapons and became
                     // buggy (not attacking enemies) if dynamically set
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier1) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier2) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier3) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.WarriorTier4) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.ArcherTier1) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.ArcherTier2) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.ArcherTier3) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.MageTier1) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.MageTier2) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.MageTier3) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.PoisonTier1) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.PoisonTier2) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.PoisonTier3) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.Woodcutter) + ".prefab");
-                    prefabNames.Add(InternalName.GetName(SkeletonMinion.SkeletonType.Miner) + ".prefab");
+                    foreach (SkeletonMinion.SkeletonType value in Enum.GetValues(typeof(SkeletonMinion.SkeletonType)))
+                    {
+                        if (value is SkeletonMinion.SkeletonType.None) continue;
+                        prefabNames.Add(InternalName.GetName(value) + ".prefab");
+                    }
                 }
 
                 if (SpectralShroud.SpawnWraith.Value)
