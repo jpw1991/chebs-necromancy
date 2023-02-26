@@ -86,6 +86,9 @@ namespace ChebsNecromancy.Items
             TeleportGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"TeleportGamepad",
                 InputManager.GamepadButton.SelectButton,
                 new ConfigDescription("The gamepad button to teleport following minions to you."));
+            
+            UnlockExtraResourceConsumptionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName + "UnlockExtraResourceConsumption",
+                KeyCode.LeftShift, new ConfigDescription("The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton."));
         }
         
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
