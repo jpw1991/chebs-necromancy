@@ -122,6 +122,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+26/02/2023 | 2.0.4 | Fix bug in Neckro where the remainder of an item stack could get deleted if not fully deposited
 25/02/2023 | 2.0.2 | Fix worker skeletons
 25/02/2023 | 2.0.1 | Fix poison skeleton
 25/02/2023 | 2.0.0 | Big refactor & reorganization of things

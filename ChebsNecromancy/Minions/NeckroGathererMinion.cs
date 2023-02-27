@@ -151,31 +151,45 @@ namespace ChebsNecromancy.Minions
 
         private void StoreItem(ItemDrop itemDrop, Container depositContainer)
         {
-            NeckroStatus = $"Storing {itemDrop.m_itemData.m_shared.m_name} in {depositContainer.m_name}";
-            
             ItemDrop.ItemData itemData = itemDrop.m_itemData;
             if (itemData == null) return;
 
             if (itemData.m_stack < 1) return;
+            
+            NeckroStatus = $"Storing {itemData.m_shared.m_name} in {depositContainer.m_name}";
 
             int originalStackSize = itemData.m_stack;
             int itemsDeposited = 0;
 
-            while (itemData.m_stack-- > 0 && depositContainer.GetInventory().CanAddItem(itemData, 1))
+            var depositInventory = depositContainer.GetInventory();
+
+            var itemsOfTypeInInventoryBefore = depositInventory.CountItems(itemData.m_shared.m_name);
+            
+            while (itemData.m_stack-- > 0 && depositInventory.CanAddItem(itemData, 1))
             {
                 ItemDrop.ItemData newItemData = itemData.Clone();
                 newItemData.m_stack = 1;
-                depositContainer.GetInventory().AddItem(newItemData);
+                depositInventory.AddItem(newItemData);
                 itemsDeposited++;
             }
 
             itemData.m_stack -= itemsDeposited;
 
             depositContainer.Save();
+            
+            // do a sanity check to make sure that nothing has been lost
+            var itemsOfTypeInInventoryAfter = depositInventory.CountItems(itemData.m_shared.m_name);
+            var completelyDeposited = originalStackSize == itemsDeposited;
 
             // if the stack was completely deposited, destroy the item
-            if (itemData.m_stack <= 0)
+            if (itemData.m_stack <= 0 && completelyDeposited)
             {
+                // Jotunn.Logger.LogInfo($"Neckro: destroying {itemData.m_shared.m_name} because completely " +
+                //                       $"deposited." +
+                //                       $"Original stack size: {originalStackSize}, " +
+                //                       $"Item count before: {itemsOfTypeInInventoryBefore}, " +
+                //                       $"now: {itemsOfTypeInInventoryAfter}. " +
+                //                       $"Completely deposited: {completelyDeposited}");
                 if (itemDrop.GetComponent<ZNetView>() == null)
                     DestroyImmediate(itemDrop.gameObject);
                 else
