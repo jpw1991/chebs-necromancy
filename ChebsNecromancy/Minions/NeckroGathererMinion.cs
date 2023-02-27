@@ -134,13 +134,11 @@ namespace ChebsNecromancy.Minions
             foreach (var hitCollider in hitColliders)
             {
                 ItemDrop itemDrop = hitCollider.GetComponentInParent<ItemDrop>();
-                if (itemDrop != null)
+                if (itemDrop != null
+                    && itemDrop.CanPickup()
+                    && StoreItem(itemDrop, container))
                 {
-                    if (itemDrop.CanPickup())
-                    {
-                        itemNames.Add(itemDrop.m_itemData.m_shared.m_name);
-                        StoreItem(itemDrop, container);
-                    }
+                    itemNames.Add(itemDrop.m_itemData.m_shared.m_name);
                 }
             }
 
@@ -149,12 +147,12 @@ namespace ChebsNecromancy.Minions
                 : "Looking for items...";
         }
 
-        private void StoreItem(ItemDrop itemDrop, Container depositContainer)
+        private bool StoreItem(ItemDrop itemDrop, Container depositContainer)
         {
             ItemDrop.ItemData itemData = itemDrop.m_itemData;
-            if (itemData == null) return;
+            if (itemData == null) return false;
 
-            if (itemData.m_stack < 1) return;
+            if (itemData.m_stack < 1) return false;
             
             NeckroStatus = $"Storing {itemData.m_shared.m_name} in {depositContainer.m_name}";
 
@@ -195,6 +193,8 @@ namespace ChebsNecromancy.Minions
                 else
                     ZNetScene.instance.Destroy(itemDrop.gameObject);
             }
+
+            return itemsDeposited > 0;
         }
 
         private bool ReturnHome()
