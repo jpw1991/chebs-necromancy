@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class FarmingPylon : MonoBehaviour
+    internal class FarmingPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> UpdateInterval;
@@ -24,7 +24,7 @@ namespace ChebsNecromancy.Structures
 
         private List<Container> _containers;
 
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "FineWood:15,IronNails:15,SurtlingCore:1",
             IconName = "chebgonaz_farmingpylon_icon.png",
@@ -56,6 +56,11 @@ namespace ChebsNecromancy.Structures
 
             PickableList = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FarmingPylonPickableList", DefaultPickables,
                 "A list of pickable IDs.", null, true);
+        }
+        
+        public new static void UpdateRecipe()
+        {
+            ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
         }
 
         private void Awake()

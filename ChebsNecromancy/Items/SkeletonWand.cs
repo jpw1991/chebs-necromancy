@@ -146,6 +146,11 @@ namespace ChebsNecromancy.Items
                     null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
+        
+        public override void UpdateRecipe()
+        {
+            UpdateRecipe(CraftingStationRequired, CraftingCost);
+        }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {

@@ -8,14 +8,14 @@ using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class NeckroGathererPylon : MonoBehaviour
+    internal class NeckroGathererPylon : Structure
     {
         public static ConfigEntry<float> SpawnInterval;
         public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
 
         protected Container Container;
         
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "Stone:15,NeckTail:25,SurtlingCore:1",
             IconName = "chebgonaz_neckrogathererpylon_icon.png",
@@ -42,6 +42,11 @@ namespace ChebsNecromancy.Structures
 
             NeckTailsConsumedPerSpawn = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererCreationCost", 1,
                 "How many Neck Tails get consumed when creating a Neckro Gatherer.", plugin.IntQuantityValue, true);
+        }
+        
+        public new static void UpdateRecipe()
+        {
+            ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
         }
 
 #pragma warning disable IDE0051 // Remove unused private members

@@ -91,6 +91,11 @@ namespace ChebsNecromancy.Items
                 KeyCode.LeftShift, new ConfigDescription("The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton."));
         }
         
+        public override void UpdateRecipe()
+        {
+            UpdateRecipe(CraftingStationRequired, CraftingCost);
+        }
+        
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
             ItemConfig config = new();

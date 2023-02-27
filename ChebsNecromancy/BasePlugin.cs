@@ -44,6 +44,7 @@ namespace ChebsNecromancy
             new DraugrWand(),
             new OrbOfBeckoning()
         };
+
         public const string NecromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private readonly SpectralShroud spectralShroudItem = new();
@@ -262,13 +263,23 @@ namespace ChebsNecromancy
             if (!File.Exists(ConfigFileFullPath)) return;
             try
             {
-                Jotunn.Logger.LogInfo("Read updated config values");
+                Logger.LogInfo("Read updated config values");
                 Config.Reload();
+                
+                wands.ForEach(wand => wand.UpdateRecipe());
+                necromancersHoodItem.UpdateRecipe();
+                spectralShroudItem.UpdateRecipe();
+
+                BatBeacon.UpdateRecipe();
+                FarmingPylon.UpdateRecipe();
+                NeckroGathererPylon.UpdateRecipe();
+                RefuelerPylon.UpdateRecipe();
+                SpiritPylon.UpdateRecipe();
             }
             catch
             {
-                Jotunn.Logger.LogError($"There was an issue loading your {ConfigFileName}");
-                Jotunn.Logger.LogError("Please check your config entries for spelling and format!");
+                Logger.LogError($"There was an issue loading your {ConfigFileName}");
+                Logger.LogError("Please check your config entries for spelling and format!");
             }
         }
 

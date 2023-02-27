@@ -120,6 +120,11 @@ namespace ChebsNecromancy.Items
                 0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
+        
+        public override void UpdateRecipe()
+        {
+            UpdateRecipe(CraftingStationRequired, CraftingCost);
+        }
 
         public override void CreateButtons()
         {

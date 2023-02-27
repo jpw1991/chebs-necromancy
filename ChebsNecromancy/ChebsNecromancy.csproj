@@ -215,6 +215,7 @@
     <Compile Include="Structures\NeckroGathererPylon.cs" />
     <Compile Include="Structures\RefuelerPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />
+    <Compile Include="Structures\Structure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
