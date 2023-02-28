@@ -25,16 +25,16 @@ namespace ChebsNecromancy.Patches
         [HarmonyPrefix]
         static void AddBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
         {
-            if (SkeletonWand.BoneFragmentsDroppedAmountMin.Value >= 0
-                && SkeletonWand.BoneFragmentsDroppedAmountMax.Value > 0)
+            if (BasePlugin.BoneFragmentsDroppedAmountMin.Value >= 0
+                && BasePlugin.BoneFragmentsDroppedAmountMax.Value > 0)
             {
                 CharacterDrop.Drop bones = new()
                 {
                     m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
                     m_onePerPlayer = true,
-                    m_amountMin = SkeletonWand.BoneFragmentsDroppedAmountMin.Value,
-                    m_amountMax = SkeletonWand.BoneFragmentsDroppedAmountMax.Value,
-                    m_chance = SkeletonWand.BoneFragmentsDroppedChance.Value
+                    m_amountMin = BasePlugin.BoneFragmentsDroppedAmountMin.Value,
+                    m_amountMax = BasePlugin.BoneFragmentsDroppedAmountMax.Value,
+                    m_chance = BasePlugin.BoneFragmentsDroppedChance.Value
                 };
                 ___m_drops.Add(bones);
             }

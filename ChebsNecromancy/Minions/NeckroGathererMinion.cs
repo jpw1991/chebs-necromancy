@@ -134,13 +134,11 @@ namespace ChebsNecromancy.Minions
             foreach (var hitCollider in hitColliders)
             {
                 ItemDrop itemDrop = hitCollider.GetComponentInParent<ItemDrop>();
-                if (itemDrop != null)
+                if (itemDrop != null
+                    && itemDrop.CanPickup()
+                    && StoreItem(itemDrop, container))
                 {
-                    if (itemDrop.CanPickup())
-                    {
-                        itemNames.Add(itemDrop.m_itemData.m_shared.m_name);
-                        StoreItem(itemDrop, container);
-                    }
+                    itemNames.Add(itemDrop.m_itemData.m_shared.m_name);
                 }
             }
 
@@ -149,38 +147,54 @@ namespace ChebsNecromancy.Minions
                 : "Looking for items...";
         }
 
-        private void StoreItem(ItemDrop itemDrop, Container depositContainer)
+        private bool StoreItem(ItemDrop itemDrop, Container depositContainer)
         {
-            NeckroStatus = $"Storing {itemDrop.m_itemData.m_shared.m_name} in {depositContainer.m_name}";
-            
             ItemDrop.ItemData itemData = itemDrop.m_itemData;
-            if (itemData == null) return;
+            if (itemData == null) return false;
 
-            if (itemData.m_stack < 1) return;
+            if (itemData.m_stack < 1) return false;
+            
+            NeckroStatus = $"Storing {itemData.m_shared.m_name} in {depositContainer.m_name}";
 
             int originalStackSize = itemData.m_stack;
             int itemsDeposited = 0;
 
-            while (itemData.m_stack-- > 0 && depositContainer.GetInventory().CanAddItem(itemData, 1))
+            var depositInventory = depositContainer.GetInventory();
+
+            var itemsOfTypeInInventoryBefore = depositInventory.CountItems(itemData.m_shared.m_name);
+            
+            while (itemData.m_stack-- > 0 && depositInventory.CanAddItem(itemData, 1))
             {
                 ItemDrop.ItemData newItemData = itemData.Clone();
                 newItemData.m_stack = 1;
-                depositContainer.GetInventory().AddItem(newItemData);
+                depositInventory.AddItem(newItemData);
                 itemsDeposited++;
             }
 
             itemData.m_stack -= itemsDeposited;
 
             depositContainer.Save();
+            
+            // do a sanity check to make sure that nothing has been lost
+            var itemsOfTypeInInventoryAfter = depositInventory.CountItems(itemData.m_shared.m_name);
+            var completelyDeposited = originalStackSize == itemsDeposited;
 
             // if the stack was completely deposited, destroy the item
-            if (itemData.m_stack <= 0)
+            if (itemData.m_stack <= 0 && completelyDeposited)
             {
+                // Jotunn.Logger.LogInfo($"Neckro: destroying {itemData.m_shared.m_name} because completely " +
+                //                       $"deposited." +
+                //                       $"Original stack size: {originalStackSize}, " +
+                //                       $"Item count before: {itemsOfTypeInInventoryBefore}, " +
+                //                       $"now: {itemsOfTypeInInventoryAfter}. " +
+                //                       $"Completely deposited: {completelyDeposited}");
                 if (itemDrop.GetComponent<ZNetView>() == null)
                     DestroyImmediate(itemDrop.gameObject);
                 else
                     ZNetScene.instance.Destroy(itemDrop.gameObject);
             }
+
+            return itemsDeposited > 0;
         }
 
         private bool ReturnHome()

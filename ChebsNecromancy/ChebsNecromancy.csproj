@@ -138,8 +138,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
+    <Compile Include="InternalName.cs" />
     <Compile Include="Items\OrbOfBeckoning.cs" />
+    <Compile Include="Items\SkeletonAxeBlackMetal.cs" />
+    <Compile Include="Items\SkeletonAxeBronze.cs" />
+    <Compile Include="Items\SkeletonBow3.cs" />
+    <Compile Include="Items\SkeletonMaceBlackMetal.cs" />
+    <Compile Include="Items\SkeletonMaceBronze.cs" />
+    <Compile Include="Items\SkeletonMaceIron.cs" />
     <Compile Include="Items\SkeletonPickaxe.cs" />
+    <Compile Include="Items\SkeletonSwordBlackMetal.cs" />
+    <Compile Include="Items\SkeletonSwordBronze.cs" />
+    <Compile Include="Items\SkeletonSwordIron.cs" />
     <Compile Include="Items\SkeletonWoodAxe.cs" />
     <Compile Include="Minions\AI\MinerAI.cs" />
     <Compile Include="Minions\AI\WoodcutterAI.cs" />
@@ -205,6 +215,7 @@
     <Compile Include="Structures\NeckroGathererPylon.cs" />
     <Compile Include="Structures\RefuelerPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />
+    <Compile Include="Structures\Structure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

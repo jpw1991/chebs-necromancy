@@ -9,7 +9,7 @@ using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class SpiritPylon : MonoBehaviour
+    internal class SpiritPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> GhostDuration;
@@ -19,7 +19,7 @@ namespace ChebsNecromancy.Structures
         protected List<GameObject> SpawnedGhosts = new();
         private float ghostLastSpawnedAt;
 
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "Stone:15,Wood:15,BoneFragments:15,SurtlingCore:1",
             IconName = "chebgonaz_spiritpylon_icon.png",
@@ -29,7 +29,12 @@ namespace ChebsNecromancy.Structures
             PieceDescription = "$chebgonaz_spiritpylon_desc",
             PrefabName = "ChebGonaz_SpiritPylon.prefab",
             ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
-    };
+        };
+        
+        public new static void UpdateRecipe()
+        {
+            ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
+        }
 
         public static void CreateConfigs(BasePlugin plugin)
         {

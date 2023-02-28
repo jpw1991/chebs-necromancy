@@ -12,8 +12,28 @@ namespace ChebsNecromancy.Minions
     {
         public enum DraugrType
         {
-            Warrior,
-            Archer,
+            None,
+
+            [InternalName("ChebGonaz_DraugrWarrior")]
+            WarriorTier1,
+
+            [InternalName("ChebGonaz_DraugrWarriorTier2")]
+            WarriorTier2,
+
+            [InternalName("ChebGonaz_DraugrWarriorTier3")]
+            WarriorTier3,
+
+            [InternalName("ChebGonaz_DraugrWarriorTier4")]
+            WarriorTier4,
+
+            [InternalName("ChebGonaz_DraugrArcher")]
+            ArcherTier1,
+
+            [InternalName("ChebGonaz_DraugrArcherTier2")]
+            ArcherTier2,
+
+            [InternalName("ChebGonaz_DraugrArcherTier3")]
+            ArcherTier3,
         };
 
         // for limits checking
@@ -24,14 +44,17 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
-        { 
+        {
             DropOnDeath = plugin.Config.Bind("DraugrMinion (Server Synced)", "DropOnDeath",
                 DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PackDropItemsIntoCargoCrate = plugin.Config.Bind("DraugrMinion (Server Synced)", "PackDroppedItemsIntoCargoCrate",
-                true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PackDropItemsIntoCargoCrate = plugin.Config.Bind("DraugrMinion (Server Synced)",
+                "PackDroppedItemsIntoCargoCrate",
+                true, new ConfigDescription(
+                    "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void Awake()
@@ -61,11 +84,11 @@ namespace ChebsNecromancy.Minions
             // Exploit this to reapply the armor so the armor values work
             // again.
             List<int> equipmentHashes = new List<int>()
-                {
-                    humanoid.m_visEquipment.m_currentChestItemHash,
-                    humanoid.m_visEquipment.m_currentLegItemHash,
-                    humanoid.m_visEquipment.m_currentHelmetItemHash
-                };
+            {
+                humanoid.m_visEquipment.m_currentChestItemHash,
+                humanoid.m_visEquipment.m_currentLegItemHash,
+                humanoid.m_visEquipment.m_currentHelmetItemHash
+            };
             equipmentHashes.ForEach(hash =>
             {
                 ZNetScene.instance.GetPrefab(hash);
@@ -88,7 +111,7 @@ namespace ChebsNecromancy.Minions
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
                 yield return new WaitUntil(() => Player.m_localPlayer != null);
-                
+
                 RoamFollowOrWait();
             }
 
@@ -107,12 +130,14 @@ namespace ChebsNecromancy.Minions
                 Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
-            float health = DraugrWand.DraugrBaseHealth.Value + necromancyLevel * DraugrWand.DraugrHealthMultiplier.Value;
+
+            float health = DraugrWand.DraugrBaseHealth.Value +
+                           necromancyLevel * DraugrWand.DraugrHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
 
-        public virtual void ScaleEquipment(float necromancyLevel, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor)
+        public virtual void ScaleEquipment(float necromancyLevel, ArmorType armorType)
         {
             List<GameObject> defaultItems = new List<GameObject>();
 
@@ -130,45 +155,64 @@ namespace ChebsNecromancy.Minions
             // and running away from enemies.
             //
             // Fortunately, armor seems to work fine.
-            if (leatherArmor)
+            switch (armorType)
             {
-                defaultItems.AddRange(new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
-                    ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
-                    ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
-                    //ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                case ArmorType.Leather:
+                    defaultItems.AddRange(new GameObject[]
+                    {
+                        ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeather"),
+                        ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
+                        ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
+                        //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (DraugrWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.DurabilityDamageLeather.Value; }
-            }
-            else if (bronzeArmor)
-            {
-                defaultItems.AddRange(new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
-                    ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
-                    ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
-                    //ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    if (BasePlugin.DurabilityDamage.Value)
+                    {
+                        Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value;
+                    }
+
+                    break;
+                case ArmorType.Bronze:
+                    defaultItems.AddRange(new GameObject[]
+                    {
+                        ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetBronze"),
+                        ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
+                        ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
+                        //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (DraugrWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.DurabilityDamageBronze.Value; }
-            }
-            else if (ironArmor)
-            {
-                defaultItems.AddRange(new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
-                    ZNetScene.instance.GetPrefab("ArmorIronChest"),
-                    ZNetScene.instance.GetPrefab("ArmorIronLegs"),
-                    //ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    if (BasePlugin.DurabilityDamage.Value)
+                    {
+                        Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageBronze.Value;
+                    }
+
+                    break;
+                case ArmorType.Iron:
+                    defaultItems.AddRange(new GameObject[]
+                    {
+                        ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetIron"),
+                        ZNetScene.instance.GetPrefab("ArmorIronChest"),
+                        ZNetScene.instance.GetPrefab("ArmorIronLegs"),
+                        //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (DraugrWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.DurabilityDamageIron.Value; }
-            }
-            else if (blackIronArmor)
-            {
-                defaultItems.AddRange(new GameObject[] {
-                    ZNetScene.instance.GetPrefab("ChebGonaz_HelmetBlackIronSkeleton"),
-                    ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronChest"),
-                    ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
-                    //ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    if (BasePlugin.DurabilityDamage.Value)
+                    {
+                        Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageIron.Value;
+                    }
+
+                    break;
+                case ArmorType.BlackMetal:
+                    defaultItems.AddRange(new GameObject[]
+                    {
+                        ZNetScene.instance.GetPrefab("ChebGonaz_HelmetBlackIronSkeleton"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronChest"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
+                        //ZNetScene.instance.GetPrefab("CapeDeerHide"),
                     });
-                if (DraugrWand.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= DraugrWand.DurabilityDamageBlackIron.Value; }
+                    if (BasePlugin.DurabilityDamage.Value)
+                    {
+                        Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageBlackIron.Value;
+                    }
+
+                    break;
             }
 
             humanoid.m_defaultItems = defaultItems.ToArray();

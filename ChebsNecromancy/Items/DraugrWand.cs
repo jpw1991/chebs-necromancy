@@ -16,6 +16,7 @@ namespace ChebsNecromancy.Items
     internal class DraugrWand : Wand
     {
         #region ConfigEntries
+
         public static ConfigEntry<int> MaxDraugr;
 
         public static ConfigEntry<CraftingTable> CraftingStationRequired;
@@ -34,18 +35,11 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<int> DraugrTierThreeLevelReq;
         public static ConfigEntry<float> DraugrSetFollowRange;
 
-        public static ConfigEntry<bool> DurabilityDamage;
-        public static ConfigEntry<float> DurabilityDamageWarrior;
-        public static ConfigEntry<float> DurabilityDamageArcher;
-        public static ConfigEntry<float> DurabilityDamageLeather;
-        public static ConfigEntry<float> DurabilityDamageBronze;
-        public static ConfigEntry<float> DurabilityDamageIron;
-        public static ConfigEntry<float> DurabilityDamageBlackIron;
-
         private ConfigEntry<float> necromancyLevelIncrease;
 
         public static ConfigEntry<int> DraugrBoneFragmentsRequiredConfig;
         public static ConfigEntry<int> DraugrMeatRequiredConfig;
+
         #endregion
 
         public override string ItemName => "ChebGonaz_DraugrWand";
@@ -57,99 +51,79 @@ namespace ChebsNecromancy.Items
             base.CreateConfigs(plugin);
 
             DraugrSetFollowRange = plugin.Config.Bind("DraugrWand (Client)", "DraugrCommandRange",
-                10f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
+                20f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
 
             Allowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             CraftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStation",
                 CraftingTable.Forge, new ConfigDescription("Crafting station where Draugr Wand is available", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             CraftingStationLevel = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Draugr Wand", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             CraftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingCosts",
-               DefaultRecipe, new ConfigDescription("Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                DefaultRecipe, new ConfigDescription(
+                    "Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",
                 true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrBaseHealth = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBaseHealth",
-                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                80f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrHealthMultiplier = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrHealthMultiplier",
-                5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrTierOneQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierOneQuality",
                 1, new ConfigDescription("Star Quality of tier 1 Draugr minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrTierTwoQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoQuality",
                 2, new ConfigDescription("Star Quality of tier 2 Draugr minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrTierTwoLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoLevelReq",
                 35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Draugr", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrTierThreeQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeQuality",
                 3, new ConfigDescription("Star Quality of tier 3 Draugr minions", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrTierThreeLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeLevelReq",
                 70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Draugr", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DraugrMeatRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrMeatRequired",
-                1, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                2, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrBoneFragmentsRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBoneFragmentsRequired",
-                3, new ConfigDescription("How many bone fragments it costs to make a Draugr.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DraugrBoneFragmentsRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)",
+                "DraugrBoneFragmentsRequired",
+                6, new ConfigDescription("How many bone fragments it costs to make a Draugr.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             necromancyLevelIncrease = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrNecromancyLevelIncrease",
-                1.5f, new ConfigDescription("How much creating a Draugr contributes to your Necromancy level increasing.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                1.5f, new ConfigDescription(
+                    "How much creating a Draugr contributes to your Necromancy level increasing.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             MaxDraugr = plugin.Config.Bind("DraugrWand (Server Synced)", "MaximumDraugr",
                 0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamage = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamage",
-                true, new ConfigDescription("Whether using a Draugr Wand damages its durability.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageWarrior = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageWarrior",
-                1f, new ConfigDescription("How much creating a warrior damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageArcher = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageArcher",
-                3f, new ConfigDescription("How much creating an archer damages the wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageLeather = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageLeather",
-                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageBronze = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageBronze",
-                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageIron = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageIron",
-                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            DurabilityDamageBlackIron = plugin.Config.Bind("DraugrWand (Server Synced)", "DurabilityDamageBlackIron",
-                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
+        
+        public override void UpdateRecipe()
+        {
+            UpdateRecipe(CraftingStationRequired, CraftingCost, CraftingStationLevel);
         }
 
         public override void CreateButtons()
@@ -158,7 +132,6 @@ namespace ChebsNecromancy.Items
             base.CreateButtons();
 
             // add any extra buttons
-
         }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
@@ -173,6 +146,7 @@ namespace ChebsNecromancy.Items
                 {
                     CraftingCost.Value = DefaultRecipe;
                 }
+
                 // set recipe requirements
                 SetRecipeReqs(
                     config,
@@ -192,11 +166,13 @@ namespace ChebsNecromancy.Items
                 Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
                 return null;
             }
+
             if (customItem.ItemPrefab == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
                 return null;
             }
+
             // make sure the set effect is applied
             customItem.ItemDrop.m_itemData.m_shared.m_setStatusEffect = BasePlugin.SetEffectNecromancyArmor;
 
@@ -223,11 +199,11 @@ namespace ChebsNecromancy.Items
         public override bool HandleInputs()
         {
             if (MessageHud.instance != null
-                    && Player.m_localPlayer != null
-                    && Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
-                        equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_draugrwand")
-                        ) != null
-                    )
+                && Player.m_localPlayer != null
+                && Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
+                    equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand_draugrwand")
+                ) != null
+               )
             {
                 ExtraResourceConsumptionUnlocked =
                     UnlockExtraResourceConsumptionButton == null
@@ -235,28 +211,21 @@ namespace ChebsNecromancy.Items
 
                 if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
                 {
-                    SpawnFriendlyDraugr(DraugrBoneFragmentsRequiredConfig.Value,
-                        DraugrMeatRequiredConfig.Value,
-                        necromancyLevelIncrease.Value,
-                        false
-                        );
+                    SpawnDraugr();
                     return true;
                 }
-                else if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
+
+                if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
                 {
-                    SpawnFriendlyDraugr(DraugrBoneFragmentsRequiredConfig.Value,
-                        DraugrMeatRequiredConfig.Value,
-                        necromancyLevelIncrease.Value,
-                        true
-                        );
+                    SpawnRangedDraugr();
                     return true;
                 }
-                else if (FollowButton != null && ZInput.GetButton(FollowButton.Name))
+                if (FollowButton != null && ZInput.GetButton(FollowButton.Name))
                 {
                     MakeNearbyMinionsFollow(DraugrSetFollowRange.Value, true);
                     return true;
                 }
-                else if (WaitButton != null && ZInput.GetButton(WaitButton.Name))
+                if (WaitButton != null && ZInput.GetButton(WaitButton.Name))
                 {
                     if (ExtraResourceConsumptionUnlocked)
                     {
@@ -264,48 +233,247 @@ namespace ChebsNecromancy.Items
                     }
                     else
                     {
-                        MakeNearbyMinionsFollow(DraugrSetFollowRange.Value, false);   
+                        MakeNearbyMinionsFollow(DraugrSetFollowRange.Value, false);
                     }
+
                     return true;
                 }
-                else if (TeleportButton != null && ZInput.GetButton(TeleportButton.Name))
+                if (TeleportButton != null && ZInput.GetButton(TeleportButton.Name))
                 {
                     TeleportFollowingMinionsToPlayer();
                     return true;
                 }
             }
+
             return false;
         }
 
-        public void SpawnFriendlyDraugr(int boneFragmentsRequired, int meatRequired, float necromancyLevelIncrease, bool archer)
+        private void ConsumeResources(DraugrMinion.DraugrType draugrType, UndeadMinion.ArmorType armorType, Dictionary<string, int> meatTypesFound)
         {
-            if (!DraugrAllowed.Value) return;
-            
             Player player = Player.m_localPlayer;
 
-            if (archer && SkeletonWand.ArcherArrowsRequiredConfig.Value > 0)
+            // consume bones
+            player.GetInventory().RemoveItem("$item_bonefragments", DraugrBoneFragmentsRequiredConfig.Value);
+            
+            // consume the meat
+            int meatConsumed = 0;
+            Stack<Tuple<string, int>> meatToConsume = new Stack<Tuple<string, int>>();
+            foreach (string key in meatTypesFound.Keys)
             {
-                var arrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
-
-                if (arrowsInInventory < SkeletonWand.ArcherArrowsRequiredConfig.Value)
+                if (meatConsumed >= DraugrMeatRequiredConfig.Value)
                 {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
-                    return;
+                    break;
+                }
+
+                int meatAvailable = meatTypesFound[key];
+
+                if (meatAvailable <= DraugrMeatRequiredConfig.Value)
+                {
+                    meatToConsume.Push(new Tuple<string, int>(key, meatAvailable));
+                    meatConsumed += meatAvailable;
+                }
+                else
+                {
+                    meatToConsume.Push(new Tuple<string, int>(key, DraugrMeatRequiredConfig.Value));
+                    meatConsumed += DraugrMeatRequiredConfig.Value;
                 }
             }
 
-            // check player inventory for requirements
-            if (boneFragmentsRequired > 0)
+            while (meatToConsume.Count > 0)
+            {
+                Tuple<string, int> keyValue = meatToConsume.Pop();
+                player.GetInventory().RemoveItem(keyValue.Item1, keyValue.Item2);
+            }
+
+            // consume other
+            switch (draugrType)
+            {
+                case DraugrMinion.DraugrType.ArcherTier1:
+                    player.GetInventory().RemoveItem("$item_arrow_wood", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.ArcherTier2:
+                    player.GetInventory().RemoveItem("$item_arrow_bronze", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.ArcherTier3:
+                    player.GetInventory().RemoveItem("$item_arrow_iron", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+            }
+
+            // consume armor materials
+            switch (armorType)
+            {
+                case UndeadMinion.ArmorType.Leather:
+                    // todo: expose these options to config
+                    var leatherItemTypes = new List<string>()
+                    {
+                        "$item_leatherscraps",
+                        "$item_deerhide",
+                        "$item_trollhide",
+                        "$item_wolfpelt",
+                        "$item_loxpelt",
+                        "$item_scalehide"
+                    };
+                    
+                    foreach (var leatherItem in leatherItemTypes)
+                    {
+                        var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
+                        if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                        {
+                            player.GetInventory().RemoveItem(leatherItem,
+                                BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                            break;
+                        }
+                    }
+                    break;
+                case UndeadMinion.ArmorType.Bronze:
+                    player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.Iron:
+                    player.GetInventory().RemoveItem("$item_iron", BasePlugin.ArmorIronRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.BlackMetal:
+                    player.GetInventory().RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
+                    break;
+            }
+        }
+
+
+        private DraugrMinion.DraugrType SpawnDraugrArcher()
+        {
+            // Determine type of archer to spawn and consume resources.
+            // Return None if unable to determine archer type, or if necessary resources are missing.
+            
+            var player = Player.m_localPlayer;
+            
+            // check for bones
+            if (DraugrBoneFragmentsRequiredConfig.Value > 0)
             {
                 int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-                if (boneFragmentsInInventory < boneFragmentsRequired)
+
+                if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
                 {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughbones");
-                    return;
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlydraugrwand_notenoughbones");
+                    return DraugrMinion.DraugrType.None;
                 }
             }
 
-            if (meatRequired > 0)
+            // check for arrows
+            var woodArrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
+            var bronzeArrowsInInventory = player.GetInventory().CountItems("$item_arrow_bronze");
+            var ironArrowsInInventory = player.GetInventory().CountItems("$item_arrow_iron");
+
+            if (BasePlugin.ArcherTier3ArrowsRequiredConfig.Value <= 0
+                || ironArrowsInInventory >= BasePlugin.ArcherTier3ArrowsRequiredConfig.Value)
+            {
+                return DraugrMinion.DraugrType.ArcherTier3;
+            }
+            if (BasePlugin.ArcherTier2ArrowsRequiredConfig.Value <= 0
+                     || bronzeArrowsInInventory >= BasePlugin.ArcherTier2ArrowsRequiredConfig.Value)
+            {
+                return DraugrMinion.DraugrType.ArcherTier2;
+            }
+            if (BasePlugin.ArcherTier1ArrowsRequiredConfig.Value <= 0
+                     || woodArrowsInInventory >= BasePlugin.ArcherTier1ArrowsRequiredConfig.Value)
+            {
+                return DraugrMinion.DraugrType.ArcherTier1;
+            }
+
+            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
+            return DraugrMinion.DraugrType.None;
+        }
+
+
+        private void SpawnRangedDraugr()
+        {
+            if (!DraugrAllowed.Value) return;
+
+            var player = Player.m_localPlayer;
+            
+            var meatTypesFound = LookForMeat();
+            if (DraugrMeatRequiredConfig.Value > 0)
+            {
+                var meatInInventory = meatTypesFound.Item1;
+                if (meatInInventory < DraugrMeatRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughmeat");
+                    return;
+                }
+            }
+            
+            // check for bones
+            if (DraugrBoneFragmentsRequiredConfig.Value > 0)
+            {
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+
+                if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughbones");
+                    return;
+                }
+            }
+            
+            var playerNecromancyLevel =
+                player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+            var armorType = ExtraResourceConsumptionUnlocked ? UndeadMinion.DetermineArmorType() : UndeadMinion.ArmorType.None;
+
+            var draugrType = SpawnDraugrArcher();
+
+            if (draugrType is DraugrMinion.DraugrType.None)
+            {
+                return;
+            }
+
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            if (MaxDraugr.Value > 0)
+            {
+                // re-count the current active draugr
+                CountActiveDraugrMinions();
+            }
+
+            // scale according to skill
+            int quality = DraugrTierOneQuality.Value;
+            if (playerNecromancyLevel >= DraugrTierThreeLevelReq.Value)
+            {
+                quality = DraugrTierThreeQuality.Value;
+            }
+            else if (playerNecromancyLevel >= DraugrTierTwoLevelReq.Value)
+            {
+                quality = DraugrTierTwoQuality.Value;
+            }
+
+            ConsumeResources(draugrType, armorType, meatTypesFound.Item2);
+
+            InstantiateDraugr(quality, playerNecromancyLevel, draugrType, armorType);
+        }
+        
+        private DraugrMinion.DraugrType SpawnDraugrWarriorMinion(UndeadMinion.ArmorType armorType)
+        {
+            // Determine type of minion to spawn and consume resources.
+            // Return None if unable to determine minion type, or if necessary resources are missing.
+
+            // determine quality
+        
+            return armorType switch
+            {
+                UndeadMinion.ArmorType.Leather => DraugrMinion.DraugrType.WarriorTier1,
+                UndeadMinion.ArmorType.Bronze => DraugrMinion.DraugrType.WarriorTier2,
+                UndeadMinion.ArmorType.Iron => DraugrMinion.DraugrType.WarriorTier3,
+                UndeadMinion.ArmorType.BlackMetal => DraugrMinion.DraugrType.WarriorTier4,
+                _ => DraugrMinion.DraugrType.WarriorTier1
+            };
+        }
+
+
+        private Tuple<int, Dictionary<string, int>> LookForMeat()
+        {
+            Player player = Player.m_localPlayer;
+            var meatTypesFound = new Dictionary<string, int>();
+            var meatInInventory = 0;
+            if (DraugrMeatRequiredConfig.Value > 0)
             {
                 List<string> allowedMeatTypes = new List<string>()
                 {
@@ -320,114 +488,61 @@ namespace ChebsNecromancy.Items
                     "$item_chicken_meat",
                     "$item_hare_meat",
                 };
-                Dictionary<string, int> meatTypesFound = new Dictionary<string, int>();
-                int meatInInventory = 0;
+                
                 allowedMeatTypes.ForEach(meatTypeStr =>
-                {
-                    int meatFound = player.GetInventory().CountItems(meatTypeStr);
-                    if (meatFound > 0)
                     {
-                        meatInInventory += meatFound;
-                        meatTypesFound[meatTypeStr] = meatFound;
+                        int meatFound = player.GetInventory().CountItems(meatTypeStr);
+                        if (meatFound > 0)
+                        {
+                            meatInInventory += meatFound;
+                            meatTypesFound[meatTypeStr] = meatFound;
+                        }
                     }
-                }
                 );
+            }
 
-                if (meatInInventory < meatRequired)
+            return new Tuple<int, Dictionary<string, int>>(meatInInventory, meatTypesFound);
+        }
+
+        private void SpawnDraugr()
+        {
+            if (!DraugrAllowed.Value) return;
+            
+            var player = Player.m_localPlayer;
+
+            var meatTypesFound = LookForMeat();
+            if (DraugrMeatRequiredConfig.Value > 0)
+            {
+                var meatInInventory = meatTypesFound.Item1;
+                if (meatInInventory < DraugrMeatRequiredConfig.Value)
                 {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenoughmeat");
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughmeat");
                     return;
                 }
-
-                // consume the fragments
-                player.GetInventory().RemoveItem("$item_bonefragments", boneFragmentsRequired);
-                if (archer && SkeletonWand.ArcherArrowsRequiredConfig.Value > 0) player.GetInventory().RemoveItem("$item_arrow_wood", SkeletonWand.ArcherArrowsRequiredConfig.Value);
-
-                // consume the meat
-                int meatConsumed = 0;
-                Stack<Tuple<string, int>> meatToConsume = new Stack<Tuple<string, int>>();
-                foreach (string key in meatTypesFound.Keys)
-                {
-                    if (meatConsumed >= meatRequired) { break; }
-
-                    int meatAvailable = meatTypesFound[key];
-
-                    if (meatAvailable <= meatRequired)
-                    {
-                        meatToConsume.Push(new Tuple<string, int>(key, meatAvailable));
-                        meatConsumed += meatAvailable;
-                    }
-                    else
-                    {
-                        meatToConsume.Push(new Tuple<string, int>(key, meatRequired));
-                        meatConsumed += meatRequired;
-                    }
-                }
-
-                while (meatToConsume.Count > 0)
-                {
-                    Tuple<string, int> keyValue = meatToConsume.Pop();
-                    player.GetInventory().RemoveItem(keyValue.Item1, keyValue.Item2);
-                }
             }
-
-            bool createArmoredLeather = false;
-            if (ExtraResourceConsumptionUnlocked && SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value > 0)
+            
+            // check for bones
+            if (DraugrBoneFragmentsRequiredConfig.Value > 0)
             {
-                int leatherScrapsInInventory = player.GetInventory().CountItems("$item_leatherscraps");
-                if (leatherScrapsInInventory >= SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value)
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+
+                if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
                 {
-                    createArmoredLeather = true;
-                    player.GetInventory().RemoveItem("$item_leatherscraps", SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value);
-                }
-                else
-                {
-                    // no leather scraps? Try some deer hide
-                    int deerHideInInventory = player.GetInventory().CountItems("$item_deerhide");
-                    if (deerHideInInventory >= SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value)
-                    {
-                        createArmoredLeather = true;
-                        player.GetInventory().RemoveItem("$item_deerhide", SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value);
-                    }
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughbones");
+                    return;
                 }
             }
 
-            bool createArmoredBronze = false;
-            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && SkeletonWand.ArmorBronzeRequiredConfig.Value > 0)
-            {
-                int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
-                if (bronzeInInventory >= SkeletonWand.ArmorBronzeRequiredConfig.Value)
-                {
-                    createArmoredBronze = true;
-                    player.GetInventory().RemoveItem("$item_bronze", SkeletonWand.ArmorBronzeRequiredConfig.Value);
-                }
-            }
+            var playerNecromancyLevel =
+                player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+            var armorType = ExtraResourceConsumptionUnlocked ? UndeadMinion.DetermineArmorType() : UndeadMinion.ArmorType.None;
 
-            bool createArmoredIron = false;
-            if (ExtraResourceConsumptionUnlocked && !createArmoredLeather && !createArmoredBronze && SkeletonWand.ArmorIronRequiredConfig.Value > 0)
-            {
-                int ironInInventory = player.GetInventory().CountItems("$item_iron");
-                if (ironInInventory >= SkeletonWand.ArmorIronRequiredConfig.Value)
-                {
-                    createArmoredIron = true;
-                    player.GetInventory().RemoveItem("$item_iron", SkeletonWand.ArmorIronRequiredConfig.Value);
-                }
-            }
+            var draugrType = SpawnDraugrWarriorMinion(armorType);
 
-            bool createArmoredBlackIron = false;
-            if (ExtraResourceConsumptionUnlocked
-                && !createArmoredLeather
-                && !createArmoredBronze
-                && !createArmoredIron
-                && SkeletonWand.ArmorBlackIronRequiredConfig.Value > 0)
-            {
-                int blackIronInInventory = player.GetInventory().CountItems("$item_blackmetal");
-                if (blackIronInInventory >= SkeletonWand.ArmorBlackIronRequiredConfig.Value)
-                {
-                    createArmoredBlackIron = true;
-                    player.GetInventory().RemoveItem("$item_blackmetal", SkeletonWand.ArmorBlackIronRequiredConfig.Value);
-                }
-            }
+            if (draugrType is DraugrMinion.DraugrType.None)
+                return;
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
@@ -438,19 +553,28 @@ namespace ChebsNecromancy.Items
             }
 
             // scale according to skill
-            float playerNecromancyLevel = player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-
             int quality = DraugrTierOneQuality.Value;
-            if (playerNecromancyLevel >= DraugrTierThreeLevelReq.Value) { quality = DraugrTierThreeQuality.Value; }
-            else if (playerNecromancyLevel >= DraugrTierTwoLevelReq.Value) { quality = DraugrTierTwoQuality.Value; }
+            if (playerNecromancyLevel >= DraugrTierThreeLevelReq.Value)
+            {
+                quality = DraugrTierThreeQuality.Value;
+            }
+            else if (playerNecromancyLevel >= DraugrTierTwoLevelReq.Value)
+            {
+                quality = DraugrTierTwoQuality.Value;
+            }
 
-            InstantiateDraugr(player, quality, playerNecromancyLevel, archer, createArmoredLeather, createArmoredBronze, createArmoredIron, createArmoredBlackIron, boneFragmentsRequired, meatRequired);
+            ConsumeResources(draugrType, armorType, meatTypesFound.Item2);
+
+            InstantiateDraugr(quality, playerNecromancyLevel, draugrType, armorType);
         }
 
-        protected void InstantiateDraugr(Player player, int quality, float playerNecromancyLevel, bool archer, bool leatherArmor, bool bronzeArmor, bool ironArmor, bool blackIronArmor, int boneFragmentsRequired, int meatRequired)
+        protected void InstantiateDraugr(int quality, float playerNecromancyLevel, DraugrMinion.DraugrType draugrType, UndeadMinion.ArmorType armorType)
         {
+            if (draugrType is DraugrMinion.DraugrType.None) return;
+            
+            Player player = Player.m_localPlayer;
             // go on to spawn draugr
-            string prefabName = archer ? "ChebGonaz_DraugrArcher" : "ChebGonaz_DraugrWarrior";
+            string prefabName = InternalName.GetName(draugrType);
             GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
@@ -458,16 +582,18 @@ namespace ChebsNecromancy.Items
                 Logger.LogError($"SpawnFriendlyDraugr: spawning {prefabName} failed");
             }
 
-            GameObject spawnedChar = GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+            GameObject spawnedChar = GameObject.Instantiate(prefab,
+                player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
             spawnedChar.AddComponent<FreshMinion>();
             DraugrMinion minion = spawnedChar.AddComponent<DraugrMinion>();
             minion.SetCreatedAtLevel(playerNecromancyLevel);
             Character character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
             minion.ScaleStats(playerNecromancyLevel);
-            minion.ScaleEquipment(playerNecromancyLevel, leatherArmor, bronzeArmor, ironArmor, blackIronArmor);
+            minion.ScaleEquipment(playerNecromancyLevel, armorType);
 
-            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill, necromancyLevelIncrease.Value);
+            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill,
+                necromancyLevelIncrease.Value);
 
             if (FollowByDefault.Value)
             {
@@ -480,12 +606,6 @@ namespace ChebsNecromancy.Items
 
             minion.UndeadMinionMaster = player.GetPlayerName();
 
-            if (DurabilityDamage.Value)
-            {
-                Player.m_localPlayer.GetRightItem().m_durability -= archer
-                    ? DurabilityDamageArcher.Value : DurabilityDamageWarrior.Value;
-            }
-
             // handle refunding of resources on death
             if (DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing)
             {
@@ -494,75 +614,78 @@ namespace ChebsNecromancy.Items
                 if (DraugrMinion.DropOnDeath.Value == UndeadMinion.DropType.Everything)
                 {
                     // bones
-                    if (boneFragmentsRequired > 0)
+                    if (DraugrBoneFragmentsRequiredConfig.Value > 0)
                     {
                         characterDrop.m_drops.Add(new CharacterDrop.Drop
                         {
                             m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
                             m_onePerPlayer = true,
-                            m_amountMin = boneFragmentsRequired,
-                            m_amountMax = boneFragmentsRequired,
+                            m_amountMin = DraugrBoneFragmentsRequiredConfig.Value,
+                            m_amountMax = DraugrBoneFragmentsRequiredConfig.Value,
                             m_chance = 1f
                         });
                     }
 
                     // meat. For now, assume Neck tails
-                    if (meatRequired > 0)
+                    if (DraugrMeatRequiredConfig.Value > 0)
                     {
                         characterDrop.m_drops.Add(new CharacterDrop.Drop
                         {
                             m_prefab = ZNetScene.instance.GetPrefab("NeckTail"),
                             m_onePerPlayer = true,
-                            m_amountMin = meatRequired,
-                            m_amountMax = meatRequired,
+                            m_amountMin = DraugrMeatRequiredConfig.Value,
+                            m_amountMax = DraugrMeatRequiredConfig.Value,
                             m_chance = 1f
                         });
                     }
                 }
-                if (leatherArmor)
+
+                switch (armorType)
                 {
-                    // for now, assume deerhide
-                    characterDrop.m_drops.Add(new CharacterDrop.Drop
-                    {
-                        m_prefab = ZNetScene.instance.GetPrefab("DeerHide"),
-                        m_onePerPlayer = true,
-                        m_amountMin = SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value,
-                        m_amountMax = SkeletonWand.ArmorLeatherScrapsRequiredConfig.Value,
-                        m_chance = 1f
-                    });
-                }
-                else if (bronzeArmor)
-                {
-                    characterDrop.m_drops.Add(new CharacterDrop.Drop
-                    {
-                        m_prefab = ZNetScene.instance.GetPrefab("Bronze"),
-                        m_onePerPlayer = true,
-                        m_amountMin = SkeletonWand.ArmorBronzeRequiredConfig.Value,
-                        m_amountMax = SkeletonWand.ArmorBronzeRequiredConfig.Value,
-                        m_chance = 1f
-                    });
-                }
-                else if (ironArmor)
-                {
-                    characterDrop.m_drops.Add(new CharacterDrop.Drop
-                    {
-                        m_prefab = ZNetScene.instance.GetPrefab("Iron"),
-                        m_onePerPlayer = true,
-                        m_amountMin = SkeletonWand.ArmorIronRequiredConfig.Value,
-                        m_amountMax = SkeletonWand.ArmorIronRequiredConfig.Value,
-                        m_chance = 1f
-                    });
-                }
-                else if (blackIronArmor)
-                {
-                    characterDrop.m_drops.Add(new CharacterDrop.Drop
-                    {
-                        m_prefab = ZNetScene.instance.GetPrefab("BlackMetal"),
-                        m_onePerPlayer = true,
-                        m_amountMin = SkeletonWand.ArmorBlackIronRequiredConfig.Value,
-                        m_amountMax = SkeletonWand.ArmorBlackIronRequiredConfig.Value,
-                        m_chance = 1f
-                    });
+                    case UndeadMinion.ArmorType.Leather:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            // flip a coin for deer or scraps
+                            m_prefab = UnityEngine.Random.value > .5f 
+                                ? ZNetScene.instance.GetPrefab("DeerHide")
+                                : ZNetScene.instance.GetPrefab("LeatherScraps") 
+                            ,
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case UndeadMinion.ArmorType.Bronze:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("Bronze"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case UndeadMinion.ArmorType.Iron:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("Iron"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorIronRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorIronRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case UndeadMinion.ArmorType.BlackMetal:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("BlackMetal"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
                 }
 
                 // the component won't be remembered by the game on logout because

@@ -1,22 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Configs;
 using Jotunn.Entities;
+using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items
 {
-
-    public class InternalName : Attribute
-    {
-        public readonly string Name;
-        public InternalName(string internalName) => Name = internalName;
-    }
-
     public enum CraftingTable
     {
         None,
@@ -41,6 +36,40 @@ namespace ChebsNecromancy.Items
 
         protected virtual string DefaultRecipe => "";
 
+        public virtual void UpdateRecipe()
+        {
+            
+        }
+
+        public virtual void UpdateRecipe(ConfigEntry<CraftingTable> craftingStationRequired, ConfigEntry<string> craftingCost, ConfigEntry<int> craftingStationLevel)
+        {
+            var recipe = ItemManager.Instance.GetItem(ItemName).Recipe;
+
+            var craftingStationName =
+                ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0]
+                    .GetCustomAttributes(typeof(InternalName)).First()).Name;
+
+            recipe.Recipe.m_minStationLevel = craftingStationLevel.Value;
+            
+            var sub = ZNetScene.instance.GetPrefab(craftingStationName);
+            recipe.Recipe.m_craftingStation = sub.GetComponent<CraftingStation>();
+            var newRequirements = new List<Piece.Requirement>();
+            foreach (string material in craftingCost.Value.Split(','))
+            {
+                var materialSplit = material.Split(':');
+                var materialName = materialSplit[0];
+                var materialAmount = int.Parse(materialSplit[1]);
+                newRequirements.Add(new Piece.Requirement()
+                {
+                    m_amount = materialAmount,
+                    m_amountPerLevel = materialAmount * 2,
+                    m_resItem = ZNetScene.instance.GetPrefab(materialName).GetComponent<ItemDrop>(),
+                });
+            }
+
+            recipe.Recipe.m_resources = newRequirements.ToArray();
+        }
+        
         //
         // Summary:
         //      Method SetRecipeReqs sets the material requirements needed to craft the item via a recipe.

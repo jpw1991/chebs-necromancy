@@ -39,6 +39,15 @@ namespace ChebsNecromancy.Minions
             Following,
         }
 
+        public enum ArmorType
+        {
+            None,
+            Leather,
+            Bronze,
+            Iron,
+            BlackMetal,
+        }
+
         public bool canBeCommanded = true;
 
         public static ConfigEntry<CleanupType> CleanupAfter;
@@ -61,6 +70,51 @@ namespace ChebsNecromancy.Minions
 
         private Vector3 StatusRoaming => Vector3.negativeInfinity;
         private Vector3 StatusFollowing => Vector3.positiveInfinity;
+        
+        public static ArmorType DetermineArmorType()
+        {
+            Player player = Player.m_localPlayer;
+
+            // todo: expose these options to config
+            var leatherItemTypes = new List<string>()
+            {
+                "$item_leatherscraps",
+                "$item_deerhide",
+                "$item_trollhide",
+                "$item_wolfpelt",
+                "$item_loxpelt",
+                "$item_scalehide"
+            };
+            
+            foreach (var leatherItem in leatherItemTypes)
+            {
+                var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
+                if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                {
+                    return ArmorType.Leather;
+                }
+            }
+
+            int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
+            if (bronzeInInventory >= BasePlugin.ArmorBronzeRequiredConfig.Value)
+            {
+                return ArmorType.Bronze;
+            }
+            
+            int ironInInventory = player.GetInventory().CountItems("$item_iron");
+            if (ironInInventory >= BasePlugin.ArmorIronRequiredConfig.Value)
+            {
+                return ArmorType.Iron;
+            }
+            
+            int blackMetalInInventory = player.GetInventory().CountItems("$item_blackmetal");
+            if (blackMetalInInventory >= BasePlugin.ArmorBlackIronRequiredConfig.Value)
+            {
+                return ArmorType.BlackMetal;
+            }
+
+            return ArmorType.None;
+        }
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
