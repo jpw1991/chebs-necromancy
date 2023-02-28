@@ -44,10 +44,13 @@ namespace ChebsNecromancy.Items
         public virtual void UpdateRecipe(ConfigEntry<CraftingTable> craftingStationRequired, ConfigEntry<string> craftingCost)
         {
             var recipe = ItemManager.Instance.GetItem(ItemName).Recipe;
-            recipe.Recipe.m_craftingStation = CraftingStation.m_allStations
-                .Find(c => c.m_name.Equals(
-                    typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())
-                ));
+
+            var craftingStationName =
+                ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0]
+                    .GetCustomAttributes(typeof(InternalName)).First()).Name;
+
+            var sub = ZNetScene.instance.GetPrefab(craftingStationName);
+            recipe.Recipe.m_craftingStation = sub.GetComponent<CraftingStation>();
             var newRequirements = new List<Piece.Requirement>();
             foreach (string material in craftingCost.Value.Split(','))
             {

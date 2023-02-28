@@ -122,7 +122,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
-27/02/2023 | 2.0.6 | Fix a problem where recipes for items and structures wouldn't sync with server
+27/02/2023 | 2.0.7 | Fix a problem where recipes for items and structures wouldn't sync with server
 27/02/2023 | 2.0.5 | Neckro only says it's picking up items that it actually successfully picks up, rather than all candidates
 26/02/2023 | 2.0.4 | Fix bug in Neckro where the remainder of an item stack could get deleted if not fully deposited
 25/02/2023 | 2.0.2 | Fix worker skeletons
