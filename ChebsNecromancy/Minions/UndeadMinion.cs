@@ -74,7 +74,25 @@ namespace ChebsNecromancy.Minions
         public static ArmorType DetermineArmorType()
         {
             Player player = Player.m_localPlayer;
-
+            
+            int blackMetalInInventory = player.GetInventory().CountItems("$item_blackmetal");
+            if (blackMetalInInventory >= BasePlugin.ArmorBlackIronRequiredConfig.Value)
+            {
+                return ArmorType.BlackMetal;
+            }
+            
+            int ironInInventory = player.GetInventory().CountItems("$item_iron");
+            if (ironInInventory >= BasePlugin.ArmorIronRequiredConfig.Value)
+            {
+                return ArmorType.Iron;
+            }
+            
+            int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
+            if (bronzeInInventory >= BasePlugin.ArmorBronzeRequiredConfig.Value)
+            {
+                return ArmorType.Bronze;
+            }
+            
             // todo: expose these options to config
             var leatherItemTypes = new List<string>()
             {
@@ -93,24 +111,6 @@ namespace ChebsNecromancy.Minions
                 {
                     return ArmorType.Leather;
                 }
-            }
-
-            int bronzeInInventory = player.GetInventory().CountItems("$item_bronze");
-            if (bronzeInInventory >= BasePlugin.ArmorBronzeRequiredConfig.Value)
-            {
-                return ArmorType.Bronze;
-            }
-            
-            int ironInInventory = player.GetInventory().CountItems("$item_iron");
-            if (ironInInventory >= BasePlugin.ArmorIronRequiredConfig.Value)
-            {
-                return ArmorType.Iron;
-            }
-            
-            int blackMetalInInventory = player.GetInventory().CountItems("$item_blackmetal");
-            if (blackMetalInInventory >= BasePlugin.ArmorBlackIronRequiredConfig.Value)
-            {
-                return ArmorType.BlackMetal;
             }
 
             return ArmorType.None;
