@@ -143,9 +143,14 @@
     <Compile Include="Items\SkeletonAxeBlackMetal.cs" />
     <Compile Include="Items\SkeletonAxeBronze.cs" />
     <Compile Include="Items\SkeletonBow3.cs" />
+    <Compile Include="Items\SkeletonBowFire.cs" />
+    <Compile Include="Items\SkeletonBowFrost.cs" />
+    <Compile Include="Items\SkeletonBowPoison.cs" />
+    <Compile Include="Items\SkeletonBowSilver.cs" />
     <Compile Include="Items\SkeletonMaceBlackMetal.cs" />
     <Compile Include="Items\SkeletonMaceBronze.cs" />
     <Compile Include="Items\SkeletonMaceIron.cs" />
+    <Compile Include="Items\SkeletonMaceNeedle.cs" />
     <Compile Include="Items\SkeletonPickaxe.cs" />
     <Compile Include="Items\SkeletonSwordBlackMetal.cs" />
     <Compile Include="Items\SkeletonSwordBronze.cs" />

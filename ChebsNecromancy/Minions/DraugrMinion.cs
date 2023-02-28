@@ -13,27 +13,18 @@ namespace ChebsNecromancy.Minions
         public enum DraugrType
         {
             None,
-
-            [InternalName("ChebGonaz_DraugrWarrior")]
-            WarriorTier1,
-
-            [InternalName("ChebGonaz_DraugrWarriorTier2")]
-            WarriorTier2,
-
-            [InternalName("ChebGonaz_DraugrWarriorTier3")]
-            WarriorTier3,
-
-            [InternalName("ChebGonaz_DraugrWarriorTier4")]
-            WarriorTier4,
-
-            [InternalName("ChebGonaz_DraugrArcher")]
-            ArcherTier1,
-
-            [InternalName("ChebGonaz_DraugrArcherTier2")]
-            ArcherTier2,
-
-            [InternalName("ChebGonaz_DraugrArcherTier3")]
-            ArcherTier3,
+            [InternalName("ChebGonaz_DraugrWarrior")] WarriorTier1,
+            [InternalName("ChebGonaz_DraugrWarriorTier2")] WarriorTier2,
+            [InternalName("ChebGonaz_DraugrWarriorTier3")] WarriorTier3,
+            [InternalName("ChebGonaz_DraugrWarriorTier4")] WarriorTier4,
+            [InternalName("ChebGonaz_DraugrArcher")] ArcherTier1,
+            [InternalName("ChebGonaz_DraugrArcherTier2")] ArcherTier2,
+            [InternalName("ChebGonaz_DraugrArcherTier3")] ArcherTier3,
+            [InternalName("ChebGonaz_DraugrArcherPoison")] ArcherPoison,
+            [InternalName("ChebGonaz_DraugrArcherFire")] ArcherFire,
+            [InternalName("ChebGonaz_DraugrArcherFrost")] ArcherFrost,
+            [InternalName("ChebGonaz_DraugrArcherSilver")] ArcherSilver,
+            [InternalName("ChebGonaz_DraugrWarriorNeedle")] WarriorNeedle,
         };
 
         // for limits checking

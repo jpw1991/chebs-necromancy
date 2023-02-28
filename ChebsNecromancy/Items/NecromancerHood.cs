@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Configs;
 using Jotunn.Entities;
-using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 

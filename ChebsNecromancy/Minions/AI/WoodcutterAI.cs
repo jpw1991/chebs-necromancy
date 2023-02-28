@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
-using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Minions.AI
 {

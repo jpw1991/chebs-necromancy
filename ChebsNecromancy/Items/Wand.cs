@@ -205,28 +205,28 @@ namespace ChebsNecromancy.Items
         
         public void MakeNearbyMinionsFollow(float radius, bool follow)
         {
-            Player player = Player.m_localPlayer;
+            var player = Player.m_localPlayer;
             // based off BaseAI.FindClosestCreature
-            List<Character> allCharacters = Character.GetAllCharacters();
-            foreach (Character item in allCharacters)
+            var allCharacters = Character.GetAllCharacters();
+            foreach (var item in allCharacters)
             {
                 if (item.IsDead())
                 {
                     continue;
                 }
 
-                UndeadMinion minion = item.GetComponent<UndeadMinion>();
+                var minion = item.GetComponent<UndeadMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
                 
-                float distance = Vector3.Distance(item.transform.position, player.transform.position);
+                var distance = Vector3.Distance(item.transform.position, player.transform.position);
                 
                 // if within radius OR it's set to the targetObject so you can recall those you've commanded
                 // to be somewhere that's beyond the radius
-                GameObject minionFollowTarget = item.GetComponent<MonsterAI>().GetFollowTarget();
-                bool minionFollowingOrb = minionFollowTarget != null &&
+                var minionFollowTarget = item.GetComponent<MonsterAI>().GetFollowTarget();
+                var minionFollowingOrb = minionFollowTarget != null &&
                                           minionFollowTarget.TryGetComponent(out OrbOfBeckoningProjectile _);
-                
+                //var minionFollowingPlayer = !minionFollowingOrb && minionFollowTarget == player.gameObject;
                 if (distance > radius && !minionFollowingOrb) continue;
                 
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
@@ -235,7 +235,7 @@ namespace ChebsNecromancy.Items
                 {
                     minion.Follow(player.gameObject);
                 }
-                else
+                else if (minionFollowTarget == player.gameObject)
                 {
                     minion.Wait(player.transform.position);
                 }

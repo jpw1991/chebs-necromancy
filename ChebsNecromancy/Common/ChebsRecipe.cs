@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;

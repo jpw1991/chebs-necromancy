@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2579418839
+CRC: 2929499033
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 5f6e9c2288268c80960e96f9bc97e537
+    Hash: 9346395c581f0a1ec90605fa36e8907d
   TypeTreeHash:
     serializedVersion: 2
     Hash: 718f88a43fd10a1f1d920a362fa18deb
@@ -195,6 +195,7 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: VisEquipment/PlayerModel
 Assets:
+- Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherFire.prefab
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.mat
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMace.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWarriorTier2.prefab
@@ -202,6 +203,8 @@ Assets:
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_drop.mat
 - Assets/_ChebGonaz/SkeletonMiner/ChebGonaz_SkeletonMiner.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetLeatherPoison.prefab
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBowSilver.prefab
+- Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrWarriorNeedle.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcher.prefab
 - Assets/_ChebGonaz/OrbOfBeckoning/ChebGonaz_OrbOfBeckoningProjectile.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonSwordBronze.prefab
@@ -209,33 +212,42 @@ Assets:
 - Assets/_ChebGonaz/SkeletonPoison/ChebGonaz_PoisonSkeleton.prefab
 - Assets/_ChebGonaz/SpiritPylon/ChebGonaz_SpiritPylon.prefab
 - Assets/_ChebGonaz/NecromancerHood/ChebGonaz_NecromancerHood.prefab
+- Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWarriorNeedle.prefab
 - Assets/_ChebGonaz/SkeletonPoison/ChebGonaz_PoisonSkeleton3.prefab
+- Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherFire.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBow.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBow3.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_FireballLevel3.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_SkeletonMageCirclet.prefab
 - Assets/_ChebGonaz/OrbOfBeckoning/ChebGonaz_OrbOfBeckoningProjectile.mat
+- Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherSilver.prefab
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGatherer.prefab
 - Assets/_ChebGonaz/SkeletonWoodcutter/ChebGonaz_SkeletonWoodcutter.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrWarriorTier2.prefab
 - Assets/_ChebGonaz/SpectralShroud/chebgonaz_spectralshroud_icon.png
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetIronPoison.prefab
-- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMace3.prefab
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBowFrost.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_SkeletonMageTier3.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetBronzePoison.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorChest_mat.mat
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrWarriorTier4.prefab
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMace3.prefab
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcher.prefab
 - Assets/_ChebGonaz/SpectralShroud/ChebGonaz_GuardianWraith.prefab
-- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMaceBronze.prefab
+- Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherPoison.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetIron.prefab
 - Assets/_ChebGonaz/OrbOfBeckoning/ChebGonaz_OrbOfBeckoning.prefab
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMaceBronze.prefab
+- Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonEye.mat
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWand.prefab
-- Assets/_ChebGonaz/Draugr/draugr_staff_icon.png
 - Assets/_ChebGonaz/NecromancerHood/chebgonaz_necromancerhood_icon.png
+- Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherSilver.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherTier2.prefab
 - Assets/_ChebGonaz/SpectralShroud/ChebGonaz_Wraith.mat
+- Assets/_ChebGonaz/Draugr/draugr_staff_icon.png
 - Assets/_ChebGonaz/SpectralShroud/ChebGonaz_SpectralShroud.prefab
+- Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherFrost.prefab
+- Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherFrost.prefab
 - Assets/_ChebGonaz/NecromancerHood/ChebGonaz_NecromancerHood.mat
 - Assets/_ChebGonaz/RefuelerPylon/ChebGonaz_RefuelerPylon.mat
 - Assets/_ChebGonaz/BatBeacon/chebgonaz_batlantern_icon.png
@@ -264,6 +276,7 @@ Assets:
 - Assets/_ChebGonaz/FarmingPylon/ChebGonaz_FarmingPylon.prefab
 - Assets/_ChebGonaz/RefuelerPylon/ChebGonaz_RefuelerPylon.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonAxeBlackMetal.prefab
+- Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherPoison.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonAxe.prefab
 - Assets/_ChebGonaz/SetEffect_NecromancyArmor2.asset
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonSwordBlackMetal.prefab
@@ -284,15 +297,18 @@ Assets:
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWarrior.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_mat.mat
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBowPoison.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcher.mat
 - Assets/_ChebGonaz/SkeletonPoison/ChebGonaz_PoisonSkeleton2.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIronSkeleton.prefab
 - Assets/_ChebGonaz/SpectralShroud/spectral_shroud_d.png
 - Assets/_ChebGonaz/Neckro/chebgonaz_neckrogathererpylon_icon.png
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBowFire.prefab
 - Assets/_ChebGonaz/FarmingPylon/chebgonaz_farmingpylon_icon.png
 - Assets/_ChebGonaz/SpiritPylon/chebgonaz_spiritpylon_icon.png
 - Assets/_ChebGonaz/BatBeacon/ChebGonaz_BatLantern.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_FireballLevel2.prefab
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMaceNeedle.prefab
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherTier3.prefab
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_IronArmorLegs_drop.mat
 - Assets/_ChebGonaz/SkeletonMiner/ChebGonaz_SkeletonPickaxe.prefab

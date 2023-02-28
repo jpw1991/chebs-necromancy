@@ -10,6 +10,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Items
 {
@@ -289,13 +290,28 @@ namespace ChebsNecromancy.Items
             switch (draugrType)
             {
                 case DraugrMinion.DraugrType.ArcherTier1:
-                    player.GetInventory().RemoveItem("$item_arrow_wood", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    player.GetInventory().RemoveItem("$item_arrow_wood", BasePlugin.ArcherTier1ArrowsRequiredConfig.Value);
                     break;
                 case DraugrMinion.DraugrType.ArcherTier2:
-                    player.GetInventory().RemoveItem("$item_arrow_bronze", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    player.GetInventory().RemoveItem("$item_arrow_bronze", BasePlugin.ArcherTier2ArrowsRequiredConfig.Value);
                     break;
                 case DraugrMinion.DraugrType.ArcherTier3:
                     player.GetInventory().RemoveItem("$item_arrow_iron", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.ArcherPoison:
+                    player.GetInventory().RemoveItem("$item_arrow_poison", BasePlugin.ArcherPoisonArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.ArcherFire:
+                    player.GetInventory().RemoveItem("$item_arrow_fire", BasePlugin.ArcherFireArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.ArcherFrost:
+                    player.GetInventory().RemoveItem("$item_arrow_frost", BasePlugin.ArcherFrostArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.ArcherSilver:
+                    player.GetInventory().RemoveItem("$item_arrow_silver", BasePlugin.ArcherSilverArrowsRequiredConfig.Value);
+                    break;
+                case DraugrMinion.DraugrType.WarriorNeedle:
+                    player.GetInventory().RemoveItem("$item_needle", BasePlugin.NeedlesRequiredConfig.Value);
                     break;
             }
 
@@ -359,22 +375,51 @@ namespace ChebsNecromancy.Items
             }
 
             // check for arrows
-            var woodArrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
-            var bronzeArrowsInInventory = player.GetInventory().CountItems("$item_arrow_bronze");
-            var ironArrowsInInventory = player.GetInventory().CountItems("$item_arrow_iron");
+            var silverRequirement = BasePlugin.ArcherSilverArrowsRequiredConfig.Value;
+            if (silverRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_silver") >= silverRequirement)
+            {
+                return DraugrMinion.DraugrType.ArcherSilver;
+            }
+            
+            var fireRequirement = BasePlugin.ArcherFireArrowsRequiredConfig.Value;
+            if (fireRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_fire") >= fireRequirement)
+            {
+                return DraugrMinion.DraugrType.ArcherFire;
+            }
 
-            if (BasePlugin.ArcherTier3ArrowsRequiredConfig.Value <= 0
-                || ironArrowsInInventory >= BasePlugin.ArcherTier3ArrowsRequiredConfig.Value)
+            var frostRequirement = BasePlugin.ArcherFrostArrowsRequiredConfig.Value;
+            if (frostRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_frost") >= frostRequirement)
+            {
+                return DraugrMinion.DraugrType.ArcherFrost;
+            }
+
+            var poisonRequirement = BasePlugin.ArcherPoisonArrowsRequiredConfig.Value;
+            if (poisonRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_poison") >= poisonRequirement)
+            {
+                return DraugrMinion.DraugrType.ArcherPoison;
+            }
+
+            var ironRequirement = BasePlugin.ArcherTier3ArrowsRequiredConfig.Value;
+            if (ironRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_iron") >= ironRequirement)
             {
                 return DraugrMinion.DraugrType.ArcherTier3;
             }
-            if (BasePlugin.ArcherTier2ArrowsRequiredConfig.Value <= 0
-                     || bronzeArrowsInInventory >= BasePlugin.ArcherTier2ArrowsRequiredConfig.Value)
+
+            var bronzeRequirement = BasePlugin.ArcherTier2ArrowsRequiredConfig.Value;
+            if (bronzeRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_bronze") >= bronzeRequirement)
             {
                 return DraugrMinion.DraugrType.ArcherTier2;
             }
-            if (BasePlugin.ArcherTier1ArrowsRequiredConfig.Value <= 0
-                     || woodArrowsInInventory >= BasePlugin.ArcherTier1ArrowsRequiredConfig.Value)
+
+            var woodRequirement = BasePlugin.ArcherTier1ArrowsRequiredConfig.Value;
+            if (woodRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_wood") >= woodRequirement)
             {
                 return DraugrMinion.DraugrType.ArcherTier1;
             }
@@ -456,6 +501,12 @@ namespace ChebsNecromancy.Items
             // Return None if unable to determine minion type, or if necessary resources are missing.
 
             // determine quality
+            var needleRequirement = BasePlugin.NeedlesRequiredConfig.Value;
+            if (needleRequirement <= 0
+                || Player.m_localPlayer.GetInventory().CountItems("$item_needle") >= needleRequirement)
+            {
+                return DraugrMinion.DraugrType.WarriorNeedle;
+            }
         
             return armorType switch
             {
@@ -646,7 +697,7 @@ namespace ChebsNecromancy.Items
                         characterDrop.m_drops.Add(new CharacterDrop.Drop
                         {
                             // flip a coin for deer or scraps
-                            m_prefab = UnityEngine.Random.value > .5f 
+                            m_prefab = Random.value > .5f 
                                 ? ZNetScene.instance.GetPrefab("DeerHide")
                                 : ZNetScene.instance.GetPrefab("LeatherScraps") 
                             ,

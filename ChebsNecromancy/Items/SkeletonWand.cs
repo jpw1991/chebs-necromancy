@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
@@ -10,7 +8,6 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
-using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Items
 {
@@ -288,24 +285,51 @@ namespace ChebsNecromancy.Items
             }
 
             // check for arrows
-            var woodArrowsInInventory = player.GetInventory().CountItems("$item_arrow_wood");
-            var bronzeArrowsInInventory = player.GetInventory().CountItems("$item_arrow_bronze");
-            var ironArrowsInInventory = player.GetInventory().CountItems("$item_arrow_iron");
+            var silverRequirement = BasePlugin.ArcherSilverArrowsRequiredConfig.Value;
+            if (silverRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_silver") >= silverRequirement)
+            {
+                return SkeletonMinion.SkeletonType.ArcherSilver;
+            }
+            
+            var fireRequirement = BasePlugin.ArcherFireArrowsRequiredConfig.Value;
+            if (fireRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_fire") >= fireRequirement)
+            {
+                return SkeletonMinion.SkeletonType.ArcherFire;
+            }
 
-            if (BasePlugin.ArcherTier3ArrowsRequiredConfig.Value <= 0
-                || ironArrowsInInventory >= BasePlugin.ArcherTier3ArrowsRequiredConfig.Value)
+            var frostRequirement = BasePlugin.ArcherFrostArrowsRequiredConfig.Value;
+            if (frostRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_frost") >= frostRequirement)
+            {
+                return SkeletonMinion.SkeletonType.ArcherFrost;
+            }
+
+            var poisonRequirement = BasePlugin.ArcherPoisonArrowsRequiredConfig.Value;
+            if (poisonRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_poison") >= poisonRequirement)
+            {
+                return SkeletonMinion.SkeletonType.ArcherPoison;
+            }
+
+            var ironRequirement = BasePlugin.ArcherTier3ArrowsRequiredConfig.Value;
+            if (ironRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_iron") >= ironRequirement)
             {
                 return SkeletonMinion.SkeletonType.ArcherTier3;
             }
 
-            if (BasePlugin.ArcherTier2ArrowsRequiredConfig.Value <= 0
-                || bronzeArrowsInInventory >= BasePlugin.ArcherTier2ArrowsRequiredConfig.Value)
+            var bronzeRequirement = BasePlugin.ArcherTier2ArrowsRequiredConfig.Value;
+            if (bronzeRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_bronze") >= bronzeRequirement)
             {
                 return SkeletonMinion.SkeletonType.ArcherTier2;
             }
 
-            if (BasePlugin.ArcherTier1ArrowsRequiredConfig.Value <= 0
-                || woodArrowsInInventory >= BasePlugin.ArcherTier1ArrowsRequiredConfig.Value)
+            var woodRequirement = BasePlugin.ArcherTier1ArrowsRequiredConfig.Value;
+            if (woodRequirement <= 0
+                || player.GetInventory().CountItems("$item_arrow_wood") >= woodRequirement)
             {
                 return SkeletonMinion.SkeletonType.ArcherTier1;
             }
@@ -411,8 +435,15 @@ namespace ChebsNecromancy.Items
                     return SkeletonMinion.SkeletonType.None;
                 }
             }
-
+            
             // determine quality
+            var needleRequirement = BasePlugin.NeedlesRequiredConfig.Value;
+            if (needleRequirement <= 0
+                || Player.m_localPlayer.GetInventory().CountItems("$item_needle") >= needleRequirement)
+            {
+                return SkeletonMinion.SkeletonType.WarriorNeedle;
+            }
+            
             return armorType switch
             {
                 UndeadMinion.ArmorType.Leather => SkeletonMinion.SkeletonType.WarriorTier1,

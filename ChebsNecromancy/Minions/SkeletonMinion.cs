@@ -24,6 +24,10 @@ namespace ChebsNecromancy.Minions
             [InternalName("ChebGonaz_SkeletonArcher")] ArcherTier1,
             [InternalName("ChebGonaz_SkeletonArcherTier2")] ArcherTier2,
             [InternalName("ChebGonaz_SkeletonArcherTier3")] ArcherTier3,
+            [InternalName("ChebGonaz_SkeletonArcherPoison")] ArcherPoison,
+            [InternalName("ChebGonaz_SkeletonArcherFire")] ArcherFire,
+            [InternalName("ChebGonaz_SkeletonArcherFrost")] ArcherFrost,
+            [InternalName("ChebGonaz_SkeletonArcherSilver")] ArcherSilver,
             [InternalName("ChebGonaz_SkeletonMage")] MageTier1,
             [InternalName("ChebGonaz_SkeletonMageTier2")] MageTier2,
             [InternalName("ChebGonaz_SkeletonMageTier3")] MageTier3,
@@ -32,6 +36,7 @@ namespace ChebsNecromancy.Minions
             [InternalName("ChebGonaz_PoisonSkeleton3")] PoisonTier3,
             [InternalName("ChebGonaz_SkeletonWoodcutter")] Woodcutter,
             [InternalName("ChebGonaz_SkeletonMiner")] Miner,
+            [InternalName("ChebGonaz_SkeletonWarriorNeedle")] WarriorNeedle,
         };
 
         // for limits checking
@@ -482,6 +487,22 @@ namespace ChebsNecromancy.Minions
                 case SkeletonType.ArcherTier3:
                     player.GetInventory()
                         .RemoveItem("$item_arrow_iron", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    break;
+                case SkeletonType.ArcherPoison:
+                    player.GetInventory().RemoveItem("$item_arrow_poison", BasePlugin.ArcherPoisonArrowsRequiredConfig.Value);
+                    break;
+                case SkeletonType.ArcherFire:
+                    player.GetInventory().RemoveItem("$item_arrow_fire", BasePlugin.ArcherFireArrowsRequiredConfig.Value);
+                    break;
+                case SkeletonType.ArcherFrost:
+                    player.GetInventory().RemoveItem("$item_arrow_frost", BasePlugin.ArcherFrostArrowsRequiredConfig.Value);
+                    break;
+                case SkeletonType.ArcherSilver:
+                    player.GetInventory().RemoveItem("$item_arrow_silver", BasePlugin.ArcherSilverArrowsRequiredConfig.Value);
+                    break;
+                
+                case SkeletonType.WarriorNeedle:
+                    player.GetInventory().RemoveItem("$item_needle", BasePlugin.NeedlesRequiredConfig.Value);
                     break;
 
                 case SkeletonType.MageTier1:

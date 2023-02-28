@@ -1,7 +1,6 @@
 using ChebsNecromancy.Items;
 using ChebsNecromancy.Minions;
 using HarmonyLib;
-using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local

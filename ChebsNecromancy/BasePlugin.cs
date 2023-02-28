@@ -20,7 +20,6 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
-using Logger = UnityEngine.Logger;
 using Paths = BepInEx.Paths;
 
 namespace ChebsNecromancy
@@ -32,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.0.8";
+        public const string PluginVersion = "2.1.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -74,6 +73,11 @@ namespace ChebsNecromancy
         public static ConfigEntry<int> ArcherTier1ArrowsRequiredConfig;
         public static ConfigEntry<int> ArcherTier2ArrowsRequiredConfig;
         public static ConfigEntry<int> ArcherTier3ArrowsRequiredConfig;
+        public static ConfigEntry<int> ArcherFrostArrowsRequiredConfig;
+        public static ConfigEntry<int> ArcherFireArrowsRequiredConfig;
+        public static ConfigEntry<int> ArcherPoisonArrowsRequiredConfig;
+        public static ConfigEntry<int> ArcherSilverArrowsRequiredConfig;
+        public static ConfigEntry<int> NeedlesRequiredConfig;
         
         public static ConfigEntry<bool> DurabilityDamage;
         public static ConfigEntry<float> DurabilityDamageWarrior;
@@ -183,6 +187,27 @@ namespace ChebsNecromancy
             ArcherTier3ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier3ArrowsRequired",
                 10, new ConfigDescription("The amount of iron arrows required to craft a tier 3 archer.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            ArcherFrostArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherFrostArrowsRequired",
+                10, new ConfigDescription("The amount of frost arrows required to craft a frost archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ArcherFireArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherFireArrowsRequired",
+                10, new ConfigDescription("The amount of fire arrows required to craft a fire archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ArcherPoisonArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherPoisonArrowsRequired",
+                10, new ConfigDescription("The amount of poison arrows required to craft a poison archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            ArcherSilverArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherSilverArrowsRequired",
+                10, new ConfigDescription("The amount of silver arrows required to craft a silver archer.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            NeedlesRequiredConfig = Config.Bind("General (Server Synced)", "NeedlesRequired",
+                5, new ConfigDescription("The amount of needles required to craft a needle warrior.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
             #endregion
             #region Durability
             DurabilityDamage = Config.Bind("General (Server Synced)", "DurabilityDamage",
@@ -399,7 +424,12 @@ namespace ChebsNecromancy
                     new SkeletonMaceIron(),
                     new SkeletonSwordBlackMetal(),
                     new SkeletonSwordBronze(),
-                    new SkeletonSwordIron()
+                    new SkeletonSwordIron(),
+                    new SkeletonBowFire(),
+                    new SkeletonBowPoison(),
+                    new SkeletonBowFrost(),
+                    new SkeletonBowSilver(),
+                    new SkeletonMaceNeedle()
                 };
                 minionWornItems.ForEach(minionItem =>
                 {

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Minions;
 using HarmonyLib;
 using UnityEngine;
