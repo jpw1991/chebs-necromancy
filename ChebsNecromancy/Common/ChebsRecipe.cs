@@ -27,7 +27,7 @@ namespace ChebsNecromancy.Common
         public virtual void UpdateRecipe(ConfigEntry<string> craftingCost)
         {
             var prefabNameNoExt = PrefabName.Split('.')[0];
-            Logger.LogInfo($"Updating crafting cost for {prefabNameNoExt}");
+            //Logger.LogInfo($"Updating crafting cost for {prefabNameNoExt}");
             var piece = PieceManager.Instance.GetPiece(prefabNameNoExt).Piece;
             var newRequirements = new List<Piece.Requirement>();
             foreach (string material in craftingCost.Value.Split(','))

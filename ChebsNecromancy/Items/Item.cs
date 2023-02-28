@@ -41,7 +41,7 @@ namespace ChebsNecromancy.Items
             
         }
 
-        public virtual void UpdateRecipe(ConfigEntry<CraftingTable> craftingStationRequired, ConfigEntry<string> craftingCost)
+        public virtual void UpdateRecipe(ConfigEntry<CraftingTable> craftingStationRequired, ConfigEntry<string> craftingCost, ConfigEntry<int> craftingStationLevel)
         {
             var recipe = ItemManager.Instance.GetItem(ItemName).Recipe;
 
@@ -49,6 +49,8 @@ namespace ChebsNecromancy.Items
                 ((InternalName)typeof(CraftingTable).GetMember(craftingStationRequired.Value.ToString())[0]
                     .GetCustomAttributes(typeof(InternalName)).First()).Name;
 
+            recipe.Recipe.m_minStationLevel = craftingStationLevel.Value;
+            
             var sub = ZNetScene.instance.GetPrefab(craftingStationName);
             recipe.Recipe.m_craftingStation = sub.GetComponent<CraftingStation>();
             var newRequirements = new List<Piece.Requirement>();

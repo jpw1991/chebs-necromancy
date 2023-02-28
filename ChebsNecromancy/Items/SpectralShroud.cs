@@ -90,7 +90,7 @@ namespace ChebsNecromancy.Items
         
         public override void UpdateRecipe()
         {
-            UpdateRecipe(CraftingStationRequired, CraftingCost);
+            UpdateRecipe(CraftingStationRequired, CraftingCost, CraftingStationLevel);
         }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
