@@ -32,7 +32,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.0.5";
+        public const string PluginVersion = "2.0.8";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -44,6 +44,7 @@ namespace ChebsNecromancy
             new DraugrWand(),
             new OrbOfBeckoning()
         };
+
         public const string NecromancySkillIdentifier = "friendlyskeletonwand_necromancy_skill";
 
         private readonly SpectralShroud spectralShroudItem = new();
@@ -262,13 +263,23 @@ namespace ChebsNecromancy
             if (!File.Exists(ConfigFileFullPath)) return;
             try
             {
-                Jotunn.Logger.LogInfo("Read updated config values");
+                Logger.LogInfo("Read updated config values");
                 Config.Reload();
+                
+                wands.ForEach(wand => wand.UpdateRecipe());
+                necromancersHoodItem.UpdateRecipe();
+                spectralShroudItem.UpdateRecipe();
+
+                BatBeacon.UpdateRecipe();
+                FarmingPylon.UpdateRecipe();
+                NeckroGathererPylon.UpdateRecipe();
+                RefuelerPylon.UpdateRecipe();
+                SpiritPylon.UpdateRecipe();
             }
-            catch
+            catch (Exception exc)
             {
-                Jotunn.Logger.LogError($"There was an issue loading your {ConfigFileName}");
-                Jotunn.Logger.LogError("Please check your config entries for spelling and format!");
+                Logger.LogError($"There was an issue loading your {ConfigFileName}: {exc}");
+                Logger.LogError("Please check your config entries for spelling and format!");
             }
         }
 

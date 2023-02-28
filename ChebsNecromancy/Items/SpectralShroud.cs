@@ -87,6 +87,11 @@ namespace ChebsNecromancy.Items
                 70, new ConfigDescription("Necromancy skill level required to summon Tier 3 GuardianWraith", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
+        
+        public override void UpdateRecipe()
+        {
+            UpdateRecipe(CraftingStationRequired, CraftingCost, CraftingStationLevel);
+        }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {

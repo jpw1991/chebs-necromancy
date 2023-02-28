@@ -1,7 +1,9 @@
-﻿using BepInEx;
+﻿using System.Collections.Generic;
+using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Configs;
 using Jotunn.Entities;
+using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -43,6 +45,11 @@ namespace ChebsNecromancy.Items
             NecromancySkillBonus = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
+
+        public override void UpdateRecipe()
+        {
+            UpdateRecipe(CraftingStationRequired, CraftingCost, CraftingStationLevel);
         }
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)

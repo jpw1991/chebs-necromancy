@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using BepInEx.Configuration;
+using ChebsNecromancy.Items;
 using Jotunn.Configs;
 using Jotunn.Entities;
+using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -20,6 +23,28 @@ namespace ChebsNecromancy.Common
         public string PrefabName { get; set; }
         public string IconName { get; set; }
         public string ObjectName { get; set; }
+
+        public virtual void UpdateRecipe(ConfigEntry<string> craftingCost)
+        {
+            var prefabNameNoExt = PrefabName.Split('.')[0];
+            //Logger.LogInfo($"Updating crafting cost for {prefabNameNoExt}");
+            var piece = PieceManager.Instance.GetPiece(prefabNameNoExt).Piece;
+            var newRequirements = new List<Piece.Requirement>();
+            foreach (string material in craftingCost.Value.Split(','))
+            {
+                var materialSplit = material.Split(':');
+                var materialName = materialSplit[0];
+                var materialAmount = int.Parse(materialSplit[1]);
+                newRequirements.Add(new Piece.Requirement()
+                {
+                    m_amount = materialAmount,
+                    m_amountPerLevel = materialAmount * 2,
+                    m_resItem = ZNetScene.instance.GetPrefab(materialName).GetComponent<ItemDrop>(),
+                });
+            }
+
+            piece.m_resources = newRequirements.ToArray();
+        }
 
         public CustomPiece GetCustomPieceFromPrefab(GameObject prefab, Sprite icon)
         {

@@ -9,7 +9,7 @@ using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class BatBeacon : MonoBehaviour
+    internal class BatBeacon : Structure
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> BatDuration;
@@ -19,7 +19,7 @@ namespace ChebsNecromancy.Structures
         protected List<GameObject> SpawnedBats = new();
         private float batLastSpawnedAt;
 
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "FineWood:10,Silver:5,Guck:15",
             IconName = "chebgonaz_batbeacon_icon.png",
@@ -30,6 +30,11 @@ namespace ChebsNecromancy.Structures
             PrefabName = "ChebGonaz_BatBeacon.prefab",
             ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
         };
+
+        public new static void UpdateRecipe()
+        {
+            ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
+        }
 
         public static void CreateConfigs(BasePlugin plugin)
         {         

@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace ChebsNecromancy.Structures
 {
-    internal class RefuelerPylon : MonoBehaviour
+    internal class RefuelerPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RefuelerUpdateInterval;
@@ -21,7 +21,7 @@ namespace ChebsNecromancy.Structures
         private Container _container;
         private Inventory _inventory;
 
-        public static ChebsRecipe ChebsRecipeConfig = new()
+        public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "Stone:15,Coal:15,BoneFragments:15,SurtlingCore:1",
             IconName = "chebgonaz_refuelerpylon_icon.png",
@@ -33,6 +33,11 @@ namespace ChebsNecromancy.Structures
             ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
         };
 
+        public new static void UpdateRecipe()
+        {
+            ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
+        }
+        
         public static void CreateConfigs(BasePlugin plugin)
         {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
