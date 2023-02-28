@@ -276,9 +276,9 @@ namespace ChebsNecromancy
                 RefuelerPylon.UpdateRecipe();
                 SpiritPylon.UpdateRecipe();
             }
-            catch
+            catch (Exception exc)
             {
-                Logger.LogError($"There was an issue loading your {ConfigFileName}");
+                Logger.LogError($"There was an issue loading your {ConfigFileName}: {exc}");
                 Logger.LogError("Please check your config entries for spelling and format!");
             }
         }

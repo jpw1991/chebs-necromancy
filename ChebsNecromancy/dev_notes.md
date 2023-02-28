@@ -12,11 +12,11 @@ podman run -d --name valheim-server --cap-add=sys_nice --stop-timeout 120 -p 245
 # copy mods in
 cd ~/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins;
 for f in *; do
-  podman cp --overwrite $f a2dc88de3800:/config/bepinex/plugins
+  podman cp $f a91e4bf83e8e:/config/bepinex/plugins
 done
 
 # restart container
-podman restart a2dc88de3800
+podman restart a91e4bf83e8e
 ```
 
 Then start valheim and conntect to 127.0.0.1
