@@ -263,7 +263,7 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (SkeletonWand.MaxSkeletons.Value > 0)
+            if (SkeletonMinion.MaxSkeletons.Value > 0)
             {
                 // re-count the current active skeletons
                 SkeletonMinion.CountActiveSkeletonMinions();

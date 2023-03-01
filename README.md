@@ -122,6 +122,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+01/03/2023 | 2.1.1 | Add bonus minions for necromancy level if configured to use limits
 28/02/2023 | 2.1.0 | Add porcupine skeleton & draugr warriors; add fire, frost, silver, and poison arrow skeletons; only following skeletons respond to the wand's wait command; armor materials consumed in order of best to worst
 28/02/2023 | 2.0.8 | Fix a problem where recipes for items and structures wouldn't sync with server
 27/02/2023 | 2.0.5 | Neckro only says it's picking up items that it actually successfully picks up, rather than all candidates

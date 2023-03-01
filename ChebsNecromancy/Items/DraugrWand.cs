@@ -17,9 +17,6 @@ namespace ChebsNecromancy.Items
     internal class DraugrWand : Wand
     {
         #region ConfigEntries
-
-        public static ConfigEntry<int> MaxDraugr;
-
         public static ConfigEntry<CraftingTable> CraftingStationRequired;
         public static ConfigEntry<int> CraftingStationLevel;
 
@@ -40,7 +37,6 @@ namespace ChebsNecromancy.Items
 
         public static ConfigEntry<int> DraugrBoneFragmentsRequiredConfig;
         public static ConfigEntry<int> DraugrMeatRequiredConfig;
-
         #endregion
 
         public override string ItemName => "ChebGonaz_DraugrWand";
@@ -115,10 +111,6 @@ namespace ChebsNecromancy.Items
             necromancyLevelIncrease = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrNecromancyLevelIncrease",
                 1.5f, new ConfigDescription(
                     "How much creating a Draugr contributes to your Necromancy level increasing.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            MaxDraugr = plugin.Config.Bind("DraugrWand (Server Synced)", "MaximumDraugr",
-                0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
         
@@ -473,7 +465,7 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (MaxDraugr.Value > 0)
+            if (DraugrMinion.MaxDraugr.Value > 0)
             {
                 // re-count the current active draugr
                 CountActiveDraugrMinions();
@@ -597,7 +589,7 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (MaxDraugr.Value > 0)
+            if (DraugrMinion.MaxDraugr.Value > 0)
             {
                 // re-count the current active draugr
                 CountActiveDraugrMinions();
@@ -776,10 +768,17 @@ namespace ChebsNecromancy.Items
             // not the newest things
             minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
 
+            var playerNecromancyLevel =
+                Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+            var bonusMinions = DraugrMinion.MinionLimitIncrementsEveryXLevels.Value > 0
+                ? (int)playerNecromancyLevel / DraugrMinion.MinionLimitIncrementsEveryXLevels.Value
+                : 0;
+            var maxMinions = DraugrMinion.MaxDraugr.Value + bonusMinions;
+            
             for (int i = 0; i < minionsFound.Count; i++)
             {
                 // kill off surplus
-                if (result >= MaxDraugr.Value - 1)
+                if (result >= maxMinions - 1)
                 {
                     Tuple<int, Character> tuple = minionsFound[i];
                     tuple.Item2.SetHealth(0);

@@ -21,8 +21,6 @@ namespace ChebsNecromancy.Items
 
         public static ConfigEntry<bool> SkeletonsAllowed;
 
-        public static ConfigEntry<int> MaxSkeletons;
-
         public static ConfigEntry<int> BoneFragmentsRequiredConfig;
         public static ConfigEntry<float> SkeletonBaseHealth;
         public static ConfigEntry<float> SkeletonHealthMultiplier;
@@ -106,10 +104,6 @@ namespace ChebsNecromancy.Items
 
             SkeletonTierThreeLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeLevelReq",
                 90, new ConfigDescription("Necromancy skill level required to summon Tier 3 Skeleton", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            MaxSkeletons = plugin.Config.Bind("SkeletonWand (Server Synced)", "MaximumSkeletons",
-                0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             PoisonSkeletonBaseHealth = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonBaseHealth",
@@ -474,7 +468,7 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (MaxSkeletons.Value > 0)
+            if (SkeletonMinion.MaxSkeletons.Value > 0)
             {
                 // re-count the current active skeletons
                 SkeletonMinion.CountActiveSkeletonMinions();
@@ -521,7 +515,7 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (MaxSkeletons.Value > 0)
+            if (SkeletonMinion.MaxSkeletons.Value > 0)
             {
                 // re-count the current active skeletons
                 SkeletonMinion.CountActiveSkeletonMinions();

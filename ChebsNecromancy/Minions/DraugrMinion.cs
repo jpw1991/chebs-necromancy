@@ -33,6 +33,9 @@ namespace ChebsNecromancy.Minions
 
         public static ConfigEntry<DropType> DropOnDeath;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
+        
+        public static ConfigEntry<int> MaxDraugr;
+        public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -45,6 +48,16 @@ namespace ChebsNecromancy.Minions
                 true, new ConfigDescription(
                     "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.",
                     null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            MaxDraugr = plugin.Config.Bind("DraugrMinion (Server Synced)", "MaximumDraugr",
+                0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            MinionLimitIncrementsEveryXLevels = plugin.Config.Bind("DraugrMinion (Server Synced)",
+                "MinionLimitIncrementsEveryXLevels",
+                10, new ConfigDescription(
+                    "Attention: has no effect if minion limits are off. Increases player's maximum minion count by 1 every X levels. For example, if the limit is 3 draugr and this is set to 10, then at level 10 Necromancy the player can have 4 minions. Then 5 at level 20, and so on.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
