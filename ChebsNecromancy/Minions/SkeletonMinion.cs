@@ -50,6 +50,9 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<float> PoisonNecromancyLevelIncrease;
         public static ConfigEntry<float> ArcherNecromancyLevelIncrease;
         public static ConfigEntry<float> MageNecromancyLevelIncrease;
+        
+        public static ConfigEntry<int> MaxSkeletons;
+        public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -85,6 +88,16 @@ namespace ChebsNecromancy.Minions
                 "MageSkeletonNecromancyLevelIncrease",
                 1f, new ConfigDescription(
                     "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            MaxSkeletons = plugin.Config.Bind("SkeletonMinion (Server Synced)", "MaximumSkeletons",
+                0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            MinionLimitIncrementsEveryXLevels = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+                "MinionLimitIncrementsEveryXLevels",
+                10, new ConfigDescription(
+                    "Attention: has no effect if minion limits are off. Increases player's maximum minion count by 1 every X levels. For example, if the limit is 3 skeletons and this is set to 10, then at level 10 Necromancy the player can have 4 minions. Then 5 at level 20, and so on.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
@@ -587,11 +600,18 @@ namespace ChebsNecromancy.Minions
             // when we kill off surplus, the oldest things are getting killed
             // not the newest things
             minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
+            
+            var playerNecromancyLevel =
+                Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+            var bonusMinions = MinionLimitIncrementsEveryXLevels.Value > 0
+                ? (int)playerNecromancyLevel / MinionLimitIncrementsEveryXLevels.Value
+                : 0;
+            var maxMinions = MaxSkeletons.Value + bonusMinions;
 
             foreach (var t in minionsFound)
             {
                 // kill off surplus
-                if (result >= SkeletonWand.MaxSkeletons.Value - 1)
+                if (result >= maxMinions - 1)
                 {
                     Tuple<int, Character> tuple = t;
                     tuple.Item2.SetHealth(0);
