@@ -200,14 +200,10 @@ namespace ChebsNecromancy.Minions
             Container closestContainer = FindClosest<Container>(DropoffPointRadius.Value, pieceMask,
                 c => c.GetInventory().GetEmptySlots() > 0);
             if (closestContainer == null) return null;
-            if (TryGetComponent(out MonsterAI monsterAI)) {
-                // move toward that piece
-                monsterAI.SetFollowTarget(closestContainer.gameObject);
-                return closestContainer;
-
-            }
-
-            return null;
+            
+            // move toward that piece
+            _monsterAI.SetFollowTarget(closestContainer.gameObject);
+            return closestContainer;
         }
 
         private bool CloseToDropoffPoint()
