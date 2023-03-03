@@ -30,7 +30,6 @@ namespace ChebsNecromancy.Minions
         private MonsterAI _monsterAI;
 
         private ItemDrop _currentItem;
-        private float _pickupTime;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -112,26 +111,13 @@ namespace ChebsNecromancy.Minions
 
         private void LookForNearbyItems()
         {
-            if (_currentItem is not null) return;
-            
-            // get all nearby items
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, LookRadius.Value, autoPickupMask);
-            if (hitColliders.Length < 1) return;
-            // order items from closest to furthest, then take closest one
-            var closest = hitColliders
-                .OrderBy(col => Vector3.Distance(transform.position, col.transform.position))
-                .FirstOrDefault();
-            if (closest != null)
+            ItemDrop itemDrop = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > PickupDelay.Value);
+            if (itemDrop == null) return; 
+            if (TryGetComponent(out MonsterAI monsterAI))
             {
                 // move toward that item
-                _currentItem = closest.GetComponentInParent<ItemDrop>();
-                if (_currentItem is null)
-                {
-                    return;
-                }
-                NeckroStatus = $"Moving toward {_currentItem.m_itemData.m_shared.m_name}";
-                _monsterAI.SetFollowTarget(_currentItem.gameObject);
-                _pickupTime = Time.time + PickupDelay.Value;
+                NeckroStatus = $"Moving toward {itemDrop.m_itemData.m_shared.m_name}";
+                monsterAI.SetFollowTarget(itemDrop.gameObject);
             }
         }
 
@@ -144,8 +130,7 @@ namespace ChebsNecromancy.Minions
                 return;
             }
 
-            if (Time.time > _pickupTime
-                && _currentItem.CanPickup()
+            if (_currentItem.CanPickup()
                 && StoreItem(_currentItem, container))
             {
                 NeckroStatus = $"Picking up {string.Join(", ", _currentItem.m_itemData.m_shared.m_name)}";
