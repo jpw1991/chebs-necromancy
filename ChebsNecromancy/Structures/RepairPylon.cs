@@ -95,13 +95,19 @@ namespace ChebsNecromancy.Structures
                     if (healthPercent < 1
                         && ConsumeResin(wearNTear))
                     {
-                        Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
-                            $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
                         wearNTear.Repair();
+                        
                         // make the hammer sound and puff of smoke etc. if the player is nearby
-                        Player player = Player.m_localPlayer;
-                        if (Vector3.Distance(player.transform.position, wearNTear.transform.position) < 20)
+                        var player = Player.m_localPlayer;
+                        var distance = Vector3.Distance(player.transform.position, wearNTear.transform.position);
+                        if (distance < 20)
                         {
+                            if (distance < 5)
+                            {
+                                Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
+                                    $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
+                            }
+                            
                             var localPiece = wearNTear.m_piece;
                             if (localPiece is not null)
                             {
