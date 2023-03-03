@@ -201,37 +201,15 @@ namespace ChebsNecromancy.Minions
             return container.GetInventory().GetEmptySlots() < 1;
         }
 
-        private Container GetNearestDropOffPoint()
-        {
-            // find and return drop off point (some container with room)
-
-            // doesnt work, dunno why
-            //List<Piece> nearbyPieces = new List<Piece>();
-            //Piece.GetAllPiecesInRadius(transform.position, dropoffPointRadius.Value, nearbyPieces);
-            //
-            //if (nearbyPieces.Count < 1) return false;
-            Collider[] nearbyPieces = Physics.OverlapSphere(transform.position + Vector3.up, DropoffPointRadius.Value, pieceMask);
-            if (nearbyPieces.Length < 1) return null;
-
-            // order piece from closest to furthest, then take closest container
-            Collider closest = nearbyPieces
-                .OrderBy(piece => Vector3.Distance(transform.position, piece.transform.position))
-                .FirstOrDefault(piece =>
-                {
-                    var pieceContainer = piece.GetComponentInParent<Container>();
-                    return pieceContainer != null && pieceContainer.GetInventory().GetEmptySlots() > 0;
-                });
-            if (closest != null)
-            {
-                Container closestContainer = closest.GetComponentInParent<Container>();
-                if (closestContainer != null)
-                {
-                    // move toward that piece
-                    _monsterAI.SetFollowTarget(closest.gameObject);
-                    return closestContainer;
-                }
-            }
-            return null;
+        private Container GetNearestDropOffPoint() {
+            // Container closestContainer;
+            Container closestContainer = FindClosest<Container>(DropoffPointRadius.Value, pieceMask,
+                c => c.GetInventory().GetEmptySlots() > 0);
+            if (closestContainer == null) return null;
+            
+            // move toward that piece
+            _monsterAI.SetFollowTarget(closestContainer.gameObject);
+            return closestContainer;
         }
 
         private bool CloseToDropoffPoint()
