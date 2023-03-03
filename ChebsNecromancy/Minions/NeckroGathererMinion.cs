@@ -17,7 +17,7 @@ namespace ChebsNecromancy.Minions
         private float lastUpdate;
 
         public static ConfigEntry<bool> Allowed, ShowMessages;
-        public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay;
+        public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance;
 
         public string NeckroStatus { get; set; }
 
@@ -49,6 +49,9 @@ namespace ChebsNecromancy.Minions
                 true, new ConfigDescription("Whether the Neckro Gatherer talks or not."));
             PickupDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDelay",
                 10f, new ConfigDescription("The Neckro won't pick up items immediately upon seeing them. Rather, it will make note of them and pick them up if they're still on the ground after this delay.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            PickupDistance = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDistance",
+                5f, new ConfigDescription("How close a Neckro needs to be to an item to pick it up.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
@@ -111,14 +114,11 @@ namespace ChebsNecromancy.Minions
 
         private void LookForNearbyItems()
         {
-            ItemDrop itemDrop = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > PickupDelay.Value);
-            if (itemDrop == null) return; 
-            if (TryGetComponent(out MonsterAI monsterAI))
-            {
-                // move toward that item
-                NeckroStatus = $"Moving toward {itemDrop.m_itemData.m_shared.m_name}";
-                monsterAI.SetFollowTarget(itemDrop.gameObject);
-            }
+            _currentItem = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > PickupDelay.Value);
+            if (_currentItem == null) return;
+            // move toward that item
+            NeckroStatus = $"Moving toward {_currentItem.m_itemData.m_shared.m_name}";
+            _monsterAI.SetFollowTarget(_currentItem.gameObject);
         }
 
         private void AttemptItemPickup()
@@ -131,6 +131,7 @@ namespace ChebsNecromancy.Minions
             }
 
             if (_currentItem.CanPickup()
+                && Vector3.Distance(_currentItem.transform.position, transform.position) <= PickupDistance.Value
                 && StoreItem(_currentItem, container))
             {
                 NeckroStatus = $"Picking up {string.Join(", ", _currentItem.m_itemData.m_shared.m_name)}";
@@ -203,6 +204,7 @@ namespace ChebsNecromancy.Minions
                 // move toward that piece
                 monsterAI.SetFollowTarget(closestContainer.gameObject);
                 return closestContainer;
+
             }
 
             return null;
