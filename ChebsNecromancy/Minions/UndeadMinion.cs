@@ -422,11 +422,11 @@ namespace ChebsNecromancy.Minions
             monsterAI.SetFollowTarget(null);
         }
 
-        internal T FindClosest<T>(float radius, int mask, System.Func<T, bool> where = default(System.Func<T, bool>)) where T : Component {
+        internal T FindClosest<T>(float radius, int mask, System.Func<T, bool> where) where T : Component {
+            
             return Physics.OverlapSphere(transform.position, radius, mask)
-                .Where(c => c.attachedRigidbody) // must have collider (always true?)
-                .Select(c => c.attachedRigidbody) // get the collider
-                .Select(r => r.GetComponent<T>()) // get the component we want from the collider (e.g. ItemDrop)
+                .Where(c => c.GetComponentInParent<T>() != null) // check if desired component exists
+                .Select(r => r.GetComponentInParent<T>()) // get the component we want (e.g. ItemDrop)
                 .Where(t => t.GetComponent<ZNetView>().IsValid()) // TODO: explain
                 .Where(where) // allow the caller to specify additional constraints (e.g. drop => drop.GetTimeSinceSpawned() > 4)
                 .OrderBy(t => Vector3.Distance(t.transform.position, transform.position)) // sort to find closest
