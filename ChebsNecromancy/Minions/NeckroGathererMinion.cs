@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
@@ -16,7 +17,7 @@ namespace ChebsNecromancy.Minions
         private float lastUpdate;
 
         public static ConfigEntry<bool> Allowed, ShowMessages;
-        public static ConfigEntry<float> UpdateDelay, LookRadius, PickupRadius, DropoffPointRadius;
+        public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay;
 
         public string NeckroStatus { get; set; }
 
@@ -26,6 +27,11 @@ namespace ChebsNecromancy.Minions
 
         private Container dropoffTarget;
 
+        private MonsterAI _monsterAI;
+
+        private ItemDrop _currentItem;
+        private float _pickupTime;
+
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
             Allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
@@ -33,9 +39,6 @@ namespace ChebsNecromancy.Minions
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             LookRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
                 500f, new ConfigDescription("The radius in which the Neckro Gatherer can see items from.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            PickupRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupRadius",
-                10f, new ConfigDescription("The radius in which the Neckro Gatherer can pickup items from.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             DropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
                 1000f, new ConfigDescription("The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
@@ -45,6 +48,9 @@ namespace ChebsNecromancy.Minions
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             ShowMessages = plugin.Config.Bind("NeckroGatherer (Client)", "NeckroGathererShowMessages",
                 true, new ConfigDescription("Whether the Neckro Gatherer talks or not."));
+            PickupDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDelay",
+                10f, new ConfigDescription("The Neckro won't pick up items immediately upon seeing them. Rather, it will make note of them and pick them up if they're still on the ground after this delay.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void Awake()
@@ -62,6 +68,8 @@ namespace ChebsNecromancy.Minions
             pieceMask = LayerMask.GetMask("piece");
 
             canBeCommanded = false;
+
+            _monsterAI = GetComponent<MonsterAI>();
         }
 
         private void Update()
@@ -87,7 +95,7 @@ namespace ChebsNecromancy.Minions
             else
             {
                 LookForNearbyItems();
-                PickupNearbyItems();
+                AttemptItemPickup();
                 //todo: loot dead gatherers
             }
             
@@ -104,47 +112,45 @@ namespace ChebsNecromancy.Minions
 
         private void LookForNearbyItems()
         {
+            if (_currentItem is not null) return;
+            
             // get all nearby items
             Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, LookRadius.Value, autoPickupMask);
             if (hitColliders.Length < 1) return;
             // order items from closest to furthest, then take closest one
-            Collider closest = hitColliders
+            var closest = hitColliders
                 .OrderBy(col => Vector3.Distance(transform.position, col.transform.position))
                 .FirstOrDefault();
             if (closest != null)
             {
-                ItemDrop itemDrop = closest.GetComponentInParent<ItemDrop>();
-                if (itemDrop != null)
+                // move toward that item
+                _currentItem = closest.GetComponentInParent<ItemDrop>();
+                if (_currentItem is null)
                 {
-                    if (TryGetComponent(out MonsterAI monsterAI))
-                    {
-                        // move toward that item
-                        NeckroStatus = $"Moving toward {itemDrop.m_itemData.m_shared.m_name}";
-                        monsterAI.SetFollowTarget(itemDrop.gameObject);
-                        return;
-                    }
+                    return;
                 }
+                NeckroStatus = $"Moving toward {_currentItem.m_itemData.m_shared.m_name}";
+                _monsterAI.SetFollowTarget(_currentItem.gameObject);
+                _pickupTime = Time.time + PickupDelay.Value;
             }
         }
 
-        private void PickupNearbyItems()
+        private void AttemptItemPickup()
         {
-            List<string> itemNames = new();
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, PickupRadius.Value, autoPickupMask);
-            foreach (var hitCollider in hitColliders)
+            if (_currentItem is null)
             {
-                ItemDrop itemDrop = hitCollider.GetComponentInParent<ItemDrop>();
-                if (itemDrop != null
-                    && itemDrop.CanPickup()
-                    && StoreItem(itemDrop, container))
-                {
-                    itemNames.Add(itemDrop.m_itemData.m_shared.m_name);
-                }
+                NeckroStatus = "Looking for items...";
+                _monsterAI.SetFollowTarget(null);
+                return;
             }
 
-            NeckroStatus = itemNames.Count > 0
-                ? $"Picking up {string.Join(", ", itemNames)}"
-                : "Looking for items...";
+            if (Time.time > _pickupTime
+                && _currentItem.CanPickup()
+                && StoreItem(_currentItem, container))
+            {
+                NeckroStatus = $"Picking up {string.Join(", ", _currentItem.m_itemData.m_shared.m_name)}";
+                _currentItem = null;
+            }
         }
 
         private bool StoreItem(ItemDrop itemDrop, Container depositContainer)
