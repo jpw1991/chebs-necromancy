@@ -78,31 +78,35 @@ namespace ChebsNecromancy.Minions
         {
             if (ZNet.instance == null
                 || !(Time.time > lastUpdate)) return;
-            if (ReturnHome())
-            {
-                dropoffTarget = GetNearestDropOffPoint();
-                if (dropoffTarget == null)
-                {
-                    NeckroStatus = "Can't find a container";
-                }
-                else
-                {
-                    NeckroStatus = $"Moving toward {dropoffTarget.name}";
-                    if (CloseToDropoffPoint())
-                    {
-                        DepositItems();
-                    }
-                }
-            }
-            else
-            {
-                LookForNearbyItems();
+            
+            
+            bool canPick = LookForNearbyItems();
+            if (canPick) {
                 AttemptItemPickup();
-                //todo: loot dead gatherers
+            } else {
+                if (container.GetInventory().NrOfItems() > 0)
+                {
+                    dropoffTarget = GetNearestDropOffPoint();
+                    if (dropoffTarget == null)
+                    {
+                        NeckroStatus = "Can't find a container";
+                    }
+                    else
+                    {
+                        NeckroStatus = $"Moving toward {dropoffTarget.name}";
+                        if (CloseToDropoffPoint())
+                        {
+                            DepositItems();
+                        }
+                    }
+                } else {
+                    NeckroStatus = "";
+                }
             }
+            //todo: loot dead gatherers
             
             if (ShowMessages.Value
-                && NeckroStatus != ""
+                && !String.IsNullOrEmpty(NeckroStatus)
                 && Player.m_localPlayer != null
                 && Vector3.Distance(Player.m_localPlayer.transform.position, transform.position) < 5)
             {
@@ -112,13 +116,15 @@ namespace ChebsNecromancy.Minions
             lastUpdate = Time.time + UpdateDelay.Value;
         }
 
-        private void LookForNearbyItems()
-        {
+        private bool LookForNearbyItems() {
+            if (InventoryFull()) return false;
+            
             _currentItem = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > PickupDelay.Value);
-            if (_currentItem == null) return;
+            if (_currentItem == null) return false;
             // move toward that item
             NeckroStatus = $"Moving toward {_currentItem.m_itemData.m_shared.m_name}";
             _monsterAI.SetFollowTarget(_currentItem.gameObject);
+            return true;
         }
 
         private void AttemptItemPickup()
@@ -189,7 +195,7 @@ namespace ChebsNecromancy.Minions
             return itemsDeposited > 0;
         }
 
-        private bool ReturnHome()
+        private bool InventoryFull()
         {
             // return home if no slots found
             return container.GetInventory().GetEmptySlots() < 1;
