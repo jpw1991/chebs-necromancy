@@ -233,6 +233,14 @@ namespace ChebsNecromancy.Items
 
             // determine quality
 
+            if (armorType is not UndeadMinion.ArmorType.Bronze
+                and not UndeadMinion.ArmorType.Iron
+                and not UndeadMinion.ArmorType.BlackMetal)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_magesrequirearmor");
+            }
+
             // mages require bronze or better to be created
             return armorType switch
             {
@@ -256,8 +264,6 @@ namespace ChebsNecromancy.Items
 
             if (skeletonType is SkeletonMinion.SkeletonType.None)
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    "$chebgonaz_magesrequirearmor");
                 return;
             }
 
