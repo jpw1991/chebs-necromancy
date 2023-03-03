@@ -465,7 +465,8 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (DraugrMinion.MaxDraugr.Value > 0)
+            var minionLimitIsSet = DraugrMinion.MaxDraugr.Value > 0; 
+            if (minionLimitIsSet)
             {
                 // re-count the current active draugr
                 CountActiveDraugrMinions();
@@ -589,7 +590,8 @@ namespace ChebsNecromancy.Items
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
-            if (DraugrMinion.MaxDraugr.Value > 0)
+            var minionLimitIsSet = DraugrMinion.MaxDraugr.Value > 0; 
+            if (minionLimitIsSet)
             {
                 // re-count the current active draugr
                 CountActiveDraugrMinions();

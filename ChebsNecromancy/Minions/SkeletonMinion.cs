@@ -603,7 +603,7 @@ namespace ChebsNecromancy.Minions
             
             var playerNecromancyLevel =
                 Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var bonusMinions = DraugrMinion.MinionLimitIncrementsEveryXLevels.Value > 0
+            var bonusMinions = MinionLimitIncrementsEveryXLevels.Value > 0
                 ? (int)playerNecromancyLevel / MinionLimitIncrementsEveryXLevels.Value
                 : 0;
             var maxMinions = MaxSkeletons.Value + bonusMinions;
