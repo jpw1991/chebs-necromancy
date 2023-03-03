@@ -104,6 +104,7 @@ namespace ChebsNecromancy.Minions
 
         private void LookForNearbyItems() {
             ItemDrop itemDrop = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > 4);
+            if (itemDrop == null) return; 
             if (TryGetComponent(out MonsterAI monsterAI))
             {
                 // move toward that item
