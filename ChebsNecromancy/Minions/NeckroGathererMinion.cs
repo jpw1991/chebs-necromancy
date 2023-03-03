@@ -102,28 +102,13 @@ namespace ChebsNecromancy.Minions
             lastUpdate = Time.time + UpdateDelay.Value;
         }
 
-        private void LookForNearbyItems()
-        {
-            // get all nearby items
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, LookRadius.Value, autoPickupMask);
-            if (hitColliders.Length < 1) return;
-            // order items from closest to furthest, then take closest one
-            Collider closest = hitColliders
-                .OrderBy(col => Vector3.Distance(transform.position, col.transform.position))
-                .FirstOrDefault();
-            if (closest != null)
+        private void LookForNearbyItems() {
+            ItemDrop itemDrop = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > 4);
+            if (TryGetComponent(out MonsterAI monsterAI))
             {
-                ItemDrop itemDrop = closest.GetComponentInParent<ItemDrop>();
-                if (itemDrop != null)
-                {
-                    if (TryGetComponent(out MonsterAI monsterAI))
-                    {
-                        // move toward that item
-                        NeckroStatus = $"Moving toward {itemDrop.m_itemData.m_shared.m_name}";
-                        monsterAI.SetFollowTarget(itemDrop.gameObject);
-                        return;
-                    }
-                }
+                // move toward that item
+                NeckroStatus = $"Moving toward {itemDrop.m_itemData.m_shared.m_name}";
+                monsterAI.SetFollowTarget(itemDrop.gameObject);
             }
         }
 
