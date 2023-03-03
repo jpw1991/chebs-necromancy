@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using Jotunn.Managers;
@@ -419,6 +420,18 @@ namespace ChebsNecromancy.Minions
             }
             monsterAI.m_randomMoveRange = RoamRange.Value;
             monsterAI.SetFollowTarget(null);
+        }
+
+        internal T FindClosest<T>(float radius, int mask, System.Func<T, bool> where = default(System.Func<T, bool>)) where T : Component
+        {
+            return Physics.OverlapSphere(transform.position, radius, mask)
+                .Where(c => c.attachedRigidbody) // must have collider (always true?)
+                .Select(c => c.attachedRigidbody) // get the collider
+                .Select(r => r.GetComponent<T>()) // get the component we want from the collider (e.g. ItemDrop)
+                .Where(t => t.GetComponent<ZNetView>().IsValid()) // TODO: explain
+                .Where(where) // allow the caller to specify additional constraints (e.g. drop => drop.GetTimeSinceSpawned() > 4)
+                .OrderBy(t => Vector3.Distance(t.transform.position, transform.position)) // sort to find closest
+                .FirstOrDefault(); // return closest
         }
 
         #region CreatedAtLevelZDO

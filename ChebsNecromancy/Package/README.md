@@ -107,6 +107,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 - [**Dracbjorn**](https://github.com/Dracbjorn) for development help & testing.
 - **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) for texturing help and for making the custom icons.
 - [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
+- [CW-Jesse](https://github.com/CW-Jesse) for networking code help & testing.
 - **redseiko** for helpful advice on the official Valheim modding Discord.
 - **S970X** for making the German language localization for the mod.
 - [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) for making the Korean language localization.
@@ -122,6 +123,9 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+02/03/2023 | 2.2.1 | Add CW-Jesse's network optimization for Neckros
+02/03/2023 | 2.2.0 | Add Repair pylon
+02/03/2023 | 2.1.2 | Add delay to Neckros before they pick up an item; make Neckros pick up items one by one
 01/03/2023 | 2.1.1 | Add bonus minions for necromancy level if configured to use limits
 28/02/2023 | 2.1.0 | Add porcupine skeleton & draugr warriors; add fire, frost, silver, and poison arrow skeletons; only following skeletons respond to the wand's wait command; armor materials consumed in order of best to worst
 28/02/2023 | 2.0.8 | Fix a problem where recipes for items and structures wouldn't sync with server

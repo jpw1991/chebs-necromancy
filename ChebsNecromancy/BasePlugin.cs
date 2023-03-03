@@ -31,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.1.1";
+        public const string PluginVersion = "2.2.1";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -265,6 +265,7 @@ namespace ChebsNecromancy
             BatBeacon.CreateConfigs(this);
             BatLantern.CreateConfigs(this);
             FarmingPylon.CreateConfigs(this);
+            RepairPylon.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -560,6 +561,13 @@ namespace ChebsNecromancy
                     FarmingPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(farmingPylonPrefab,
                         chebgonazAssetBundle.LoadAsset<Sprite>(FarmingPylon.ChebsRecipeConfig.IconName))
                 );
+                
+                GameObject repairPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RepairPylon.ChebsRecipeConfig.PrefabName);
+                PieceManager.Instance.AddPiece(
+                    RepairPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(repairPylonPrefab,
+                        chebgonazAssetBundle.LoadAsset<Sprite>(RepairPylon.ChebsRecipeConfig.IconName))
+                );
+
                 #endregion
             }
             catch (Exception ex)

@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2929499033
+CRC: 1830560449
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9346395c581f0a1ec90605fa36e8907d
+    Hash: ad9589b971067e4351abf339263ecb8d
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 718f88a43fd10a1f1d920a362fa18deb
+    Hash: 996162dc7c93f200652204b1a5879a0c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -46,13 +46,13 @@ ClassTypes:
 - Class: 108
   Script: {instanceID: 0}
 - Class: 114
+  Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: 1109157524, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 313648218, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 1521249158, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
-- Class: 114
-  Script: {fileID: 1541706127, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: 927819712, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
@@ -236,8 +236,9 @@ Assets:
 - Assets/_ChebGonaz/SpectralShroud/ChebGonaz_GuardianWraith.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherPoison.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetIron.prefab
-- Assets/_ChebGonaz/OrbOfBeckoning/ChebGonaz_OrbOfBeckoning.prefab
+- Assets/_ChebGonaz/RepairPylon/ChebGonaz_RepairPylon.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMaceBronze.prefab
+- Assets/_ChebGonaz/OrbOfBeckoning/ChebGonaz_OrbOfBeckoning.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonEye.mat
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/NecromancerHood/chebgonaz_necromancerhood_icon.png
@@ -304,6 +305,7 @@ Assets:
 - Assets/_ChebGonaz/SpectralShroud/spectral_shroud_d.png
 - Assets/_ChebGonaz/Neckro/chebgonaz_neckrogathererpylon_icon.png
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonBowFire.prefab
+- Assets/_ChebGonaz/RepairPylon/chebgonaz_repairpylon_icon.png
 - Assets/_ChebGonaz/FarmingPylon/chebgonaz_farmingpylon_icon.png
 - Assets/_ChebGonaz/SpiritPylon/chebgonaz_spiritpylon_icon.png
 - Assets/_ChebGonaz/BatBeacon/ChebGonaz_BatLantern.prefab

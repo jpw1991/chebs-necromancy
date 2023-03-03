@@ -67,6 +67,13 @@ namespace ChebsNecromancy.Patches
                         __instance.gameObject.AddComponent<FarmingPylon>();
                     }
                 }
+                else if (__instance.name.Contains("RepairPylon"))
+                {
+                    if (!__instance.TryGetComponent(out RepairPylon _))
+                    {
+                        __instance.gameObject.AddComponent<RepairPylon>();
+                    }
+                }
             }
         }
     }
