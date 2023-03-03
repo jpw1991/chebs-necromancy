@@ -79,6 +79,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 	+ [**Bat Beacon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_batbeacon): Spawns bats to defend your base.
 	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_spiritpylon): Spawns spirits to defend your base.
 	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
+	+ [**Repair Pylon**](ttps://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
 
 ### Config
 
