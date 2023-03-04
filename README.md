@@ -79,7 +79,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 	+ [**Bat Beacon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_batbeacon): Spawns bats to defend your base.
 	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_spiritpylon): Spawns spirits to defend your base.
 	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
-	+ [**Repair Pylon**](ttps://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
+	+ [**Repair Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
 
 ### Config
 
@@ -128,6 +128,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+03/03/2023 | 2.2.3 | Hotfix Neckro null object
 03/03/2023 | 2.2.2 | Remove unnecessary attack collider on Spirit Pylon Ghosts that was causing unwanted collisions with player; if Neckros don't see any other items to pick up, they can return their inventories before they're full
 02/03/2023 | 2.2.1 | Add CW-Jesse's network optimization for Neckros
 02/03/2023 | 2.2.0 | Add Repair pylon
