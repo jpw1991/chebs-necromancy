@@ -71,7 +71,7 @@ namespace ChebsNecromancy.Minions.AI
             if (followTarget != null) transform.LookAt(followTarget.transform.position + Vector3.down);
             if (Time.time > nextCheck)
             {
-                nextCheck += SkeletonWoodcutterMinion.UpdateDelay.Value;
+                nextCheck = Time.time + SkeletonWoodcutterMinion.UpdateDelay.Value;
                 
                 LookForCuttableObjects();
                 if (followTarget != null

@@ -53,7 +53,7 @@ namespace ChebsNecromancy.Minions.AI
             if (followTarget != null) transform.LookAt(followTarget.transform.position + Vector3.down);
             if (Time.time > nextCheck)
             {
-                nextCheck += SkeletonMinerMinion.UpdateDelay.Value;
+                nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value;
                 
                 LookForMineableObjects();
                 if (followTarget != null
