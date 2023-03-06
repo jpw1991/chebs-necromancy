@@ -41,7 +41,6 @@ namespace ChebsNecromancy.Minions
 
         // for limits checking
         private static int _createdOrderIncrementer;
-        public int createdOrder;
 
         public static ConfigEntry<DropType> DropOnDeath;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
@@ -567,58 +566,6 @@ namespace ChebsNecromancy.Minions
                 case ArmorType.BlackMetal:
                     player.GetInventory().RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
                     break;
-            }
-        }
-        
-        public static void CountActiveSkeletonMinions()
-        {
-            //todo: this function is poorly designed. Return value is not
-            // important to its function; function has side effects, etc.
-            // Refactor sometime
-
-            int result = 0;
-            // based off BaseAI.FindClosestCreature
-            var allCharacters = Character.GetAllCharacters();
-            var minionsFound = new List<Tuple<int, Character>>();
-
-            foreach (var item in allCharacters)
-            {
-                if (item.IsDead())
-                {
-                    continue;
-                }
-
-                var minion = item.GetComponent<SkeletonMinion>();
-                if (minion != null
-                    && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
-                {
-                    minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
-                }
-            }
-
-            // reverse so that we get newest first, oldest last. This means
-            // when we kill off surplus, the oldest things are getting killed
-            // not the newest things
-            minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
-            
-            var playerNecromancyLevel =
-                Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var bonusMinions = MinionLimitIncrementsEveryXLevels.Value > 0
-                ? (int)playerNecromancyLevel / MinionLimitIncrementsEveryXLevels.Value
-                : 0;
-            var maxMinions = MaxSkeletons.Value + bonusMinions;
-
-            foreach (var t in minionsFound)
-            {
-                // kill off surplus
-                if (result >= maxMinions - 1)
-                {
-                    Tuple<int, Character> tuple = t;
-                    tuple.Item2.SetHealth(0);
-                    continue;
-                }
-
-                result++;
             }
         }
     }

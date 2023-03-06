@@ -12,7 +12,6 @@ namespace ChebsNecromancy.Minions
     {
         // for limits checking
         private static int _createdOrderIncrementer;
-        public int createdOrder;
 
         private float lastUpdate;
 

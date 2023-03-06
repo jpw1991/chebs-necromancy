@@ -29,7 +29,6 @@ namespace ChebsNecromancy.Minions
 
         // for limits checking
         private static int _createdOrderIncrementer;
-        public int createdOrder;
 
         public static ConfigEntry<DropType> DropOnDeath;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;

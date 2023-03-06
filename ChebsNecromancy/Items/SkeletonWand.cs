@@ -472,7 +472,9 @@ namespace ChebsNecromancy.Items
             if (minionLimitIsSet)
             {
                 // re-count the current active skeletons
-                SkeletonMinion.CountActiveSkeletonMinions();
+                UndeadMinion.CountActive<SkeletonMinion>(
+                    SkeletonMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    SkeletonMinion.MaxSkeletons.Value);
             }
 
             // scale according to skill
@@ -520,7 +522,9 @@ namespace ChebsNecromancy.Items
             if (minionLimitIsSet)
             {
                 // re-count the current active skeletons
-                SkeletonMinion.CountActiveSkeletonMinions();
+                UndeadMinion.CountActive<SkeletonMinion>(
+                    SkeletonMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    SkeletonMinion.MaxSkeletons.Value);
             }
 
             // scale according to skill
