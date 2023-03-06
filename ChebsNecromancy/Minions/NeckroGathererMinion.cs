@@ -18,6 +18,8 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<bool> Allowed, ShowMessages;
         public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance;
 
+        private static List<ItemDrop> _itemDrops = new();
+
         public string NeckroStatus { get; set; }
 
         private int autoPickupMask, pieceMask;
@@ -115,11 +117,18 @@ namespace ChebsNecromancy.Minions
             lastUpdate = Time.time + UpdateDelay.Value;
         }
 
-        private bool LookForNearbyItems() {
+        private bool LookForNearbyItems()
+        {
             if (InventoryFull()) return false;
-            
-            _currentItem = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, drop => drop.GetTimeSinceSpawned() > PickupDelay.Value);
+
+            if (_currentItem == null)
+            {
+                _currentItem = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, 
+                    drop => drop.GetTimeSinceSpawned() > PickupDelay.Value
+                            && !_itemDrops.Contains(drop));
+            }
             if (_currentItem == null) return false;
+            _itemDrops.Add(_currentItem);
             // move toward that item
             NeckroStatus = $"Moving toward {_currentItem.m_itemData.m_shared.m_name}";
             _monsterAI.SetFollowTarget(_currentItem.gameObject);
@@ -140,6 +149,7 @@ namespace ChebsNecromancy.Minions
                 && StoreItem(_currentItem, container))
             {
                 NeckroStatus = $"Picking up {string.Join(", ", _currentItem.m_itemData.m_shared.m_name)}";
+                if (_itemDrops.Contains(_currentItem)) _itemDrops.Remove(_currentItem);
                 _currentItem = null;
             }
         }
