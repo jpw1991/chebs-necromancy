@@ -253,6 +253,7 @@ namespace ChebsNecromancy
             GuardianWraithMinion.CreateConfigs(this);
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
+            LeechMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
 

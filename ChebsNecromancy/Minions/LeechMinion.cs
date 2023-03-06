@@ -2,6 +2,7 @@ using System.Collections;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items;
+using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
@@ -19,16 +20,33 @@ namespace ChebsNecromancy.Minions
         private static int _createdOrderIncrementer;
 
         public static ConfigEntry<DropType> DropOnDeath;
-        public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
+        public static ConfigEntry<bool> PackDropItemsIntoCargoCrate, Allowed;
 
         public static ConfigEntry<int> MaxLeeches;
         public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
         
         public static ConfigEntry<float> LeechBaseHealth;
         public static ConfigEntry<float> LeechHealthMultiplier;
+        
+        public static ConfigEntry<int> LeechTierOneQuality;
+        public static ConfigEntry<int> LeechTierTwoQuality;
+        public static ConfigEntry<int> LeechTierTwoLevelReq;
+        public static ConfigEntry<int> LeechTierThreeQuality;
+        public static ConfigEntry<int> LeechTierThreeLevelReq;
+
+        public static ConfigEntry<float> LevelIncrease;
+
+        public static ConfigEntry<int> BloodBagsRequired, IntestinesRequired;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
+            Allowed = plugin.Config.Bind("LeechMinion (Server Synced)",
+                "Allowed",
+                true, new ConfigDescription(
+                    "Set to false to disable leeches.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
             DropOnDeath = plugin.Config.Bind("LeechMinion (Server Synced)", "DropOnDeath",
                 DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -57,6 +75,44 @@ namespace ChebsNecromancy.Minions
 
             LeechHealthMultiplier = plugin.Config.Bind("LeechMinion (Server Synced)", "LeechHealthMultiplier",
                 .5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            BloodBagsRequired = plugin.Config.Bind("LeechMinion (Server Synced)",
+                "BloodBagsRequired",
+                2, new ConfigDescription(
+                    "The amount of bags required to summon a leech.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            IntestinesRequired = plugin.Config.Bind("LeechMinion (Server Synced)",
+                "IntestinesRequired",
+                2, new ConfigDescription(
+                    "The amount of intestines required to summon a leech.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            LeechTierOneQuality = plugin.Config.Bind("LeechMinion (Server Synced)", "LeechTierOneQuality",
+                1, new ConfigDescription("Star Quality of tier 1 Leech minions", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            LeechTierTwoQuality = plugin.Config.Bind("LeechMinion (Server Synced)", "LeechTierTwoQuality",
+                2, new ConfigDescription("Star Quality of tier 2 Leech minions", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            LeechTierTwoLevelReq = plugin.Config.Bind("LeechMinion (Server Synced)", "LeechTierTwoLevelReq",
+                35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Leech", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            LeechTierThreeQuality = plugin.Config.Bind("LeechMinion (Server Synced)", "LeechTierThreeQuality",
+                3, new ConfigDescription("Star Quality of tier 3 Leech minions", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            LeechTierThreeLevelReq = plugin.Config.Bind("LeechMinion (Server Synced)", "LeechTierThreeLevelReq",
+                70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Leech", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            LevelIncrease = plugin.Config.Bind("LeechMinion (Server Synced)", "LevelIncrease",
+                1f, new ConfigDescription("How much creating a leech contributes to necromancy level.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
@@ -117,6 +173,99 @@ namespace ChebsNecromancy.Minions
                            necromancyLevel * LeechHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
+        }
+        
+        public static void ConsumeResources(LeechType leechType)
+        {
+            if (leechType is LeechType.None) return;
+            
+            var player = Player.m_localPlayer;
+            
+            if (BloodBagsRequired.Value > 0)
+                player.GetInventory().RemoveItem("$item_bloodbag", BloodBagsRequired.Value);
+            if (IntestinesRequired.Value > 0)
+                player.GetInventory().RemoveItem("$item_entrails", IntestinesRequired.Value);
+        }
+        
+        public static void InstantiateLeech(int quality, float playerNecromancyLevel, LeechType leechType)
+        {
+            if (leechType is LeechType.None) return;
+            
+            var player = Player.m_localPlayer;
+            var prefabName = InternalName.GetName(leechType);
+            var prefab = ZNetScene.instance.GetPrefab(prefabName);
+            if (!prefab)
+            {
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
+                Logger.LogError($"InstantiateLeech: spawning {prefabName} failed");
+                return;
+            }
+
+            var transform = player.transform;
+            var spawnedChar = Instantiate(prefab,
+                transform.position + transform.forward * 2f + Vector3.up, Quaternion.identity);
+            var character = spawnedChar.GetComponent<Character>();
+            character.SetLevel(quality);
+
+            spawnedChar.AddComponent<FreshMinion>();
+
+            var minion = spawnedChar.AddComponent<LeechMinion>();
+            minion.SetCreatedAtLevel(playerNecromancyLevel);
+            minion.ScaleStats(playerNecromancyLevel);
+
+            if (Wand.FollowByDefault.Value)
+            {
+                minion.Follow(player.gameObject);
+            }
+            else
+            {
+                minion.Wait(player.transform.position);
+            }
+
+            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill,
+                LevelIncrease.Value);
+
+            minion.UndeadMinionMaster = player.GetPlayerName();
+
+            // handle refunding of resources on death
+            if (DropOnDeath.Value != DropType.Nothing)
+            {
+                var characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
+
+                if (DropOnDeath.Value == DropType.Everything
+                    && BloodBagsRequired.Value > 0)
+                {
+                    if (BloodBagsRequired.Value > 0)
+                    {
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("Bloodbag"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BloodBagsRequired.Value,
+                            m_amountMax = BloodBagsRequired.Value,
+                            m_chance = 1f
+                        });   
+                    }
+
+                    if (IntestinesRequired.Value > 0)
+                    {
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("Entrails"),
+                            m_onePerPlayer = true,
+                            m_amountMin = IntestinesRequired.Value,
+                            m_amountMax = IntestinesRequired.Value,
+                            m_chance = 1f
+                        });
+                    }
+                }
+
+                // the component won't be remembered by the game on logout because
+                // only what is on the prefab is remembered. Even changes to the prefab
+                // aren't remembered. So we must write what we're dropping into
+                // the ZDO as well and then read & restore this on Awake
+                minion.RecordDrops(characterDrop);
+            }
         }
     }
 }
