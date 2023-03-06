@@ -425,8 +425,8 @@ namespace ChebsNecromancy.Minions
         internal T FindClosest<T>(float radius, int mask, System.Func<T, bool> where) where T : Component {
             return Physics.OverlapSphere(transform.position, radius, mask)
                 .Where(c => c.GetComponentInParent<T>() != null) // check if desired component exists
-                .Select(r => r.GetComponentInParent<T>()) // get the component we want (e.g. ItemDrop)
-                .Where(t => t.GetComponent<ZNetView>().IsValid()) // TODO: explain
+                .Select(c => c.GetComponentInParent<T>()) // get the component we want (e.g. ItemDrop)
+                .Where(c => c.TryGetComponent(out ZNetView znv) && znv.IsValid()) // only interactable objects
                 .Where(where) // allow the caller to specify additional constraints (e.g. drop => drop.GetTimeSinceSpawned() > 4)
                 .OrderBy(t => Vector3.Distance(t.transform.position, transform.position)) // sort to find closest
                 .FirstOrDefault(); // return closest
