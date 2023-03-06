@@ -513,6 +513,12 @@ namespace ChebsNecromancy
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
                 }
+                
+                foreach (LeechMinion.LeechType value in Enum.GetValues(typeof(LeechMinion.LeechType)))
+                {
+                    if (value is LeechMinion.LeechType.None) continue;
+                    prefabNames.Add(InternalName.GetName(value) + ".prefab");
+                }
 
                 prefabNames.ForEach(prefabName =>
                 {

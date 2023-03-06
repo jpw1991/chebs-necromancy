@@ -68,6 +68,10 @@ namespace ChebsNecromancy.Patches
                         {
                             __instance.gameObject.AddComponent<BatBeaconBatMinion>();
                         }
+                        else if (__instance.name.Contains("Leech"))
+                        {
+                            __instance.gameObject.AddComponent<LeechMinion>();
+                        }
                     }
                 }
             }

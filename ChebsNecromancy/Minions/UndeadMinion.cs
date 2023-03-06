@@ -461,6 +461,7 @@ namespace ChebsNecromancy.Minions
         
         public static void CountActive<T>(int minionLimitIncrementsEveryXLevels, int maxMinions) where T : UndeadMinion
         {
+            Logger.LogInfo($"increments: {minionLimitIncrementsEveryXLevels}, max: {maxMinions}");
             // Get all active skeleton minions that belong to the local player
             var minions = Character.GetAllCharacters()
                 .Where(c => !c.IsDead())
@@ -473,10 +474,13 @@ namespace ChebsNecromancy.Minions
             var necromancySkill = SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill;
             var playerNecromancyLevel = Player.m_localPlayer.GetSkillLevel(necromancySkill);
             var bonusMinions = minionLimitIncrementsEveryXLevels > 0
-                ? (int)playerNecromancyLevel / minionLimitIncrementsEveryXLevels
+                ? Mathf.FloorToInt(playerNecromancyLevel / minionLimitIncrementsEveryXLevels)
                 : 0;
             var maxMinionsPlusBonus = maxMinions + bonusMinions;
+            maxMinionsPlusBonus -= 1;
 
+            Logger.LogInfo($"maxMinionsPlusBonus: {maxMinionsPlusBonus}");
+            
             // Kill off surplus minions
             for (var i = maxMinionsPlusBonus; i < minions.Count; i++)
             {
