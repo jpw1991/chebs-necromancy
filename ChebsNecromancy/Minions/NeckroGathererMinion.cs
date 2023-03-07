@@ -223,7 +223,8 @@ namespace ChebsNecromancy.Minions
 
         private bool CloseToDropoffPoint()
         {
-            return dropoffTarget != null && Vector3.Distance(transform.position, dropoffTarget.transform.position) < 5;
+            return dropoffTarget != null 
+                   && Vector3.Distance(transform.position, dropoffTarget.transform.position) < PickupDistance.Value;
         }
 
         private void DepositItems()
