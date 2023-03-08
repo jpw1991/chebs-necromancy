@@ -12,8 +12,6 @@ namespace ChebsNecromancy.Minions.AI
         private Humanoid _humanoid;
         private List<string> _rocksList;
 
-        private readonly int staticSolidMask = LayerMask.GetMask("static_solid");
-
         private string _status;
 
         private void Awake()
@@ -28,12 +26,13 @@ namespace ChebsNecromancy.Minions.AI
         public void LookForMineableObjects()
         {
             _status = "Can't find rocks.";
-            
+
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
+            LayerMask layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
             var closest = UndeadMinion.FindClosest<Transform>(transform,
                 SkeletonMinerMinion.LookRadius.Value,
-                staticSolidMask,
+                layerMask,
                 hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)),
                 false);
             if (closest != null)
