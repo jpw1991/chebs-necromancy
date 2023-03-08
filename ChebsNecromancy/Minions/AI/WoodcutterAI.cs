@@ -24,12 +24,14 @@ namespace ChebsNecromancy.Minions.AI
 
         public void LookForCuttableObjects()
         {
+            _status = "Can't find wood.";
+            
             // Trees: TreeBase
             // Stumps: Destructible with type Tree
             // Logs: TreeLog
             var closest =
-                UndeadMinion.FindClosest<Collider>(transform, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask, 
-                    a => true);
+                UndeadMinion.FindClosest<Transform>(transform, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask, 
+                    a => true, false);
             if (closest != null)
             {
                 // prioritize stumps, then logs, then trees
@@ -54,10 +56,7 @@ namespace ChebsNecromancy.Minions.AI
                 {
                     _monsterAI.SetFollowTarget(tree.gameObject);
                     _status = "Moving to tree.";
-                    return;
                 }
-
-                _status = "Can't find wood.";
             }
         }
 

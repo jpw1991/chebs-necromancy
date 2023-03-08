@@ -27,20 +27,20 @@ namespace ChebsNecromancy.Minions.AI
 
         public void LookForMineableObjects()
         {
+            _status = "Can't find rocks.";
+            
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
-            var closest = UndeadMinion.FindClosest<Collider>(transform,
+            var closest = UndeadMinion.FindClosest<Transform>(transform,
                 SkeletonMinerMinion.LookRadius.Value,
                 staticSolidMask,
-                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)));
+                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)),
+                false);
             if (closest != null)
             {
                 _monsterAI.SetFollowTarget(closest.gameObject);
                 _status = "Moving to rock.";
-                return;
             }
-            
-            _status = "Can't find rocks.";
         }
 
         private void Update()
