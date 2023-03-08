@@ -31,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.2.3";
+        public const string PluginVersion = "2.3.1";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -253,6 +253,7 @@ namespace ChebsNecromancy
             GuardianWraithMinion.CreateConfigs(this);
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
+            LeechMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
 
@@ -512,6 +513,12 @@ namespace ChebsNecromancy
                 if (BatBeacon.ChebsRecipeConfig.Allowed.Value)
                 {
                     prefabNames.Add("ChebGonaz_Bat.prefab");
+                }
+                
+                foreach (LeechMinion.LeechType value in Enum.GetValues(typeof(LeechMinion.LeechType)))
+                {
+                    if (value is LeechMinion.LeechType.None) continue;
+                    prefabNames.Add(InternalName.GetName(value) + ".prefab");
                 }
 
                 prefabNames.ForEach(prefabName =>

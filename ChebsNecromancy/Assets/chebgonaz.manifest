@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3725813876
+CRC: 4038607330
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a764e1f8a4cbcbde07d1d56964e348d9
+    Hash: 1705abb52ec576605ec6c7a1798d65d9
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 4b465ea897b10c240d4d73daf8b479ab
+    Hash: f217880939f95309b92eb737385684c4
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -124,6 +124,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 1863081269, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
+  Script: {fileID: -534334656, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
+- Class: 114
   Script: {fileID: -2012497638, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
 - Class: 114
   Script: {fileID: -415060008, guid: c1b78fa918b030faf1c1f6f6164daeb2, type: 3}
@@ -195,6 +197,7 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: assembly_valheim
   ClassName: VisEquipment/PlayerModel
 Assets:
+- Assets/_ChebGonaz/Leech/ChebGonaz_Leech.prefab
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherFire.prefab
 - Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.mat
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMace.prefab
@@ -237,13 +240,14 @@ Assets:
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherPoison.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonHelmetIron.prefab
 - Assets/_ChebGonaz/RepairPylon/ChebGonaz_RepairPylon.prefab
-- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMaceBronze.prefab
+- Assets/_ChebGonaz/Leech/ChebGonaz_Leech_BiteAttack.prefab
 - Assets/_ChebGonaz/OrbOfBeckoning/ChebGonaz_OrbOfBeckoning.prefab
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonEye.mat
 - Assets/_ChebGonaz/SkeletonWarrior/ChebGonaz_SkeletonWand.prefab
 - Assets/_ChebGonaz/NecromancerHood/chebgonaz_necromancerhood_icon.png
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherSilver.prefab
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrArcherTier2.prefab
+- Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMaceBronze.prefab
 - Assets/_ChebGonaz/SpectralShroud/ChebGonaz_Wraith.mat
 - Assets/_ChebGonaz/Draugr/draugr_staff_icon.png
 - Assets/_ChebGonaz/SpectralShroud/ChebGonaz_SpectralShroud.prefab

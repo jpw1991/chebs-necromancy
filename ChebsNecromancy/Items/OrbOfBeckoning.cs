@@ -166,7 +166,14 @@ namespace ChebsNecromancy.Items
 
             if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
             {
-                SpawnSkeleton();
+                if (ExtraResourceConsumptionUnlocked)
+                {
+                    SpawnLeech();
+                }
+                else
+                {
+                    SpawnSkeleton();   
+                }
                 return true;
             }
 
@@ -273,7 +280,9 @@ namespace ChebsNecromancy.Items
             if (minionLimitIsSet)
             {
                 // re-count the current active skeletons
-                SkeletonMinion.CountActiveSkeletonMinions();
+                UndeadMinion.CountActive<SkeletonMinion>(
+                    SkeletonMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    SkeletonMinion.MaxSkeletons.Value);
             }
 
             // scale according to skill
@@ -290,6 +299,70 @@ namespace ChebsNecromancy.Items
             SkeletonMinion.ConsumeResources(skeletonType, armorType);
 
             SkeletonMinion.InstantiateSkeleton(quality, playerNecromancyLevel, skeletonType, armorType);
+        }
+
+        private LeechMinion.LeechType SpawnLeechMinion()
+        {
+            var player = Player.m_localPlayer;
+            
+            var bloodBagsInInventory = player.GetInventory().CountItems("$item_bloodbag");
+            if (bloodBagsInInventory < LeechMinion.BloodBagsRequired.Value)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_notenoughbloodbags");
+                return LeechMinion.LeechType.None;
+            }
+            
+            var intestinesInInventory = player.GetInventory().CountItems("$item_entrails");
+            if (intestinesInInventory < LeechMinion.IntestinesRequired.Value)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_notenoughentrails");
+                return LeechMinion.LeechType.None;
+            }
+
+            return LeechMinion.LeechType.Leech;
+        }
+        
+        private void SpawnLeech()
+        {
+            if (!LeechMinion.Allowed.Value) return;
+
+            var player = Player.m_localPlayer;
+            var playerNecromancyLevel =
+                player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+
+            var leechType = SpawnLeechMinion();
+            if (leechType is LeechMinion.LeechType.None)
+            {
+                return;
+            }
+            
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            var minionLimitIsSet = LeechMinion.MaxLeeches.Value > 0; 
+            if (minionLimitIsSet)
+            {
+                // re-count the current active Leechs
+                UndeadMinion.CountActive<LeechMinion>(
+                    LeechMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    LeechMinion.MaxLeeches.Value);
+            }
+
+            // scale according to skill
+            int quality = LeechMinion.LeechTierOneQuality.Value;
+            if (playerNecromancyLevel >= LeechMinion.LeechTierThreeLevelReq.Value)
+            {
+                quality = LeechMinion.LeechTierThreeQuality.Value;
+            }
+            else if (playerNecromancyLevel >= LeechMinion.LeechTierTwoLevelReq.Value)
+            {
+                quality = LeechMinion.LeechTierTwoQuality.Value;
+            }
+
+            LeechMinion.ConsumeResources(leechType);
+
+            LeechMinion.InstantiateLeech(quality, playerNecromancyLevel, leechType);
         }
         
         public override void CreateButtons()

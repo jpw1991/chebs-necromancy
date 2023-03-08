@@ -469,7 +469,9 @@ namespace ChebsNecromancy.Items
             if (minionLimitIsSet)
             {
                 // re-count the current active draugr
-                CountActiveDraugrMinions();
+                UndeadMinion.CountActive<DraugrMinion>(
+                    DraugrMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    DraugrMinion.MaxDraugr.Value);
             }
 
             // scale according to skill
@@ -594,7 +596,9 @@ namespace ChebsNecromancy.Items
             if (minionLimitIsSet)
             {
                 // re-count the current active draugr
-                CountActiveDraugrMinions();
+                UndeadMinion.CountActive<DraugrMinion>(
+                    DraugrMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    DraugrMinion.MaxDraugr.Value);
             }
 
             // scale according to skill
@@ -739,58 +743,6 @@ namespace ChebsNecromancy.Items
                 // the ZDO as well and then read & restore this on Awake
                 minion.RecordDrops(characterDrop);
             }
-        }
-
-        public int CountActiveDraugrMinions()
-        {
-            //todo: this function is poorly designed. Return value is not
-            // important to its function; function has side effects, etc.
-            // Refactor sometime
-            int result = 0;
-            // based off BaseAI.FindClosestCreature
-            List<Character> allCharacters = Character.GetAllCharacters();
-            List<Tuple<int, Character>> minionsFound = new List<Tuple<int, Character>>();
-
-            foreach (Character item in allCharacters)
-            {
-                if (item.IsDead())
-                {
-                    continue;
-                }
-
-                DraugrMinion minion = item.GetComponent<DraugrMinion>();
-                if (minion != null && minion.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
-                {
-                    minionsFound.Add(new Tuple<int, Character>(minion.createdOrder, item));
-                }
-            }
-
-            // reverse so that we get newest first, oldest last. This means
-            // when we kill off surplus, the oldest things are getting killed
-            // not the newest things
-            minionsFound = minionsFound.OrderByDescending((arg) => arg.Item1).ToList();
-
-            var playerNecromancyLevel =
-                Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var bonusMinions = DraugrMinion.MinionLimitIncrementsEveryXLevels.Value > 0
-                ? (int)playerNecromancyLevel / DraugrMinion.MinionLimitIncrementsEveryXLevels.Value
-                : 0;
-            var maxMinions = DraugrMinion.MaxDraugr.Value + bonusMinions;
-            
-            for (int i = 0; i < minionsFound.Count; i++)
-            {
-                // kill off surplus
-                if (result >= maxMinions - 1)
-                {
-                    Tuple<int, Character> tuple = minionsFound[i];
-                    tuple.Item2.SetHealth(0);
-                    continue;
-                }
-
-                result++;
-            }
-
-            return result;
         }
     }
 }
