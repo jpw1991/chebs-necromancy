@@ -27,13 +27,9 @@ namespace ChebsNecromancy.Minions.AI
             // Trees: TreeBase
             // Stumps: Destructible with type Tree
             // Logs: TreeLog
-
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask);
-            if (hitColliders.Length < 1) return;
-            // order items from closest to furthest, then take closest one
-            Collider closest = hitColliders
-                .OrderBy(hitCollider => Vector3.Distance(transform.position, hitCollider.transform.position))
-                .FirstOrDefault();
+            var closest =
+                UndeadMinion.FindClosest<Collider>(transform, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask, 
+                    a => true);
             if (closest != null)
             {
                 // prioritize stumps, then logs, then trees

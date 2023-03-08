@@ -29,14 +29,10 @@ namespace ChebsNecromancy.Minions.AI
         {
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
-
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, SkeletonMinerMinion.LookRadius.Value, staticSolidMask);
-            if (hitColliders.Length < 1) return;
-            // order items from closest to furthest, then take closest one
-            Collider closest = hitColliders
-                .Where(hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)))
-                .OrderBy(hitCollider => Vector3.Distance(transform.position, hitCollider.transform.position))
-                .FirstOrDefault();
+            var closest = UndeadMinion.FindClosest<Collider>(transform,
+                SkeletonMinerMinion.LookRadius.Value,
+                staticSolidMask,
+                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)));
             if (closest != null)
             {
                 _monsterAI.SetFollowTarget(closest.gameObject);

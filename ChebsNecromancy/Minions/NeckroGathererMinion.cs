@@ -123,7 +123,7 @@ namespace ChebsNecromancy.Minions
 
             if (_currentItem == null)
             {
-                _currentItem = FindClosest<ItemDrop>(LookRadius.Value, autoPickupMask, 
+                _currentItem = FindClosest<ItemDrop>(transform, LookRadius.Value, autoPickupMask, 
                     drop => drop.GetTimeSinceSpawned() > PickupDelay.Value
                             && !_itemDrops.Contains(drop));
             }
@@ -212,7 +212,7 @@ namespace ChebsNecromancy.Minions
 
         private Container GetNearestDropOffPoint() {
             // Container closestContainer;
-            Container closestContainer = FindClosest<Container>(DropoffPointRadius.Value, pieceMask,
+            Container closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, pieceMask,
                 c => c.GetInventory().GetEmptySlots() > 0);
             if (closestContainer == null) return null;
             
