@@ -13,6 +13,8 @@ namespace ChebsNecromancy.Minions.AI
         private List<string> _rocksList;
 
         private string _status;
+        
+        private static List<Transform> _transforms = new();
 
         private void Awake()
         {
@@ -25,20 +27,31 @@ namespace ChebsNecromancy.Minions.AI
 
         public void LookForMineableObjects()
         {
-            _status = "Can't find rocks.";
-
+            if (_monsterAI.GetFollowTarget() != null) return;
+            
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
             LayerMask layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
             var closest = UndeadMinion.FindClosest<Transform>(transform,
                 SkeletonMinerMinion.LookRadius.Value,
                 layerMask,
-                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)),
+                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)
+                                                         && !_transforms.Contains(hitCollider)),
                 false);
+            
+            // if closest turns up nothing, pick the closest from the claimed transforms list (if there's nothing else
+            // to whack, may as well whack a rock right next to you, even if another skeleton is already whacking it)
+            if (closest == null)
+            {
+                closest = _transforms
+                    .OrderBy(t => Vector3.Distance(t.position, transform.position))
+                    .FirstOrDefault();
+            }
+            
             if (closest != null)
             {
+                _transforms.Add(closest);
                 _monsterAI.SetFollowTarget(closest.gameObject);
-                _status = "Moving to rock.";
             }
         }
 
@@ -51,11 +64,17 @@ namespace ChebsNecromancy.Minions.AI
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value;
                 
                 LookForMineableObjects();
-                if (followTarget != null
+                if (_monsterAI.GetFollowTarget() != null
                     && Vector3.Distance(followTarget.transform.position, transform.position) < 5)
                 {
                     _monsterAI.DoAttack(null, false);
                 }
+
+                _transforms.RemoveAll(item => item == null);
+
+                _status = _monsterAI.GetFollowTarget() != null
+                    ? $"Moving to rock ({followTarget.name})."
+                    : "Can't find rocks.";
 
                 _humanoid.m_name = _status;
             }
