@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ChebsNecromancy.Minions.AI
@@ -11,6 +12,8 @@ namespace ChebsNecromancy.Minions.AI
         private Humanoid _humanoid;
 
         private readonly int defaultMask = LayerMask.GetMask("Default");
+        
+        private static List<Transform> _transforms = new();
 
         private string _status;
 
@@ -24,22 +27,31 @@ namespace ChebsNecromancy.Minions.AI
 
         public void LookForCuttableObjects()
         {
+            if (_monsterAI.GetFollowTarget() != null) return;
+            
             // Trees: TreeBase
             // Stumps: Destructible with type Tree
             // Logs: TreeLog
-
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask);
-            if (hitColliders.Length < 1) return;
-            // order items from closest to furthest, then take closest one
-            Collider closest = hitColliders
-                .OrderBy(hitCollider => Vector3.Distance(transform.position, hitCollider.transform.position))
-                .FirstOrDefault();
+            var closest =
+                UndeadMinion.FindClosest<Transform>(transform, SkeletonWoodcutterMinion.LookRadius.Value, defaultMask, 
+                    a => !_transforms.Contains(a), false);
+            
+            // if closest turns up nothing, pick the closest from the claimed transforms list (if there's nothing else
+            // to whack, may as well whack a log right next to you, even if another skeleton is already whacking it)
+            if (closest == null)
+            {
+                closest = _transforms
+                    .OrderBy(t => Vector3.Distance(t.position, transform.position))
+                    .FirstOrDefault();
+            }
+            
             if (closest != null)
             {
                 // prioritize stumps, then logs, then trees
                 Destructible destructible = closest.GetComponentInParent<Destructible>();
                 if (destructible != null && destructible.GetDestructibleType() == DestructibleType.Tree)
                 {
+                    _transforms.Add(closest);
                     _monsterAI.SetFollowTarget(destructible.gameObject);
                     _status = "Moving to stump.";
                     return;
@@ -48,6 +60,7 @@ namespace ChebsNecromancy.Minions.AI
                 TreeLog treeLog = closest.GetComponentInParent<TreeLog>();
                 if (treeLog != null)
                 {
+                    _transforms.Add(closest);
                     _monsterAI.SetFollowTarget(treeLog.gameObject);
                     _status = "Moving to log.";
                     return;
@@ -56,12 +69,10 @@ namespace ChebsNecromancy.Minions.AI
                 TreeBase tree = closest.GetComponentInParent<TreeBase>();
                 if (tree != null)
                 {
+                    _transforms.Add(closest);
                     _monsterAI.SetFollowTarget(tree.gameObject);
                     _status = "Moving to tree.";
-                    return;
                 }
-
-                _status = "Can't find wood.";
             }
         }
 
@@ -74,11 +85,15 @@ namespace ChebsNecromancy.Minions.AI
                 nextCheck = Time.time + SkeletonWoodcutterMinion.UpdateDelay.Value;
                 
                 LookForCuttableObjects();
-                if (followTarget != null
+                if (_monsterAI.GetFollowTarget() != null
                     && Vector3.Distance(followTarget.transform.position, transform.position) < 5)
                 {
                     _monsterAI.DoAttack(null, false);
                 }
+                
+                _transforms.RemoveAll(item => item == null);
+
+                if (_monsterAI.GetFollowTarget() == null) _status = "Can't find tree.";
 
                 _humanoid.m_name = _status;
             }

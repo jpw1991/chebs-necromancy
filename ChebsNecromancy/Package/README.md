@@ -128,6 +128,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+08/03/2023 | 2.3.3 | improve miner/woodcutter
 08/03/2023 | 2.3.2 | hitting minions with wand dismisses them; add leeches as summon to orb; neckro hivemind; refactor count code; slight speed increase by not searching parents for ZNetView; fixed performance drop for new Miners and Woodcutters after game has been running for a while
 03/03/2023 | 2.2.3 | Hotfix Neckro null object
 03/03/2023 | 2.2.2 | Remove unnecessary attack collider on Spirit Pylon Ghosts that was causing unwanted collisions with player; if Neckros don't see any other items to pick up, they can return their inventories before they're full

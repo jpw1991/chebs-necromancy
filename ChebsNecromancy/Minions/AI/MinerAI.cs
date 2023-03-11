@@ -12,9 +12,9 @@ namespace ChebsNecromancy.Minions.AI
         private Humanoid _humanoid;
         private List<string> _rocksList;
 
-        private readonly int staticSolidMask = LayerMask.GetMask("static_solid");
-
         private string _status;
+        
+        private static List<Transform> _transforms = new();
 
         private void Awake()
         {
@@ -27,24 +27,32 @@ namespace ChebsNecromancy.Minions.AI
 
         public void LookForMineableObjects()
         {
+            if (_monsterAI.GetFollowTarget() != null) return;
+            
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
-
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position + Vector3.up, SkeletonMinerMinion.LookRadius.Value, staticSolidMask);
-            if (hitColliders.Length < 1) return;
-            // order items from closest to furthest, then take closest one
-            Collider closest = hitColliders
-                .Where(hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)))
-                .OrderBy(hitCollider => Vector3.Distance(transform.position, hitCollider.transform.position))
-                .FirstOrDefault();
-            if (closest != null)
+            LayerMask layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
+            var closest = UndeadMinion.FindClosest<Transform>(transform,
+                SkeletonMinerMinion.LookRadius.Value,
+                layerMask,
+                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)
+                                                         && !_transforms.Contains(hitCollider)),
+                false);
+            
+            // if closest turns up nothing, pick the closest from the claimed transforms list (if there's nothing else
+            // to whack, may as well whack a rock right next to you, even if another skeleton is already whacking it)
+            if (closest == null)
             {
-                _monsterAI.SetFollowTarget(closest.gameObject);
-                _status = "Moving to rock.";
-                return;
+                closest = _transforms
+                    .OrderBy(t => Vector3.Distance(t.position, transform.position))
+                    .FirstOrDefault();
             }
             
-            _status = "Can't find rocks.";
+            if (closest != null)
+            {
+                _transforms.Add(closest);
+                _monsterAI.SetFollowTarget(closest.gameObject);
+            }
         }
 
         private void Update()
@@ -56,11 +64,17 @@ namespace ChebsNecromancy.Minions.AI
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value;
                 
                 LookForMineableObjects();
-                if (followTarget != null
+                if (_monsterAI.GetFollowTarget() != null
                     && Vector3.Distance(followTarget.transform.position, transform.position) < 5)
                 {
                     _monsterAI.DoAttack(null, false);
                 }
+
+                _transforms.RemoveAll(item => item == null);
+
+                _status = _monsterAI.GetFollowTarget() != null
+                    ? $"Moving to rock ({followTarget.name})."
+                    : "Can't find rocks.";
 
                 _humanoid.m_name = _status;
             }
