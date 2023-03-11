@@ -57,15 +57,14 @@ namespace ChebsNecromancy.Minions.AI
 
         private void Update()
         {
-            var followTarget = _monsterAI.GetFollowTarget();
-            if (followTarget != null) transform.LookAt(followTarget.transform.position + Vector3.down);
+            if (_monsterAI.GetFollowTarget() != null) transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down);
             if (Time.time > nextCheck)
             {
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value;
                 
                 LookForMineableObjects();
                 if (_monsterAI.GetFollowTarget() != null
-                    && Vector3.Distance(followTarget.transform.position, transform.position) < 5)
+                    && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
                 {
                     _monsterAI.DoAttack(null, false);
                 }
@@ -73,7 +72,7 @@ namespace ChebsNecromancy.Minions.AI
                 _transforms.RemoveAll(item => item == null);
 
                 _status = _monsterAI.GetFollowTarget() != null
-                    ? $"Moving to rock ({followTarget.name})."
+                    ? $"Moving to rock ({_monsterAI.GetFollowTarget().name})."
                     : "Can't find rocks.";
 
                 _humanoid.m_name = _status;
