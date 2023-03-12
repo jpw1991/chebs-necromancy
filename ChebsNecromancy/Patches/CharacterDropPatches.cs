@@ -22,10 +22,13 @@ namespace ChebsNecromancy.Patches
     class CharacterDrop_Patches
     {
         [HarmonyPrefix]
-        static void AddBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops)
+        static void AddBonesToDropList(ref List<CharacterDrop.Drop> ___m_drops, CharacterDrop __instance)
         {
             if (BasePlugin.BoneFragmentsDroppedAmountMin.Value >= 0
-                && BasePlugin.BoneFragmentsDroppedAmountMax.Value > 0)
+                && BasePlugin.BoneFragmentsDroppedAmountMax.Value > 0
+                // for some stupid reason, the GuardianWraith somehow drops bones even though it shouldn't even have
+                // a CharacterDrop component on it. I guess somehow it's being added on. Just ignore it
+                && !__instance.TryGetComponent(out GuardianWraithMinion _))
             {
                 CharacterDrop.Drop bones = new()
                 {
