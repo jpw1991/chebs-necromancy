@@ -31,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.3.5";
+        public const string PluginVersion = "2.3.6";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -313,13 +313,12 @@ namespace ChebsNecromancy
         private void LoadChebGonazAssetBundle()
         {
             // order is important (I think): items, creatures, structures
-            string assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonaz");
-            AssetBundle chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
+            var assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonaz");
+            var chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
                 GameObject LoadPrefabFromBundle(string prefabName, AssetBundle bundle)
                 {
-                    //Jotunn.Logger.LogInfo($"Loading {prefabName}...");
                     GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
                     if (prefab == null)
                     {
@@ -330,7 +329,6 @@ namespace ChebsNecromancy
                     {
                         foreach (var child in prefab.GetComponentsInChildren<ParticleSystem>())
                         {
-                            //Logger.LogInfo($"Prefab name: {prefabName}: Destroying ParticleSystem {child.name}");
                             Destroy(child);
                         }
 
@@ -376,21 +374,12 @@ namespace ChebsNecromancy
 
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
-
-                // // //
+                
                 // Orb of Beckoning
-                //
                 GameObject orbOfBeckoningProjectilePrefab = 
                     LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle);
                 orbOfBeckoningProjectilePrefab.AddComponent<OrbOfBeckoningProjectile>();
-                
-                // GameObject orbOfBeckoningItemPrefab =
-                //     LoadPrefabFromBundle(orbOfBeckoningItem.PrefabName, chebgonazAssetBundle);
-                // orbOfBeckoningItemPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
-                //     orbOfBeckoningProjectilePrefab;
-                // ItemManager.Instance.AddItem(orbOfBeckoningItem.GetCustomItemFromPrefab(orbOfBeckoningItemPrefab));
-                // // //
-                
+
                 // minion worn items
                 List<Item> minionWornItems = new()
                 {
@@ -474,46 +463,25 @@ namespace ChebsNecromancy
                 #region Creatures
                 List<string> prefabNames = new();
 
-                if (DraugrWand.DraugrAllowed.Value)
+                foreach (DraugrMinion.DraugrType value in Enum.GetValues(typeof(DraugrMinion.DraugrType)))
                 {
-                    foreach (DraugrMinion.DraugrType value in Enum.GetValues(typeof(DraugrMinion.DraugrType)))
-                    {
-                        if (value is DraugrMinion.DraugrType.None) continue;
-                        prefabNames.Add(InternalName.GetName(value) + ".prefab");
-                    }
+                    if (value is DraugrMinion.DraugrType.None) continue;
+                    prefabNames.Add(InternalName.GetName(value) + ".prefab");
                 }
 
-                if (SkeletonWand.SkeletonsAllowed.Value)
+                // 1.2.0: I had to make extra prefabs for each tier because
+                // the skeletons consistently forgot their weapons and became
+                // buggy (not attacking enemies) if dynamically set
+                foreach (SkeletonMinion.SkeletonType value in Enum.GetValues(typeof(SkeletonMinion.SkeletonType)))
                 {
-                    // 1.2.0: I had to make extra prefabs for each tier because
-                    // the skeletons consistently forgot their weapons and became
-                    // buggy (not attacking enemies) if dynamically set
-                    foreach (SkeletonMinion.SkeletonType value in Enum.GetValues(typeof(SkeletonMinion.SkeletonType)))
-                    {
-                        if (value is SkeletonMinion.SkeletonType.None) continue;
-                        prefabNames.Add(InternalName.GetName(value) + ".prefab");
-                    }
+                    if (value is SkeletonMinion.SkeletonType.None) continue;
+                    prefabNames.Add(InternalName.GetName(value) + ".prefab");
                 }
 
-                if (SpectralShroud.SpawnWraith.Value)
-                {
-                    prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
-                }
-
-                if (SpiritPylon.ChebsRecipeConfig.Allowed.Value)
-                {
-                    prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
-                }
-
-                if (NeckroGathererMinion.Allowed.Value && LargeCargoCrate.Allowed.Value)
-                {
-                    prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
-                }
-
-                if (BatBeacon.ChebsRecipeConfig.Allowed.Value)
-                {
-                    prefabNames.Add("ChebGonaz_Bat.prefab");
-                }
+                prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
+                prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
+                prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
+                prefabNames.Add("ChebGonaz_Bat.prefab");
                 
                 foreach (LeechMinion.LeechType value in Enum.GetValues(typeof(LeechMinion.LeechType)))
                 {
@@ -523,11 +491,7 @@ namespace ChebsNecromancy
 
                 prefabNames.ForEach(prefabName =>
                 {
-                    //Jotunn.Logger.LogInfo($"Loading {prefabName}...");
-                    //GameObject prefab = chebgonazAssetBundle.LoadAsset<GameObject>(prefabName);
-                    //if (prefab == null) { Jotunn.Logger.LogError($"prefab for {prefabName} is null!"); }
                     var prefab = LoadPrefabFromBundle(prefabName, chebgonazAssetBundle);
-
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 });
                 #endregion
