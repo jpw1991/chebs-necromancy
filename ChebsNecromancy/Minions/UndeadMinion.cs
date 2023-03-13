@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
@@ -65,6 +66,60 @@ namespace ChebsNecromancy.Minions
         public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
         
         public int createdOrder;
+
+        #region DeathCrates
+        private static List<Transform> _deathCrates = new();
+
+        public void DepositIntoNearbyDeathCrate(List<CharacterDrop.Drop> drops, float range=15f)
+        {
+            // cleanup
+            _deathCrates.RemoveAll(t => t is null);
+            
+            // try depositing everything into existing containers
+            var deathCrates = _deathCrates.OrderBy(t => Vector3.Distance(t.position, transform.position) < range);
+            foreach (var t in deathCrates)
+            {
+                if (drops.Count < 1) break;
+                if (!t.TryGetComponent(out Container container)) continue;
+
+                var inv = container.GetInventory();
+                if (inv is null) continue;
+
+                var dropStack = new Stack<CharacterDrop.Drop>(drops);
+                while (dropStack.Count > 0)
+                {
+                    var drop = dropStack.Pop();
+                    if (inv.CanAddItem(drop.m_prefab))
+                    {
+                        inv.AddItem(drop.m_prefab, drop.m_amountMax);
+                    }
+                }
+
+                drops = dropStack.ToList();
+            }
+            
+            // if items remain undeposited, create a new crate for them
+            var crate = CreateDeathCrate();
+            if (crate != null)
+            {
+                // warning: we mustn't ever exceed the maximum storage capacity
+                // of the crate. Not a problem right now, but could be in the future
+                // if the ingredients exceed 4. Right now, can only be 3, so it's fine.
+                // eg. bones, meat, ingot (draugr) OR bones, ingot, surtling core (skele)
+                var inv = crate.GetInventory();
+                drops.ForEach(drop => inv.AddItem(drop.m_prefab, drop.m_amountMax));
+            }
+        }
+        
+        private Container CreateDeathCrate()
+        {
+            // use vanilla cargo crate -> same as a karve/longboat drops
+            var cratePrefab = ZNetScene.instance.GetPrefab("CargoCrate");
+            var result = Instantiate(cratePrefab, transform.position + Vector3.up, Quaternion.identity);
+            _deathCrates.Add(result.transform);
+            return result.GetComponent<Container>();
+        }
+        #endregion
 
         #region CleanupAfterLogout
         private const float NextPlayerOnlineCheckInterval = 15f;
@@ -424,7 +479,7 @@ namespace ChebsNecromancy.Minions
             monsterAI.SetFollowTarget(null);
         }
 
-        public static T FindClosest<T>(Transform targetTransform, float radius, int mask, System.Func<T, bool> where, bool interactable) where T : Component
+        public static T FindClosest<T>(Transform targetTransform, float radius, int mask, Func<T, bool> where, bool interactable) where T : Component
         {
             return Physics.OverlapSphere(targetTransform.position, radius, mask)
                 .Where(c => c.GetComponentInParent<T>() != null) // check if desired component exists

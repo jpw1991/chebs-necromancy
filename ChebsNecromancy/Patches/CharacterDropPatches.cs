@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using HarmonyLib;
-using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
@@ -65,35 +64,17 @@ namespace ChebsNecromancy.Patches
             // We don't want ppls surtling cores and things to be claimed by davey jones
             else if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
             {
-                void PackDropsIntoCrate()
-                {
-                    // use vanilla cargo crate -> same as a karve/longboat drops
-                    GameObject cratePrefab = ZNetScene.instance.GetPrefab("CargoCrate");
-                    if (cratePrefab != null)
-                    {
-                        // warning: we mustn't ever exceed the maximum storage capacity
-                        // of the crate. Not a problem right now, but could be in the future
-                        // if the ingredients exceed 4. Right now, can only be 3, so it's fine.
-                        // eg. bones, meat, ingot (draugr) OR bones, ingot, surtling core (skele)
-                        Inventory inv =
-                            GameObject.Instantiate(cratePrefab, __instance.transform.position + Vector3.up, Quaternion.identity)
-                            .GetComponent<Container>()
-                            .GetInventory();
-                        __instance.m_drops.ForEach(drop => inv.AddItem(drop.m_prefab, drop.m_amountMax));
-                    }
-                }
-
                 if (undeadMinion is SkeletonMinion
                     && SkeletonMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
                     && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
                 {
-                    PackDropsIntoCrate();
+                    undeadMinion.DepositIntoNearbyDeathCrate(__instance.m_drops);
                 }
                 else if (undeadMinion is DraugrMinion
                     && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
                     && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
                 {
-                    PackDropsIntoCrate();
+                    undeadMinion.DepositIntoNearbyDeathCrate(__instance.m_drops);
                 }
             }
         }
