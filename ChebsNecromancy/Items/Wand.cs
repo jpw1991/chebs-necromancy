@@ -255,9 +255,17 @@ namespace ChebsNecromancy.Items
                 }
 
                 if (item.GetComponent<UndeadMinion>() != null
-                    && item.GetComponent<MonsterAI>().GetFollowTarget() == player.gameObject)
+                    && item.TryGetComponent(out MonsterAI monsterAI)
+                    && monsterAI.GetFollowTarget() == player.gameObject)
                 {
                     item.transform.position = player.transform.position;
+                    // forget position of current enemy so they don't start chasing after it. Cannot set it to null
+                    // via monsterAI.SetTarget(null) because this has no effect. Code below inspired by reading
+                    // MonsterAI.UpdateTarget
+                    monsterAI.SetAlerted(false);
+                    monsterAI.m_targetCreature = null;
+                    monsterAI.m_targetStatic = null;
+                    monsterAI.m_timeSinceAttacking = 0.0f;
                 }
             }
         }
