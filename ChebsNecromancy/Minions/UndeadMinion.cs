@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
@@ -65,6 +66,73 @@ namespace ChebsNecromancy.Minions
         public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
         
         public int createdOrder;
+
+        #region DeathCrates
+        private static List<Transform> _deathCrates = new();
+
+        public void DepositIntoNearbyDeathCrate(CharacterDrop characterDrop, float range=15f)
+        {
+            // cleanup
+            _deathCrates.RemoveAll(t => t == null);
+
+            // try depositing everything into existing containers
+            var deathCrates = _deathCrates
+                .OrderBy(t => Vector3.Distance(t.position, transform.position) < range);
+            foreach (var t in deathCrates)
+            {
+                if (characterDrop.m_drops.Count < 1) break;
+                if (!t.TryGetComponent(out Container container)) continue;
+
+                var inv = container.GetInventory();
+                if (inv is null) continue;
+
+                var dropsRemaining = new List<CharacterDrop.Drop>();
+                foreach (var drop in characterDrop.m_drops)
+                {
+                    if (inv.CanAddItem(drop.m_prefab))
+                    {
+                        inv.AddItem(drop.m_prefab, drop.m_amountMax);
+                    }
+                    else
+                    {
+                        dropsRemaining.Add(drop);
+                    }
+                }
+
+                characterDrop.m_drops = dropsRemaining;
+            }
+            
+            // if items remain undeposited, create a new crate for them
+            if (characterDrop.m_drops.Count < 1) return;
+            var crate = CreateDeathCrate();
+            if (crate != null)
+            {
+                // warning: we mustn't ever exceed the maximum storage capacity
+                // of the crate. Not a problem right now, but could be in the future
+                // if the ingredients exceed 4. Right now, can only be 3, so it's fine.
+                // eg. bones, meat, ingot (draugr) OR bones, ingot, surtling core (skele)
+                var inv = crate.GetInventory();
+                var unsuccessful = new List<CharacterDrop.Drop>();
+                characterDrop.m_drops.ForEach(drop =>
+                {
+                    if (!inv.AddItem(drop.m_prefab, drop.m_amountMax))
+                    {
+                        unsuccessful.Add(drop);
+                    }
+                });
+                characterDrop.m_drops = unsuccessful;
+            }
+        }
+        
+        private Container CreateDeathCrate()
+        {
+            // use vanilla cargo crate -> same as a karve/longboat drops
+            var cratePrefab = ZNetScene.instance.GetPrefab("CargoCrate");
+            var result = Instantiate(cratePrefab, transform.position + Vector3.up, Quaternion.identity);
+            _deathCrates.Add(result.transform);
+            return result.GetComponent<Container>();
+        }
+        #endregion
 
         #region CleanupAfterLogout
         private const float NextPlayerOnlineCheckInterval = 15f;
@@ -424,7 +492,7 @@ namespace ChebsNecromancy.Minions
             monsterAI.SetFollowTarget(null);
         }
 
-        public static T FindClosest<T>(Transform targetTransform, float radius, int mask, System.Func<T, bool> where, bool interactable) where T : Component
+        public static T FindClosest<T>(Transform targetTransform, float radius, int mask, Func<T, bool> where, bool interactable) where T : Component
         {
             return Physics.OverlapSphere(targetTransform.position, radius, mask)
                 .Where(c => c.GetComponentInParent<T>() != null) // check if desired component exists
