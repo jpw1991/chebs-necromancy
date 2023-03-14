@@ -68,13 +68,13 @@ namespace ChebsNecromancy.Patches
                     && SkeletonMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
                     && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
                 {
-                    undeadMinion.DepositIntoNearbyDeathCrate(__instance.m_drops);
+                    undeadMinion.DepositIntoNearbyDeathCrate(__instance);
                 }
                 else if (undeadMinion is DraugrMinion
                     && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
                     && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
                 {
-                    undeadMinion.DepositIntoNearbyDeathCrate(__instance.m_drops);
+                    undeadMinion.DepositIntoNearbyDeathCrate(__instance);
                 }
             }
         }

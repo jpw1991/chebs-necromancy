@@ -70,27 +70,25 @@ namespace ChebsNecromancy.Minions
         #region DeathCrates
         private static List<Transform> _deathCrates = new();
 
-        public void DepositIntoNearbyDeathCrate(List<CharacterDrop.Drop> drops, float range=15f)
+        public void DepositIntoNearbyDeathCrate(CharacterDrop characterDrop, float range=15f)
         {
             // cleanup
             _deathCrates.RemoveAll(t => t == null);
-            
+
             // try depositing everything into existing containers
             var deathCrates = _deathCrates
                 .OrderBy(t => Vector3.Distance(t.position, transform.position) < range);
             foreach (var t in deathCrates)
             {
-                if (drops.Count < 1) break;
+                if (characterDrop.m_drops.Count < 1) break;
                 if (!t.TryGetComponent(out Container container)) continue;
 
                 var inv = container.GetInventory();
                 if (inv is null) continue;
 
                 var dropsRemaining = new List<CharacterDrop.Drop>();
-                var dropStack = new Stack<CharacterDrop.Drop>(drops);
-                while (dropStack.Count > 0)
+                foreach (var drop in characterDrop.m_drops)
                 {
-                    var drop = dropStack.Pop();
                     if (inv.CanAddItem(drop.m_prefab))
                     {
                         inv.AddItem(drop.m_prefab, drop.m_amountMax);
@@ -101,11 +99,11 @@ namespace ChebsNecromancy.Minions
                     }
                 }
 
-                drops = dropsRemaining; //dropStack.ToList();
+                characterDrop.m_drops = dropsRemaining;
             }
             
             // if items remain undeposited, create a new crate for them
-            if (drops.Count < 1) return;
+            if (characterDrop.m_drops.Count < 1) return;
             var crate = CreateDeathCrate();
             if (crate != null)
             {
@@ -114,7 +112,15 @@ namespace ChebsNecromancy.Minions
                 // if the ingredients exceed 4. Right now, can only be 3, so it's fine.
                 // eg. bones, meat, ingot (draugr) OR bones, ingot, surtling core (skele)
                 var inv = crate.GetInventory();
-                drops.ForEach(drop => inv.AddItem(drop.m_prefab, drop.m_amountMax));
+                var unsuccessful = new List<CharacterDrop.Drop>();
+                characterDrop.m_drops.ForEach(drop =>
+                {
+                    if (!inv.AddItem(drop.m_prefab, drop.m_amountMax))
+                    {
+                        unsuccessful.Add(drop);
+                    }
+                });
+                characterDrop.m_drops = unsuccessful;
             }
         }
         
