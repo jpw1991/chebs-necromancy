@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\JotunnLib.2.10.4\build\JotunnLib.props" Condition="Exists('..\packages\JotunnLib.2.10.4\build\JotunnLib.props')" />
+  <Import Project="..\packages\JotunnLib.2.11.0\build\JotunnLib.props" Condition="Exists('..\packages\JotunnLib.2.11.0\build\JotunnLib.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -46,6 +46,21 @@
     <StartWorkingDirectory>$(VALHEIM_INSTALL)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="assembly_guiutils">
+      <HintPath>libs\assembly_guiutils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_postprocessing">
+      <HintPath>libs\assembly_postprocessing_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_utils">
+      <HintPath>libs\assembly_utils_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim_">
+      <HintPath>libs\assembly_valheim_publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="Jotunn, Version=2.11.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JotunnLib.2.11.0\lib\net462\Jotunn.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -80,9 +95,6 @@
     <Reference Include="0Harmony">
       <HintPath>..\packages\HarmonyX.2.10.1\lib\net45\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Jotunn">
-      <HintPath>..\packages\JotunnLib.2.10.4\lib\net462\Jotunn.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -106,33 +118,6 @@
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
       <HintPath>libs\UnityEngine.Physics2DModule.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_googleanalytics_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_googleanalytics_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_guiutils_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_guiutils_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_lux_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_lux_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_postprocessing_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_postprocessing_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_simplemeshcombine_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_simplemeshcombine_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_steamworks_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_steamworks_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_sunshafts_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_sunshafts_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_utils_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_utils_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_valheim_publicized">
-      <HintPath>libs\publicized_assemblies\assembly_valheim_publicized.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
   </ItemGroup>
@@ -252,4 +237,10 @@
       JotunnPostBuildTaskWin
     </BuildDependsOn>
   </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\JotunnLib.2.11.0\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.11.0\build\JotunnLib.props'))" />
+  </Target>
 </Project>
