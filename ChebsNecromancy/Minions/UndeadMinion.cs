@@ -73,10 +73,11 @@ namespace ChebsNecromancy.Minions
         public void DepositIntoNearbyDeathCrate(List<CharacterDrop.Drop> drops, float range=15f)
         {
             // cleanup
-            _deathCrates.RemoveAll(t => t is null);
+            _deathCrates.RemoveAll(t => t == null);
             
             // try depositing everything into existing containers
-            var deathCrates = _deathCrates.OrderBy(t => Vector3.Distance(t.position, transform.position) < range);
+            var deathCrates = _deathCrates
+                .OrderBy(t => Vector3.Distance(t.position, transform.position) < range);
             foreach (var t in deathCrates)
             {
                 if (drops.Count < 1) break;
@@ -85,6 +86,7 @@ namespace ChebsNecromancy.Minions
                 var inv = container.GetInventory();
                 if (inv is null) continue;
 
+                var dropsRemaining = new List<CharacterDrop.Drop>();
                 var dropStack = new Stack<CharacterDrop.Drop>(drops);
                 while (dropStack.Count > 0)
                 {
@@ -93,12 +95,17 @@ namespace ChebsNecromancy.Minions
                     {
                         inv.AddItem(drop.m_prefab, drop.m_amountMax);
                     }
+                    else
+                    {
+                        dropsRemaining.Add(drop);
+                    }
                 }
 
-                drops = dropStack.ToList();
+                drops = dropsRemaining; //dropStack.ToList();
             }
             
             // if items remain undeposited, create a new crate for them
+            if (drops.Count < 1) return;
             var crate = CreateDeathCrate();
             if (crate != null)
             {
