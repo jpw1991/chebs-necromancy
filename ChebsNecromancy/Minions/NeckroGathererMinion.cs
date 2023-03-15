@@ -16,7 +16,7 @@ namespace ChebsNecromancy.Minions
         private float lastUpdate;
 
         public static ConfigEntry<bool> Allowed, ShowMessages;
-        public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance;
+        public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance, MaxSecondsBeforeDropoff;
 
         private static List<ItemDrop> _itemDrops = new();
 
@@ -31,6 +31,8 @@ namespace ChebsNecromancy.Minions
         private MonsterAI _monsterAI;
 
         private ItemDrop _currentItem;
+
+        private float _lastDropoffAt;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -54,6 +56,8 @@ namespace ChebsNecromancy.Minions
             PickupDistance = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDistance",
                 5f, new ConfigDescription("How close a Neckro needs to be to an item to pick it up.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            MaxSecondsBeforeDropoff = plugin.Config.Bind("NeckroGatherer (Client)", "MaxSecondsBeforeDropoff",
+                0f, new ConfigDescription("The maximum amount of time, in seconds, before a Neckro is forced to return whatever it is currently carrying. If set to 0, this condition is ignored."));
         }
 
         public override void Awake()
@@ -119,7 +123,9 @@ namespace ChebsNecromancy.Minions
 
         private bool LookForNearbyItems()
         {
-            if (InventoryFull()) return false;
+            if (InventoryFull()
+                || (MaxSecondsBeforeDropoff.Value > 0 
+                    && Time.time - _lastDropoffAt >= MaxSecondsBeforeDropoff.Value)) return false;
 
             if (_currentItem == null)
             {
@@ -210,9 +216,9 @@ namespace ChebsNecromancy.Minions
             return container.GetInventory().GetEmptySlots() < 1;
         }
 
-        private Container GetNearestDropOffPoint() {
-            // Container closestContainer;
-            Container closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, pieceMask,
+        private Container GetNearestDropOffPoint()
+        {
+            var closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, pieceMask,
                 c => c.GetInventory().GetEmptySlots() > 0, true);
             if (closestContainer == null) return null;
             
@@ -229,6 +235,7 @@ namespace ChebsNecromancy.Minions
 
         private void DepositItems()
         {
+            _lastDropoffAt = Time.time;
             dropoffTarget.GetInventory().MoveAll(container.GetInventory());
         }
     }

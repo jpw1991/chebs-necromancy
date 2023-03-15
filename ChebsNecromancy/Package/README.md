@@ -128,6 +128,13 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+15/03/2023 | 2.3.10 | implement maximum time allowed between dropoffs for Neckros
+14/03/2023 | 2.3.9 | upgrade jotunn; mess with references; fix logic error
+14/03/2023 | 2.3.8 | combine crates to reduce pollution
+13/03/2023 | 2.3.7 | forget position of current enemy so they don't start chasing after it after teleporting
+13/03/2023 | 2.3.6 | even if disabled still load assets from asset bundle
+11/03/2023 | 2.3.5 | guardian wraith shouldn't drop fragments anymore
+11/03/2023 | 2.3.4 | fix possible null object
 08/03/2023 | 2.3.3 | improve miner/woodcutter
 08/03/2023 | 2.3.2 | hitting minions with wand dismisses them; add leeches as summon to orb; neckro hivemind; refactor count code; slight speed increase by not searching parents for ZNetView; fixed performance drop for new Miners and Woodcutters after game has been running for a while
 03/03/2023 | 2.2.3 | Hotfix Neckro null object
