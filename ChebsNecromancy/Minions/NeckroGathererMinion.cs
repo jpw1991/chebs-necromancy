@@ -123,8 +123,9 @@ namespace ChebsNecromancy.Minions
 
         private bool LookForNearbyItems()
         {
-            if (InventoryFull()
-                || (MaxSecondsBeforeDropoff.Value > 0 
+            if (InventoryFull
+                || (InventoryHasItems
+                    && MaxSecondsBeforeDropoff.Value > 0 
                     && Time.time - _lastDropoffAt >= MaxSecondsBeforeDropoff.Value)) return false;
 
             if (_currentItem == null)
@@ -210,11 +211,9 @@ namespace ChebsNecromancy.Minions
             return itemsDeposited > 0;
         }
 
-        private bool InventoryFull()
-        {
-            // return home if no slots found
-            return container.GetInventory().GetEmptySlots() < 1;
-        }
+        private bool InventoryFull => container.GetInventory().GetEmptySlots() < 1;
+
+        private bool InventoryHasItems => container.GetInventory().NrOfItems() > 0;
 
         private Container GetNearestDropOffPoint()
         {
