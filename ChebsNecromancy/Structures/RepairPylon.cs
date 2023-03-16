@@ -10,13 +10,15 @@ namespace ChebsNecromancy.Structures
     internal class RepairPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
-        public static ConfigEntry<float> RepairUpdateInterval, ResinConsumedPerPointOfDamage;
+        public static ConfigEntry<float> RepairUpdateInterval, FuelConsumedPerPointOfDamage, RepairWoodWhen, RepairOtherWhen;
         public static ConfigEntry<int> RepairContainerWidth, RepairContainerHeight;
+        public static ConfigEntry<string> Fuels;
 
         private readonly int pieceMask = LayerMask.GetMask("piece");
 
         private Container _container;
         private Inventory _inventory;
+        private float _fuelAccumulator;
 
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -59,8 +61,20 @@ namespace ChebsNecromancy.Structures
             RepairContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonContainerHeight", 4,
                 "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
 
-            ResinConsumedPerPointOfDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ResinConsumedPerPointOfDamage", .25f,
-                "How low a structure's health must drop in order for it to be repaired.",
+            FuelConsumedPerPointOfDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FuelConsumedPerPointOfDamage", .01f,
+                "How much fuel is consumed per point of damage. For example at 0.01 it will cost 1 fuel per 100 points of damage healed.",
+                null, true);
+            
+            RepairWoodWhen = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairWoodWhen", .25f,
+                "How low a wooden structure's health must drop in order for it to be repaired. Set to 0 to repair regardless of damage.",
+                null, true);
+            
+            RepairOtherWhen = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairOtherWhen", 0f,
+                "How low a non-wood structure's health must drop in order for it to be repaired. Set to 0 to repair regardless of damage.",
+                null, true);
+            
+            Fuels = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Fuels", "Resin,GreydwarfEye,Pukeberries",
+                "The items that are consumed as fuel when repairing. Please use a comma-delimited list of prefab names.",
                 null, true);
         }
         
@@ -92,22 +106,21 @@ namespace ChebsNecromancy.Structures
                 foreach (var wearNTear in piecesInRange)
                 {
                     var healthPercent = wearNTear.GetHealthPercentage();
-                    if (healthPercent < 1
-                        && ConsumeResin(wearNTear))
+                    if (RepairDamage(wearNTear))
                     {
-                        wearNTear.Repair();
-                        
-                        // make the hammer sound and puff of smoke etc. if the player is nearby
                         var player = Player.m_localPlayer;
+                        
+                        // show repair text if player is near the pylon
+                        if (Vector3.Distance(player.transform.position, transform.position) < 5)
+                        {
+                            Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
+                                $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
+                        }
+                        
+                        // make the hammer sound and puff of smoke etc. if the player is nearby the thing being repaired
                         var distance = Vector3.Distance(player.transform.position, wearNTear.transform.position);
                         if (distance < 20)
                         {
-                            if (distance < 5)
-                            {
-                                Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
-                                    $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
-                            }
-                            
                             var localPiece = wearNTear.m_piece;
                             if (localPiece is not null)
                             {
@@ -123,20 +136,98 @@ namespace ChebsNecromancy.Structures
             }
         }
 
-        private bool ConsumeResin(WearNTear wearNTear)
+        private bool RepairDamage(WearNTear wearNTear)
         {
-            var resinInInventory = _inventory.CountItems("$item_resin");
+            if (wearNTear.GetHealthPercentage() >= 1f) return false;
+            
+            if (wearNTear.m_materialType is WearNTear.MaterialType.Wood or WearNTear.MaterialType.HardWood)
+            {
+                if (RepairWoodWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairWoodWhen.Value) return false;
+            }
+            else
+            {
+                if (RepairOtherWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairOtherWhen.Value) return false;
+            }
 
+            var consumedFuel = ConsumeFuel(wearNTear);
+            if (consumedFuel) wearNTear.Repair();
+            return consumedFuel;
+        }
+        
+        private int FuelInInventory
+        {
+            get
+            {
+                var accumulator = 0;
+                foreach (var fuel in Fuels.Value.Split(','))
+                {
+                    var fuelPrefab = ZNetScene.instance.GetPrefab(fuel);
+                    if (fuelPrefab == null) continue;
+                    accumulator +=
+                        _inventory.CountItems(fuelPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name);
+                }
+                return accumulator;
+            }
+        }
+
+        private bool ConsumeFuel(int fuelToConsume)
+        {
+            var consumableFuels = new Dictionary<string, int>();
+            var fuelAvailable = 0;
+            foreach (var fuel in Fuels.Value.Split(','))
+            {
+                var fuelPrefab = ZNetScene.instance.GetPrefab(fuel);
+                if (fuelPrefab == null) continue;
+                var fuelName = fuelPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_name;
+                var canConsume = _inventory.CountItems(fuelName);
+                consumableFuels[fuelName] = canConsume;
+                fuelAvailable += canConsume;
+
+                if (fuelAvailable >= fuelToConsume) break;
+            }
+
+            // not enough fuel
+            if (fuelAvailable < fuelToConsume) return false;
+            
+            // enough fuel; consume
+            foreach (var key in consumableFuels.Keys)
+            {
+                var fuel = consumableFuels[key];
+                if (fuelToConsume <= fuel)
+                {
+                    _inventory.RemoveItem(key, fuelToConsume);
+                    return true;
+                }
+                
+                fuelToConsume -= fuel;
+                _inventory.RemoveItem(key, fuel);
+            }
+
+            return true;
+        }
+
+        private bool ConsumeFuel(WearNTear wearNTear)
+        {
+            // first pay any fuel debts
+            if (_fuelAccumulator >= 1 && FuelInInventory >= _fuelAccumulator)
+            {
+                ConsumeFuel((int)_fuelAccumulator);
+                _fuelAccumulator -= (int)_fuelAccumulator;
+            }
+            
+            // debts paid - continue on to repair the current damage
             var percentage = wearNTear.GetHealthPercentage();
             if (percentage <= 0) return false;
 
-            var resinToConsume = (100 - (percentage * 100)) * ResinConsumedPerPointOfDamage.Value;
-            if (resinToConsume < 1) resinToConsume = 1;
+            var fuelToConsume = (100 - (percentage * 100)) * FuelConsumedPerPointOfDamage.Value;
+            // fuel to consume is too small to be currently deducated -> remember the amount and attempt to deduct
+            // once it is larger
+            if (fuelToConsume < 1) _fuelAccumulator += fuelToConsume;
 
-            if (resinToConsume > resinInInventory) return false;
+            if (fuelToConsume > FuelInInventory) return false;
 
-            _inventory.RemoveItem("$item_resin", (int)resinToConsume);
-            
+            ConsumeFuel((int)fuelToConsume);
+
             return true;
         }
 
@@ -150,6 +241,7 @@ namespace ChebsNecromancy.Structures
             {
                 var wearAndTear = nearbyCollider.GetComponentInParent<WearNTear>();
                 if (wearAndTear == null) continue;
+                if (!wearAndTear.m_nview.IsValid()) continue;
                 result.Add(wearAndTear);
             }
 
