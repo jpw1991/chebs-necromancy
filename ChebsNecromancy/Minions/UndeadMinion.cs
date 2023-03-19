@@ -45,6 +45,9 @@ namespace ChebsNecromancy.Minions
         {
             None,
             Leather,
+            LeatherTroll,
+            LeatherWolf,
+            LeatherLox,
             Bronze,
             Iron,
             BlackMetal,
@@ -164,12 +167,17 @@ namespace ChebsNecromancy.Minions
                 return ArmorType.Bronze;
             }
             
+            int trollHideInInventory = player.GetInventory().CountItems("$item_trollhide");
+            if (trollHideInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            {
+                return ArmorType.LeatherTroll;
+            }
+            
             // todo: expose these options to config
             var leatherItemTypes = new List<string>()
             {
                 "$item_leatherscraps",
                 "$item_deerhide",
-                "$item_trollhide",
                 "$item_wolfpelt",
                 "$item_loxpelt",
                 "$item_scalehide"

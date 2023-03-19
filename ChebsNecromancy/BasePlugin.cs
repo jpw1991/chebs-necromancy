@@ -31,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.3.11";
+        public const string PluginVersion = "2.4.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -420,7 +420,10 @@ namespace ChebsNecromancy
                     new SkeletonBowPoison(),
                     new SkeletonBowFrost(),
                     new SkeletonBowSilver(),
-                    new SkeletonMaceNeedle()
+                    new SkeletonMaceNeedle(),
+                    new SkeletonHelmetLeatherTroll(),
+                    new SkeletonArmorLeatherChestTroll(),
+                    new SkeletonArmorLeatherLegsTroll()
                 };
                 minionWornItems.ForEach(minionItem =>
                 {

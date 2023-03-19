@@ -174,6 +174,20 @@ namespace ChebsNecromancy.Minions
                     }
 
                     break;
+                case ArmorType.LeatherTroll:
+                    defaultItems.AddRange(new GameObject[]
+                    {
+                        ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeatherTroll"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherChestTroll"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherLegsTroll"),
+                        //ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    });
+                    if (BasePlugin.DurabilityDamage.Value)
+                    {
+                        Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value;
+                    }
+
+                    break;
                 case ArmorType.Bronze:
                     defaultItems.AddRange(new GameObject[]
                     {

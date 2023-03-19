@@ -199,6 +199,7 @@ namespace ChebsNecromancy.Minions
                     return ZNetScene.instance.GetPrefab(armorType switch
                     {
                         ArmorType.Leather => "ChebGonaz_SkeletonHelmetLeatherPoison",
+                        ArmorType.LeatherTroll => "ChebGonaz_SkeletonHelmetLeatherPoisonTroll",
                         ArmorType.Bronze => "ChebGonaz_SkeletonHelmetBronzePoison",
                         ArmorType.Iron => "ChebGonaz_SkeletonHelmetIronPoison",
                         _ => "ChebGonaz_HelmetBlackIronSkeletonPoison",
@@ -207,6 +208,7 @@ namespace ChebsNecromancy.Minions
                 return ZNetScene.instance.GetPrefab(armorType switch
                 {
                     ArmorType.Leather => "ChebGonaz_SkeletonHelmetLeather",
+                    ArmorType.LeatherTroll => "ChebGonaz_SkeletonHelmetLeatherTroll",
                     ArmorType.Bronze => "ChebGonaz_SkeletonHelmetBronze",
                     ArmorType.Iron => "ChebGonaz_SkeletonHelmetIron",
                     _ => "ChebGonaz_HelmetBlackIronSkeleton",
@@ -228,6 +230,15 @@ namespace ChebsNecromancy.Minions
                         ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
                         ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
                         ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    });
+                    if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value; }
+                    break;
+                case ArmorType.LeatherTroll:
+                    defaultItems.AddRange(new GameObject[] {
+                        GetHelmetPrefab(),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherChestTroll"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherLegsTroll"),
+                        ZNetScene.instance.GetPrefab("CapeTrollHide"),
                     });
                     if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value; }
                     break;
@@ -540,7 +551,6 @@ namespace ChebsNecromancy.Minions
                     {
                         "$item_leatherscraps",
                         "$item_deerhide",
-                        "$item_trollhide",
                         "$item_wolfpelt",
                         "$item_loxpelt",
                         "$item_scalehide"
@@ -556,6 +566,9 @@ namespace ChebsNecromancy.Minions
                             break;
                         }
                     }
+                    break;
+                case ArmorType.LeatherTroll:
+                    player.GetInventory().RemoveItem("$item_trollhide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
                 case ArmorType.Bronze:
                     player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);

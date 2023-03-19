@@ -316,7 +316,6 @@ namespace ChebsNecromancy.Items
                     {
                         "$item_leatherscraps",
                         "$item_deerhide",
-                        "$item_trollhide",
                         "$item_wolfpelt",
                         "$item_loxpelt",
                         "$item_scalehide"
@@ -332,6 +331,9 @@ namespace ChebsNecromancy.Items
                             break;
                         }
                     }
+                    break;
+                case UndeadMinion.ArmorType.LeatherTroll:
+                    player.GetInventory().RemoveItem("$item_trollhide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
                 case UndeadMinion.ArmorType.Bronze:
                     player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
