@@ -202,6 +202,20 @@ namespace ChebsNecromancy.Minions
                     }
 
                     break;
+                case ArmorType.LeatherLox:
+                    defaultItems.AddRange(new GameObject[]
+                    {
+                        ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonHelmetLeatherLox"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherChestLox"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherLegsLox"),
+                        //ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                    });
+                    if (BasePlugin.DurabilityDamage.Value)
+                    {
+                        Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value;
+                    }
+
+                    break;
                 case ArmorType.Bronze:
                     defaultItems.AddRange(new GameObject[]
                     {

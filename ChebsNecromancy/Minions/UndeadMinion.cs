@@ -179,12 +179,17 @@ namespace ChebsNecromancy.Minions
                 return ArmorType.LeatherWolf;
             }
             
+            int loxHideInInventory = player.GetInventory().CountItems("$item_loxpelt");
+            if (loxHideInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            {
+                return ArmorType.LeatherLox;
+            }
+            
             // todo: expose these options to config
             var leatherItemTypes = new List<string>()
             {
                 "$item_leatherscraps",
                 "$item_deerhide",
-                "$item_loxpelt",
                 "$item_scalehide"
             };
             

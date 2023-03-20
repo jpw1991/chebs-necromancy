@@ -133,6 +133,10 @@
     <Compile Include="Items\Armor\Bronze\SkeletonHelmetBronzePoison.cs" />
     <Compile Include="Items\Armor\Iron\SkeletonHelmetIron.cs" />
     <Compile Include="Items\Armor\Iron\SkeletonHelmetIronPoison.cs" />
+    <Compile Include="Items\Armor\Leather\Lox\SkeletonArmorLeatherChestLox.cs" />
+    <Compile Include="Items\Armor\Leather\Lox\SkeletonArmorLeatherLegsLox.cs" />
+    <Compile Include="Items\Armor\Leather\Lox\SkeletonHelmetLeatherLox.cs" />
+    <Compile Include="Items\Armor\Leather\Lox\SkeletonHelmetLeatherPoisonLox.cs" />
     <Compile Include="Items\Armor\Leather\SkeletonHelmetLeather.cs" />
     <Compile Include="Items\Armor\Leather\SkeletonHelmetLeatherPoison.cs" />
     <Compile Include="Items\Armor\Leather\Troll\SkeletonArmorLeatherLegsTroll.cs" />
