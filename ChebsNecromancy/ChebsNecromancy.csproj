@@ -139,6 +139,10 @@
     <Compile Include="Items\Armor\Leather\Troll\SkeletonArmorLeatherChestTroll.cs" />
     <Compile Include="Items\Armor\Leather\Troll\SkeletonHelmetLeatherPoisonTroll.cs" />
     <Compile Include="Items\Armor\Leather\Troll\SkeletonHelmetLeatherTroll.cs" />
+    <Compile Include="Items\Armor\Leather\Wolf\SkeletonArmorLeatherChestWolf.cs" />
+    <Compile Include="Items\Armor\Leather\Wolf\SkeletonArmorLeatherLegsWolf.cs" />
+    <Compile Include="Items\Armor\Leather\Wolf\SkeletonHelmetLeatherPoisonWolf.cs" />
+    <Compile Include="Items\Armor\Leather\Wolf\SkeletonHelmetLeatherWolf.cs" />
     <Compile Include="Items\Armor\Mage\SkeletonMageCirclet.cs" />
     <Compile Include="Items\Armor\Player\NecromancerHood.cs" />
     <Compile Include="Items\Armor\Player\SpectralShroud.cs" />

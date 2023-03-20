@@ -11,6 +11,8 @@ using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.Armor.Leather.Troll;
+using ChebsNecromancy.Items.Wolf;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Structures;
 using HarmonyLib;
@@ -31,7 +33,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.4.0";
+        public const string PluginVersion = "2.4.1";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -422,8 +424,13 @@ namespace ChebsNecromancy
                     new SkeletonBowSilver(),
                     new SkeletonMaceNeedle(),
                     new SkeletonHelmetLeatherTroll(),
+                    new SkeletonHelmetLeatherPoisonTroll(),
                     new SkeletonArmorLeatherChestTroll(),
-                    new SkeletonArmorLeatherLegsTroll()
+                    new SkeletonArmorLeatherLegsTroll(),
+                    new SkeletonHelmetLeatherWolf(),
+                    new SkeletonHelmetLeatherPoisonWolf(),
+                    new SkeletonArmorLeatherChestWolf(),
+                    new SkeletonArmorLeatherLegsWolf()
                 };
                 minionWornItems.ForEach(minionItem =>
                 {

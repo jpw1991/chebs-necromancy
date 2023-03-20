@@ -1,4 +1,4 @@
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Armor.Leather.Troll
 {
     internal class SkeletonHelmetLeatherPoisonTroll : Item
     {
