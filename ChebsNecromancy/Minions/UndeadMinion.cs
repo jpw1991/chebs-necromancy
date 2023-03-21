@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
+using ChebsNecromancy.Items;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
@@ -67,6 +68,7 @@ namespace ChebsNecromancy.Minions
         public const string MinionWaitPosZdoKey = "UndeadMinionWaitPosition";
         public const string MinionWaitObjectName = "UndeadMinionWaitPositionObject";
         public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
+        public const string MinionEmblemZdoKey = "UndeadMinionEmblem";
         
         public int createdOrder;
 
@@ -221,7 +223,7 @@ namespace ChebsNecromancy.Minions
 
         public virtual void Awake()
         {
-            Tameable tameable = GetComponent<Tameable>();
+            var tameable = GetComponent<Tameable>();
             if (tameable != null)
             {
                 // let the minions generate a little necromancy XP for their master
@@ -575,5 +577,22 @@ namespace ChebsNecromancy.Minions
             }
         }
 
+        #region EmblemZDO
+        public string Emblem
+        {
+            get => TryGetComponent(out ZNetView zNetView) ? zNetView.GetZDO().GetString(MinionEmblemZdoKey) : InternalName.GetName(NecromancerCape.Emblem.Blank);
+            set
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    zNetView.GetZDO().Set(MinionEmblemZdoKey, value);
+                }
+                else
+                {
+                    Logger.LogError($"Cannot set emblem to {value} because it has no ZNetView component.");
+                }
+            }
+        }
+        #endregion
     }
 }

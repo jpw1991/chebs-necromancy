@@ -148,6 +148,7 @@
     <Compile Include="Items\Armor\Leather\Wolf\SkeletonHelmetLeatherPoisonWolf.cs" />
     <Compile Include="Items\Armor\Leather\Wolf\SkeletonHelmetLeatherWolf.cs" />
     <Compile Include="Items\Armor\Mage\SkeletonMageCirclet.cs" />
+    <Compile Include="Items\Armor\Player\NecromancerCape.cs" />
     <Compile Include="Items\Armor\Player\NecromancerHood.cs" />
     <Compile Include="Items\Armor\Player\SpectralShroud.cs" />
     <Compile Include="Items\Tools\SkeletonPickaxe.cs" />

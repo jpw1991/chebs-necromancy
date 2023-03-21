@@ -34,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.4.2";
+        public const string PluginVersion = "2.4.3";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -51,6 +51,7 @@ namespace ChebsNecromancy
 
         private readonly SpectralShroud spectralShroudItem = new();
         private readonly NecromancerHood necromancersHoodItem = new();
+        private readonly NecromancerCape necromancerCapeItem = new();
 
         private float inputDelay = 0;
 
@@ -262,6 +263,7 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
+            necromancerCapeItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
@@ -378,6 +380,10 @@ namespace ChebsNecromancy
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
                 
+                // GameObject necromancersCapePrefab = LoadPrefabFromBundle(necromancerCapeItem.PrefabName, chebgonazAssetBundle);
+                // ItemManager.Instance.AddItem(necromancerCapeItem.GetCustomItemFromPrefab(necromancersCapePrefab));
+                NecromancerCape.LoadEmblems(chebgonazAssetBundle);
+
                 // Orb of Beckoning
                 GameObject orbOfBeckoningProjectilePrefab = 
                     LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle);
