@@ -522,6 +522,17 @@ namespace ChebsNecromancy.Minions
                 .OrderBy(t => Vector3.Distance(t.transform.position, targetTransform.position)) // sort to find closest
                 .FirstOrDefault(); // return closest
         }
+        
+        public static List<T> FindNearby<T>(Transform targetTransform, float radius, int mask, Func<T, bool> where, bool interactable) where T : Component
+        {
+            return Physics.OverlapSphere(targetTransform.position, radius, mask)
+                .Where(c => c.GetComponentInParent<T>() != null) // check if desired component exists
+                .Select(c => c.GetComponentInParent<T>()) // get the component we want (e.g. ItemDrop)
+                .Where(c => !interactable ||
+                            (c.TryGetComponent(out ZNetView znv) && znv.IsValid())) // only interactable objects
+                .Where(where) // allow the caller to specify additional constraints (e.g. drop => drop.GetTimeSinceSpawned() > 4)
+                .ToList();
+        }
 
         #region CreatedAtLevelZDO
         public void SetCreatedAtLevel(float necromancyLevel)

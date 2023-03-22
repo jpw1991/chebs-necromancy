@@ -222,6 +222,7 @@
     <Compile Include="Structures\RepairPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />
     <Compile Include="Structures\Structure.cs" />
+    <Compile Include="Structures\TreasurePylon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -34,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.4.4";
+        public const string PluginVersion = "2.5.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -272,6 +272,7 @@ namespace ChebsNecromancy
             BatLantern.CreateConfigs(this);
             FarmingPylon.CreateConfigs(this);
             RepairPylon.CreateConfigs(this);
+            TreasurePylon.CreateConfigs(this);
 
             LargeCargoCrate.CreateConfigs(this);
 
@@ -557,6 +558,15 @@ namespace ChebsNecromancy
                     RepairPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(repairPylonPrefab,
                         chebgonazAssetBundle.LoadAsset<Sprite>(RepairPylon.ChebsRecipeConfig.IconName))
                 );
+                
+                GameObject treasurePylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.ChebsRecipeConfig.PrefabName);
+                PieceManager.Instance.AddPiece(
+                    TreasurePylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(treasurePylonPrefab,
+                        chebgonazAssetBundle.LoadAsset<Sprite>(TreasurePylon.ChebsRecipeConfig.IconName))
+                );
+                GameObject treasurePylonEffectPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.EffectName);
+                PrefabManager.Instance.AddPrefab(treasurePylonEffectPrefab);
 
                 #endregion
             }
