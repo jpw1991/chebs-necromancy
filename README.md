@@ -128,6 +128,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+21/03/2023 | 2.4.4 | optimize workers by staggering update intervals (50 Neckros/lumberjacks/miners no longer attempt to scan at the same time); add custom cape emblems for armored skeletons; add wolf, lox and troll leather armor varieties
 16/03/2023 | 2.3.11 | repair pylon consumes resin more intelligently; repair pylon permits multiple customizable fuel types
 15/03/2023 | 2.3.10 | implement maximum time allowed between dropoffs for Neckros
 14/03/2023 | 2.3.9 | upgrade jotunn; mess with references; fix logic error

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
+using ChebsNecromancy.Items;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
@@ -45,6 +46,9 @@ namespace ChebsNecromancy.Minions
         {
             None,
             Leather,
+            LeatherTroll,
+            LeatherWolf,
+            LeatherLox,
             Bronze,
             Iron,
             BlackMetal,
@@ -64,6 +68,7 @@ namespace ChebsNecromancy.Minions
         public const string MinionWaitPosZdoKey = "UndeadMinionWaitPosition";
         public const string MinionWaitObjectName = "UndeadMinionWaitPositionObject";
         public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
+        public const string MinionEmblemZdoKey = "UndeadMinionEmblem";
         
         public int createdOrder;
 
@@ -164,14 +169,29 @@ namespace ChebsNecromancy.Minions
                 return ArmorType.Bronze;
             }
             
+            int trollHideInInventory = player.GetInventory().CountItems("$item_trollhide");
+            if (trollHideInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            {
+                return ArmorType.LeatherTroll;
+            }
+            
+            int wolfHideInInventory = player.GetInventory().CountItems("$item_wolfpelt");
+            if (wolfHideInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            {
+                return ArmorType.LeatherWolf;
+            }
+            
+            int loxHideInInventory = player.GetInventory().CountItems("$item_loxpelt");
+            if (loxHideInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+            {
+                return ArmorType.LeatherLox;
+            }
+            
             // todo: expose these options to config
             var leatherItemTypes = new List<string>()
             {
                 "$item_leatherscraps",
                 "$item_deerhide",
-                "$item_trollhide",
-                "$item_wolfpelt",
-                "$item_loxpelt",
                 "$item_scalehide"
             };
             
@@ -203,7 +223,7 @@ namespace ChebsNecromancy.Minions
 
         public virtual void Awake()
         {
-            Tameable tameable = GetComponent<Tameable>();
+            var tameable = GetComponent<Tameable>();
             if (tameable != null)
             {
                 // let the minions generate a little necromancy XP for their master
@@ -557,5 +577,23 @@ namespace ChebsNecromancy.Minions
             }
         }
 
+        #region EmblemZDO
+        public string Emblem
+        {
+            // todo: refactor to store (int)Emblem value instead
+            get => TryGetComponent(out ZNetView zNetView) ? zNetView.GetZDO().GetString(MinionEmblemZdoKey) : InternalName.GetName(NecromancerCape.Emblem.Blank);
+            set
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    zNetView.GetZDO().Set(MinionEmblemZdoKey, value);
+                }
+                else
+                {
+                    Logger.LogError($"Cannot set emblem to {value} because it has no ZNetView component.");
+                }
+            }
+        }
+        #endregion
     }
 }

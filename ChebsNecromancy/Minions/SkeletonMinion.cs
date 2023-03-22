@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
@@ -8,7 +7,6 @@ using ChebsNecromancy.Items;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
-using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions
 {
@@ -129,18 +127,40 @@ namespace ChebsNecromancy.Minions
             {
                 humanoid.m_visEquipment.m_currentChestItemHash,
                 humanoid.m_visEquipment.m_currentLegItemHash,
-                humanoid.m_visEquipment.m_currentHelmetItemHash
+                humanoid.m_visEquipment.m_currentHelmetItemHash,
             };
             equipmentHashes.ForEach(hash =>
             {
-                ZNetScene.instance.GetPrefab(hash);
-
                 var equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
                 if (equipmentPrefab != null)
                 {
                     humanoid.GiveDefaultItem(equipmentPrefab);
                 }
             });
+
+            var shoulderHash = humanoid.m_visEquipment.m_currentShoulderItemHash;
+            var shoulderPrefab = ZNetScene.instance.GetPrefab(shoulderHash);
+            if (shoulderPrefab != null
+                && shoulderPrefab.TryGetComponent(out ItemDrop itemDrop)
+                && itemDrop.name.Equals("CapeLox"))
+            {
+                var emblem = Emblem;
+                if (Emblem.Contains(emblem))
+                {
+                    var material = NecromancerCape.Emblems[Emblem];
+                    humanoid.m_visEquipment.m_shoulderItemInstances.ForEach(g => 
+                        g.GetComponentsInChildren<SkinnedMeshRenderer>().ToList().ForEach(m =>
+                        {
+                            var mats = m.materials;
+                            for (int i = 0; i < mats.Length; i++)
+                            {
+                                mats[i] = material;
+                            }
+                            m.materials = mats;
+                        })
+                    );   
+                }
+            }
 
             RestoreDrops();
 
@@ -199,6 +219,9 @@ namespace ChebsNecromancy.Minions
                     return ZNetScene.instance.GetPrefab(armorType switch
                     {
                         ArmorType.Leather => "ChebGonaz_SkeletonHelmetLeatherPoison",
+                        ArmorType.LeatherTroll => "ChebGonaz_SkeletonHelmetLeatherPoisonTroll",
+                        ArmorType.LeatherWolf => "ChebGonaz_SkeletonHelmetLeatherPoisonWolf",
+                        ArmorType.LeatherLox => "ChebGonaz_SkeletonHelmetLeatherPoisonLox",
                         ArmorType.Bronze => "ChebGonaz_SkeletonHelmetBronzePoison",
                         ArmorType.Iron => "ChebGonaz_SkeletonHelmetIronPoison",
                         _ => "ChebGonaz_HelmetBlackIronSkeletonPoison",
@@ -207,6 +230,9 @@ namespace ChebsNecromancy.Minions
                 return ZNetScene.instance.GetPrefab(armorType switch
                 {
                     ArmorType.Leather => "ChebGonaz_SkeletonHelmetLeather",
+                    ArmorType.LeatherTroll => "ChebGonaz_SkeletonHelmetLeatherTroll",
+                    ArmorType.LeatherWolf => "ChebGonaz_SkeletonHelmetLeatherWolf",
+                    ArmorType.LeatherLox => "ChebGonaz_SkeletonHelmetLeatherLox",
                     ArmorType.Bronze => "ChebGonaz_SkeletonHelmetBronze",
                     ArmorType.Iron => "ChebGonaz_SkeletonHelmetIron",
                     _ => "ChebGonaz_HelmetBlackIronSkeleton",
@@ -223,7 +249,7 @@ namespace ChebsNecromancy.Minions
             switch (armorType)
             {
                 case ArmorType.Leather:
-                    defaultItems.AddRange(new GameObject[] {
+                    defaultItems.AddRange(new[] {
                         GetHelmetPrefab(),
                         ZNetScene.instance.GetPrefab("ArmorLeatherChest"),
                         ZNetScene.instance.GetPrefab("ArmorLeatherLegs"),
@@ -231,32 +257,62 @@ namespace ChebsNecromancy.Minions
                     });
                     if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value; }
                     break;
+                case ArmorType.LeatherTroll:
+                    defaultItems.AddRange(new[] {
+                        GetHelmetPrefab(),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherChestTroll"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherLegsTroll"),
+                        ZNetScene.instance.GetPrefab("CapeTrollHide"),
+                    });
+                    if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value; }
+                    break;
+                case ArmorType.LeatherWolf:
+                    defaultItems.AddRange(new[] {
+                        GetHelmetPrefab(),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherChestWolf"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherLegsWolf"),
+                        ZNetScene.instance.GetPrefab("CapeWolf"),
+                    });
+                    if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value; }
+                    break;
+                case ArmorType.LeatherLox:
+                    defaultItems.AddRange(new[] {
+                        GetHelmetPrefab(),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherChestLox"),
+                        ZNetScene.instance.GetPrefab("ChebGonaz_ArmorLeatherLegsLox"),
+                        ZNetScene.instance.GetPrefab("CapeLox"),
+                    });
+                    if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageLeather.Value; }
+                    break;
                 case ArmorType.Bronze:
-                    defaultItems.AddRange(new GameObject[] {
+                    defaultItems.AddRange(new[] {
                         GetHelmetPrefab(),
                         ZNetScene.instance.GetPrefab("ArmorBronzeChest"),
                         ZNetScene.instance.GetPrefab("ArmorBronzeLegs"),
-                        ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                        ZNetScene.instance.GetPrefab("CapeLox"),
                     });
                     if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageBronze.Value; }
+                    Emblem = InternalName.GetName(NecromancerCape.EmblemConfig.Value);
                     break;
                 case ArmorType.Iron:
-                    defaultItems.AddRange(new GameObject[] {
+                    defaultItems.AddRange(new[] {
                         GetHelmetPrefab(),
                         ZNetScene.instance.GetPrefab("ArmorIronChest"),
                         ZNetScene.instance.GetPrefab("ArmorIronLegs"),
-                        ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                        ZNetScene.instance.GetPrefab("CapeLox"),
                     });
                     if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageIron.Value; }
+                    Emblem = InternalName.GetName(NecromancerCape.EmblemConfig.Value);
                     break;
                 case ArmorType.BlackMetal:
-                    defaultItems.AddRange(new GameObject[] {
+                    defaultItems.AddRange(new[] {
                         GetHelmetPrefab(),
                         ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronChest"),
                         ZNetScene.instance.GetPrefab("ChebGonaz_ArmorBlackIronLegs"),
-                        ZNetScene.instance.GetPrefab("CapeDeerHide"),
+                        ZNetScene.instance.GetPrefab("CapeLox"),
                     });
                     if (BasePlugin.DurabilityDamage.Value) { Player.m_localPlayer.GetRightItem().m_durability -= BasePlugin.DurabilityDamageBlackIron.Value; }
+                    Emblem = InternalName.GetName(NecromancerCape.EmblemConfig.Value);
                     break;
             }
 
@@ -431,6 +487,36 @@ namespace ChebsNecromancy.Minions
                             m_chance = 1f
                         });
                         break;
+                    case ArmorType.LeatherTroll:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("TrollHide"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.LeatherWolf:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("WolfPelt"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.LeatherLox:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("LoxPelt"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
                     case ArmorType.Bronze:
                         characterDrop.m_drops.Add(new CharacterDrop.Drop
                         {
@@ -540,9 +626,6 @@ namespace ChebsNecromancy.Minions
                     {
                         "$item_leatherscraps",
                         "$item_deerhide",
-                        "$item_trollhide",
-                        "$item_wolfpelt",
-                        "$item_loxpelt",
                         "$item_scalehide"
                     };
                     
@@ -556,6 +639,15 @@ namespace ChebsNecromancy.Minions
                             break;
                         }
                     }
+                    break;
+                case ArmorType.LeatherTroll:
+                    player.GetInventory().RemoveItem("$item_trollhide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    break;
+                case ArmorType.LeatherWolf:
+                    player.GetInventory().RemoveItem("$item_wolfpelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    break;
+                case ArmorType.LeatherLox:
+                    player.GetInventory().RemoveItem("$item_loxpelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
                 case ArmorType.Bronze:
                     player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);

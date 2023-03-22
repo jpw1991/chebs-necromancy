@@ -11,6 +11,9 @@ using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.Armor.Leather.Troll;
+using ChebsNecromancy.Items.Lox;
+using ChebsNecromancy.Items.Wolf;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Structures;
 using HarmonyLib;
@@ -31,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.3.11";
+        public const string PluginVersion = "2.4.4";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -48,6 +51,7 @@ namespace ChebsNecromancy
 
         private readonly SpectralShroud spectralShroudItem = new();
         private readonly NecromancerHood necromancersHoodItem = new();
+        private readonly NecromancerCape necromancerCapeItem = new();
 
         private float inputDelay = 0;
 
@@ -259,6 +263,7 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
+            necromancerCapeItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
@@ -375,6 +380,8 @@ namespace ChebsNecromancy
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
                 
+                NecromancerCape.LoadEmblems(chebgonazAssetBundle);
+
                 // Orb of Beckoning
                 GameObject orbOfBeckoningProjectilePrefab = 
                     LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle);
@@ -420,7 +427,19 @@ namespace ChebsNecromancy
                     new SkeletonBowPoison(),
                     new SkeletonBowFrost(),
                     new SkeletonBowSilver(),
-                    new SkeletonMaceNeedle()
+                    new SkeletonMaceNeedle(),
+                    new SkeletonHelmetLeatherTroll(),
+                    new SkeletonHelmetLeatherPoisonTroll(),
+                    new SkeletonArmorLeatherChestTroll(),
+                    new SkeletonArmorLeatherLegsTroll(),
+                    new SkeletonHelmetLeatherWolf(),
+                    new SkeletonHelmetLeatherPoisonWolf(),
+                    new SkeletonArmorLeatherChestWolf(),
+                    new SkeletonArmorLeatherLegsWolf(),
+                    new SkeletonHelmetLeatherLox(),
+                    new SkeletonHelmetLeatherPoisonLox(),
+                    new SkeletonArmorLeatherChestLox(),
+                    new SkeletonArmorLeatherLegsLox()
                 };
                 minionWornItems.ForEach(minionItem =>
                 {
