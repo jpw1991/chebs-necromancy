@@ -380,8 +380,6 @@ namespace ChebsNecromancy
                 GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
                 
-                // GameObject necromancersCapePrefab = LoadPrefabFromBundle(necromancerCapeItem.PrefabName, chebgonazAssetBundle);
-                // ItemManager.Instance.AddItem(necromancerCapeItem.GetCustomItemFromPrefab(necromancersCapePrefab));
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
 
                 // Orb of Beckoning

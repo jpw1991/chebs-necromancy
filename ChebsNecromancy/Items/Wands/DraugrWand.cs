@@ -707,6 +707,36 @@ namespace ChebsNecromancy.Items
                             m_chance = 1f
                         });
                         break;
+                    case UndeadMinion.ArmorType.LeatherTroll:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("TrollHide"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case UndeadMinion.ArmorType.LeatherWolf:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("WolfPelt"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case UndeadMinion.ArmorType.LeatherLox:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("LoxPelt"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
                     case UndeadMinion.ArmorType.Bronze:
                         characterDrop.m_drops.Add(new CharacterDrop.Drop
                         {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
@@ -8,7 +7,6 @@ using ChebsNecromancy.Items;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
-using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions
 {
@@ -482,6 +480,36 @@ namespace ChebsNecromancy.Minions
                             m_onePerPlayer = true,
                             m_amountMin = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
                             m_amountMax = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.LeatherTroll:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("TrollHide"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.LeatherWolf:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("WolfPelt"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_chance = 1f
+                        });
+                        break;
+                    case ArmorType.LeatherLox:
+                        characterDrop.m_drops.Add(new CharacterDrop.Drop
+                        {
+                            m_prefab = ZNetScene.instance.GetPrefab("LoxPelt"),
+                            m_onePerPlayer = true,
+                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
                             m_chance = 1f
                         });
                         break;
