@@ -60,7 +60,9 @@ namespace ChebsNecromancy.Minions.AI
             if (_monsterAI.GetFollowTarget() != null) transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down);
             if (Time.time > nextCheck)
             {
-                nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value;
+                nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value
+                                      + Random.value; // add a fraction of a second so that multiple
+                                                      // workers don't all simultaneously scan
                 
                 LookForMineableObjects();
                 if (_monsterAI.GetFollowTarget() != null

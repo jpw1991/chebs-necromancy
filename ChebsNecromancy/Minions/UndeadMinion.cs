@@ -580,6 +580,7 @@ namespace ChebsNecromancy.Minions
         #region EmblemZDO
         public string Emblem
         {
+            // todo: refactor to store (int)Emblem value instead
             get => TryGetComponent(out ZNetView zNetView) ? zNetView.GetZDO().GetString(MinionEmblemZdoKey) : InternalName.GetName(NecromancerCape.Emblem.Blank);
             set
             {

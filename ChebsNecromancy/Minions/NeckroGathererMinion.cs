@@ -5,6 +5,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions
 {
@@ -15,7 +16,7 @@ namespace ChebsNecromancy.Minions
 
         private float lastUpdate;
 
-        public static ConfigEntry<bool> Allowed, ShowMessages;
+        public static ConfigEntry<bool> Allowed;
         public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance, MaxSecondsBeforeDropoff;
 
         private static List<ItemDrop> _itemDrops = new();
@@ -29,6 +30,8 @@ namespace ChebsNecromancy.Minions
         private Container dropoffTarget;
 
         private MonsterAI _monsterAI;
+
+        private Humanoid _humanoid;
 
         private ItemDrop _currentItem;
 
@@ -48,8 +51,6 @@ namespace ChebsNecromancy.Minions
             UpdateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
                 6f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            ShowMessages = plugin.Config.Bind("NeckroGatherer (Client)", "NeckroGathererShowMessages",
-                true, new ConfigDescription("Whether the Neckro Gatherer talks or not."));
             PickupDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDelay",
                 10f, new ConfigDescription("The Neckro won't pick up items immediately upon seeing them. Rather, it will make note of them and pick them up if they're still on the ground after this delay.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -77,6 +78,7 @@ namespace ChebsNecromancy.Minions
             canBeCommanded = false;
 
             _monsterAI = GetComponent<MonsterAI>();
+            _humanoid = GetComponent<Humanoid>();
         }
 
         private void Update()
@@ -109,16 +111,13 @@ namespace ChebsNecromancy.Minions
                 }
             }
             //todo: loot dead gatherers
-            
-            if (ShowMessages.Value
-                && !String.IsNullOrEmpty(NeckroStatus)
-                && Player.m_localPlayer != null
-                && Vector3.Distance(Player.m_localPlayer.transform.position, transform.position) < 5)
-            {
-                Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", NeckroStatus, false);   
-            }
 
-            lastUpdate = Time.time + UpdateDelay.Value;
+            _humanoid.m_name = NeckroStatus;
+
+            lastUpdate = Time.time
+                         + UpdateDelay.Value
+                         + Random.value; // add a fraction of a second so that multiple
+                                         // workers don't all simultaneously scan
         }
 
         private bool LookForNearbyItems()

@@ -144,18 +144,22 @@ namespace ChebsNecromancy.Minions
                 && shoulderPrefab.TryGetComponent(out ItemDrop itemDrop)
                 && itemDrop.name.Equals("CapeLox"))
             {
-                var material = NecromancerCape.Emblems[Emblem];
-                Logger.LogInfo($"material={material}");
-                humanoid.m_visEquipment.m_shoulderItemInstances.ForEach(g => 
-                    g.GetComponentsInChildren<SkinnedMeshRenderer>().ToList().ForEach(m =>
-                    {
-                        var mats = m.materials;
-                        for (int i = 0; i < mats.Length; i++)
+                var emblem = Emblem;
+                if (Emblem.Contains(emblem))
+                {
+                    var material = NecromancerCape.Emblems[Emblem];
+                    humanoid.m_visEquipment.m_shoulderItemInstances.ForEach(g => 
+                        g.GetComponentsInChildren<SkinnedMeshRenderer>().ToList().ForEach(m =>
                         {
-                            mats[i] = material;
-                        }
-                        m.materials = mats;
-                    }));
+                            var mats = m.materials;
+                            for (int i = 0; i < mats.Length; i++)
+                            {
+                                mats[i] = material;
+                            }
+                            m.materials = mats;
+                        })
+                    );   
+                }
             }
 
             RestoreDrops();
