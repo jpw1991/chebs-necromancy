@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
@@ -24,6 +25,7 @@ namespace ChebsNecromancy.Structures
 
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> UpdateInterval;
+        public static ConfigEntry<string> ContainerWhitelist;
 
         private readonly int pieceMask = LayerMask.GetMask("piece");
 
@@ -61,6 +63,10 @@ namespace ChebsNecromancy.Structures
             UpdateInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "UpdateInterval", 30f,
                 "How long a Treasure Pylon waits between checking containers (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
+            
+            ContainerWhitelist = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWhitelist", "piece_chest_wood",
+                "The containers that are sorted. Please use a comma-delimited list of prefab names.",
+                null, true);
         }
 
         private void Awake()
@@ -76,15 +82,15 @@ namespace ChebsNecromancy.Structures
             // yet constructed
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
-
-            Jotunn.Logger.LogInfo("Starting");
-            //if (!ZNet.instance.IsServer()) yield break;
+            
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value + Random.value);
 
+                var allowedContainers = ContainerWhitelist.Value.Split(',').ToList();
                 var nearbyContainers = UndeadMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
-                    c => true, true);
+                    c => c.m_piece.IsPlacedByPlayer() 
+                         && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);
 
                 for (int i = 0; i < nearbyContainers.Count; i++)
                 {
@@ -117,8 +123,6 @@ namespace ChebsNecromancy.Structures
                             var jItem = jItems[k];
                             var itemsMoved = 0;
                             if (currentContainerInventory.CanAddItem(jItem))
-                                // if ((currentContainerInventory.HaveEmptySlot() || currentContainerItems.Contains(jItem))
-                                //     && currentContainerInventory.CanAddItem(jItem))
                             {
                                 var currentItemCount = currentContainerInventory.CountItems(jItem.m_shared.m_name);
                                 currentContainerInventory.AddItem(jItem);
