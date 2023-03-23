@@ -29,6 +29,8 @@ namespace ChebsNecromancy.Minions.AI
         {
             if (_monsterAI.GetFollowTarget() != null) return;
             
+            _transforms.RemoveAll(a => a == null); // clean trash
+            
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
             LayerMask layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
@@ -70,8 +72,6 @@ namespace ChebsNecromancy.Minions.AI
                 {
                     _monsterAI.DoAttack(null, false);
                 }
-
-                _transforms.RemoveAll(item => item == null);
 
                 _status = _monsterAI.GetFollowTarget() != null
                     ? $"Moving to rock ({_monsterAI.GetFollowTarget().name})."

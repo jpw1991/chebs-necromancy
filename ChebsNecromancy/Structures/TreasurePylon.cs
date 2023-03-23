@@ -1,17 +1,27 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using ChebsNecromancy.Minions;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Structures
 {
+    internal class TreasurePylonEffect : MonoBehaviour
+    {
+        private IEnumerator Start()
+        {
+            yield return new WaitForSeconds(5);
+            ZNetScene.instance.Destroy(gameObject);
+        }
+    }
+    
     internal class TreasurePylon : Structure
     {
         public const string EffectName = "ChebGonaz_TreasurePylonEffect";
-        
+
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> UpdateInterval;
 
@@ -33,7 +43,7 @@ namespace ChebsNecromancy.Structures
         {
             ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
         }
-        
+
         public static void CreateConfigs(BasePlugin plugin)
         {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Allowed", true,
@@ -45,14 +55,14 @@ namespace ChebsNecromancy.Structures
                 ChebsRecipeConfig.RecipeValue,
                 null, true);
 
-            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SightRadius", 50f,
+            SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SightRadius", 20f,
                 "How far a Treasure Pylon can reach containers.", plugin.FloatQuantityValue, true);
 
             UpdateInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "UpdateInterval", 30f,
                 "How long a Treasure Pylon waits between checking containers (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
         }
-        
+
         private void Awake()
         {
             StartCoroutine(LookForPieces());
@@ -67,6 +77,8 @@ namespace ChebsNecromancy.Structures
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
 
+            Jotunn.Logger.LogInfo("Starting");
+            //if (!ZNet.instance.IsServer()) yield break;
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value + Random.value);
@@ -79,9 +91,10 @@ namespace ChebsNecromancy.Structures
                     // make a fancy effect on the container being processed
                     var effect = Instantiate(ZNetScene.instance.GetPrefab(EffectName));
                     effect.transform.position = nearbyContainers[i].transform.position + Vector3.up;
+                    effect.AddComponent<TreasurePylonEffect>();
 
-                    var movedLog = new List<string>();
-                    
+                    //var movedLog = new List<string>();
+
                     // 1. Make note of contents of current container
                     // 2. Check every other container in the list and if one of these has the same object as the
                     //    current container, then remove it and put it in the current container.
@@ -90,12 +103,12 @@ namespace ChebsNecromancy.Structures
                     //    b) or list has been exhausted
                     // 4. Once finished, repeat for other containers in list
                     var currentContainerInventory = nearbyContainers[i].GetInventory();
-                    var currentContainerItems = currentContainerInventory.GetAllItems();
+                    //var currentContainerItems = currentContainerInventory.GetAllItems();
 
                     for (int j = 0; j < nearbyContainers.Count; j++)
                     {
                         if (j == i) continue; // skip over self
-                        
+
                         var jInventory = nearbyContainers[j].GetInventory();
                         var jItems = jInventory.GetAllItems();
 
@@ -104,8 +117,8 @@ namespace ChebsNecromancy.Structures
                             var jItem = jItems[k];
                             var itemsMoved = 0;
                             if (currentContainerInventory.CanAddItem(jItem))
-                            // if ((currentContainerInventory.HaveEmptySlot() || currentContainerItems.Contains(jItem))
-                            //     && currentContainerInventory.CanAddItem(jItem))
+                                // if ((currentContainerInventory.HaveEmptySlot() || currentContainerItems.Contains(jItem))
+                                //     && currentContainerInventory.CanAddItem(jItem))
                             {
                                 var currentItemCount = currentContainerInventory.CountItems(jItem.m_shared.m_name);
                                 currentContainerInventory.AddItem(jItem);
@@ -115,15 +128,14 @@ namespace ChebsNecromancy.Structures
 
                             if (itemsMoved > 0)
                             {
-                                movedLog.Add($"{itemsMoved} {jItem.m_shared.m_name}");
+                                //movedLog.Add($"{itemsMoved} {jItem.m_shared.m_name}");
                                 jInventory.RemoveItem(jItem, itemsMoved);
                             }
                         }
                     }
-                    
-                    Jotunn.Logger.LogInfo($"Moved {string.Join(",", movedLog)} to {currentContainerInventory.GetName()}");
+
+                    //Jotunn.Logger.LogInfo($"Moved {string.Join(",", movedLog)} to {currentContainerInventory.GetName()}");
                     yield return new WaitForSeconds(5);
-                    Destroy(effect);
                 }
             }
         }
