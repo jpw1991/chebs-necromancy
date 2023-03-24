@@ -28,6 +28,8 @@ namespace ChebsNecromancy.Minions.AI
         public void LookForCuttableObjects()
         {
             if (_monsterAI.GetFollowTarget() != null) return;
+
+            _transforms.RemoveAll(a => a == null); // clean trash
             
             // Trees: TreeBase
             // Stumps: Destructible with type Tree
@@ -91,8 +93,6 @@ namespace ChebsNecromancy.Minions.AI
                 {
                     _monsterAI.DoAttack(null, false);
                 }
-                
-                _transforms.RemoveAll(item => item == null);
 
                 if (_monsterAI.GetFollowTarget() == null) _status = "Can't find tree.";
 

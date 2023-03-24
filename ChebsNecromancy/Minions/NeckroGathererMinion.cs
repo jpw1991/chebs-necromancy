@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
+using ChebsNecromancy.Items;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions
 {
     internal class NeckroGathererMinion : UndeadMinion
     {
+        public const string NeckroHomeZdoKey = "NeckroHome";
+        
         // for limits checking
         private static int _createdOrderIncrementer;
 
@@ -36,6 +40,8 @@ namespace ChebsNecromancy.Minions
         private ItemDrop _currentItem;
 
         private float _lastDropoffAt;
+
+        private GameObject homeObject;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -79,34 +85,74 @@ namespace ChebsNecromancy.Minions
 
             _monsterAI = GetComponent<MonsterAI>();
             _humanoid = GetComponent<Humanoid>();
+            
+            StartCoroutine(WaitForZNet());
+        }
+
+        IEnumerator WaitForZNet()
+        {
+            yield return new WaitUntil(() => ZNetScene.instance != null);
+
+            // wondering what the code below does? Check comments in the
+            // FreshMinion.cs file.
+            var freshMinion = GetComponent<FreshMinion>();
+
+            yield return new WaitUntil(() => Player.m_localPlayer != null);
+
+            if (freshMinion != null)
+            {
+                // record home position as current position
+                Home = transform.position;
+                
+                // remove the component
+                Destroy(freshMinion);
+            }
         }
 
         private void Update()
         {
             if (ZNet.instance == null
                 || !(Time.time > lastUpdate)) return;
-            
-            
+
             bool canPick = LookForNearbyItems();
-            if (canPick) {
+            if (canPick)
+            {
                 AttemptItemPickup();
-            } else {
+            }
+            else
+            {
                 if (container.GetInventory().NrOfItems() > 0)
                 {
-                    dropoffTarget = GetNearestDropOffPoint();
-                    if (dropoffTarget == null)
+                    var home = Home;
+                    if (home.Equals(Vector3.negativeInfinity) // unset for some reason
+                        || Vector3.Distance(home, transform.position) <= DropoffPointRadius.Value)
                     {
-                        NeckroStatus = "Can't find a container";
+                        dropoffTarget = GetNearestDropOffPoint();
+                        _monsterAI.SetFollowTarget(dropoffTarget.gameObject);
+                        if (dropoffTarget == null)
+                        {
+                            NeckroStatus = "Can't find a container";
+                        }
+                        else
+                        {
+                            NeckroStatus = $"Moving toward {dropoffTarget.name}";
+                            if (CloseToDropoffPoint())
+                            {
+                                DepositItems();
+                            }
+                        }                        
                     }
                     else
                     {
-                        NeckroStatus = $"Moving toward {dropoffTarget.name}";
-                        if (CloseToDropoffPoint())
-                        {
-                            DepositItems();
-                        }
+                        NeckroStatus = $"Returning home! ({home})";
+                        if (homeObject != null) Destroy(homeObject);
+                        homeObject = new GameObject();
+                        homeObject.transform.position = home;
+                        _monsterAI.SetFollowTarget(homeObject);
                     }
-                } else {
+                }
+                else
+                {
                     NeckroStatus = "";
                 }
             }
@@ -220,8 +266,6 @@ namespace ChebsNecromancy.Minions
                 c => c.GetInventory().GetEmptySlots() > 0, true);
             if (closestContainer == null) return null;
             
-            // move toward that piece
-            _monsterAI.SetFollowTarget(closestContainer.gameObject);
             return closestContainer;
         }
 
@@ -235,6 +279,31 @@ namespace ChebsNecromancy.Minions
         {
             _lastDropoffAt = Time.time;
             dropoffTarget.GetInventory().MoveAll(container.GetInventory());
+        }
+        
+        #region HomeZDO
+        public Vector3 Home
+        {
+            get => TryGetComponent(out ZNetView zNetView)
+                ? zNetView.GetZDO().GetVec3(NeckroHomeZdoKey, Vector3.negativeInfinity)
+                : Vector3.negativeInfinity;
+            set
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    zNetView.GetZDO().Set(NeckroHomeZdoKey, value);
+                }
+                else
+                {
+                    Logger.LogError($"Cannot set neckro home to {value} because it has no ZNetView component.");
+                }
+            }
+        }
+        #endregion
+
+        private void OnDestroy()
+        {
+            if (homeObject != null) Destroy(homeObject);
         }
     }
 }

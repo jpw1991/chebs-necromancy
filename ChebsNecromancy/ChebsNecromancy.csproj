@@ -122,6 +122,7 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\SetNeckroHome.cs" />
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
     <Compile Include="InternalName.cs" />
     <Compile Include="Items\Armor\BlackMetal\BlackIronChest.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="Structures\RepairPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />
     <Compile Include="Structures\Structure.cs" />
+    <Compile Include="Structures\TreasurePylon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

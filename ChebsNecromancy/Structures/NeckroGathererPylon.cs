@@ -69,6 +69,7 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(SpawnInterval.Value);
+                yield return new WaitWhile(() => Player.m_localPlayer != null && Player.m_localPlayer.m_sleeping);
 
                 SpawnNeckro();
             }
@@ -108,6 +109,7 @@ namespace ChebsNecromancy.Structures
             character.SetLevel(quality);
             
             spawnedChar.GetComponent<NeckroGathererMinion>().UndeadMinionMaster = player.GetPlayerName();
+            spawnedChar.AddComponent<FreshMinion>();
         }
     }
 }

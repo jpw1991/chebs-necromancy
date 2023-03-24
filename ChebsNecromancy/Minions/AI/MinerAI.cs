@@ -29,6 +29,8 @@ namespace ChebsNecromancy.Minions.AI
         {
             if (_monsterAI.GetFollowTarget() != null) return;
             
+            _transforms.RemoveAll(a => a == null); // clean trash
+            
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
             LayerMask layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
@@ -57,7 +59,14 @@ namespace ChebsNecromancy.Minions.AI
 
         private void Update()
         {
-            if (_monsterAI.GetFollowTarget() != null) transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down);
+            if (_monsterAI.GetFollowTarget() != null)
+            {
+                var t = Mathf.PingPong(Time.time, .5f); // This will give you a value between 0 and 1 that oscillates over time.
+                var lerpedValue = Mathf.Lerp(1f, -1f, t); // This will interpolate between 1 and -1 based on the value of t.
+                
+                transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down * lerpedValue);
+                TryAttack();
+            }
             if (Time.time > nextCheck)
             {
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value
@@ -65,19 +74,26 @@ namespace ChebsNecromancy.Minions.AI
                                                       // workers don't all simultaneously scan
                 
                 LookForMineableObjects();
-                if (_monsterAI.GetFollowTarget() != null
-                    && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
-                {
-                    _monsterAI.DoAttack(null, false);
-                }
-
-                _transforms.RemoveAll(item => item == null);
+                // if (_monsterAI.GetFollowTarget() != null
+                //     && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
+                // {
+                //     _monsterAI.DoAttack(null, false);
+                // }
 
                 _status = _monsterAI.GetFollowTarget() != null
                     ? $"Moving to rock ({_monsterAI.GetFollowTarget().name})."
                     : "Can't find rocks.";
 
                 _humanoid.m_name = _status;
+            }
+        }
+
+        private void TryAttack()
+        {
+            if (_monsterAI.GetFollowTarget() != null
+                && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 2f)
+            {
+                _monsterAI.DoAttack(null, false);
             }
         }
     }

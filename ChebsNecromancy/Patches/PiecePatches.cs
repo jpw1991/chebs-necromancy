@@ -74,6 +74,13 @@ namespace ChebsNecromancy.Patches
                         __instance.gameObject.AddComponent<RepairPylon>();
                     }
                 }
+                else if (__instance.name.Contains("TreasurePylon"))
+                {
+                    if (!__instance.TryGetComponent(out TreasurePylon _))
+                    {
+                        __instance.gameObject.AddComponent<TreasurePylon>();
+                    }
+                }
             }
         }
     }
