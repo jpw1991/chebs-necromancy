@@ -59,7 +59,14 @@ namespace ChebsNecromancy.Minions.AI
 
         private void Update()
         {
-            if (_monsterAI.GetFollowTarget() != null) transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down);
+            if (_monsterAI.GetFollowTarget() != null)
+            {
+                var t = Mathf.PingPong(Time.time, .5f); // This will give you a value between 0 and 1 that oscillates over time.
+                var lerpedValue = Mathf.Lerp(1f, -1f, t); // This will interpolate between 1 and -1 based on the value of t.
+                
+                transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down * lerpedValue);
+                TryAttack();
+            }
             if (Time.time > nextCheck)
             {
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value
@@ -67,17 +74,26 @@ namespace ChebsNecromancy.Minions.AI
                                                       // workers don't all simultaneously scan
                 
                 LookForMineableObjects();
-                if (_monsterAI.GetFollowTarget() != null
-                    && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
-                {
-                    _monsterAI.DoAttack(null, false);
-                }
+                // if (_monsterAI.GetFollowTarget() != null
+                //     && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
+                // {
+                //     _monsterAI.DoAttack(null, false);
+                // }
 
                 _status = _monsterAI.GetFollowTarget() != null
                     ? $"Moving to rock ({_monsterAI.GetFollowTarget().name})."
                     : "Can't find rocks.";
 
                 _humanoid.m_name = _status;
+            }
+        }
+
+        private void TryAttack()
+        {
+            if (_monsterAI.GetFollowTarget() != null
+                && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 2f)
+            {
+                _monsterAI.DoAttack(null, false);
             }
         }
     }

@@ -82,7 +82,7 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value);
-                yield return new WaitWhile(() => Player.m_localPlayer.m_sleeping);
+                yield return new WaitWhile(() => Player.m_localPlayer != null && Player.m_localPlayer.m_sleeping);
 
                 //_containers = GetNearbyContainers();
                 
