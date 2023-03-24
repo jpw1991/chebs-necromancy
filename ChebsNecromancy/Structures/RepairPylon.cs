@@ -101,6 +101,7 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RepairUpdateInterval.Value);
+                yield return new WaitWhile(() => Player.m_localPlayer.m_sleeping);
 
                 var piecesInRange = PiecesInRange();
                 foreach (var wearNTear in piecesInRange)

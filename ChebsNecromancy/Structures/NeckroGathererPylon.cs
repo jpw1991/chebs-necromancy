@@ -69,6 +69,7 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(SpawnInterval.Value);
+                yield return new WaitWhile(() => Player.m_localPlayer.m_sleeping);
 
                 SpawnNeckro();
             }
