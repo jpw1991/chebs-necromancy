@@ -122,6 +122,7 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\SetNeckroHome.cs" />
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
     <Compile Include="InternalName.cs" />
     <Compile Include="Items\Armor\BlackMetal\BlackIronChest.cs" />
