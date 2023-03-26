@@ -14,7 +14,7 @@ namespace ChebsNecromancy.Minions.AI
 
         private string _status;
         
-        private static List<Transform> _transforms = new();
+        private bool _inContact;
 
         private void Awake()
         {
@@ -28,43 +28,35 @@ namespace ChebsNecromancy.Minions.AI
         public void LookForMineableObjects()
         {
             if (_monsterAI.GetFollowTarget() != null) return;
-            
-            _transforms.RemoveAll(a => a == null); // clean trash
-            
+
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
-            LayerMask layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
+            var layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
             var closest = UndeadMinion.FindClosest<Transform>(transform,
                 SkeletonMinerMinion.LookRadius.Value,
                 layerMask,
-                hitCollider => _rocksList.Exists(item => hitCollider.name.Contains(item)
-                                                         && !_transforms.Contains(hitCollider)),
+                Hittable,
                 false);
-            
-            // if closest turns up nothing, pick the closest from the claimed transforms list (if there's nothing else
-            // to whack, may as well whack a rock right next to you, even if another skeleton is already whacking it)
-            if (closest == null)
-            {
-                closest = _transforms
-                    .OrderBy(t => Vector3.Distance(t.position, transform.position))
-                    .FirstOrDefault();
-            }
-            
+
             if (closest != null)
             {
-                _transforms.Add(closest);
                 _monsterAI.SetFollowTarget(closest.gameObject);
             }
         }
 
         private void Update()
         {
-            if (_monsterAI.GetFollowTarget() != null)
+            var followTarget = _monsterAI.GetFollowTarget();
+            if (followTarget != null)
             {
-                var t = Mathf.PingPong(Time.time, .5f); // This will give you a value between 0 and 1 that oscillates over time.
-                var lerpedValue = Mathf.Lerp(1f, -1f, t); // This will interpolate between 1 and -1 based on the value of t.
+                if (Vector3.Distance(transform.position, followTarget.transform.position) < 5f)
+                {
+                    var t = Mathf.PingPong(Time.time, .5f); // This will give you a value between 0 and 1 that oscillates over time.
+                    var lerpedValue = Mathf.Lerp(1f, -1f, t); // This will interpolate between 1 and -1 based on the value of t.
                 
-                transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down * lerpedValue);
+                    transform.LookAt(followTarget.transform.position + Vector3.down * lerpedValue);                    
+                }
+                
                 TryAttack();
             }
             if (Time.time > nextCheck)
@@ -74,11 +66,6 @@ namespace ChebsNecromancy.Minions.AI
                                                       // workers don't all simultaneously scan
                 
                 LookForMineableObjects();
-                // if (_monsterAI.GetFollowTarget() != null
-                //     && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
-                // {
-                //     _monsterAI.DoAttack(null, false);
-                // }
 
                 _status = _monsterAI.GetFollowTarget() != null
                     ? $"Moving to rock ({_monsterAI.GetFollowTarget().name})."
@@ -90,11 +77,42 @@ namespace ChebsNecromancy.Minions.AI
 
         private void TryAttack()
         {
-            if (_monsterAI.GetFollowTarget() != null
-                && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 2f)
+            if (_monsterAI.GetFollowTarget() != null && _inContact)
             {
                 _monsterAI.DoAttack(null, false);
             }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            _inContact = Hittable(collision.gameObject);
+        }
+
+        private void OnCollisionExit(Collision other)
+        {
+            _inContact = Hittable(other.gameObject);
+        }
+
+        private bool Hittable(Transform t)
+        {
+            return Hittable(t.gameObject);
+        }
+        
+        private bool Hittable(GameObject go)
+        {
+            // Getting miners to hit the right stuff has been a big challenge. This is the closest thing I've been able
+            // to come up with. For some reason, checking layers isn't so reliable.
+            // History of most of it can be seen here: https://github.com/jpw1991/chebs-necromancy/issues/109
+            var destructible = go.GetComponentInParent<Destructible>();
+            return _rocksList.FirstOrDefault(rocksListName => rocksListName.Contains(go.transform.parent.name)) != null
+                   || (destructible != null
+                    //&& (destructible.gameObject.layer == LayerMask.NameToLayer("static_solid") || destructible.gameObject.layer == LayerMask.NameToLayer("Default_small"))
+                    && destructible.m_destructibleType == DestructibleType.Default
+                    && destructible.GetComponent<Container>() == null // don't attack containers
+                    && destructible.GetComponent<Pickable>() == null // don't attack useful bushes
+                    )
+                   || go.GetComponentInParent<MineRock5>() != null
+                   || go.GetComponentInParent<MineRock>() != null;
         }
     }
 }
