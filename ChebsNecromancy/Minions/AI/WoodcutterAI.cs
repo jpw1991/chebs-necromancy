@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions.AI
 {
@@ -16,6 +18,7 @@ namespace ChebsNecromancy.Minions.AI
         private static List<Transform> _transforms = new();
 
         private string _status;
+        private bool _inContact;
 
         private void Awake()
         {
@@ -80,7 +83,13 @@ namespace ChebsNecromancy.Minions.AI
 
         private void Update()
         {
-            if (_monsterAI.GetFollowTarget() != null) transform.LookAt(_monsterAI.GetFollowTarget().transform.position + Vector3.down);
+            var followTarget = _monsterAI.GetFollowTarget();
+            if (followTarget != null)
+            {
+                transform.LookAt(followTarget.transform.position + Vector3.down);
+                
+                TryAttack();
+            }
             if (Time.time > nextCheck)
             {
                 nextCheck = Time.time + SkeletonWoodcutterMinion.UpdateDelay.Value
@@ -88,16 +97,53 @@ namespace ChebsNecromancy.Minions.AI
                                                       // workers don't all simultaneously scan
                 
                 LookForCuttableObjects();
-                if (_monsterAI.GetFollowTarget() != null
-                    && Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5)
-                {
-                    _monsterAI.DoAttack(null, false);
-                }
 
                 if (_monsterAI.GetFollowTarget() == null) _status = "Can't find tree.";
 
                 _humanoid.m_name = _status;
             }
+        }
+        
+        private void TryAttack()
+        {
+            if (_monsterAI.GetFollowTarget() != null && _inContact)
+                //&& Vector3.Distance(_monsterAI.GetFollowTarget().transform.position, transform.position) < 5f)
+            {
+                _monsterAI.DoAttack(null, false);
+            }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            _inContact = Hittable(collision.gameObject);
+        }
+
+        private void OnCollisionExit(Collision other)
+        {
+            _inContact = Hittable(other.gameObject);
+        }
+
+        private bool Hittable(GameObject go)
+        {
+            var destructible = go.GetComponentInParent<Destructible>();
+            if (destructible != null && destructible.GetDestructibleType() == DestructibleType.Tree)
+            {
+                return true;
+            }
+
+            var treeLog = go.GetComponentInParent<TreeLog>();
+            if (treeLog != null)
+            {
+                return true;
+            }
+
+            var tree = go.GetComponentInParent<TreeBase>();
+            if (tree != null)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
