@@ -104,7 +104,11 @@ namespace ChebsNecromancy.Minions.AI
             // to come up with. For some reason, checking layers isn't so reliable.
             // History of most of it can be seen here: https://github.com/jpw1991/chebs-necromancy/issues/109
             var destructible = go.GetComponentInParent<Destructible>();
-            return _rocksList.FirstOrDefault(rocksListName => rocksListName.Contains(go.transform.parent.name)) != null
+            return _rocksList.FirstOrDefault(rocksListName =>
+                   {
+                       var parent = go.transform.parent;
+                       return parent != null && rocksListName.Contains(parent.name);
+                   }) != null
                    || (destructible != null
                     //&& (destructible.gameObject.layer == LayerMask.NameToLayer("static_solid") || destructible.gameObject.layer == LayerMask.NameToLayer("Default_small"))
                     && destructible.m_destructibleType == DestructibleType.Default

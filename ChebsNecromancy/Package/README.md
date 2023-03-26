@@ -128,6 +128,13 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+25/03/2023 | 2.5.7 | permit multiple miners to whack same rock; overhaul rock whacking logic for lumberjacks and miners; remove collision on draugr heads
+23/03/2023 | 2.5.6 | make miners lerp as they mine so that they have increased odds of being able to connect a blow with a stone; fix null object
+23/03/2023 | 2.5.5 | pylons suspend their work while players are sleeping
+23/03/2023 | 2.5.4 | Neckros return home before searching for containers
+23/03/2023 | 2.5.3 | whitelist for treasure pylon container access
+22/03/2023 | 2.5.2 | fix dumb exception
+22/03/2023 | 2.5.0 | treasure pylon
 21/03/2023 | 2.4.4 | optimize workers by staggering update intervals (50 Neckros/lumberjacks/miners no longer attempt to scan at the same time); add custom cape emblems for armored skeletons; add wolf, lox and troll leather armor varieties
 16/03/2023 | 2.3.11 | repair pylon consumes resin more intelligently; repair pylon permits multiple customizable fuel types
 15/03/2023 | 2.3.10 | implement maximum time allowed between dropoffs for Neckros
