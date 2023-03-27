@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3397770505
+CRC: 1080411948
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 3468dcdcc05d08b062af4ea18d16b2ce
+    Hash: 0c3f72a0f65842b09990bd5fba4bab92
   TypeTreeHash:
     serializedVersion: 2
     Hash: f217880939f95309b92eb737385684c4
@@ -283,12 +283,11 @@ Assets:
 - Assets/_ChebGonaz/BlackIronArmor/ChebGonaz_HelmetBlackIron.prefab
 - Assets/_ChebGonaz/TreasurePylon/ChebGonaz_TreasurePylon.prefab
 - Assets/_ChebGonaz/SkeletonMage/ChebGonaz_FireballProjectileGoblin.prefab
-- Assets/_ChebGonaz/SkeletonMiner/ChebGonaz_PickaxeProjectile.prefab
 - Assets/_ChebGonaz/SkeletonArcher/ChebGonaz_SkeletonArcherFire.prefab
+- Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.mat
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonMace.prefab
 - Assets/_ChebGonaz/UndeadWeapons/ChebGonaz_SkeletonClub.prefab
 - Assets/_ChebGonaz/NecromancerCape/ChebGonaz_NecromancerCapeAzathoth.mat
-- Assets/_ChebGonaz/Neckro/ChebGonaz_NeckroGathererPylon.mat
 - Assets/_ChebGonaz/Draugr/ChebGonaz_DraugrWarriorNeedle.prefab
 - Assets/_ChebGonaz/NecromancerCape/ChebGonaz_NecromancerCapeCthulhu.mat
 - Assets/_ChebGonaz/LeatherArmors/Lox/ChebGonaz_SkeletonHelmetLeatherPoisonLox.prefab
