@@ -27,7 +27,7 @@ namespace ChebsNecromancy.Patches
             if (attacker != null 
                 && attacker.TryGetComponent(out UndeadMinion _))
             {
-                if (___m_piece.IsPlacedByPlayer())
+                if (___m_piece != null && ___m_piece.IsPlacedByPlayer())
                 {
                     hit.m_damage.m_damage = 0f;
                     hit.m_damage.m_blunt = 0f;

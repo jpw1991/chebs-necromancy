@@ -189,6 +189,7 @@
     <Compile Include="Minions\SkeletonWoodcutterMinion.cs" />
     <Compile Include="Common\ChebsRecipe.cs" />
     <Compile Include="Patches\AoePatches.cs" />
+    <Compile Include="Patches\ImpactEffectPatches.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Patches\BaseAIPatches.cs" />
     <Compile Include="Patches\CharacterDropPatches.cs" />
