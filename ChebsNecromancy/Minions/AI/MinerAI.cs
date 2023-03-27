@@ -15,6 +15,8 @@ namespace ChebsNecromancy.Minions.AI
         private string _status;
         
         private bool _inContact;
+        private float _lerpedValue;
+        //private float _timeFollowingObject;
 
         private void Awake()
         {
@@ -41,6 +43,7 @@ namespace ChebsNecromancy.Minions.AI
             if (closest != null)
             {
                 _monsterAI.SetFollowTarget(closest.gameObject);
+                //_timeFollowingObject = Time.time;
             }
         }
 
@@ -51,14 +54,20 @@ namespace ChebsNecromancy.Minions.AI
             {
                 if (Vector3.Distance(transform.position, followTarget.transform.position) < 5f)
                 {
-                    var t = Mathf.PingPong(Time.time, .5f); // This will give you a value between 0 and 1 that oscillates over time.
-                    var lerpedValue = Mathf.Lerp(1f, -1f, t); // This will interpolate between 1 and -1 based on the value of t.
-                
-                    transform.LookAt(followTarget.transform.position + Vector3.down * lerpedValue);                    
+                    //var t = Mathf.PingPong(Time.time, 2f);
+                    //_lerpedValue = Mathf.Lerp(1f, -1f, t);  
+
+                    transform.LookAt(followTarget.transform.position);// + Vector3.down * _lerpedValue);
+                    
                 }
+                //followTarget.GetComponent<Destructible>().Damage(new);
                 
                 TryAttack();
             }
+            // else
+            // {
+            //     _timeFollowingObject = 0f;
+            // }
             if (Time.time > nextCheck)
             {
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value
@@ -77,9 +86,63 @@ namespace ChebsNecromancy.Minions.AI
 
         private void TryAttack()
         {
-            if (_monsterAI.GetFollowTarget() != null && _inContact)
+            var followTarget = _monsterAI.GetFollowTarget();
+            if (followTarget != null && _inContact)
+                //&& (_inContact // in contact with rock (physically touching it)
+                //|| _timeFollowingObject > 20f // or can't reach it after prolonged period (large rock fragments)
+                //))
             {
                 _monsterAI.DoAttack(null, false);
+
+                var destructible = followTarget.GetComponentInParent<Destructible>();
+                if (destructible != null)
+                {
+                    var hitData = new HitData();
+                    hitData.m_damage.m_pickaxe = 500;
+                    destructible.m_nview.InvokeRPC("Damage", hitData);
+                    //destructible.Damage(hitData);
+                    return;
+                }
+
+                var mineRock5 = followTarget.GetComponentInParent<MineRock5>();
+                if (mineRock5 != null)
+                {
+                    // destroy all fragments
+                    for (int i = 0; i < mineRock5.m_hitAreas.Count; i++)
+                    {
+                        var hitArea = mineRock5.m_hitAreas[i];
+                        if (hitArea.m_health > 0f)// && !hitArea.m_supported)
+                        {
+                            var hitData = new HitData();
+                            hitData.m_damage.m_damage = hitArea.m_health;
+                            hitData.m_point = hitArea.m_collider.bounds.center;
+                            hitData.m_toolTier = 100;
+                            mineRock5.DamageArea(i, hitData);
+                        }
+                    }
+                    //mineRock5.Damage(hitData);
+                    //mineRock5.m_nview.Destroy();
+                    return;
+                }
+
+                var mineRock = followTarget.GetComponentInParent<MineRock>();
+                if (mineRock != null)
+                {
+                    // destroy all fragments
+                    for (int i = 0; i < mineRock.m_hitAreas.Length; i++)
+                    {
+                        var collider = mineRock.m_hitAreas[i];
+                        if (collider.TryGetComponent(out HitArea hitArea) && hitArea.m_health > 0f)
+                        {
+                            var hitData = new HitData();
+                            hitData.m_damage.m_damage = hitArea.m_health;
+                            hitData.m_point = collider.bounds.center;
+                            hitData.m_toolTier = 100;
+                            mineRock5.DamageArea(i, hitData);
+                        }
+                    }
+                    //mineRock.Damage(hitData);
+                }
             }
         }
 

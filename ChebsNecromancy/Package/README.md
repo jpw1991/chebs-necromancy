@@ -128,6 +128,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+25/03/2023 | 2.5.8 | miners pop an entire rock/node in one whack because completely mining the fragments seems impossible
 25/03/2023 | 2.5.7 | permit multiple miners to whack same rock; overhaul rock whacking logic for lumberjacks and miners; remove collision on draugr heads
 23/03/2023 | 2.5.6 | make miners lerp as they mine so that they have increased odds of being able to connect a blow with a stone; fix null object
 23/03/2023 | 2.5.5 | pylons suspend their work while players are sleeping
