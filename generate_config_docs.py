@@ -58,8 +58,11 @@ def render_markdown(data):
         markdown += "| Setting | Description | Type | Default Value |\n"
         markdown += "| ------- | ----------- | ---- | ------------- |\n"
 
-        for setting, info in table_data.items():
-            markdown += f"| `{setting.split(' ')[0]}` | {info[0][3:]} | `{info[1][2:]}` | `{info[2][2:]}` |\n"
+        try:
+            for setting, info in table_data.items():
+                markdown += f"| `{setting.split(' ')[0]}` | {info[0][3:]} | `{info[1][2:]}` | `{info[2][2:]}` |\n"
+        except:
+            pass
 
         markdown += "\n"
 

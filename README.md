@@ -80,6 +80,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_spiritpylon): Spawns spirits to defend your base.
 	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
 	+ [**Repair Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
+	+ [**Treasure Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/TreasurePylon): Organizes your chests in a rather chaotic way. By default only works on the basic wooden boxes but can be told to sort other things too via config. The idea is that Neckros haul all this stuff back, then the Treasure Pylon organizes it.
 
 ### Config
 
