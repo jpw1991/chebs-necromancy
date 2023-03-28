@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using HarmonyLib;
+using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
@@ -39,15 +40,18 @@ namespace ChebsNecromancy.Patches
                 };
                 ___m_drops.Add(bones);
             }
-        }
-    }
-    
-    [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
-    class OnDeathDropPatch
-    {
-        [HarmonyPrefix]
-        static void Prefix(CharacterDrop __instance)
-        {
+
+            // if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
+            //     //&& undeadMinion.ItemsDropped)
+            // {
+            //     Jotunn.Logger.LogInfo($"name={__instance.name}");
+            //     if (undeadMinion.ItemsDropped)
+            //     {
+            //         Jotunn.Logger.LogInfo($"Removing all drops from {__instance.name}");
+            //         ___m_drops.RemoveAll(a => true);                    
+            //     }
+            // }
+            
             // Although Container component is on the Neckro, its OnDestroyed
             // isn't called on the death of the creature. So instead, implement
             // its same functionality in the creature's OnDeath instead.
@@ -69,14 +73,78 @@ namespace ChebsNecromancy.Patches
                     && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+                    // var depositedSuccessfully = undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+                    // undeadMinion.ItemsDropped = depositedSuccessfully;
+                    //__instance.m_dropsEnabled = !depositedSuccessfully;
+                    //__instance.m_drops.RemoveAll(a => depositedSuccessfully);
+                    //Jotunn.Logger.LogInfo($"depositedSuccessfully={depositedSuccessfully}, m_dropsEnabled={__instance.m_dropsEnabled}");
                 }
                 else if (undeadMinion is DraugrMinion
                     && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
                     && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+                    // var depositedSuccessfully = undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+                    // undeadMinion.ItemsDropped = depositedSuccessfully;
+                    //__instance.m_dropsEnabled = !depositedSuccessfully;
+                    //__instance.m_drops.RemoveAll(a => depositedSuccessfully);
+                    //Jotunn.Logger.LogInfo($"depositedSuccessfully={depositedSuccessfully}, m_dropsEnabled={__instance.m_dropsEnabled}");
+                }
+
+                if (undeadMinion.ItemsDropped)
+                {
+                    Jotunn.Logger.LogInfo("items dropped is true");
+                    ___m_drops.RemoveAll(a => true);
                 }
             }
         }
     }
+    
+    // [HarmonyPatch(typeof(CharacterDrop), "OnDeath")]
+    // class OnDeathDropPatch
+    // {
+    //     [HarmonyPrefix]
+    //     static void Prefix(CharacterDrop __instance)
+    //     {
+    //         // Although Container component is on the Neckro, its OnDestroyed
+    //         // isn't called on the death of the creature. So instead, implement
+    //         // its same functionality in the creature's OnDeath instead.
+    //         if (__instance.TryGetComponent(out NeckroGathererMinion _))
+    //         {
+    //             if (__instance.TryGetComponent(out Container container))
+    //             {
+    //                 container.DropAllItems(container.m_destroyedLootPrefab);
+    //             }
+    //         }
+    //
+    //         // For all other minions, check if they're supposed to be dropping
+    //         // items and whether these should be packed into a crate or not.
+    //         // We don't want ppls surtling cores and things to be claimed by davey jones
+    //         else if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
+    //         {
+    //             if (undeadMinion is SkeletonMinion
+    //                 && SkeletonMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
+    //                 && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
+    //             {
+    //                 undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+    //                 // var depositedSuccessfully = undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+    //                 // undeadMinion.ItemsDropped = depositedSuccessfully;
+    //                 //__instance.m_dropsEnabled = !depositedSuccessfully;
+    //                 //__instance.m_drops.RemoveAll(a => depositedSuccessfully);
+    //                 //Jotunn.Logger.LogInfo($"depositedSuccessfully={depositedSuccessfully}, m_dropsEnabled={__instance.m_dropsEnabled}");
+    //             }
+    //             else if (undeadMinion is DraugrMinion
+    //                 && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
+    //                 && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
+    //             {
+    //                 undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+    //                 // var depositedSuccessfully = undeadMinion.DepositIntoNearbyDeathCrate(__instance);
+    //                 // undeadMinion.ItemsDropped = depositedSuccessfully;
+    //                 //__instance.m_dropsEnabled = !depositedSuccessfully;
+    //                 //__instance.m_drops.RemoveAll(a => depositedSuccessfully);
+    //                 //Jotunn.Logger.LogInfo($"depositedSuccessfully={depositedSuccessfully}, m_dropsEnabled={__instance.m_dropsEnabled}");
+    //             }
+    //         }
+    //     }
+    // }
 }
