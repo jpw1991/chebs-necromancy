@@ -129,7 +129,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
-27/03/2023 | 2.5.9 | fix a null object exception for structure friendly-fire code; ships ignore minion impact damage
+27/03/2023 | 2.5.9 | fix a null object exception for structure friendly-fire code; ships ignore minion impact damage; fix problem of duplicate resource drops on death if crate is enabled
 25/03/2023 | 2.5.8 | miners pop an entire rock/node in one whack because completely mining the fragments seems impossible
 25/03/2023 | 2.5.7 | permit multiple miners to whack same rock; overhaul rock whacking logic for lumberjacks and miners; remove collision on draugr heads
 23/03/2023 | 2.5.6 | make miners lerp as they mine so that they have increased odds of being able to connect a blow with a stone; fix null object
