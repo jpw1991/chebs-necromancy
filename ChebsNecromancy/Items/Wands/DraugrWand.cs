@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
@@ -658,123 +657,63 @@ namespace ChebsNecromancy.Items
             minion.UndeadMinionMaster = player.GetPlayerName();
 
             // handle refunding of resources on death
-            if (DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing)
+            if (DraugrMinion.DropOnDeath.Value == UndeadMinion.DropType.Nothing) return;
+            
+            // we have to be a little bit cautious. It normally shouldn't exist yet, but maybe some other mod
+            // added it? Who knows
+            var characterDrop = minion.gameObject.GetComponent<CharacterDrop>();
+            if (characterDrop == null)
             {
-                CharacterDrop characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
-
-                if (DraugrMinion.DropOnDeath.Value == UndeadMinion.DropType.Everything)
-                {
-                    // bones
-                    if (DraugrBoneFragmentsRequiredConfig.Value > 0)
-                    {
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
-                            m_onePerPlayer = true,
-                            m_amountMin = DraugrBoneFragmentsRequiredConfig.Value,
-                            m_amountMax = DraugrBoneFragmentsRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                    }
-
-                    // meat. For now, assume Neck tails
-                    if (DraugrMeatRequiredConfig.Value > 0)
-                    {
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("NeckTail"),
-                            m_onePerPlayer = true,
-                            m_amountMin = DraugrMeatRequiredConfig.Value,
-                            m_amountMax = DraugrMeatRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                    }
-                }
-
-                switch (armorType)
-                {
-                    case UndeadMinion.ArmorType.Leather:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            // flip a coin for deer or scraps
-                            m_prefab = Random.value > .5f 
-                                ? ZNetScene.instance.GetPrefab("DeerHide")
-                                : ZNetScene.instance.GetPrefab("LeatherScraps") 
-                            ,
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorLeatherScrapsRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                    case UndeadMinion.ArmorType.LeatherTroll:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("TrollHide"),
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                    case UndeadMinion.ArmorType.LeatherWolf:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("WolfPelt"),
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                    case UndeadMinion.ArmorType.LeatherLox:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("LoxPelt"),
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                    case UndeadMinion.ArmorType.Bronze:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("Bronze"),
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorBronzeRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                    case UndeadMinion.ArmorType.Iron:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("Iron"),
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorIronRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorIronRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                    case UndeadMinion.ArmorType.BlackMetal:
-                        characterDrop.m_drops.Add(new CharacterDrop.Drop
-                        {
-                            m_prefab = ZNetScene.instance.GetPrefab("BlackMetal"),
-                            m_onePerPlayer = true,
-                            m_amountMin = BasePlugin.ArmorBlackIronRequiredConfig.Value,
-                            m_amountMax = BasePlugin.ArmorBlackIronRequiredConfig.Value,
-                            m_chance = 1f
-                        });
-                        break;
-                }
-
-                // the component won't be remembered by the game on logout because
-                // only what is on the prefab is remembered. Even changes to the prefab
-                // aren't remembered. So we must write what we're dropping into
-                // the ZDO as well and then read & restore this on Awake
-                minion.RecordDrops(characterDrop);
+                characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
             }
+
+            if (DraugrMinion.DropOnDeath.Value == UndeadMinion.DropType.Everything)
+            {
+                // bones
+                if (DraugrBoneFragmentsRequiredConfig.Value > 0)
+                {
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "BoneFragments", DraugrBoneFragmentsRequiredConfig.Value);
+                }
+
+                // meat. For now, assume Neck tails
+                if (DraugrMeatRequiredConfig.Value > 0)
+                {
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "NeckTail", DraugrMeatRequiredConfig.Value);
+                }
+            }
+
+            switch (armorType)
+            {
+                case UndeadMinion.ArmorType.Leather:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, 
+                        Random.value > .5f ? "DeerHide" : "LeatherScraps", // flip a coin for deer or scraps
+                        BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.LeatherTroll:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "TrollHide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.LeatherWolf:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "WolfPelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.LeatherLox:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "LoxPelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.Bronze:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "Bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.Iron:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "Iron", BasePlugin.ArmorIronRequiredConfig.Value);
+                    break;
+                case UndeadMinion.ArmorType.BlackMetal:
+                    UndeadMinion.AddOrUpdateDrop(characterDrop, "BlackMetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
+                    break;
+            }
+
+            // the component won't be remembered by the game on logout because
+            // only what is on the prefab is remembered. Even changes to the prefab
+            // aren't remembered. So we must write what we're dropping into
+            // the ZDO as well and then read & restore this on Awake
+            minion.RecordDrops(characterDrop);
         }
     }
 }

@@ -72,11 +72,17 @@ namespace ChebsNecromancy.Minions
         
         public int createdOrder;
 
+        public bool ItemsDropped { get; private set; }
+
         #region DeathCrates
         private static List<Transform> _deathCrates = new();
 
-        public void DepositIntoNearbyDeathCrate(CharacterDrop characterDrop, float range=15f)
+        public bool DepositIntoNearbyDeathCrate(CharacterDrop characterDrop, float range=15f)
         {
+            // return:
+            // true = successful - items all loaded into a box
+            // false = unsuccessful - items remain
+            
             // cleanup
             _deathCrates.RemoveAll(t => t == null);
 
@@ -108,7 +114,11 @@ namespace ChebsNecromancy.Minions
             }
             
             // if items remain undeposited, create a new crate for them
-            if (characterDrop.m_drops.Count < 1) return;
+            if (characterDrop.m_drops.Count < 1)
+            {
+                ItemsDropped = true;
+                return ItemsDropped;
+            }
             var crate = CreateDeathCrate();
             if (crate != null)
             {
@@ -126,7 +136,11 @@ namespace ChebsNecromancy.Minions
                     }
                 });
                 characterDrop.m_drops = unsuccessful;
+
+                ItemsDropped = unsuccessful.Count == 0;
             }
+
+            return ItemsDropped;
         }
         
         private Container CreateDeathCrate()
@@ -355,20 +369,19 @@ namespace ChebsNecromancy.Minions
             // the ZDO as well and then read & restore this on Awake
             if (TryGetComponent(out ZNetView zNetView))
             {
-                if (gameObject.GetComponent<CharacterDrop>() != null)
+                var characterDrop = gameObject.GetComponent<CharacterDrop>(); 
+                if (characterDrop == null)
                 {
-                    // abort - if it's already there, don't add it twice
-                    return;
+                    characterDrop = gameObject.AddComponent<CharacterDrop>();
                 }
 
                 string minionDropsZdoValue = zNetView.GetZDO().GetString(MinionDropsZdoKey, "");
                 if (minionDropsZdoValue == "")
                 {
-                    // abort - there's no drops record -> naked minion
+                    // abort - there's no drops recorded -> naked minion
                     return;
                 }
-
-                CharacterDrop characterDrop = gameObject.AddComponent<CharacterDrop>();
+                
                 List<string> dropsList = new List<string>(minionDropsZdoValue.Split(','));
                 dropsList.ForEach(dropString =>
                 {
@@ -376,15 +389,8 @@ namespace ChebsNecromancy.Minions
 
                     string prefabName = splut[0];
                     int amount = int.Parse(splut[1]);
-
-                    characterDrop.m_drops.Add(new CharacterDrop.Drop
-                    {
-                        m_prefab = ZNetScene.instance.GetPrefab(prefabName),
-                        m_onePerPlayer = true,
-                        m_amountMin = amount,
-                        m_amountMax = amount,
-                        m_chance = 1f
-                    });
+                    
+                    AddOrUpdateDrop(characterDrop, prefabName, amount);
                 });
             }
             else
@@ -606,5 +612,27 @@ namespace ChebsNecromancy.Minions
             }
         }
         #endregion
+
+        public static void AddOrUpdateDrop(CharacterDrop characterDrop, string prefabName, int amount)
+        {
+            var existing = characterDrop.m_drops.FirstOrDefault(drop => drop.m_prefab.name.Equals(prefabName));
+            if (existing != null)
+            {
+                existing.m_amountMin = amount;
+                existing.m_amountMax = amount;
+                existing.m_chance = 1f;
+            }
+            else
+            {
+                characterDrop.m_drops.Add(new CharacterDrop.Drop
+                {
+                    m_prefab = ZNetScene.instance.GetPrefab(prefabName),
+                    m_onePerPlayer = true,
+                    m_amountMin = amount,
+                    m_amountMax = amount,
+                    m_chance = 1f
+                });
+            }
+        }
     }
 }

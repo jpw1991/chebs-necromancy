@@ -80,6 +80,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_spiritpylon): Spawns spirits to defend your base.
 	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
 	+ [**Repair Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
+	+ [**Treasure Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/TreasurePylon): Organizes your chests in a rather chaotic way. By default only works on the basic wooden boxes but can be told to sort other things too via config. The idea is that Neckros haul all this stuff back, then the Treasure Pylon organizes it.
 
 ### Config
 
@@ -128,6 +129,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+27/03/2023 | 2.5.9 | fix a null object exception for structure friendly-fire code; ships ignore minion impact damage; fix problem of duplicate resource drops on death if crate is enabled
 25/03/2023 | 2.5.8 | miners pop an entire rock/node in one whack because completely mining the fragments seems impossible
 25/03/2023 | 2.5.7 | permit multiple miners to whack same rock; overhaul rock whacking logic for lumberjacks and miners; remove collision on draugr heads
 23/03/2023 | 2.5.6 | make miners lerp as they mine so that they have increased odds of being able to connect a blow with a stone; fix null object
