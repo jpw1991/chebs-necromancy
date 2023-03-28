@@ -129,6 +129,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+28/03/2023 | 2.5.10 | improve repair pylon behaviour; upgrade to jotunn 1.11.2
 27/03/2023 | 2.5.9 | fix a null object exception for structure friendly-fire code; ships ignore minion impact damage; fix problem of duplicate resource drops on death if crate is enabled
 25/03/2023 | 2.5.8 | miners pop an entire rock/node in one whack because completely mining the fragments seems impossible
 25/03/2023 | 2.5.7 | permit multiple miners to whack same rock; overhaul rock whacking logic for lumberjacks and miners; remove collision on draugr heads
