@@ -17,10 +17,11 @@ namespace ChebsNecromancy.CustomPrefabs
             if (!TryGetComponent(out Projectile projectile)
                 || !projectile.m_owner.TryGetComponent(out player))
             {
-                Logger.LogError($"{name}'s projectile.owner has no player component! NPC using this weapon?");
+                // In this case, the item is likely being wielded by an NPC. So return prematurely and don't worry
+                // about the code.
                 return;
             }
-            
+
             // make all minions that belong to the player follow the ball
             List<Character> allCharacters = new();
             Character.GetCharactersInRange(player.transform.position, SkeletonWand.SkeletonSetFollowRange.Value, allCharacters);
