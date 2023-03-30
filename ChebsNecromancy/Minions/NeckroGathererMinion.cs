@@ -113,6 +113,20 @@ namespace ChebsNecromancy.Minions
         {
             if (ZNet.instance == null
                 || !(Time.time > lastUpdate)) return;
+            
+            // Some users get null object exceptions inside the neckro's Update method. IDK why exactly that would be.
+            // Mod conflicts? Don't know. So to mitigate this, just be extra careful about nulls and abort if anything
+            // is null.
+            if (container == null && !TryGetComponent(out container))
+            {
+                Logger.LogError("Neckro container is null and cannot be retrieved!");
+                return;
+            }
+            if (_monsterAI == null && !TryGetComponent(out _monsterAI))
+            {
+                Logger.LogError("Neckro MonsterAI is null and cannot be retrieved!");
+                return;
+            }
 
             bool canPick = LookForNearbyItems();
             if (canPick)
@@ -140,7 +154,7 @@ namespace ChebsNecromancy.Minions
                             {
                                 DepositItems();
                             }
-                        }                        
+                        }              
                     }
                     else
                     {

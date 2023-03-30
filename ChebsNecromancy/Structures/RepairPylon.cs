@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
@@ -12,7 +13,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RepairUpdateInterval, FuelConsumedPerPointOfDamage, RepairWoodWhen, RepairOtherWhen;
         public static ConfigEntry<int> RepairContainerWidth, RepairContainerHeight;
-        public static ConfigEntry<string> Fuels;
+        public static ConfigEntry<string> Fuels, AlwaysRepair;
 
         private readonly int pieceMask = LayerMask.GetMask("piece");
 
@@ -73,6 +74,10 @@ namespace ChebsNecromancy.Structures
                 "How low a non-wood structure's health must drop in order for it to be repaired. Set to 0 to repair regardless of damage.",
                 null, true);
             
+            AlwaysRepair = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "AlwaysRepair", "piece_sharpstakes,piece_dvergr_sharpstakes",
+                "These prefabs are always repaired no matter their damage and ignore the RepairWoodWhen/RepairOtherWhen thresholds. This is good for defensive things like stakes which should always be kept at maximum health. Please use a comma-delimited list of prefab names.",
+                null, true);
+            
             Fuels = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Fuels", "Resin,GreydwarfEye,Pukeberries",
                 "The items that are consumed as fuel when repairing. Please use a comma-delimited list of prefab names.",
                 null, true);
@@ -110,29 +115,31 @@ namespace ChebsNecromancy.Structures
                     if (RepairDamage(wearNTear))
                     {
                         var player = Player.m_localPlayer;
-                        
-                        // show repair text if player is near the pylon
-                        if (Vector3.Distance(player.transform.position, transform.position) < 5)
+                        if (player != null)
                         {
-                            Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
-                                $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
-                        }
-                        
-                        // make the hammer sound and puff of smoke etc. if the player is nearby the thing being repaired
-                        var distance = Vector3.Distance(player.transform.position, wearNTear.transform.position);
-                        if (distance < 20)
-                        {
-                            var localPiece = wearNTear.m_piece;
-                            if (localPiece is not null)
+                            // show repair text if player is near the pylon
+                            if (Vector3.Distance(player.transform.position, transform.position) < 5)
                             {
-                                var localPieceTransform = localPiece.transform;
-                                localPiece.m_placeEffect.Create(localPieceTransform.position,
-                                    localPieceTransform.rotation);
+                                Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
+                                    $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
+                            }
+                        
+                            // make the hammer sound and puff of smoke etc. if the player is nearby the thing being repaired
+                            var distance = Vector3.Distance(player.transform.position, wearNTear.transform.position);
+                            if (distance < 20)
+                            {
+                                var localPiece = wearNTear.m_piece;
+                                if (localPiece is not null)
+                                {
+                                    var localPieceTransform = localPiece.transform;
+                                    localPiece.m_placeEffect.Create(localPieceTransform.position,
+                                        localPieceTransform.rotation);
+                                }
                             }
                         }
+                        
+                        yield return new WaitForSeconds(1);
                     }
-
-                    yield return new WaitForSeconds(1);
                 }
             }
         }
@@ -140,14 +147,21 @@ namespace ChebsNecromancy.Structures
         private bool RepairDamage(WearNTear wearNTear)
         {
             if (wearNTear.GetHealthPercentage() >= 1f) return false;
-            
-            if (wearNTear.m_materialType is WearNTear.MaterialType.Wood or WearNTear.MaterialType.HardWood)
+
+            var alwaysRepairNames = AlwaysRepair.Value.Split(',');
+            // wearNTear.name could be "piece_sharpstakes(Clone)" and alwaysRepairName could be "piece_sharpstakes"
+            var alwaysRepair = alwaysRepairNames.Any(alwaysRepairName => wearNTear.name.Contains(alwaysRepairName));
+
+            if (!alwaysRepair)
             {
-                if (RepairWoodWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairWoodWhen.Value) return false;
-            }
-            else
-            {
-                if (RepairOtherWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairOtherWhen.Value) return false;
+                if (wearNTear.m_materialType is WearNTear.MaterialType.Wood or WearNTear.MaterialType.HardWood)
+                {
+                    if (RepairWoodWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairWoodWhen.Value) return false;
+                }
+                else
+                {
+                    if (RepairOtherWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairOtherWhen.Value) return false;
+                }   
             }
 
             var consumedFuel = ConsumeFuel(wearNTear);
@@ -238,13 +252,18 @@ namespace ChebsNecromancy.Structures
             if (nearbyColliders.Length < 1) return null;
 
             var result = new List<WearNTear>();
+            //var repairPylonSkipped = new List<string>();
             foreach (var nearbyCollider in nearbyColliders)
             {
                 var wearAndTear = nearbyCollider.GetComponentInParent<WearNTear>();
-                if (wearAndTear == null) continue;
-                if (!wearAndTear.m_nview.IsValid()) continue;
+                if (wearAndTear == null || !wearAndTear.m_nview.IsValid())
+                {
+                    //repairPylonSkipped.Add($"{nearbyCollider.name}");
+                    continue;
+                }
                 result.Add(wearAndTear);
             }
+            //Jotunn.Logger.LogInfo($"Skipped {string.Join(",", repairPylonSkipped)}");
 
             return result;
         }
