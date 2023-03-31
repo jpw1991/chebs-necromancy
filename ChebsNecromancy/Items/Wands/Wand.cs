@@ -31,6 +31,13 @@ namespace ChebsNecromancy.Items
         public ConfigEntry<InputManager.GamepadButton> TeleportGamepadConfig;
         public ButtonConfig TeleportButton;
 
+        public ConfigEntry<float> TeleportDurabilityCost;
+        public ConfigEntry<float> TeleportCooldown;
+        protected float lastTeleport;
+
+        public bool CanTeleport =>
+            TeleportCooldown.Value == 0f || Time.time - lastTeleport > TeleportCooldown.Value;
+
         public ConfigEntry<KeyCode> CreateArcherMinionConfig;
         public ConfigEntry<InputManager.GamepadButton> CreateArcherMinionGamepadConfig;
         public ButtonConfig CreateArcherMinionButton;
@@ -85,6 +92,16 @@ namespace ChebsNecromancy.Items
             TeleportGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"TeleportGamepad",
                 InputManager.GamepadButton.SelectButton,
                 new ConfigDescription("The gamepad button to teleport following minions to you."));
+            
+            TeleportCooldown = plugin.Config.Bind("Wands (Server Synced)", 
+                "TeleportCooldown",
+                5f, new ConfigDescription("How long a player must wait before being able to teleport minions again (0 for no cooldown).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            TeleportDurabilityCost = plugin.Config.Bind("Wands (Server Synced)", 
+                "TeleportDurabilityCost",
+                0f, new ConfigDescription("How much damage a wand receives from being used to teleport minions with (0 for no damage).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             UnlockExtraResourceConsumptionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName + "UnlockExtraResourceConsumption",
                 KeyCode.LeftShift, new ConfigDescription("The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton."));
@@ -244,10 +261,19 @@ namespace ChebsNecromancy.Items
 
         public void TeleportFollowingMinionsToPlayer()
         {
-            Player player = Player.m_localPlayer;
+            if (!CanTeleport) return;
+            var player = Player.m_localPlayer;
+            var rightItem = player.GetRightItem();
+            if (TeleportDurabilityCost.Value > 0 && rightItem != null)
+            {
+                rightItem.m_durability -= TeleportDurabilityCost.Value;
+            }
+
+            lastTeleport = Time.time;
+            
             // based off BaseAI.FindClosestCreature
-            List<Character> allCharacters = Character.GetAllCharacters();
-            foreach (Character item in allCharacters)
+            var allCharacters = Character.GetAllCharacters();
+            foreach (var item in allCharacters)
             {
                 if (item.IsDead())
                 {
