@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
@@ -6,7 +5,6 @@ using BepInEx.Configuration;
 using ChebsNecromancy.Common;
 using ChebsNecromancy.Minions;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Structures
 {

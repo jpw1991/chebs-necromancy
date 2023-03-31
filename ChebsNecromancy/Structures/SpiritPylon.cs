@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using ChebsNecromancy.Common;
@@ -97,7 +96,7 @@ namespace ChebsNecromancy.Structures
                 }
 
                 if (Player.m_localPlayer == null) continue;
-                if (!EnemiesNearby(out Character characterInRange)) continue;
+                if (!EnemiesNearby(out Character characterInRange, SightRadius.Value)) continue;
                 
                 // spawn ghosts up until the limit
                 if (SpawnedGhosts.Count < MaxGhosts.Value)
@@ -112,23 +111,6 @@ namespace ChebsNecromancy.Structures
                     }
                 }
             }
-        }
-
-        protected bool EnemiesNearby(out Character characterInRange)
-        {
-            List<Character> charactersInRange = new();
-            Character.GetCharactersInRange(
-                transform.position,
-                SightRadius.Value,
-                charactersInRange
-                );
-            foreach (var character in charactersInRange.Where(character => character != null && character.m_faction != Character.Faction.Players))
-            {
-                characterInRange = character;
-                return true;
-            }
-            characterInRange = null;
-            return false;
         }
 
         protected GameObject SpawnFriendlyGhost()
