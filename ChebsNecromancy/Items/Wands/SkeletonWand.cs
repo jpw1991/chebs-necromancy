@@ -217,6 +217,13 @@ namespace ChebsNecromancy.Items
                 UnlockExtraResourceConsumptionButton == null
                 || ZInput.GetButton(UnlockExtraResourceConsumptionButton.Name);
 
+            // handle visual side of keyhints
+            // if (TeleportButton != null && TeleportCooldown.Value > 0)
+            // {
+            //     TeleportButton.HintToken = Time.time - lastTeleport < TeleportCooldown.Value ? "Cooldown" : "$friendlyskeletonwand_teleport";
+            // }
+
+            // handle input responses
             if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
             {
                 SpawnSkeleton();

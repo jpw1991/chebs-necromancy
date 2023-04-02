@@ -165,7 +165,10 @@ namespace ChebsNecromancy.Items
                 30f,
                 charactersInRange
                 );
-            foreach (var character in charactersInRange.Where(character => character != null && character.m_faction != Character.Faction.Players))
+            foreach (var character in charactersInRange.Where(
+                         character => 
+                             character != null
+                             && (character.m_faction != Character.Faction.Players && !character.m_tamed)))
             {
                 enemy = character;
                 return true;
