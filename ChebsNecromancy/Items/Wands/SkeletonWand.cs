@@ -347,6 +347,19 @@ namespace ChebsNecromancy.Items
             Player player = Player.m_localPlayer;
 
             if (!ExtraResourceConsumptionUnlocked) return SkeletonMinion.SkeletonType.None;
+            
+            // check for bones
+            if (BoneFragmentsRequiredConfig.Value > 0)
+            {
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+
+                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughbones");
+                    return SkeletonMinion.SkeletonType.None;
+                }
+            }
 
             if (MinerSkeletonAntlerRequiredConfig.Value > 0)
             {
