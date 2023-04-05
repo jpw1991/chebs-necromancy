@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions.AI
 {
@@ -16,7 +18,6 @@ namespace ChebsNecromancy.Minions.AI
         
         private bool _inContact;
         private float _lerpedValue;
-        //private float _timeFollowingObject;
 
         private void Awake()
         {
@@ -34,16 +35,29 @@ namespace ChebsNecromancy.Minions.AI
             // All rocks are in the static_solid layer and have a Destructible component with type Default.
             // We can just match names as the rock names are pretty unique
             var layerMask = 1 << LayerMask.NameToLayer("static_solid") | 1 << LayerMask.NameToLayer("Default_small");
-            var closest = UndeadMinion.FindClosest<Transform>(transform,
+            // get all nearby rocks/ores
+            var nearby = UndeadMinion.FindNearby<Transform>(transform,
                 SkeletonMinerMinion.LookRadius.Value,
                 layerMask,
                 Hittable,
                 false);
+            // assign a priority to the rocks/ores -> eg. copper takes precedence over simple rocks
+            var priorities = nearby
+                .Select(c => (c, c.name.Contains("_Tin")
+                                 || c.name.Contains("silver")
+                                 || c.name.Contains("copper")
+                    ? 1
+                    : 2));
+            
+            // Order the list of tuples by priority first, then by distance
+            var orderedPriorities = priorities.OrderBy(t => t.Item2)
+                .ThenBy(t => Vector3.Distance(transform.position, t.Item1.position));
 
+            // Get the first item from the ordered list
+            var closest = orderedPriorities.FirstOrDefault().ToTuple()?.Item1;
             if (closest != null)
             {
                 _monsterAI.SetFollowTarget(closest.gameObject);
-                //_timeFollowingObject = Time.time;
             }
         }
 
@@ -54,20 +68,11 @@ namespace ChebsNecromancy.Minions.AI
             {
                 if (Vector3.Distance(transform.position, followTarget.transform.position) < 5f)
                 {
-                    //var t = Mathf.PingPong(Time.time, 2f);
-                    //_lerpedValue = Mathf.Lerp(1f, -1f, t);  
-
                     transform.LookAt(followTarget.transform.position);// + Vector3.down * _lerpedValue);
-                    
                 }
-                //followTarget.GetComponent<Destructible>().Damage(new);
-                
                 TryAttack();
             }
-            // else
-            // {
-            //     _timeFollowingObject = 0f;
-            // }
+
             if (Time.time > nextCheck)
             {
                 nextCheck = Time.time + SkeletonMinerMinion.UpdateDelay.Value
@@ -88,9 +93,6 @@ namespace ChebsNecromancy.Minions.AI
         {
             var followTarget = _monsterAI.GetFollowTarget();
             if (followTarget != null && _inContact)
-                //&& (_inContact // in contact with rock (physically touching it)
-                //|| _timeFollowingObject > 20f // or can't reach it after prolonged period (large rock fragments)
-                //))
             {
                 _monsterAI.DoAttack(null, false);
 
@@ -100,7 +102,6 @@ namespace ChebsNecromancy.Minions.AI
                     var hitData = new HitData();
                     hitData.m_damage.m_pickaxe = 500;
                     destructible.m_nview.InvokeRPC("Damage", hitData);
-                    //destructible.Damage(hitData);
                     return;
                 }
 
@@ -111,7 +112,7 @@ namespace ChebsNecromancy.Minions.AI
                     for (int i = 0; i < mineRock5.m_hitAreas.Count; i++)
                     {
                         var hitArea = mineRock5.m_hitAreas[i];
-                        if (hitArea.m_health > 0f)// && !hitArea.m_supported)
+                        if (hitArea.m_health > 0f)
                         {
                             var hitData = new HitData();
                             hitData.m_damage.m_damage = hitArea.m_health;
@@ -120,8 +121,6 @@ namespace ChebsNecromancy.Minions.AI
                             mineRock5.DamageArea(i, hitData);
                         }
                     }
-                    //mineRock5.Damage(hitData);
-                    //mineRock5.m_nview.Destroy();
                     return;
                 }
 
@@ -131,17 +130,16 @@ namespace ChebsNecromancy.Minions.AI
                     // destroy all fragments
                     for (int i = 0; i < mineRock.m_hitAreas.Length; i++)
                     {
-                        var collider = mineRock.m_hitAreas[i];
-                        if (collider.TryGetComponent(out HitArea hitArea) && hitArea.m_health > 0f)
+                        var col = mineRock.m_hitAreas[i];
+                        if (col.TryGetComponent(out HitArea hitArea) && hitArea.m_health > 0f)
                         {
                             var hitData = new HitData();
                             hitData.m_damage.m_damage = hitArea.m_health;
-                            hitData.m_point = collider.bounds.center;
+                            hitData.m_point = col.bounds.center;
                             hitData.m_toolTier = 100;
                             mineRock5.DamageArea(i, hitData);
                         }
                     }
-                    //mineRock.Damage(hitData);
                 }
             }
         }
@@ -173,10 +171,9 @@ namespace ChebsNecromancy.Minions.AI
                        return parent != null && rocksListName.Contains(parent.name);
                    }) != null
                    || (destructible != null
-                    //&& (destructible.gameObject.layer == LayerMask.NameToLayer("static_solid") || destructible.gameObject.layer == LayerMask.NameToLayer("Default_small"))
-                    && destructible.m_destructibleType == DestructibleType.Default
-                    && destructible.GetComponent<Container>() == null // don't attack containers
-                    && destructible.GetComponent<Pickable>() == null // don't attack useful bushes
+                       && destructible.m_destructibleType == DestructibleType.Default
+                       && destructible.GetComponent<Container>() == null // don't attack containers
+                       && destructible.GetComponent<Pickable>() == null // don't attack useful bushes
                     )
                    || go.GetComponentInParent<MineRock5>() != null
                    || go.GetComponentInParent<MineRock>() != null;
