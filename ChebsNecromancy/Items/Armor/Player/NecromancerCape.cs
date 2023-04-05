@@ -42,7 +42,7 @@ namespace ChebsNecromancy.Items
 
         public void CreateConfigs(BaseUnityPlugin plugin)
         {
-            EmblemConfig = plugin.Config.Bind("NecromancerCape (Client)", "Emblem", Emblem.Blank, 
+            EmblemConfig = plugin.Config.Bind($"{GetType().Name} (Client)", "Emblem", Emblem.Blank, 
                 new ConfigDescription("The symbol on the cape of your armored minions."));
         }
 

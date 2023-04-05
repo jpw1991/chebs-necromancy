@@ -39,51 +39,51 @@ namespace ChebsNecromancy.Items
         {
             base.CreateConfigs(plugin);
 
-            Allowed = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudAllowed",
+            Allowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudAllowed",
                 true, new ConfigDescription("Whether crafting a Spectral Shroud is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationRequired = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStation",
+            CraftingStationRequired = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Spectral Shroud is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationLevel = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingStationLevel",
+            CraftingStationLevel = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Spectral Shroud", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingCost = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudCraftingCosts",
+            CraftingCost = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudCraftingCosts",
                 DefaultRecipe, new ConfigDescription("Materials needed to craft Spectral Shroud. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SpawnWraith = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSpawnWraith",
+            SpawnWraith = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudSpawnWraith",
                 true, new ConfigDescription("Whether wraiths spawn or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            NecromancySkillBonus = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudSkillBonus",
+            NecromancySkillBonus = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DelayBetweenWraithSpawns = plugin.Config.Bind("SpectralShroud (Server Synced)", "SpectralShroudWraithDelay",
+            DelayBetweenWraithSpawns = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SpectralShroudWraithDelay",
                 30, new ConfigDescription("How much time must pass after a wraith spawns before a new one is able to spawn.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            GuardianWraithTierOneQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierOneQuality",
+            GuardianWraithTierOneQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "GuardianWraithTierOneQuality",
                1, new ConfigDescription("Star Quality of tier 1 GuardianWraith minions", null,
                new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            GuardianWraithTierTwoQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierTwoQuality",
+            GuardianWraithTierTwoQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "GuardianWraithTierTwoQuality",
                 2, new ConfigDescription("Star Quality of tier 2 GuardianWraith minions", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            GuardianWraithTierTwoLevelReq = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierTwoLevelReq",
+            GuardianWraithTierTwoLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "GuardianWraithTierTwoLevelReq",
                 35, new ConfigDescription("Necromancy skill level required to summon Tier 2 GuardianWraith", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            GuardianWraithTierThreeQuality = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierThreeQuality",
+            GuardianWraithTierThreeQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "GuardianWraithTierThreeQuality",
                 3, new ConfigDescription("Star Quality of tier 3 GuardianWraith minions", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            GuardianWraithTierThreeLevelReq = plugin.Config.Bind("SpectralShroud (Server Synced)", "GuardianWraithTierThreeLevelReq",
+            GuardianWraithTierThreeLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "GuardianWraithTierThreeLevelReq",
                 70, new ConfigDescription("Necromancy skill level required to summon Tier 3 GuardianWraith", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }

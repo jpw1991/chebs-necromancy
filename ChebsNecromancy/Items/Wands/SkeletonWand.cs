@@ -48,89 +48,89 @@ namespace ChebsNecromancy.Items
         {
             base.CreateConfigs(plugin);
 
-            SkeletonSetFollowRange = plugin.Config.Bind("SkeletonWand (Client)", "SkeletonCommandRange",
+            SkeletonSetFollowRange = plugin.Config.Bind($"{GetType().Name} (Client)", "SkeletonCommandRange",
                 20f, new ConfigDescription("The distance which nearby skeletons will hear your commands."));
 
-            Allowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandAllowed",
+            Allowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonWandAllowed",
                 true, new ConfigDescription("Whether crafting a Skeleton Wand is allowed or not.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationRequired = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingStation",
+            CraftingStationRequired = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonWandCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Skeleton Wand is available",
                     null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationLevel = plugin.Config.Bind("SkeletonWand (Server Synced)",
+            CraftingStationLevel = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "SkeletonWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Skeleton Wand", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingCost = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonWandCraftingCosts",
+            CraftingCost = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonWandCraftingCosts",
                 DefaultRecipe, new ConfigDescription(
                     "Materials needed to craft Skeleton Wand. None or Blank will use Default settings.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonsAllowed = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonsAllowed",
-                true, new ConfigDescription("If false, skeletons aren't loaded at all and can't be summoned.", null,
+            SkeletonsAllowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonsAllowed",
+                true, new ConfigDescription("If false, skeletons can't be summoned.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            BoneFragmentsRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)", "BoneFragmentsRequired",
+            BoneFragmentsRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "BoneFragmentsRequired",
                 6, new ConfigDescription("The amount of Bone Fragments required to craft a skeleton.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonBaseHealth = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonBaseHealth",
+            SkeletonBaseHealth = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonBaseHealth",
                 20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonHealthMultiplier = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonHealthMultiplier",
+            SkeletonHealthMultiplier = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonHealthMultiplier",
                 1.25f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonTierOneQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierOneQuality",
+            SkeletonTierOneQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierOneQuality",
                 1, new ConfigDescription("Star Quality of tier 1 Skeleton minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonTierTwoQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoQuality",
+            SkeletonTierTwoQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierTwoQuality",
                 2, new ConfigDescription("Star Quality of tier 2 Skeleton minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonTierTwoLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierTwoLevelReq",
+            SkeletonTierTwoLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierTwoLevelReq",
                 35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Skeleton", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonTierThreeQuality = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeQuality",
+            SkeletonTierThreeQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierThreeQuality",
                 3, new ConfigDescription("Star Quality of tier 3 Skeleton minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonTierThreeLevelReq = plugin.Config.Bind("SkeletonWand (Server Synced)", "SkeletonTierThreeLevelReq",
+            SkeletonTierThreeLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierThreeLevelReq",
                 90, new ConfigDescription("Necromancy skill level required to summon Tier 3 Skeleton", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PoisonSkeletonBaseHealth = plugin.Config.Bind("SkeletonWand (Server Synced)", "PoisonSkeletonBaseHealth",
+            PoisonSkeletonBaseHealth = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "PoisonSkeletonBaseHealth",
                 100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PoisonSkeletonLevelRequirementConfig = plugin.Config.Bind("SkeletonWand (Server Synced)",
+            PoisonSkeletonLevelRequirementConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "PoisonSkeletonLevelRequired",
                 50, new ConfigDescription("The Necromancy level needed to summon a Poison Skeleton.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PoisonSkeletonGuckRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)",
+            PoisonSkeletonGuckRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "PoisonSkeletonGuckRequired",
                 1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            WoodcutterSkeletonFlintRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)",
+            WoodcutterSkeletonFlintRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "WoodcutterSkeletonFlintRequired",
                 1, new ConfigDescription("The amount of Flint required to craft a Woodcutter Skeleton.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            MinerSkeletonAntlerRequiredConfig = plugin.Config.Bind("SkeletonWand (Server Synced)",
+            MinerSkeletonAntlerRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "MinerSkeletonAntlerRequired",
                 1, new ConfigDescription("The amount of HardAntler required to craft a Miner Skeleton.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SkeletonArmorValueMultiplier = plugin.Config.Bind("SkeletonWand (Server Synced)",
+            SkeletonArmorValueMultiplier = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "SkeletonArmorValueMultiplier",
                 1f, new ConfigDescription(
                     "If you find the armor value for skeletons to be too low, you can multiply it here. By default, a skeleton wearing iron armor will have an armor value of 42 (14+14+14). A multiplier of 1.5 will cause this armor value to increase to 63.",
@@ -522,6 +522,11 @@ namespace ChebsNecromancy.Items
 
             if (skeletonType is SkeletonMinion.SkeletonType.None)
                 skeletonType = SpawnSkeletonWarriorMinion(armorType);
+
+            if (skeletonType is SkeletonMinion.SkeletonType.None)
+            {
+                return;
+            }
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here

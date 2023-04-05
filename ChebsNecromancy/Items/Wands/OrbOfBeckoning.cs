@@ -32,19 +32,19 @@ namespace ChebsNecromancy.Items
             //
             // don't call base.CreateConfig because we want to omit the archer button
 
-            Allowed = plugin.Config.Bind("OrbOfBeckoning (Server Synced)", "OrbOfBeckoningAllowed",
+            Allowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "OrbOfBeckoningAllowed",
                 true, new ConfigDescription("Whether crafting an Orb of Beckoning is allowed or not.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationRequired = plugin.Config.Bind("OrbOfBeckoning (Server Synced)", "OrbOfBeckoningCraftingStation",
+            CraftingStationRequired = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "OrbOfBeckoningCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where it's available", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationLevel = plugin.Config.Bind("OrbOfBeckoning (Server Synced)", "OrbOfBeckoningCraftingStationLevel",
+            CraftingStationLevel = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "OrbOfBeckoningCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingCost = plugin.Config.Bind("OrbOfBeckoning (Server Synced)", "OrbOfBeckoningCraftingCosts",
+            CraftingCost = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "OrbOfBeckoningCraftingCosts",
                 DefaultRecipe, new ConfigDescription("Materials needed to craft it. None or Blank will use Default settings.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
