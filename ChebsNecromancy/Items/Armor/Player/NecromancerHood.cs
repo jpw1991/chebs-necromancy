@@ -24,23 +24,23 @@ namespace ChebsNecromancy.Items
         {
             base.CreateConfigs(plugin);
 
-            Allowed = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodAllowed",
+            Allowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "NecromancerHoodAllowed",
                 true, new ConfigDescription("Whether crafting a Necromancer's Hood is allowed or not.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationRequired = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStation",
+            CraftingStationRequired = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "NecromancerHoodCraftingStation",
                 CraftingTable.Workbench, new ConfigDescription("Crafting station where Necromancer Hood is available", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationLevel = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingStationLevel",
+            CraftingStationLevel = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "NecromancerHoodCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Necromancer Hood", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingCost = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodCraftingCosts",
+            CraftingCost = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "NecromancerHoodCraftingCosts",
                DefaultRecipe, new ConfigDescription("Materials needed to craft Necromancer Hood. None or Blank will use Default settings.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            NecromancySkillBonus = plugin.Config.Bind("NecromancerHood (Server Synced)", "NecromancerHoodSkillBonus",
+            NecromancySkillBonus = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "NecromancerHoodSkillBonus",
                 10, new ConfigDescription("How much wearing the item should raise the Necromancy level (set to 0 to have no set effect at all).", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }

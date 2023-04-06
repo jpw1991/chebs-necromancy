@@ -18,13 +18,13 @@ namespace ChebsNecromancy.Minions
                 3, new ConfigDescription("The tier of the skeleton's tool: 0 (deerbone), 1 (bronze), 2 (iron), 3 (black metal).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             UpdateDelay = plugin.Config.Bind("SkeletonMiner (Server Synced)", "SkeletonMinerUpdateDelay",
-                6f, new ConfigDescription("The delay, in seconds, between wood searching attempts. Attention: small values may impact performance.", null,
+                6f, new ConfigDescription("The delay, in seconds, between rock/ore searching attempts. Attention: small values may impact performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             LookRadius = plugin.Config.Bind("SkeletonMiner (Server Synced)", "LookRadius",
-                50f, new ConfigDescription("How far it can see wood. High values may damage performance.", null,
+                50f, new ConfigDescription("How far it can see rock/ore. High values may damage performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             RoamRange = plugin.Config.Bind("SkeletonMiner (Server Synced)", "RoamRange",
-                50f, new ConfigDescription("How far it will randomly run to in search of wood.", null,
+                50f, new ConfigDescription("How far it will randomly run to in search of rock/ore.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             RockInternalIDsList = plugin.Config.Bind("SkeletonMiner (Server Synced)", "RockInternalIDsList",
                 DefaultOresList, new ConfigDescription("The types of rock the miner will attempt to mine. Internal IDs only.", null,

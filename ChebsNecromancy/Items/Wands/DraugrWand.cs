@@ -46,68 +46,68 @@ namespace ChebsNecromancy.Items
         {
             base.CreateConfigs(plugin);
 
-            DraugrSetFollowRange = plugin.Config.Bind("DraugrWand (Client)", "DraugrCommandRange",
+            DraugrSetFollowRange = plugin.Config.Bind($"{GetType().Name} (Client)", "DraugrCommandRange",
                 20f, new ConfigDescription("The range from which nearby Draugr will hear your command.", null));
 
-            Allowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandAllowed",
+            Allowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrWandAllowed",
                 true, new ConfigDescription("Whether crafting a Draugr Wand is allowed or not.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationRequired = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStation",
+            CraftingStationRequired = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrWandCraftingStation",
                 CraftingTable.Forge, new ConfigDescription("Crafting station where Draugr Wand is available", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingStationLevel = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingStationLevel",
+            CraftingStationLevel = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrWandCraftingStationLevel",
                 1, new ConfigDescription("Crafting station level required to craft Draugr Wand", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            CraftingCost = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrWandCraftingCosts",
+            CraftingCost = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrWandCraftingCosts",
                 DefaultRecipe, new ConfigDescription(
                     "Materials needed to craft Draugr Wand. None or Blank will use Default settings.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrAllowed = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrAllowed",
+            DraugrAllowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrAllowed",
                 true, new ConfigDescription("If false, draugr aren't loaded at all and can't be summoned.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrBaseHealth = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrBaseHealth",
+            DraugrBaseHealth = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrBaseHealth",
                 80f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrHealthMultiplier = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrHealthMultiplier",
+            DraugrHealthMultiplier = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrHealthMultiplier",
                 2.5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrTierOneQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierOneQuality",
+            DraugrTierOneQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrTierOneQuality",
                 1, new ConfigDescription("Star Quality of tier 1 Draugr minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrTierTwoQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoQuality",
+            DraugrTierTwoQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrTierTwoQuality",
                 2, new ConfigDescription("Star Quality of tier 2 Draugr minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrTierTwoLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierTwoLevelReq",
+            DraugrTierTwoLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrTierTwoLevelReq",
                 35, new ConfigDescription("Necromancy skill level required to summon Tier 2 Draugr", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrTierThreeQuality = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeQuality",
+            DraugrTierThreeQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrTierThreeQuality",
                 3, new ConfigDescription("Star Quality of tier 3 Draugr minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrTierThreeLevelReq = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrTierThreeLevelReq",
+            DraugrTierThreeLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrTierThreeLevelReq",
                 70, new ConfigDescription("Necromancy skill level required to summon Tier 3 Draugr", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrMeatRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrMeatRequired",
+            DraugrMeatRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrMeatRequired",
                 2, new ConfigDescription("How many pieces of meat it costs to make a Draugr.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            DraugrBoneFragmentsRequiredConfig = plugin.Config.Bind("DraugrWand (Server Synced)",
+            DraugrBoneFragmentsRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
                 "DraugrBoneFragmentsRequired",
                 6, new ConfigDescription("How many bone fragments it costs to make a Draugr.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            necromancyLevelIncrease = plugin.Config.Bind("DraugrWand (Server Synced)", "DraugrNecromancyLevelIncrease",
+            necromancyLevelIncrease = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "DraugrNecromancyLevelIncrease",
                 1.5f, new ConfigDescription(
                     "How much creating a Draugr contributes to your Necromancy level increasing.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
