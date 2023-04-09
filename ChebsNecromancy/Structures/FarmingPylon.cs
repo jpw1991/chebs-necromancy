@@ -22,8 +22,6 @@ namespace ChebsNecromancy.Structures
         private int _pieceMaskNonSolid;
         private List<string> _pickableList;
 
-        private List<Container> _containers;
-
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "FineWood:15,IronNails:15,SurtlingCore:1",
@@ -85,36 +83,9 @@ namespace ChebsNecromancy.Structures
                 yield return new WaitForSeconds(UpdateInterval.Value);
                 yield return new WaitWhile(() => Player.m_localPlayer != null && Player.m_localPlayer.m_sleeping);
 
-                //_containers = GetNearbyContainers();
-                
                 PickPickables();
             }
         }
-        
-        // private List<Container> GetNearbyContainers()
-        // {
-        //     // gets nearby containers, and also picks pickables
-        //     var containers = new List<Container>();
-        //     
-        //     // get empty containers in order of closest to furthest
-        //     Collider[] nearbyPieces =
-        //         Physics.OverlapSphere(transform.position + Vector3.up, SightRadius.Value, _pieceMask);
-        //     if (nearbyPieces.Length < 1) return containers;
-        //     
-        //     nearbyPieces
-        //         .OrderBy(piece => Vector3.Distance(transform.position, piece.transform.position))
-        //         .Where(piece =>
-        //         {
-        //             var container = piece.GetComponentInParent<Container>();
-        //             if (container != null && container.GetInventory().GetEmptySlots() > 0)
-        //             {
-        //                 containers.Add(container);
-        //                 return true;
-        //             }
-        //             return false;
-        //         });
-        //     return containers;
-        // }
 
         private void PickPickables()
         {
