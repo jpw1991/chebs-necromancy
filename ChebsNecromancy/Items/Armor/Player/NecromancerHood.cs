@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using ChebsValheimLibrary.Items;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using UnityEngine;

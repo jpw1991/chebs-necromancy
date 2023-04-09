@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Reflection;
 using BepInEx.Configuration;
-using ChebsNecromancy.Common;
+
+using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Structures;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 

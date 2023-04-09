@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Items;
+using ChebsValheimLibrary.Minions;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -206,7 +208,7 @@ namespace ChebsNecromancy.Items
             return false;
         }
         
-        private SkeletonMinion.SkeletonType SpawnSkeletonMageMinion(UndeadMinion.ArmorType armorType)
+        private SkeletonMinion.SkeletonType SpawnSkeletonMageMinion(ChebGonazMinion.ArmorType armorType)
         {
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
@@ -240,9 +242,9 @@ namespace ChebsNecromancy.Items
 
             // determine quality
 
-            if (armorType is not UndeadMinion.ArmorType.Bronze
-                and not UndeadMinion.ArmorType.Iron
-                and not UndeadMinion.ArmorType.BlackMetal)
+            if (armorType is not ChebGonazMinion.ArmorType.Bronze
+                and not ChebGonazMinion.ArmorType.Iron
+                and not ChebGonazMinion.ArmorType.BlackMetal)
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
                     "$chebgonaz_magesrequirearmor");
@@ -251,9 +253,9 @@ namespace ChebsNecromancy.Items
             // mages require bronze or better to be created
             return armorType switch
             {
-                UndeadMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.MageTier1,
-                UndeadMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.MageTier2,
-                UndeadMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.MageTier3,
+                ChebGonazMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.MageTier1,
+                ChebGonazMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.MageTier2,
+                ChebGonazMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.MageTier3,
                 _ => SkeletonMinion.SkeletonType.None
             };
         }
@@ -265,7 +267,12 @@ namespace ChebsNecromancy.Items
             var player = Player.m_localPlayer;
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = UndeadMinion.DetermineArmorType();
+            var armorType = ChebGonazMinion.DetermineArmorType(
+                player.GetInventory(),
+                BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                BasePlugin.ArmorIronRequiredConfig.Value,
+                BasePlugin.ArmorBronzeRequiredConfig.Value,
+                BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
 
             var skeletonType = SpawnSkeletonMageMinion(armorType);
 

@@ -3,6 +3,7 @@ using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Items;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -213,7 +214,7 @@ namespace ChebsNecromancy.Items
                     else if (playerNecromancyLevel >= GuardianWraithTierTwoLevelReq.Value) { quality = GuardianWraithTierTwoQuality.Value; }
 
                     player.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_wraithmessage");
-                    GameObject instance = GameObject.Instantiate(prefab,
+                    GameObject instance = Object.Instantiate(prefab,
                         player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
                     GuardianWraithMinion guardianWraithMinion = instance.AddComponent<GuardianWraithMinion>();
                     guardianWraithMinion.canBeCommanded = false;
@@ -241,7 +242,7 @@ namespace ChebsNecromancy.Items
                 }
                 else
                 {
-                    GameObject.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+                    Object.Instantiate(prefab, player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
                     wraithLastSpawnedAt = Time.time;
                 }
             }

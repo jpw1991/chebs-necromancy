@@ -1,6 +1,6 @@
 using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Minions.AI;
+using ChebsValheimLibrary.Minions.AI;
 
 namespace ChebsNecromancy.Minions
 {
@@ -32,6 +32,14 @@ namespace ChebsNecromancy.Minions
             canBeCommanded = false;
 
             if (!TryGetComponent(out WoodcutterAI _)) gameObject.AddComponent<WoodcutterAI>();
+        }
+        
+        public static void SyncInternalsWithConfigs()
+        {
+            // awful stuff. Is there a better way?
+            WoodcutterAI.UpdateDelay = UpdateDelay.Value;
+            WoodcutterAI.LookRadius = LookRadius.Value;
+            WoodcutterAI.RoamRange = RoamRange.Value;
         }
     }
 }

@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Items;
+using ChebsValheimLibrary.Minions;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Items
@@ -240,7 +244,7 @@ namespace ChebsNecromancy.Items
             return false;
         }
 
-        private void ConsumeResources(DraugrMinion.DraugrType draugrType, UndeadMinion.ArmorType armorType, Dictionary<string, int> meatTypesFound)
+        private void ConsumeResources(DraugrMinion.DraugrType draugrType, ChebGonazMinion.ArmorType armorType, Dictionary<string, int> meatTypesFound)
         {
             Player player = Player.m_localPlayer;
 
@@ -309,7 +313,7 @@ namespace ChebsNecromancy.Items
             // consume armor materials
             switch (armorType)
             {
-                case UndeadMinion.ArmorType.Leather:
+                case ChebGonazMinion.ArmorType.Leather:
                     // todo: expose these options to config
                     var leatherItemTypes = new List<string>()
                     {
@@ -331,16 +335,16 @@ namespace ChebsNecromancy.Items
                         }
                     }
                     break;
-                case UndeadMinion.ArmorType.LeatherTroll:
+                case ChebGonazMinion.ArmorType.LeatherTroll:
                     player.GetInventory().RemoveItem("$item_trollhide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.Bronze:
+                case ChebGonazMinion.ArmorType.Bronze:
                     player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.Iron:
+                case ChebGonazMinion.ArmorType.Iron:
                     player.GetInventory().RemoveItem("$item_iron", BasePlugin.ArmorIronRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.BlackMetal:
+                case ChebGonazMinion.ArmorType.BlackMetal:
                     player.GetInventory().RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
                     break;
             }
@@ -455,7 +459,14 @@ namespace ChebsNecromancy.Items
             
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = ExtraResourceConsumptionUnlocked ? UndeadMinion.DetermineArmorType() : UndeadMinion.ArmorType.None;
+            var armorType = ExtraResourceConsumptionUnlocked 
+                ? ChebGonazMinion.DetermineArmorType(
+                player.GetInventory(),
+                BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                BasePlugin.ArmorIronRequiredConfig.Value,
+                BasePlugin.ArmorBronzeRequiredConfig.Value,
+                BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                : ChebGonazMinion.ArmorType.None;
 
             var draugrType = SpawnDraugrArcher();
 
@@ -491,7 +502,7 @@ namespace ChebsNecromancy.Items
             InstantiateDraugr(quality, playerNecromancyLevel, draugrType, armorType);
         }
         
-        private DraugrMinion.DraugrType SpawnDraugrWarriorMinion(UndeadMinion.ArmorType armorType)
+        private DraugrMinion.DraugrType SpawnDraugrWarriorMinion(ChebGonazMinion.ArmorType armorType)
         {
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
@@ -506,10 +517,10 @@ namespace ChebsNecromancy.Items
         
             return armorType switch
             {
-                UndeadMinion.ArmorType.Leather => DraugrMinion.DraugrType.WarriorTier1,
-                UndeadMinion.ArmorType.Bronze => DraugrMinion.DraugrType.WarriorTier2,
-                UndeadMinion.ArmorType.Iron => DraugrMinion.DraugrType.WarriorTier3,
-                UndeadMinion.ArmorType.BlackMetal => DraugrMinion.DraugrType.WarriorTier4,
+                ChebGonazMinion.ArmorType.Leather => DraugrMinion.DraugrType.WarriorTier1,
+                ChebGonazMinion.ArmorType.Bronze => DraugrMinion.DraugrType.WarriorTier2,
+                ChebGonazMinion.ArmorType.Iron => DraugrMinion.DraugrType.WarriorTier3,
+                ChebGonazMinion.ArmorType.BlackMetal => DraugrMinion.DraugrType.WarriorTier4,
                 _ => DraugrMinion.DraugrType.WarriorTier1
             };
         }
@@ -584,7 +595,14 @@ namespace ChebsNecromancy.Items
 
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = ExtraResourceConsumptionUnlocked ? UndeadMinion.DetermineArmorType() : UndeadMinion.ArmorType.None;
+            var armorType = ExtraResourceConsumptionUnlocked
+                ? ChebGonazMinion.DetermineArmorType(
+                    player.GetInventory(),
+                    BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                    BasePlugin.ArmorIronRequiredConfig.Value,
+                    BasePlugin.ArmorBronzeRequiredConfig.Value,
+                    BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                : ChebGonazMinion.ArmorType.None;
 
             var draugrType = SpawnDraugrWarriorMinion(armorType);
 
@@ -618,7 +636,7 @@ namespace ChebsNecromancy.Items
             InstantiateDraugr(quality, playerNecromancyLevel, draugrType, armorType);
         }
 
-        protected void InstantiateDraugr(int quality, float playerNecromancyLevel, DraugrMinion.DraugrType draugrType, UndeadMinion.ArmorType armorType)
+        protected void InstantiateDraugr(int quality, float playerNecromancyLevel, DraugrMinion.DraugrType draugrType, ChebGonazMinion.ArmorType armorType)
         {
             if (draugrType is DraugrMinion.DraugrType.None) return;
             
@@ -632,7 +650,7 @@ namespace ChebsNecromancy.Items
                 Logger.LogError($"SpawnFriendlyDraugr: spawning {prefabName} failed");
             }
 
-            GameObject spawnedChar = GameObject.Instantiate(prefab,
+            GameObject spawnedChar = Object.Instantiate(prefab,
                 player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
             spawnedChar.AddComponent<FreshMinion>();
             DraugrMinion minion = spawnedChar.AddComponent<DraugrMinion>();
@@ -657,7 +675,7 @@ namespace ChebsNecromancy.Items
             minion.UndeadMinionMaster = player.GetPlayerName();
 
             // handle refunding of resources on death
-            if (DraugrMinion.DropOnDeath.Value == UndeadMinion.DropType.Nothing) return;
+            if (DraugrMinion.DropOnDeath.Value == ChebGonazMinion.DropType.Nothing) return;
             
             // we have to be a little bit cautious. It normally shouldn't exist yet, but maybe some other mod
             // added it? Who knows
@@ -667,45 +685,45 @@ namespace ChebsNecromancy.Items
                 characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
             }
 
-            if (DraugrMinion.DropOnDeath.Value == UndeadMinion.DropType.Everything)
+            if (DraugrMinion.DropOnDeath.Value == ChebGonazMinion.DropType.Everything)
             {
                 // bones
                 if (DraugrBoneFragmentsRequiredConfig.Value > 0)
                 {
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "BoneFragments", DraugrBoneFragmentsRequiredConfig.Value);
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "BoneFragments", DraugrBoneFragmentsRequiredConfig.Value);
                 }
 
                 // meat. For now, assume Neck tails
                 if (DraugrMeatRequiredConfig.Value > 0)
                 {
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "NeckTail", DraugrMeatRequiredConfig.Value);
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "NeckTail", DraugrMeatRequiredConfig.Value);
                 }
             }
 
             switch (armorType)
             {
-                case UndeadMinion.ArmorType.Leather:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, 
+                case ChebGonazMinion.ArmorType.Leather:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, 
                         Random.value > .5f ? "DeerHide" : "LeatherScraps", // flip a coin for deer or scraps
                         BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.LeatherTroll:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "TrollHide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                case ChebGonazMinion.ArmorType.LeatherTroll:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "TrollHide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.LeatherWolf:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "WolfPelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                case ChebGonazMinion.ArmorType.LeatherWolf:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "WolfPelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.LeatherLox:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "LoxPelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                case ChebGonazMinion.ArmorType.LeatherLox:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "LoxPelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.Bronze:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "Bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
+                case ChebGonazMinion.ArmorType.Bronze:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "Bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.Iron:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "Iron", BasePlugin.ArmorIronRequiredConfig.Value);
+                case ChebGonazMinion.ArmorType.Iron:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "Iron", BasePlugin.ArmorIronRequiredConfig.Value);
                     break;
-                case UndeadMinion.ArmorType.BlackMetal:
-                    UndeadMinion.AddOrUpdateDrop(characterDrop, "BlackMetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
+                case ChebGonazMinion.ArmorType.BlackMetal:
+                    ChebGonazMinion.AddOrUpdateDrop(characterDrop, "BlackMetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
                     break;
             }
 

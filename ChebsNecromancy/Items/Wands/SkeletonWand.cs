@@ -2,6 +2,8 @@
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Items;
+using ChebsValheimLibrary.Minions;
 using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
@@ -382,7 +384,7 @@ namespace ChebsNecromancy.Items
         }
         
         private SkeletonMinion.SkeletonType SpawnPoisonSkeletonMinion(float playerNecromancyLevel,
-            UndeadMinion.ArmorType armorType)
+            ChebGonazMinion.ArmorType armorType)
         {
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
@@ -422,15 +424,15 @@ namespace ChebsNecromancy.Items
             // determine quality
             return armorType switch
             {
-                UndeadMinion.ArmorType.Leather => SkeletonMinion.SkeletonType.PoisonTier1,
-                UndeadMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.PoisonTier2,
-                UndeadMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.PoisonTier3,
-                UndeadMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.PoisonTier3,
+                ChebGonazMinion.ArmorType.Leather => SkeletonMinion.SkeletonType.PoisonTier1,
+                ChebGonazMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.PoisonTier2,
+                ChebGonazMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.PoisonTier3,
+                ChebGonazMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.PoisonTier3,
                 _ => SkeletonMinion.SkeletonType.PoisonTier1
             };
         }
 
-        private SkeletonMinion.SkeletonType SpawnSkeletonWarriorMinion(UndeadMinion.ArmorType armorType)
+        private SkeletonMinion.SkeletonType SpawnSkeletonWarriorMinion(ChebGonazMinion.ArmorType armorType)
         {
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
@@ -460,10 +462,10 @@ namespace ChebsNecromancy.Items
             
             return armorType switch
             {
-                UndeadMinion.ArmorType.Leather => SkeletonMinion.SkeletonType.WarriorTier1,
-                UndeadMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.WarriorTier2,
-                UndeadMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.WarriorTier3,
-                UndeadMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.WarriorTier4,
+                ChebGonazMinion.ArmorType.Leather => SkeletonMinion.SkeletonType.WarriorTier1,
+                ChebGonazMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.WarriorTier2,
+                ChebGonazMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.WarriorTier3,
+                ChebGonazMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.WarriorTier4,
                 _ => SkeletonMinion.SkeletonType.WarriorTier1
             };
         }
@@ -476,8 +478,13 @@ namespace ChebsNecromancy.Items
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
             var armorType = ExtraResourceConsumptionUnlocked
-                ? UndeadMinion.DetermineArmorType()
-                : UndeadMinion.ArmorType.None;
+                ? ChebGonazMinion.DetermineArmorType(
+                    player.GetInventory(),
+                    BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                    BasePlugin.ArmorIronRequiredConfig.Value,
+                    BasePlugin.ArmorBronzeRequiredConfig.Value,
+                    BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                : ChebGonazMinion.ArmorType.None;
 
             var skeletonType = SpawnSkeletonArcher();
 
@@ -521,14 +528,19 @@ namespace ChebsNecromancy.Items
             var playerNecromancyLevel =
                 player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
             var armorType = ExtraResourceConsumptionUnlocked
-                ? UndeadMinion.DetermineArmorType()
-                : UndeadMinion.ArmorType.None;
+                ? ChebGonazMinion.DetermineArmorType(
+                    player.GetInventory(),
+                    BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                    BasePlugin.ArmorIronRequiredConfig.Value,
+                    BasePlugin.ArmorBronzeRequiredConfig.Value,
+                    BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                : ChebGonazMinion.ArmorType.None;
 
             var skeletonType = SpawnSkeletonWorkerMinion();
 
             // don't give armor to workers
             if (skeletonType is SkeletonMinion.SkeletonType.Miner or SkeletonMinion.SkeletonType.Woodcutter)
-                armorType = UndeadMinion.ArmorType.None;
+                armorType = ChebGonazMinion.ArmorType.None;
 
             if (skeletonType is SkeletonMinion.SkeletonType.None)
                 skeletonType = SpawnPoisonSkeletonMinion(playerNecromancyLevel, armorType);

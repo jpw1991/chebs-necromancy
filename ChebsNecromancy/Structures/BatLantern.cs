@@ -1,5 +1,5 @@
 using System.Reflection;
-using ChebsNecromancy.Common;
+using ChebsValheimLibrary.Common;
 
 namespace ChebsNecromancy.Structures
 {

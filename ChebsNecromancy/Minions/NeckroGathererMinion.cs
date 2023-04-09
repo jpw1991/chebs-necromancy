@@ -5,6 +5,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
+using ChebsValheimLibrary.Minions;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 using Random = UnityEngine.Random;

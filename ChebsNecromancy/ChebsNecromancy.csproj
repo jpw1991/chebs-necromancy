@@ -58,6 +58,9 @@
     <Reference Include="assembly_valheim_">
       <HintPath>libs\assembly_valheim_publicized.dll</HintPath>
     </Reference>
+    <Reference Include="ChebsValheimLibrary">
+      <HintPath>..\..\chebs-valheim-library\ChebsValheimLibrary\ChebsValheimLibrary\bin\Release\ChebsValheimLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Jotunn, Version=2.11.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JotunnLib.2.11.2\lib\net462\Jotunn.dll</HintPath>
     </Reference>
@@ -124,70 +127,17 @@
   <ItemGroup>
     <Compile Include="Commands\SetNeckroHome.cs" />
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
-    <Compile Include="InternalName.cs" />
-    <Compile Include="Items\Armor\BlackMetal\BlackIronChest.cs" />
-    <Compile Include="Items\Armor\BlackMetal\BlackIronHelmet.cs" />
-    <Compile Include="Items\Armor\BlackMetal\BlackIronLegs.cs" />
-    <Compile Include="Items\Armor\BlackMetal\SkeletonHelmetBlackIron.cs" />
-    <Compile Include="Items\Armor\BlackMetal\SkeletonHelmetBlackIronPoison.cs" />
-    <Compile Include="Items\Armor\Bronze\SkeletonHelmetBronze.cs" />
-    <Compile Include="Items\Armor\Bronze\SkeletonHelmetBronzePoison.cs" />
-    <Compile Include="Items\Armor\Iron\SkeletonHelmetIron.cs" />
-    <Compile Include="Items\Armor\Iron\SkeletonHelmetIronPoison.cs" />
-    <Compile Include="Items\Armor\Leather\Lox\SkeletonArmorLeatherChestLox.cs" />
-    <Compile Include="Items\Armor\Leather\Lox\SkeletonArmorLeatherLegsLox.cs" />
-    <Compile Include="Items\Armor\Leather\Lox\SkeletonHelmetLeatherLox.cs" />
-    <Compile Include="Items\Armor\Leather\Lox\SkeletonHelmetLeatherPoisonLox.cs" />
-    <Compile Include="Items\Armor\Leather\SkeletonHelmetLeather.cs" />
-    <Compile Include="Items\Armor\Leather\SkeletonHelmetLeatherPoison.cs" />
-    <Compile Include="Items\Armor\Leather\Troll\SkeletonArmorLeatherLegsTroll.cs" />
-    <Compile Include="Items\Armor\Leather\Troll\SkeletonArmorLeatherChestTroll.cs" />
-    <Compile Include="Items\Armor\Leather\Troll\SkeletonHelmetLeatherPoisonTroll.cs" />
-    <Compile Include="Items\Armor\Leather\Troll\SkeletonHelmetLeatherTroll.cs" />
-    <Compile Include="Items\Armor\Leather\Wolf\SkeletonArmorLeatherChestWolf.cs" />
-    <Compile Include="Items\Armor\Leather\Wolf\SkeletonArmorLeatherLegsWolf.cs" />
-    <Compile Include="Items\Armor\Leather\Wolf\SkeletonHelmetLeatherPoisonWolf.cs" />
-    <Compile Include="Items\Armor\Leather\Wolf\SkeletonHelmetLeatherWolf.cs" />
-    <Compile Include="Items\Armor\Mage\SkeletonMageCirclet.cs" />
     <Compile Include="Items\Armor\Player\NecromancerCape.cs" />
     <Compile Include="Items\Armor\Player\NecromancerHood.cs" />
     <Compile Include="Items\Armor\Player\SpectralShroud.cs" />
-    <Compile Include="Items\Tools\SkeletonPickaxe.cs" />
-    <Compile Include="Items\Tools\SkeletonWoodAxe.cs" />
     <Compile Include="Items\Wands\DraugrWand.cs" />
     <Compile Include="Items\Wands\OrbOfBeckoning.cs" />
     <Compile Include="Items\Wands\SkeletonWand.cs" />
     <Compile Include="Items\Wands\Wand.cs" />
-    <Compile Include="Items\Weapons\BlackMetal\SkeletonAxeBlackMetal.cs" />
-    <Compile Include="Items\Weapons\BlackMetal\SkeletonMaceBlackMetal.cs" />
-    <Compile Include="Items\Weapons\BlackMetal\SkeletonSwordBlackMetal.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBow.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBow2.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBow3.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBowFire.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBowFrost.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBowPoison.cs" />
-    <Compile Include="Items\Weapons\Bows\SkeletonBowSilver.cs" />
-    <Compile Include="Items\Weapons\Bronze\SkeletonAxeBronze.cs" />
-    <Compile Include="Items\Weapons\Bronze\SkeletonMaceBronze.cs" />
-    <Compile Include="Items\Weapons\Bronze\SkeletonSwordBronze.cs" />
-    <Compile Include="Items\Weapons\Iron\SkeletonAxe.cs" />
-    <Compile Include="Items\Weapons\Iron\SkeletonMaceIron.cs" />
-    <Compile Include="Items\Weapons\Iron\SkeletonSwordIron.cs" />
-    <Compile Include="Items\Weapons\Mage\SkeletonFireballLevel1.cs" />
-    <Compile Include="Items\Weapons\Mage\SkeletonFireballLevel2.cs" />
-    <Compile Include="Items\Weapons\Mage\SkeletonFireballLevel3.cs" />
-    <Compile Include="Items\Weapons\Needle\SkeletonMaceNeedle.cs" />
-    <Compile Include="Items\Weapons\Poison\SkeletonMace.cs" />
-    <Compile Include="Items\Weapons\Poison\SkeletonMace2.cs" />
-    <Compile Include="Items\Weapons\Poison\SkeletonMace3.cs" />
-    <Compile Include="Items\Weapons\Wood\SkeletonClub.cs" />
-    <Compile Include="Minions\AI\MinerAI.cs" />
-    <Compile Include="Minions\AI\WoodcutterAI.cs" />
     <Compile Include="Minions\LeechMinion.cs" />
     <Compile Include="Minions\SkeletonMinerMinion.cs" />
     <Compile Include="Minions\SkeletonWoodcutterMinion.cs" />
-    <Compile Include="Common\ChebsRecipe.cs" />
+    <Compile Include="Minions\UndeadMinion.cs" />
     <Compile Include="Patches\AoePatches.cs" />
     <Compile Include="Patches\ImpactEffectPatches.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
@@ -201,9 +151,7 @@
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
     <Compile Include="BasePlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Items\Item.cs" />
     <Compile Include="Minions\GuardianWraithMinion.cs" />
-    <Compile Include="Minions\UndeadMinion.cs" />
     <Compile Include="Minions\SkeletonMinion.cs" />
     <Compile Include="Minions\DraugrMinion.cs" />
     <Compile Include="Minions\SpiritPylonGhostMinion.cs" />
@@ -215,7 +163,6 @@
     <Compile Include="Minions\BatBeaconBatMinion.cs" />
     <Compile Include="Commands\KillNearbyNeckros.cs" />
     <Compile Include="Commands\SetMinionOwnership.cs" />
-    <Compile Include="Minions\FreshMinion.cs" />
     <Compile Include="Structures\BatBeacon.cs" />
     <Compile Include="Structures\BatLantern.cs" />
     <Compile Include="Structures\FarmingPylon.cs" />
@@ -223,7 +170,6 @@
     <Compile Include="Structures\RefuelerPylon.cs" />
     <Compile Include="Structures\RepairPylon.cs" />
     <Compile Include="Structures\SpiritPylon.cs" />
-    <Compile Include="Structures\Structure.cs" />
     <Compile Include="Structures\TreasurePylon.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -231,9 +177,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Common\" />
     <Folder Include="Package\plugins\" />
     <Folder Include="Items\" />
-    <Folder Include="Minions\" />
     <Folder Include="Commands\" />
     <Folder Include="CustomPrefabs\" />
   </ItemGroup>

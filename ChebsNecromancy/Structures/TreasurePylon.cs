@@ -2,8 +2,11 @@ using System.Collections;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
-using ChebsNecromancy.Common;
+
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Minions;
+using ChebsValheimLibrary.Structures;
 using UnityEngine;
 
 namespace ChebsNecromancy.Structures
@@ -87,7 +90,7 @@ namespace ChebsNecromancy.Structures
                 yield return new WaitWhile(() => Player.m_localPlayer != null && Player.m_localPlayer.m_sleeping);
 
                 var allowedContainers = ContainerWhitelist.Value.Split(',').ToList();
-                var nearbyContainers = UndeadMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
+                var nearbyContainers = ChebGonazMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
                     c => c.m_piece.IsPlacedByPlayer() 
                          && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);
 

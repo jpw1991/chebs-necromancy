@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Reflection;
 using BepInEx.Configuration;
-using ChebsNecromancy.Common;
+
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Minions;
+using ChebsValheimLibrary.Structures;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 

@@ -11,11 +11,10 @@ using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items;
-using ChebsNecromancy.Items.Armor.Leather.Troll;
-using ChebsNecromancy.Items.Lox;
-using ChebsNecromancy.Items.Wolf;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Structures;
+using ChebsValheimLibrary;
+using ChebsValheimLibrary.Common;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -34,7 +33,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "2.5.15";
+        public const string PluginVersion = "3.0.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -102,8 +101,6 @@ namespace ChebsNecromancy
             LoadChebGonazAssetBundle();
 
             harmony.PatchAll();
-
-            AddNecromancy();
 
             CommandManager.Instance.AddConsoleCommand(new KillAllMinions());
             CommandManager.Instance.AddConsoleCommand(new SummonAllMinions());
@@ -309,6 +306,9 @@ namespace ChebsNecromancy
                 NeckroGathererPylon.UpdateRecipe();
                 RefuelerPylon.UpdateRecipe();
                 SpiritPylon.UpdateRecipe();
+                
+                SkeletonMinerMinion.SyncInternalsWithConfigs();
+                SkeletonWoodcutterMinion.SyncInternalsWithConfigs();
             }
             catch (Exception exc)
             {
@@ -320,45 +320,10 @@ namespace ChebsNecromancy
         private void LoadChebGonazAssetBundle()
         {
             // order is important (I think): items, creatures, structures
-            var assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "chebgonaz");
+            var assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "chebgonaz");
             var chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
-                GameObject LoadPrefabFromBundle(string prefabName, AssetBundle bundle)
-                {
-                    GameObject prefab = bundle.LoadAsset<GameObject>(prefabName);
-                    if (prefab == null)
-                    {
-                        Jotunn.Logger.LogFatal($"LoadPrefabFromBundle: {prefabName} is null!");
-                    }
-
-                    if (RadeonFriendly.Value)
-                    {
-                        foreach (var child in prefab.GetComponentsInChildren<ParticleSystem>())
-                        {
-                            Destroy(child);
-                        }
-
-                        if (prefab.TryGetComponent(out Humanoid humanoid))
-                        {
-                            humanoid.m_deathEffects = new EffectList();
-                            humanoid.m_dropEffects = new EffectList();
-                            humanoid.m_equipEffects = new EffectList();
-                            humanoid.m_pickupEffects = new EffectList();
-                            humanoid.m_consumeItemEffects = new EffectList();
-                            humanoid.m_hitEffects = new EffectList();
-                            humanoid.m_jumpEffects = new EffectList();
-                            humanoid.m_slideEffects = new EffectList();
-                            humanoid.m_perfectBlockEffect = new EffectList();
-                            humanoid.m_tarEffects = new EffectList();
-                            humanoid.m_waterEffects = new EffectList();
-                            humanoid.m_flyingContinuousEffect = new EffectList();
-                        }
-                    }
-                    
-                    return prefab;
-                }
-
                 SE_Stats LoadSetEffectFromBundle(string setEffectName, AssetBundle bundle)
                 {
                     //Jotunn.Logger.LogInfo($"Loading {setEffectName}...");
@@ -376,84 +341,27 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Items
-                GameObject spectralShroudPrefab = LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle);
+                GameObject spectralShroudPrefab = Base.LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
-                GameObject necromancersHoodPrefab = LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle);
+                GameObject necromancersHoodPrefab = Base.LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
                 
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
 
                 // Orb of Beckoning
                 GameObject orbOfBeckoningProjectilePrefab = 
-                    LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle);
+                    Base.LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                 orbOfBeckoningProjectilePrefab.AddComponent<OrbOfBeckoningProjectile>();
 
-                // minion worn items
-                List<Item> minionWornItems = new()
-                {
-                    new SkeletonClub(),
-                    new SkeletonBow(),
-                    new SkeletonBow2(),
-                    new SkeletonBow3(),
-                    new SkeletonHelmetLeather(),
-                    new SkeletonHelmetBronze(),
-                    new SkeletonHelmetIron(),
-                    new SkeletonFireballLevel1(),
-                    new SkeletonFireballLevel2(),
-                    new SkeletonFireballLevel3(),
-                    new SkeletonMageCirclet(),
-                    new SkeletonAxe(),
-                    new BlackIronChest(),
-                    new BlackIronHelmet(),
-                    new BlackIronLegs(),
-                    new SkeletonHelmetBlackIron(),
-                    new SkeletonMace(),
-                    new SkeletonMace2(),
-                    new SkeletonMace3(),
-                    new SkeletonHelmetIronPoison(),
-                    new SkeletonHelmetBlackIronPoison(),
-                    new SkeletonHelmetLeatherPoison(),
-                    new SkeletonHelmetBronzePoison(),
-                    new SkeletonWoodAxe(),
-                    new SkeletonPickaxe(),
-                    new SkeletonAxeBlackMetal(),
-                    new SkeletonAxeBronze(),
-                    new SkeletonMaceBlackMetal(),
-                    new SkeletonMaceBronze(),
-                    new SkeletonMaceIron(),
-                    new SkeletonSwordBlackMetal(),
-                    new SkeletonSwordBronze(),
-                    new SkeletonSwordIron(),
-                    new SkeletonBowFire(),
-                    new SkeletonBowPoison(),
-                    new SkeletonBowFrost(),
-                    new SkeletonBowSilver(),
-                    new SkeletonMaceNeedle(),
-                    new SkeletonHelmetLeatherTroll(),
-                    new SkeletonHelmetLeatherPoisonTroll(),
-                    new SkeletonArmorLeatherChestTroll(),
-                    new SkeletonArmorLeatherLegsTroll(),
-                    new SkeletonHelmetLeatherWolf(),
-                    new SkeletonHelmetLeatherPoisonWolf(),
-                    new SkeletonArmorLeatherChestWolf(),
-                    new SkeletonArmorLeatherLegsWolf(),
-                    new SkeletonHelmetLeatherLox(),
-                    new SkeletonHelmetLeatherPoisonLox(),
-                    new SkeletonArmorLeatherChestLox(),
-                    new SkeletonArmorLeatherLegsLox()
-                };
-                minionWornItems.ForEach(minionItem =>
-                {
-                    GameObject minionItemPrefab = LoadPrefabFromBundle(minionItem.PrefabName, chebgonazAssetBundle);
-                    ItemManager.Instance.AddItem(minionItem.GetCustomItemFromPrefab(minionItemPrefab));
-                });
+                // minion items
+                Base.LoadMinionItems(chebgonazAssetBundle, RadeonFriendly.Value);
 
                 wands.ForEach(wand =>
                 {
                     // we do the keyhints later after vanilla items are available
                     // so we can override what's in the prefab
-                    GameObject wandPrefab = LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle);
+                    GameObject wandPrefab = Base.LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                     wand.CreateButtons();
                     KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
                     
@@ -468,7 +376,7 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region CustomPrefabs
-                GameObject largeCargoCratePrefab = LoadPrefabFromBundle(LargeCargoCrate.PrefabName, chebgonazAssetBundle);
+                GameObject largeCargoCratePrefab = Base.LoadPrefabFromBundle(LargeCargoCrate.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                 if (largeCargoCratePrefab.TryGetComponent(out Container container))
                 {
                     container.m_width = LargeCargoCrate.ContainerWidth.Value;
@@ -512,7 +420,7 @@ namespace ChebsNecromancy
 
                 prefabNames.ForEach(prefabName =>
                 {
-                    var prefab = LoadPrefabFromBundle(prefabName, chebgonazAssetBundle);
+                    var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 });
                 #endregion
@@ -570,6 +478,11 @@ namespace ChebsNecromancy
                 PrefabManager.Instance.AddPrefab(treasurePylonEffectPrefab);
 
                 #endregion
+                
+                #region Skills
+                var iconSprite = chebgonazAssetBundle.LoadAsset<Sprite>("necromancy_icon.png");
+                AddNecromancy(iconSprite);
+                #endregion
             }
             catch (Exception ex)
             {
@@ -581,14 +494,13 @@ namespace ChebsNecromancy
             }
         }
 
-        private void AddNecromancy()
+        private void AddNecromancy(Sprite iconSprite)
         {
-            string iconPath = Path.Combine(Path.GetDirectoryName(Info.Location), "Assets", "necromancy_icon.png");
             SkillConfig skill = new()
             {
                 Name = "$friendlyskeletonwand_necromancy",
                 Description = "$friendlyskeletonwand_necromancy_desc",
-                IconPath = iconPath,
+                Icon = iconSprite,
                 Identifier = NecromancySkillIdentifier
             };
 

@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Items;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using UnityEngine;

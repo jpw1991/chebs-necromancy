@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
+using ChebsValheimLibrary.Common;
 using UnityEngine;
 
 namespace ChebsNecromancy.Items

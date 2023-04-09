@@ -1,6 +1,6 @@
 using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Minions.AI;
+using ChebsValheimLibrary.Minions.AI;
 
 namespace ChebsNecromancy.Minions
 {
@@ -38,6 +38,15 @@ namespace ChebsNecromancy.Minions
             canBeCommanded = false;
 
             if (!TryGetComponent(out MinerAI _)) gameObject.AddComponent<MinerAI>();
+        }
+        
+        public static void SyncInternalsWithConfigs()
+        {
+            // awful stuff. Is there a better way?
+            MinerAI.UpdateDelay = UpdateDelay.Value;
+            MinerAI.LookRadius = LookRadius.Value;
+            MinerAI.RoamRange = RoamRange.Value;
+            MinerAI.RockInternalIDsList = RockInternalIDsList.Value;
         }
     }
 }

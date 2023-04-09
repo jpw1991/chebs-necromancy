@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 using UnityEngine;
 
@@ -69,7 +70,7 @@ namespace ChebsNecromancy.Patches
             else if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
             {
                 if (undeadMinion is SkeletonMinion
-                    && SkeletonMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
+                    && SkeletonMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Nothing
                     && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);
@@ -80,7 +81,7 @@ namespace ChebsNecromancy.Patches
                     //Jotunn.Logger.LogInfo($"depositedSuccessfully={depositedSuccessfully}, m_dropsEnabled={__instance.m_dropsEnabled}");
                 }
                 else if (undeadMinion is DraugrMinion
-                    && DraugrMinion.DropOnDeath.Value != UndeadMinion.DropType.Nothing
+                    && DraugrMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Nothing
                     && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);

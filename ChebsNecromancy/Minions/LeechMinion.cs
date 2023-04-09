@@ -2,6 +2,8 @@ using System.Collections;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items;
+using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;

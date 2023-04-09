@@ -1,4 +1,5 @@
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 
 // ReSharper disable InconsistentNaming
@@ -40,7 +41,7 @@ namespace ChebsNecromancy.Patches
                 }
 
                 // use the minion methods to ensure the ZDO is updated
-                if (undeadMinion.Status == UndeadMinion.State.Following)
+                if (undeadMinion.Status == ChebGonazMinion.State.Following)
                 {
                     user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonwaiting");
                     undeadMinion.Wait(player.transform.position);
