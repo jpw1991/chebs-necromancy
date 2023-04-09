@@ -95,6 +95,12 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but it's linked to the particle effects. You can switch them off by turning `RadeonFriendly = true` in the config.
 - Pylons won't show inventory unless you open a normal container first.
 
+## Known Incompatibilities
+
+- Soft incompatibility with [slope combat fix](https://github.com/jpw1991/chebs-necromancy/issues/180) because it can mess up worker minion aiming. Not a big deal - especially if you never use miners/woodcutters.
+- Soft incompatibility with [Ward is Love](https://github.com/jpw1991/chebs-necromancy/issues/177) because it will identify workers as enemies and yeet them.
+- Soft incompatibility with [Item Drawers Mod](https://github.com/jpw1991/chebs-necromancy/issues/147) because the Neckro Gatherers try to pick the items out of the drawers.
+
 ## Future Ideas
 
 - Fully custom undead types.
@@ -129,6 +135,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+09/04/2023 | 3.0.1 | Refactor to be compatible with Cheb's Mercenaries; bug fixes
 05/04/2023 | 2.5.15 | Miners prioritize copper, silver, and tin over rocks
 05/04/2023 | 2.5.14 | Fix bug where bones get consumed even when not enough are in the inventory; fix config descriptions
 31/03/2023 | 2.5.13 | Character.m_tamed is also checked when looking for hostiles so that things like tamed animals aren't detected; Configurable teleport durability cost & cooldown

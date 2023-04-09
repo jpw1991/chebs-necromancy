@@ -34,7 +34,19 @@ namespace ChebsNecromancy.Patches
                 {
                     __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
                 }
-                else
+                else if (__instance.name.Contains("Neckro"))
+                {
+                    __instance.gameObject.AddComponent<NeckroGathererMinion>();
+                }
+                else if (__instance.name.Contains("Bat"))
+                {
+                    __instance.gameObject.AddComponent<BatBeaconBatMinion>();
+                }
+                else if (__instance.name.Contains("Leech"))
+                {
+                    __instance.gameObject.AddComponent<LeechMinion>();
+                }
+                else if (__instance.name.Contains("Skeleton") || __instance.name.Contains("Draugr"))
                 {
                     if (!__instance.TryGetComponent(out UndeadMinion _))
                     {
@@ -59,18 +71,6 @@ namespace ChebsNecromancy.Patches
                         else if (__instance.name.Contains("Draugr"))
                         {
                             __instance.gameObject.AddComponent<DraugrMinion>();
-                        }
-                        else if (__instance.name.Contains("Neckro"))
-                        {
-                            __instance.gameObject.AddComponent<NeckroGathererMinion>();
-                        }
-                        else if (__instance.name.Contains("Bat"))
-                        {
-                            __instance.gameObject.AddComponent<BatBeaconBatMinion>();
-                        }
-                        else if (__instance.name.Contains("Leech"))
-                        {
-                            __instance.gameObject.AddComponent<LeechMinion>();
                         }
                     }
                 }

@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Minions;
 using ChebsValheimLibrary.Items;
+using ChebsValheimLibrary.Minions;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using UnityEngine;
@@ -203,14 +204,14 @@ namespace ChebsNecromancy.Items
 
         public void MakeNearbyMinionsRoam(float radius)
         {
-            Player player = Player.m_localPlayer;
-            List<Character> allCharacters = new();
+            var player = Player.m_localPlayer;
+            var allCharacters = new List<Character>();
             Character.GetCharactersInRange(player.transform.position, radius, allCharacters);
             foreach (var character in allCharacters)
             {
                 if (character.IsDead()) continue;
                 
-                UndeadMinion minion = character.GetComponent<UndeadMinion>();
+                var minion = character.GetComponent<ChebGonazMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
                 
@@ -233,7 +234,7 @@ namespace ChebsNecromancy.Items
                     continue;
                 }
 
-                var minion = item.GetComponent<UndeadMinion>();
+                var minion = item.GetComponent<ChebGonazMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
                 
@@ -281,7 +282,7 @@ namespace ChebsNecromancy.Items
                     continue;
                 }
 
-                if (item.GetComponent<UndeadMinion>() != null
+                if (item.GetComponent<ChebGonazMinion>() != null
                     && item.TryGetComponent(out MonsterAI monsterAI)
                     && monsterAI.GetFollowTarget() == player.gameObject)
                 {

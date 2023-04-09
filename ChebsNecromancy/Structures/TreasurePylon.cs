@@ -87,7 +87,7 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value + Random.value);
-                yield return new WaitWhile(() => Player.m_localPlayer != null && Player.m_localPlayer.m_sleeping);
+                yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
 
                 var allowedContainers = ContainerWhitelist.Value.Split(',').ToList();
                 var nearbyContainers = ChebGonazMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
@@ -96,7 +96,7 @@ namespace ChebsNecromancy.Structures
 
                 for (int i = 0; i < nearbyContainers.Count; i++)
                 {
-                    yield return new WaitWhile(() => Player.m_localPlayer != null && Player.m_localPlayer.m_sleeping);
+                    yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
                     
                     // make a fancy effect on the container being processed
                     var effect = Instantiate(ZNetScene.instance.GetPrefab(EffectName));

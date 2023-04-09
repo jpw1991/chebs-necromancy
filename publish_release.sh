@@ -5,6 +5,7 @@ LIB=ChebsNecromancy/bin/Release/ChebsValheimLibrary.dll
 BUN=ChebsNecromancyUnity/Assets/AssetBundles/chebgonaz
 PLUGINS=ChebsNecromancy/Package/plugins
 README=README.md
+TRANSLATIONS=Translations
 
 VERSION=$1
 
@@ -45,7 +46,7 @@ cp -f "$LIB" "$PLUGINS" || { echo "Error: Failed to copy $LIB"; exit 1; }
 cp -f "$BUN" "$PLUGINS" || { echo "Error: Failed to copy $BUN"; exit 1; }
 cp -f "$BUN.manifest" "$PLUGINS" || { echo "Error: Failed to copy $BUN.manifest"; exit 1; }
 cp -f "$README" "$PLUGINS/../README.md" || { echo "Error: Failed to copy $README"; exit 1; }
-
+cp -rf "$TRANSLATIONS" "$PLUGINS/Translations" || { echo "Error: Failed to copy Translations"; exit 1; }
 
 ZIPDESTINATION="../bin/Release/ChebsNecromancy.$VERSION.zip"
 
