@@ -36,6 +36,8 @@ namespace ChebsNecromancy
         public const string PluginVersion = "3.0.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
+        
+        public readonly System.Version ChebsValheimLibraryVersion = new("1.0.0");
 
         private readonly Harmony harmony = new(PluginGuid);
 
@@ -91,11 +93,14 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> DurabilityDamageBronze;
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
-
-#pragma warning disable IDE0051 // Remove unused private members
+        
         private void Awake()
-#pragma warning restore IDE0051 // Remove unused private members
         {
+            if (!ChebsValheimLibrary.Base.VersionCheck(ChebsValheimLibraryVersion, out string message))
+            {
+                Jotunn.Logger.LogWarning(message);
+            }
+            
             CreateConfigValues();
 
             LoadChebGonazAssetBundle();
