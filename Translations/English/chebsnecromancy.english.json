@@ -57,5 +57,7 @@
     "item_friendlyskeletonwand_draugrwand_desc": "Spawn draugr minions.",
     "item_friendlyskeletonwand_spectralshroud": "Spectral Shroud",
     "item_friendlyskeletonwand_spectralshroud_desc": "Attracts spirits to you to serve you, provided you're skilled enough.",
-    "item_friendlyskeletonwand_spectralshroud_backpack": "Spectral Shroud of Holding"
+    "item_friendlyskeletonwand_spectralshroud_backpack": "Spectral Shroud of Holding",
+    "chebgonaz_treasurepylon_name": "Treasure Pylon",
+    "chebgonaz_treasurepylon_desc": "A pylon whose spirits toil to sort your trash."
 }
