@@ -129,6 +129,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+05/04/2023 | 2.5.15 | Miners prioritize copper, silver, and tin over rocks
 05/04/2023 | 2.5.14 | Fix bug where bones get consumed even when not enough are in the inventory; fix config descriptions
 31/03/2023 | 2.5.13 | Character.m_tamed is also checked when looking for hostiles so that things like tamed animals aren't detected; Configurable teleport durability cost & cooldown
 28/03/2023 | 2.5.11 | don't log error if NPC is using the Orb of Beckoning
