@@ -16,7 +16,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SpawnInterval;
         public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
 
-        protected Container Container;
+        private Container _container;
         
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -56,7 +56,7 @@ namespace ChebsNecromancy.Structures
         private void Awake()
 #pragma warning restore IDE0051 // Remove unused private members
         {
-            Container = GetComponent<Container>();
+            _container = GetComponent<Container>();
             StartCoroutine(SpawnNeckros());
         }
         
@@ -88,10 +88,10 @@ namespace ChebsNecromancy.Structures
                 return;
             }
             
-            int neckTailsInInventory = Container.GetInventory().CountItems("$item_necktail");
+            int neckTailsInInventory = _container.GetInventory().CountItems("$item_necktail");
             if (neckTailsInInventory < NeckTailsConsumedPerSpawn.Value) return;
 
-            Container.GetInventory().RemoveItem("$item_necktail", NeckTailsConsumedPerSpawn.Value);
+            _container.GetInventory().RemoveItem("$item_necktail", NeckTailsConsumedPerSpawn.Value);
 
             int quality = 1;
 
