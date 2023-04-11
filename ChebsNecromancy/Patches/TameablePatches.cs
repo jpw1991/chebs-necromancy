@@ -40,19 +40,31 @@ namespace ChebsNecromancy.Patches
                     return false; // deny base method completion
                 }
 
+                var currentStatus = undeadMinion.Status;
+                var nextStatus = currentStatus switch
+                {
+                    ChebGonazMinion.State.Following => ChebGonazMinion.State.Waiting,
+                    ChebGonazMinion.State.Waiting => ChebGonazMinion.State.Roaming,
+                    _ => ChebGonazMinion.State.Following
+                };
+
                 // use the minion methods to ensure the ZDO is updated
-                if (undeadMinion.Status == ChebGonazMinion.State.Following)
+                if (nextStatus.Equals(ChebGonazMinion.State.Following))
                 {
-                    user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonwaiting");
-                    undeadMinion.Wait(player.transform.position);
-                    return false; // deny base method completion
-                }
-                else
-                {
-                    user.Message(MessageHud.MessageType.Center, "$friendlyskeletonwand_skeletonfollowing");
+                    user.Message(MessageHud.MessageType.Center, "$chebgonaz_following");
                     undeadMinion.Follow(player.gameObject);
                     return false; // deny base method completion
                 }
+                if (nextStatus.Equals(ChebGonazMinion.State.Waiting))
+                {
+                    user.Message(MessageHud.MessageType.Center, "$chebgonaz_waiting");
+                    undeadMinion.Wait(player.transform.position);
+                    return false; // deny base method completion
+                }
+                
+                user.Message(MessageHud.MessageType.Center, "$chebgonaz_roaming");
+                undeadMinion.Roam();
+                return false; // deny base method completion
             }
 
             return true; // permit base method to complete
@@ -68,13 +80,15 @@ namespace ChebsNecromancy.Patches
         {
             if (__instance.m_nview.IsValid()
                 && __instance.m_commandable
-                && __instance.TryGetComponent(out UndeadMinion _)
-                && __instance.TryGetComponent(out MonsterAI monsterAI)
+                && __instance.TryGetComponent(out UndeadMinion undeadMinion)
                 && Player.m_localPlayer != null)
             {
-                __result = monsterAI.GetFollowTarget() == Player.m_localPlayer.gameObject
-                    ? Localization.instance.Localize("$chebgonaz_wait")
-                    : Localization.instance.Localize("$chebgonaz_follow");
+                __result = undeadMinion.Status switch
+                {
+                    ChebGonazMinion.State.Following => Localization.instance.Localize("$chebgonaz_wait"),
+                    ChebGonazMinion.State.Waiting => Localization.instance.Localize("$chebgonaz_roam"),
+                    _ => Localization.instance.Localize("$chebgonaz_follow")
+                };
             }
         }
     }
