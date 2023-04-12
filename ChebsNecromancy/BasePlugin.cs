@@ -15,6 +15,7 @@ using ChebsNecromancy.Minions;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Items.Tools;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -33,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.0.3";
+        public const string PluginVersion = "3.0.4";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
         
@@ -115,6 +116,8 @@ namespace ChebsNecromancy
             
             SkeletonMinerMinion.SyncInternalsWithConfigs();
             SkeletonWoodcutterMinion.SyncInternalsWithConfigs();
+            SkeletonPickaxe.SyncInternalsWithConfigs(SkeletonMinerMinion.ToolTier.Value);
+            SkeletonWoodAxe.SyncInternalsWithConfigs(SkeletonWoodcutterMinion.ToolTier.Value);
 
             SetupWatcher();
         }
