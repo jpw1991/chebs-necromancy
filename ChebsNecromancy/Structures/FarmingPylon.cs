@@ -53,7 +53,7 @@ namespace ChebsNecromancy.Structures
 
             var pickableList = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FarmingPylonPickableList", DefaultPickables,
                 "A list of pickable IDs.", null, true);
-            PickableList = new (pickableList, s => s.Split(',').ToList());
+            PickableList = new MemoryConfigEntry<string, List<string>>(pickableList, s => s?.Split(',').ToList());
         }
         
         public new static void UpdateRecipe()

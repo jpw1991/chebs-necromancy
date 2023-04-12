@@ -69,7 +69,7 @@ namespace ChebsNecromancy.Structures
             var containerWhitelist = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWhitelist", "piece_chest_wood",
                 "The containers that are sorted. Please use a comma-delimited list of prefab names.",
                 null, true);
-            ContainerWhitelist = new (containerWhitelist, s => s.Split(',').ToList());
+            ContainerWhitelist = new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
         }
 
         private void Awake()
