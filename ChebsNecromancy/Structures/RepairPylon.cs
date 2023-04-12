@@ -15,7 +15,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RepairUpdateInterval, FuelConsumedPerPointOfDamage, RepairWoodWhen, RepairOtherWhen;
         public static ConfigEntry<int> RepairContainerWidth, RepairContainerHeight;
-        public static ConfigEntry<string> Fuels, AlwaysRepair;
+        public static MemoryConfigEntry<string, List<string>> Fuels, AlwaysRepair;
 
         private readonly int pieceMask = LayerMask.GetMask("piece");
 
@@ -76,13 +76,15 @@ namespace ChebsNecromancy.Structures
                 "How low a non-wood structure's health must drop in order for it to be repaired. Set to 0 to repair regardless of damage.",
                 null, true);
             
-            AlwaysRepair = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "AlwaysRepair", "piece_sharpstakes,piece_dvergr_sharpstakes",
+            var alwaysRepair = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "AlwaysRepair", "piece_sharpstakes,piece_dvergr_sharpstakes",
                 "These prefabs are always repaired no matter their damage and ignore the RepairWoodWhen/RepairOtherWhen thresholds. This is good for defensive things like stakes which should always be kept at maximum health. Please use a comma-delimited list of prefab names.",
                 null, true);
+            AlwaysRepair = new (alwaysRepair, s => s.Split(',').ToList());
             
-            Fuels = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Fuels", "Resin,GreydwarfEye,Pukeberries",
+            var fuels = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Fuels", "Resin,GreydwarfEye,Pukeberries",
                 "The items that are consumed as fuel when repairing. Please use a comma-delimited list of prefab names.",
                 null, true);
+            Fuels = new (fuels, s => s.Split(',').ToList());
         }
         
         private void Awake()
@@ -150,7 +152,7 @@ namespace ChebsNecromancy.Structures
         {
             if (wearNTear.GetHealthPercentage() >= 1f) return false;
 
-            var alwaysRepairNames = AlwaysRepair.Value.Split(',');
+            var alwaysRepairNames = AlwaysRepair.Value;
             // wearNTear.name could be "piece_sharpstakes(Clone)" and alwaysRepairName could be "piece_sharpstakes"
             var alwaysRepair = alwaysRepairNames.Any(alwaysRepairName => wearNTear.name.Contains(alwaysRepairName));
 
@@ -176,7 +178,7 @@ namespace ChebsNecromancy.Structures
             get
             {
                 var accumulator = 0;
-                foreach (var fuel in Fuels.Value.Split(','))
+                foreach (var fuel in Fuels.Value)
                 {
                     var fuelPrefab = ZNetScene.instance.GetPrefab(fuel);
                     if (fuelPrefab == null) continue;
@@ -191,7 +193,7 @@ namespace ChebsNecromancy.Structures
         {
             var consumableFuels = new Dictionary<string, int>();
             var fuelAvailable = 0;
-            foreach (var fuel in Fuels.Value.Split(','))
+            foreach (var fuel in Fuels.Value)
             {
                 var fuelPrefab = ZNetScene.instance.GetPrefab(fuel);
                 if (fuelPrefab == null) continue;

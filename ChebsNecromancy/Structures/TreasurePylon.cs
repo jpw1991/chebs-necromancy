@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
@@ -26,7 +27,7 @@ namespace ChebsNecromancy.Structures
 
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> UpdateInterval;
-        public static ConfigEntry<string> ContainerWhitelist;
+        public static MemoryConfigEntry<string, List<string>> ContainerWhitelist;
 
         private readonly int pieceMask = LayerMask.GetMask("piece");
 
@@ -65,9 +66,10 @@ namespace ChebsNecromancy.Structures
                 "How long a Treasure Pylon waits between checking containers (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
             
-            ContainerWhitelist = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWhitelist", "piece_chest_wood",
+            var containerWhitelist = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWhitelist", "piece_chest_wood",
                 "The containers that are sorted. Please use a comma-delimited list of prefab names.",
                 null, true);
+            ContainerWhitelist = new (containerWhitelist, s => s.Split(',').ToList());
         }
 
         private void Awake()
@@ -89,7 +91,7 @@ namespace ChebsNecromancy.Structures
                 yield return new WaitForSeconds(UpdateInterval.Value + Random.value);
                 yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
 
-                var allowedContainers = ContainerWhitelist.Value.Split(',').ToList();
+                var allowedContainers = ContainerWhitelist.Value;
                 var nearbyContainers = ChebGonazMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
                     c => c.m_piece.IsPlacedByPlayer() 
                          && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);

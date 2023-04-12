@@ -177,7 +177,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Common\" />
     <Folder Include="Package\plugins\" />
     <Folder Include="Items\" />
     <Folder Include="Commands\" />

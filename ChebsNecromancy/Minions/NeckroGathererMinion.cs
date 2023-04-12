@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
-using ChebsNecromancy.Items;
+using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using UnityEngine;
 using Logger = Jotunn.Logger;
-using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions
 {
@@ -23,6 +22,7 @@ namespace ChebsNecromancy.Minions
 
         public static ConfigEntry<bool> Allowed;
         public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance, MaxSecondsBeforeDropoff;
+        public static MemoryConfigEntry<string, List<string>> ContainerWhitelist;
 
         private static List<ItemDrop> _itemDrops = new();
 
@@ -66,6 +66,14 @@ namespace ChebsNecromancy.Minions
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             MaxSecondsBeforeDropoff = plugin.Config.Bind("NeckroGatherer (Client)", "MaxSecondsBeforeDropoff",
                 0f, new ConfigDescription("The maximum amount of time, in seconds, before a Neckro is forced to return whatever it is currently carrying. If set to 0, this condition is ignored."));
+            
+            var containerWhitelist = plugin.Config.Bind<string>("NeckroGatherer (Server Synced)", "ContainerWhitelist",
+                "piece_chest_wood", new ConfigDescription(
+                    "The containers that are considered dropoff points. Please use a comma-delimited list of prefab names.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }
+                ));
+            ContainerWhitelist = new (containerWhitelist, s => s.Split(',').ToList());
         }
 
         public override void Awake()
@@ -277,8 +285,11 @@ namespace ChebsNecromancy.Minions
 
         private Container GetNearestDropOffPoint()
         {
+            var allowedContainers = ContainerWhitelist.Value;
             var closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, pieceMask,
-                c => c.GetInventory().GetEmptySlots() > 0, true);
+                c => c.m_piece.IsPlacedByPlayer() 
+                     && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName())
+                     && c.GetInventory().GetEmptySlots() > 0, true);
             if (closestContainer == null) return null;
             
             return closestContainer;
