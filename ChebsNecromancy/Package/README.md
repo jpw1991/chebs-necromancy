@@ -97,8 +97,8 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 
 ## Known Incompatibilities
 
-- Soft incompatibility with [slope combat fix](https://github.com/jpw1991/chebs-necromancy/issues/180) because it can mess up worker minion aiming. Not a big deal - especially if you never use miners/woodcutters.
-- Soft incompatibility with [Ward is Love](https://github.com/jpw1991/chebs-necromancy/issues/177) because it will identify workers as enemies and yeet them.
+- Soft incompatibility with [slope combat fix](https://github.com/jpw1991/chebs-necromancy/issues/180) because it can mess up worker minion aiming. Not a big deal - especially if you never use miners/woodcutters. As an alternative, you may consider (Slope Combat Assistance)[https://valheim.thunderstore.io/package/Digitalroot/Digitalroots_Slope_Combat_Assistance/] because it only affects the player.
+- Soft incompatibility with [Ward is Love](https://github.com/jpw1991/chebs-necromancy/issues/177) because it will identify workers as enemies and yeet them. As an alternative, you may consider using [Better Wards](https://valheim.thunderstore.io/package/Azumatt/BetterWards/).
 - Soft incompatibility with [Item Drawers Mod](https://github.com/jpw1991/chebs-necromancy/issues/147) because the Neckro Gatherers try to pick the items out of the drawers.
 
 ## Future Ideas
@@ -135,6 +135,7 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 Date | Version | Notes
 --- | --- | ---
+11/04/2023 | 3.0.4 | upgrade ChebsValheimLib to 1.0.1 to fix ToolTier
 09/04/2023 | 3.0.1 | Refactor to be compatible with Cheb's Mercenaries; bug fixes
 05/04/2023 | 2.5.15 | Miners prioritize copper, silver, and tin over rocks
 05/04/2023 | 2.5.14 | Fix bug where bones get consumed even when not enough are in the inventory; fix config descriptions
