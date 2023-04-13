@@ -112,9 +112,12 @@ You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
 
 ## Special Thanks
 
+A special thanks to the people who've helped me along the way:
+
 - Developers
 	+ [**Dracbjorn**](https://github.com/Dracbjorn) - Extensive work on the configuration files & parsing (including server-sync); general help & testing.
 	+ [**CW-Jesse**](https://github.com/CW-Jesse) - Refinements and improvements on networking code and minion AI; general help & testing.
+	+ [**WalterWillis**](https://github.com/WalterWillis) - Improvements to Treasure Pylon.
 - Artists
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
 - Translations
