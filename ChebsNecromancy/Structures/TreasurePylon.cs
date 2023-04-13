@@ -119,28 +119,36 @@ namespace ChebsNecromancy.Structures
                     {
                         if (j == i) continue; // skip over self
 
-                        var jInventory = nearbyContainers[j].GetInventory();
-                        var jItems = jInventory.GetAllItems();
+                        var otherInventory = nearbyContainers[j].GetInventory();
+                        var otherItems = otherInventory.GetAllItems();
 
-                        for (int k = jItems.Count - 1; k > -1; k--)
+                        for (int k = otherItems.Count - 1; k > -1; k--)
                         {
-                            var jItem = jItems[k];
-                            var itemsMoved = 0;
-                            if (currentContainerInventory.CanAddItem(jItem))
-                            {
-                                var currentItemCount = currentContainerInventory.CountItems(jItem.m_shared.m_name);
-                                currentContainerInventory.AddItem(jItem);
-                                itemsMoved = currentContainerInventory.CountItems(jItem.m_shared.m_name) -
-                                             currentItemCount;
-                            }
+                            ItemDrop.ItemData jItem = otherItems[k];
 
-                            if (itemsMoved > 0)
+                            int currentContainerItemCount = currentContainerInventory.CountItems(jItem.m_shared.m_name);
+                            int otherContainerItemCount = otherInventory.CountItems(jItem.m_shared.m_name);
+
+                            if (currentContainerItemCount > otherContainerItemCount)
                             {
-                                //movedLog.Add($"{itemsMoved} {jItem.m_shared.m_name}");
-                                jInventory.RemoveItem(jItem, itemsMoved);
+                                var itemsMoved = 0;
+                                if (currentContainerInventory.CanAddItem(jItem))
+                                {
+                                    currentContainerInventory.AddItem(jItem);
+                                    itemsMoved = currentContainerInventory.CountItems(jItem.m_shared.m_name) -
+                                                currentContainerItemCount;
+                                }
+
+                                if (itemsMoved > 0)
+                                {
+                                    //movedLog.Add($"{itemsMoved} {jItem.m_shared.m_name}");
+                                    otherInventory.RemoveItem(jItem, itemsMoved);
+                                }
                             }
                         }
                     }
+
+
 
                     //Jotunn.Logger.LogInfo($"Moved {string.Join(",", movedLog)} to {currentContainerInventory.GetName()}");
                     yield return new WaitForSeconds(5);
