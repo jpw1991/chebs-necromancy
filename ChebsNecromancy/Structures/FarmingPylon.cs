@@ -13,14 +13,13 @@ namespace ChebsNecromancy.Structures
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> UpdateInterval;
-        public static ConfigEntry<string> PickableList;
+        public static MemoryConfigEntry<string, List<string>> PickableList;
 
         private const string DefaultPickables =
             "Pickable_Barley,Pickable_Barley_Wild,Pickable_Carrot,Pickable_Dandelion,Pickable_Flax,Pickable_Flax_Wild,Pickable_Mushroom,Pickable_Mushroom_blue,Pickable_Mushroom_JotunPuffs,Pickable_Mushroom_Magecap,Pickable_Mushroom_yellow,Pickable_Onion,Pickable_SeedCarrot,Pickable_SeedOnion,Pickable_SeedTurnip,Pickable_Thistle,Pickable_Turnip";
 
         private int _itemMask;
         private int _pieceMaskNonSolid;
-        private List<string> _pickableList;
 
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -52,8 +51,9 @@ namespace ChebsNecromancy.Structures
                 "How long a Farming Pylon waits between checking containers and crops (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
 
-            PickableList = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FarmingPylonPickableList", DefaultPickables,
+            var pickableList = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FarmingPylonPickableList", DefaultPickables,
                 "A list of pickable IDs.", null, true);
+            PickableList = new MemoryConfigEntry<string, List<string>>(pickableList, s => s?.Split(',').ToList());
         }
         
         public new static void UpdateRecipe()
@@ -65,7 +65,6 @@ namespace ChebsNecromancy.Structures
         {
             _itemMask = LayerMask.GetMask("item");
             _pieceMaskNonSolid = LayerMask.GetMask("piece_nonsolid");
-            _pickableList = PickableList.Value.Split(',').ToList();
             StartCoroutine(LookForCrops());
         }
 
@@ -99,7 +98,7 @@ namespace ChebsNecromancy.Structures
             foreach (var col in nearbyPickables)
             {
                 var pickable = col.GetComponentInParent<Pickable>();
-                if (pickable != null && _pickableList.Exists(item => pickable.name.Contains(item)))//.Contains(pickable.m_itemPrefab.name))
+                if (pickable != null && PickableList.Value.Exists(item => pickable.name.Contains(item)))//.Contains(pickable.m_itemPrefab.name))
                 {
                     pickable.m_nview.InvokeRPC("Pick");
                 }

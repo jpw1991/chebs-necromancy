@@ -138,6 +138,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+11/04/2023 | 3.0.5 | add container whitelist to Neckros & limit their selection to just player made containers
 11/04/2023 | 3.0.4 | upgrade ChebsValheimLib to 1.0.1 to fix ToolTier
 09/04/2023 | 3.0.1 | Refactor to be compatible with Cheb's Mercenaries; bug fixes
 05/04/2023 | 2.5.15 | Miners prioritize copper, silver, and tin over rocks
