@@ -97,7 +97,7 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 
 ## Known Incompatibilities
 
-- Soft incompatibility with [slope combat fix](https://github.com/jpw1991/chebs-necromancy/issues/180) because it can mess up worker minion aiming. Not a big deal - especially if you never use miners/woodcutters. As an alternative, you may consider (Slope Combat Assistance)[https://valheim.thunderstore.io/package/Digitalroot/Digitalroots_Slope_Combat_Assistance/] because it only affects the player.
+- Soft incompatibility with [slope combat fix](https://github.com/jpw1991/chebs-necromancy/issues/180) because it can mess up worker minion aiming. Not a big deal - especially if you never use miners/woodcutters. As an alternative, you may consider [Slope Combat Assistance](https://valheim.thunderstore.io/package/Digitalroot/Digitalroots_Slope_Combat_Assistance/) because it only affects the player.
 - Soft incompatibility with [Ward is Love](https://github.com/jpw1991/chebs-necromancy/issues/177) because it will identify workers as enemies and yeet them. As an alternative, you may consider using [Better Wards](https://valheim.thunderstore.io/package/Azumatt/BetterWards/).
 - Soft incompatibility with [Item Drawers Mod](https://github.com/jpw1991/chebs-necromancy/issues/147) because the Neckro Gatherers try to pick the items out of the drawers.
 
@@ -117,7 +117,7 @@ A special thanks to the people who've helped me along the way:
 - Developers
 	+ [**Dracbjorn**](https://github.com/Dracbjorn) - Extensive work on the configuration files & parsing (including server-sync); general help & testing.
 	+ [**CW-Jesse**](https://github.com/CW-Jesse) - Refinements and improvements on networking code and minion AI; general help & testing.
-	+ [**WalterWillis**](https://github.com/WalterWillis) - Improvements to Treasure Pylon.
+	+ [**WalterWillis**](https://github.com/WalterWillis) - Improvements to Treasure Pylon & Testing.
 - Artists
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
 - Translations
@@ -138,6 +138,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+13/04/2023 | 3.0.6 | fix Farming Pylon to no longer say Armor stand on hover text
 11/04/2023 | 3.0.5 | add container whitelist to Neckros & limit their selection to just player made containers
 11/04/2023 | 3.0.4 | upgrade ChebsValheimLib to 1.0.1 to fix ToolTier
 09/04/2023 | 3.0.1 | Refactor to be compatible with Cheb's Mercenaries; bug fixes

@@ -65,6 +65,15 @@ namespace ChebsNecromancy.Structures
         {
             _itemMask = LayerMask.GetMask("item");
             _pieceMaskNonSolid = LayerMask.GetMask("piece_nonsolid");
+            if (TryGetComponent(out ArmorStand armorStand))
+            {
+                // for some reason, you gotta go through each slot and adjust the name otherwise it will remain as
+                // the basic armorstand localization rather than the cheb one
+                armorStand.m_slots.ForEach(slot =>
+                {
+                    slot.m_switch.m_hoverText = armorStand.m_name;
+                });
+            }
             StartCoroutine(LookForCrops());
         }
 
