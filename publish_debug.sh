@@ -1,9 +1,11 @@
 #!/bin/bash
 
-DLL=ChebsNecromancy/bin/Debug/ChebsNecromancy.dll
-LIB=ChebsNecromancy/bin/Debug/ChebsValheimLibrary.dll
+DEBUGDIR=ChebsNecromancy/bin/Debug
+DLL=$DEBUGDIR/ChebsNecromancy.dll
+LIB=$DEBUGDIR/ChebsValheimLibrary.dll
 BUN=ChebsNecromancyUnity/Assets/AssetBundles/chebgonaz
 PLUGINS=/home/joshua/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins
+BEPINEX=ChebsNecromancy/libs/BepInEx.dll
 
 # Check that source files exist and are readable
 if [ ! -f "$DLL" ]; then
@@ -32,7 +34,30 @@ if [ ! -w "$PLUGINS" ]; then
     exit 1
 fi
 
-cp -f "$DLL" "$PLUGINS" || { echo "Error: Failed to copy $DLL"; exit 1; }
-cp -f "$LIB" "$PLUGINS" || { echo "Error: Failed to copy $LIB"; exit 1; }
+if [ ! -f "$BEPINEX" ]; then
+    echo "Error: $BEPINEX does not exist or is not readable."
+    exit 1
+fi
+
+#cp -f "$DLL" "$PLUGINS" || { echo "Error: Failed to copy $DLL"; exit 1; }
+#cp -f "$LIB" "$PLUGINS" || { echo "Error: Failed to copy $LIB"; exit 1; }
 cp -f "$BUN" "$PLUGINS" || { echo "Error: Failed to copy $BUN"; exit 1; }
 cp -f "$BUN.manifest" "$PLUGINS" || { echo "Error: Failed to copy $BUN.manifest"; exit 1; }
+
+# create dir if not existing
+if [ ! -d "$DEBUGDIR/merged" ]; then
+    mkdir $DEBUGDIR/merged
+fi
+
+cp -f $BEPINEX $DEBUGDIR
+cd $DEBUGDIR
+
+mono ../../../packages/ILRepack.2.0.18/tools/ILRepack.exe /out:merged/ChebsNecromancy.dll $(basename "$LIB") $(basename "$DLL")
+
+if [ $? != 0 ]; then
+    echo "Merging failed"
+    exit 1
+fi
+
+cp -f "merged/ChebsNecromancy.dll" "$PLUGINS" || { echo "Error: Failed to copy merged dll"; exit 1; }
+
