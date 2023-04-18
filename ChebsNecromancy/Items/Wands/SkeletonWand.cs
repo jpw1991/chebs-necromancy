@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
@@ -9,6 +10,7 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
+using UnityEngine.UI;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items
@@ -45,6 +47,32 @@ namespace ChebsNecromancy.Items
         public override string ItemName => "ChebGonaz_SkeletonWand";
         public override string PrefabName => "ChebGonaz_SkeletonWand.prefab";
         protected override string DefaultRecipe => "Wood:5,Stone:1";
+
+        #region MinionSelector
+        public enum MinionOption
+        {
+            Warrior,
+            Archer,
+            Poison,
+            Woodcutter,
+            Miner
+        }
+
+        private List<MinionOption> _minionOptions = new()
+        {
+            MinionOption.Warrior,
+            MinionOption.Archer,
+            MinionOption.Poison,
+            MinionOption.Woodcutter,
+            MinionOption.Miner,
+        };
+
+        private int _selectedMinionOptionIndex;
+        private MinionOption SelectedMinionOption => _minionOptions[_selectedMinionOptionIndex];
+
+        private Text _createMinionButtonText;
+        
+        #endregion
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -195,7 +223,7 @@ namespace ChebsNecromancy.Items
             List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
 
             if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
-            if (CreateArcherMinionButton != null) buttonConfigs.Add(CreateArcherMinionButton);
+            if (NextMinionButton != null) buttonConfigs.Add(NextMinionButton);
             if (FollowButton != null) buttonConfigs.Add(FollowButton);
             if (WaitButton != null) buttonConfigs.Add(WaitButton);
             if (TeleportButton != null) buttonConfigs.Add(TeleportButton);
@@ -225,16 +253,61 @@ namespace ChebsNecromancy.Items
             //     TeleportButton.HintToken = Time.time - lastTeleport < TeleportCooldown.Value ? "Cooldown" : "$friendlyskeletonwand_teleport";
             // }
 
-            // handle input responses
-            if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
+            if (CreateMinionButton != null)
             {
-                SpawnSkeleton();
-                return true;
+                // https://github.com/Valheim-Modding/Jotunn/issues/398
+                if (_createMinionButtonText == null)
+                {
+                    var button = GameObject.Find(CreateMinionButton.Name);
+                    if (button != null)
+                    {
+                        _createMinionButtonText = button.GetComponentInChildren<Text>();
+                    }   
+                }
+                
+                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+
+                if (ZInput.GetButton(CreateMinionButton.Name))
+                {
+                    var playerNecromancyLevel =
+                        Player.m_localPlayer.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+                    var armorType = ExtraResourceConsumptionUnlocked
+                        ? ChebGonazMinion.DetermineArmorType(
+                            Player.m_localPlayer.GetInventory(),
+                            BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                            BasePlugin.ArmorIronRequiredConfig.Value,
+                            BasePlugin.ArmorBronzeRequiredConfig.Value,
+                            BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
+                        : ChebGonazMinion.ArmorType.None;
+                    
+                    switch (SelectedMinionOption)
+                    {
+                        case MinionOption.Warrior:
+                            SpawnSkeleton(playerNecromancyLevel, SpawnSkeletonWarriorMinion(armorType), armorType);
+                            break;
+                        case MinionOption.Archer:
+                            SpawnSkeleton(playerNecromancyLevel, SpawnSkeletonArcher(), armorType);
+                            break;
+                        case MinionOption.Poison:
+                            SpawnSkeleton(playerNecromancyLevel, SpawnPoisonSkeletonMinion(playerNecromancyLevel, armorType), armorType);
+                            break;
+                        case MinionOption.Woodcutter:
+                            SpawnSkeleton(playerNecromancyLevel, SpawnSkeletonWoodcutter(), armorType);
+                            break;
+                        case MinionOption.Miner:
+                            SpawnSkeleton(playerNecromancyLevel, SpawnSkeletonMiner(), armorType);
+                            break;
+                    }
+                    
+                    return true;
+                }
             }
 
-            if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
+            if (NextMinionButton != null && ZInput.GetButton(NextMinionButton.Name))
             {
-                SpawnRangedSkeleton();
+                _selectedMinionOptionIndex++;
+                if (_selectedMinionOptionIndex >= _minionOptions.Count) _selectedMinionOptionIndex = 0;
+                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
                 return true;
             }
 
@@ -341,15 +414,45 @@ namespace ChebsNecromancy.Items
             return SkeletonMinion.SkeletonType.None;
         }
 
-        private SkeletonMinion.SkeletonType SpawnSkeletonWorkerMinion()
+        private SkeletonMinion.SkeletonType SpawnSkeletonWoodcutter()
         {
-            // Determine type of minion to spawn and consume resources.
-            // Return None if unable to determine minion type, or if necessary resources are missing.
+            // Return None if necessary resources are missing.
+            var player = Player.m_localPlayer;
 
-            Player player = Player.m_localPlayer;
+            // check for bones
+            if (BoneFragmentsRequiredConfig.Value > 0)
+            {
+                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
-            if (!ExtraResourceConsumptionUnlocked) return SkeletonMinion.SkeletonType.None;
+                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughbones");
+                    return SkeletonMinion.SkeletonType.None;
+                }
+            }
             
+            if (WoodcutterSkeletonFlintRequiredConfig.Value <= 0)
+            {
+                return SkeletonMinion.SkeletonType.Woodcutter;
+            }
+            
+            var flintInInventory = player.GetInventory().CountItems("$item_flint");
+            if (flintInInventory < WoodcutterSkeletonFlintRequiredConfig.Value)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_notenoughflint");
+                return SkeletonMinion.SkeletonType.None;
+            }
+
+            return SkeletonMinion.SkeletonType.Woodcutter;
+        }
+
+        private SkeletonMinion.SkeletonType SpawnSkeletonMiner()
+        {
+            // Return None if necessary resources are missing.
+            var player = Player.m_localPlayer;
+
             // check for bones
             if (BoneFragmentsRequiredConfig.Value > 0)
             {
@@ -363,33 +466,29 @@ namespace ChebsNecromancy.Items
                 }
             }
 
-            if (MinerSkeletonAntlerRequiredConfig.Value > 0)
+            if (MinerSkeletonAntlerRequiredConfig.Value <= 0)
             {
-                int antlerInInventory = player.GetInventory().CountItems("$item_hardantler");
-                if (antlerInInventory >= MinerSkeletonAntlerRequiredConfig.Value)
-                {
-                    return SkeletonMinion.SkeletonType.Miner;
-                }
+                return SkeletonMinion.SkeletonType.Miner;
             }
-            if (WoodcutterSkeletonFlintRequiredConfig.Value > 0)
+            
+            int antlerInInventory = player.GetInventory().CountItems("$item_hardantler");
+            if (antlerInInventory < MinerSkeletonAntlerRequiredConfig.Value)
             {
-                int flintInInventory = player.GetInventory().CountItems("$item_flint");
-                if (flintInInventory >= WoodcutterSkeletonFlintRequiredConfig.Value)
-                {
-                    return SkeletonMinion.SkeletonType.Woodcutter;
-                }
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_notenoughhardantler");
+                return SkeletonMinion.SkeletonType.None;
             }
 
-            return SkeletonMinion.SkeletonType.None;
+            return SkeletonMinion.SkeletonType.Miner;
         }
-        
+
         private SkeletonMinion.SkeletonType SpawnPoisonSkeletonMinion(float playerNecromancyLevel,
             ChebGonazMinion.ArmorType armorType)
         {
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
 
-            Player player = Player.m_localPlayer;
+            var player = Player.m_localPlayer;
             
             // check for bones
             if (BoneFragmentsRequiredConfig.Value > 0)
@@ -405,20 +504,21 @@ namespace ChebsNecromancy.Items
             }
 
             if (playerNecromancyLevel < PoisonSkeletonLevelRequirementConfig.Value)
-                return SkeletonMinion.SkeletonType.None;
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_necromancyleveltoolow");
+                return SkeletonMinion.SkeletonType.None;   
+            }
 
-            // check guck requirements
-            if (ExtraResourceConsumptionUnlocked)
+            if (PoisonSkeletonGuckRequiredConfig.Value > 0)
             {
                 int guckInInventory = player.GetInventory().CountItems("$item_guck");
                 if (guckInInventory < PoisonSkeletonGuckRequiredConfig.Value)
                 {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$chebgonaz_notenoughguck");
                     return SkeletonMinion.SkeletonType.None;
                 }
-            }
-            else
-            {
-                return SkeletonMinion.SkeletonType.None;
             }
 
             // determine quality
@@ -470,88 +570,11 @@ namespace ChebsNecromancy.Items
             };
         }
 
-        private void SpawnRangedSkeleton()
+        private void SpawnSkeleton(float playerNecromancyLevel,
+            SkeletonMinion.SkeletonType skeletonType, ChebGonazMinion.ArmorType armorType)
         {
+            if (skeletonType == SkeletonMinion.SkeletonType.None) return;
             if (!SkeletonsAllowed.Value) return;
-
-            var player = Player.m_localPlayer;
-            var playerNecromancyLevel =
-                player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = ExtraResourceConsumptionUnlocked
-                ? ChebGonazMinion.DetermineArmorType(
-                    player.GetInventory(),
-                    BasePlugin.ArmorBlackIronRequiredConfig.Value,
-                    BasePlugin.ArmorIronRequiredConfig.Value,
-                    BasePlugin.ArmorBronzeRequiredConfig.Value,
-                    BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
-                : ChebGonazMinion.ArmorType.None;
-
-            var skeletonType = SpawnSkeletonArcher();
-
-            if (skeletonType is SkeletonMinion.SkeletonType.None)
-            {
-                return;
-            }
-
-            // if players have decided to foolishly restrict their power and
-            // create a *cough* LIMIT *spits*... check that here
-            var minionLimitIsSet = SkeletonMinion.MaxSkeletons.Value > 0; 
-            if (minionLimitIsSet)
-            {
-                // re-count the current active skeletons
-                UndeadMinion.CountActive<SkeletonMinion>(
-                    SkeletonMinion.MinionLimitIncrementsEveryXLevels.Value, 
-                    SkeletonMinion.MaxSkeletons.Value);
-            }
-
-            // scale according to skill
-            int quality = SkeletonTierOneQuality.Value;
-            if (playerNecromancyLevel >= SkeletonTierThreeLevelReq.Value)
-            {
-                quality = SkeletonTierThreeQuality.Value;
-            }
-            else if (playerNecromancyLevel >= SkeletonTierTwoLevelReq.Value)
-            {
-                quality = SkeletonTierTwoQuality.Value;
-            }
-
-            SkeletonMinion.ConsumeResources(skeletonType, armorType);
-
-            SkeletonMinion.InstantiateSkeleton(quality, playerNecromancyLevel, skeletonType, armorType);
-        }
-
-        private void SpawnSkeleton()
-        {
-            if (!SkeletonsAllowed.Value) return;
-
-            var player = Player.m_localPlayer;
-            var playerNecromancyLevel =
-                player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
-            var armorType = ExtraResourceConsumptionUnlocked
-                ? ChebGonazMinion.DetermineArmorType(
-                    player.GetInventory(),
-                    BasePlugin.ArmorBlackIronRequiredConfig.Value,
-                    BasePlugin.ArmorIronRequiredConfig.Value,
-                    BasePlugin.ArmorBronzeRequiredConfig.Value,
-                    BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
-                : ChebGonazMinion.ArmorType.None;
-
-            var skeletonType = SpawnSkeletonWorkerMinion();
-
-            // don't give armor to workers
-            if (skeletonType is SkeletonMinion.SkeletonType.Miner or SkeletonMinion.SkeletonType.Woodcutter)
-                armorType = ChebGonazMinion.ArmorType.None;
-
-            if (skeletonType is SkeletonMinion.SkeletonType.None)
-                skeletonType = SpawnPoisonSkeletonMinion(playerNecromancyLevel, armorType);
-
-            if (skeletonType is SkeletonMinion.SkeletonType.None)
-                skeletonType = SpawnSkeletonWarriorMinion(armorType);
-
-            if (skeletonType is SkeletonMinion.SkeletonType.None)
-            {
-                return;
-            }
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here

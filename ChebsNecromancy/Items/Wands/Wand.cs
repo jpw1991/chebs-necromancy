@@ -40,9 +40,9 @@ namespace ChebsNecromancy.Items
         public bool CanTeleport =>
             TeleportCooldown.Value == 0f || Time.time - lastTeleport > TeleportCooldown.Value;
 
-        public ConfigEntry<KeyCode> CreateArcherMinionConfig;
-        public ConfigEntry<InputManager.GamepadButton> CreateArcherMinionGamepadConfig;
-        public ButtonConfig CreateArcherMinionButton;
+        public ConfigEntry<KeyCode> NextMinionConfig;
+        public ConfigEntry<InputManager.GamepadButton> NextMinionGamepadConfig;
+        public ButtonConfig NextMinionButton;
 
         public ConfigEntry<KeyCode> UnlockExtraResourceConsumptionConfig;
         public ButtonConfig UnlockExtraResourceConsumptionButton;
@@ -67,12 +67,12 @@ namespace ChebsNecromancy.Items
                 InputManager.GamepadButton.ButtonSouth,
                 new ConfigDescription("The key to gamepad button to create a warrior minion with."));
 
-            CreateArcherMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateArcher",
-                KeyCode.H, new ConfigDescription("The key to create an archer minion with."));
+            NextMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"NextMinion",
+                KeyCode.H, new ConfigDescription("The key to cycle minion types."));
 
-            CreateArcherMinionGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateArcherGamepad",
+            NextMinionGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"NextMinionGamepad",
                 InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("The key to gamepad button to create an archer minion with."));
+                new ConfigDescription("The key to gamepad button to cycle minion types."));
 
             FollowConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Follow",
                 KeyCode.F, new ConfigDescription("The key to tell minions to follow."));
@@ -118,23 +118,23 @@ namespace ChebsNecromancy.Items
                     Name = ItemName + "CreateMinion",
                     Config = CreateMinionConfig,
                     GamepadConfig = CreateMinionGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_create",
+                    HintToken = "$chebgonaz_wand_createminion",
                     BlockOtherInputs = true
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, CreateMinionButton);
             }
 
-            if (CreateArcherMinionConfig.Value != KeyCode.None)
+            if (NextMinionConfig.Value != KeyCode.None)
             {
-                CreateArcherMinionButton = new ButtonConfig
+                NextMinionButton = new ButtonConfig
                 {
-                    Name = ItemName + "CreateArcherMinion",
-                    Config = CreateArcherMinionConfig,
-                    GamepadConfig = CreateArcherMinionGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_create_archer",
+                    Name = ItemName + "NextMinion",
+                    Config = NextMinionConfig,
+                    GamepadConfig = NextMinionGamepadConfig,
+                    HintToken = "$chebgonaz_wand_nextminion",
                     BlockOtherInputs = true
                 };
-                InputManager.Instance.AddButton(BasePlugin.PluginGuid, CreateArcherMinionButton);
+                InputManager.Instance.AddButton(BasePlugin.PluginGuid, NextMinionButton);
             }
 
             if (FollowConfig.Value != KeyCode.None)

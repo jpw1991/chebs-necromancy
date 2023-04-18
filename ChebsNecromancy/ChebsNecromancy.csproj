@@ -124,6 +124,9 @@
       <HintPath>libs\UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\unstripped_corlib\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\SetNeckroHome.cs" />

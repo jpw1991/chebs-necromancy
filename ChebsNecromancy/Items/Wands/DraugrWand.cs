@@ -11,6 +11,7 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
+using UnityEngine.UI;
 using Logger = Jotunn.Logger;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
@@ -45,6 +46,26 @@ namespace ChebsNecromancy.Items
         public override string ItemName => "ChebGonaz_DraugrWand";
         public override string PrefabName => "ChebGonaz_DraugrWand.prefab";
         protected override string DefaultRecipe => "ElderBark:5,FineWood:5,Bronze:5,TrophyDraugr:1";
+        
+        #region MinionSelector
+        public enum MinionOption
+        {
+            Warrior,
+            Archer,
+        }
+
+        private List<MinionOption> _minionOptions = new()
+        {
+            MinionOption.Warrior,
+            MinionOption.Archer,
+        };
+
+        private int _selectedMinionOptionIndex;
+        private MinionOption SelectedMinionOption => _minionOptions[_selectedMinionOptionIndex];
+        
+        private Text _createMinionButtonText;
+        
+        #endregion
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -180,7 +201,7 @@ namespace ChebsNecromancy.Items
             List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
 
             if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
-            if (CreateArcherMinionButton != null) buttonConfigs.Add(CreateArcherMinionButton);
+            if (NextMinionButton != null) buttonConfigs.Add(NextMinionButton);
             if (FollowButton != null) buttonConfigs.Add(FollowButton);
             if (WaitButton != null) buttonConfigs.Add(WaitButton);
             if (TeleportButton != null) buttonConfigs.Add(TeleportButton);
@@ -205,17 +226,44 @@ namespace ChebsNecromancy.Items
                     UnlockExtraResourceConsumptionButton == null
                     || ZInput.GetButton(UnlockExtraResourceConsumptionButton.Name);
 
-                if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
+                if (CreateMinionButton != null)
                 {
-                    SpawnDraugr();
-                    return true;
+                    // https://github.com/Valheim-Modding/Jotunn/issues/398
+                    if (_createMinionButtonText == null)
+                    {
+                        var button = GameObject.Find(CreateMinionButton.Name);
+                        if (button != null)
+                        {
+                            _createMinionButtonText = button.GetComponentInChildren<Text>();
+                        }   
+                    }
+                    
+                    if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+                
+                    if (ZInput.GetButton(CreateMinionButton.Name))
+                    {
+                        switch (SelectedMinionOption)
+                        {
+                            case MinionOption.Warrior:
+                                SpawnDraugr();
+                                break;
+                            case MinionOption.Archer:
+                                SpawnRangedDraugr();
+                                break;
+                        }
+                    
+                        return true;
+                    }
                 }
 
-                if (CreateArcherMinionButton != null && ZInput.GetButton(CreateArcherMinionButton.Name))
+                if (NextMinionButton != null && ZInput.GetButton(NextMinionButton.Name))
                 {
-                    SpawnRangedDraugr();
+                    _selectedMinionOptionIndex++;
+                    if (_selectedMinionOptionIndex >= _minionOptions.Count) _selectedMinionOptionIndex = 0;
+                    if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
                     return true;
                 }
+                
                 if (FollowButton != null && ZInput.GetButton(FollowButton.Name))
                 {
                     MakeNearbyMinionsFollow(DraugrSetFollowRange.Value, true);
