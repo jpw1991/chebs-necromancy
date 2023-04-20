@@ -52,12 +52,14 @@ namespace ChebsNecromancy.Items
         {
             Warrior,
             Archer,
+            BattleNeckro
         }
 
         private List<MinionOption> _minionOptions = new()
         {
             MinionOption.Warrior,
             MinionOption.Archer,
+            MinionOption.BattleNeckro
         };
 
         private int _selectedMinionOptionIndex;
