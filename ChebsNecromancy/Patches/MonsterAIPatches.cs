@@ -1,4 +1,5 @@
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 
 // ReSharper disable InconsistentNaming
@@ -23,20 +24,23 @@ namespace ChebsNecromancy.Patches
         [HarmonyPatch(nameof(MonsterAI.Awake))]
         static void AwakePostfix(ref Character __instance)
         {
-            if (__instance.name.StartsWith("ChebGonaz"))
+            if (__instance.name.StartsWith("ChebGonaz") && !__instance.TryGetComponent(out ChebGonazMinion _))
             {
                 if (__instance.name.Contains("Wraith"))
                 {
                     __instance.gameObject.AddComponent<GuardianWraithMinion>();
                 }
-                else if (__instance.name.Contains("SpiritPylonGhost") &&
-                         !__instance.TryGetComponent(out SpiritPylonGhostMinion _))
+                else if (__instance.name.Contains("SpiritPylonGhost"))
                 {
                     __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
                 }
-                else if (__instance.name.Contains("Neckro"))
+                else if (__instance.name.Contains("NeckroGatherer"))
                 {
                     __instance.gameObject.AddComponent<NeckroGathererMinion>();
+                }
+                else if (__instance.name.Contains("BattleNeckro"))
+                {
+                    __instance.gameObject.AddComponent<BattleNeckroMinion>();
                 }
                 else if (__instance.name.Contains("Bat"))
                 {
@@ -48,30 +52,27 @@ namespace ChebsNecromancy.Patches
                 }
                 else if (__instance.name.Contains("Skeleton") || __instance.name.Contains("Draugr"))
                 {
-                    if (!__instance.TryGetComponent(out UndeadMinion _))
+                    if (__instance.name.Contains("Miner"))
                     {
-                        if (__instance.name.Contains("Miner"))
-                        {
-                            __instance.gameObject.AddComponent<SkeletonMinerMinion>();
-                        }
+                        __instance.gameObject.AddComponent<SkeletonMinerMinion>();
+                    }
                         
-                        if (__instance.name.Contains("Woodcutter"))
-                        {
-                            __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();
-                        }
+                    if (__instance.name.Contains("Woodcutter"))
+                    {
+                        __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();
+                    }
 
-                        if (__instance.name.Contains("PoisonSkeleton"))
-                        {
-                            __instance.gameObject.AddComponent<PoisonSkeletonMinion>();
-                        }
-                        else if (__instance.name.Contains("Skeleton"))
-                        {
-                            __instance.gameObject.AddComponent<SkeletonMinion>();
-                        }
-                        else if (__instance.name.Contains("Draugr"))
-                        {
-                            __instance.gameObject.AddComponent<DraugrMinion>();
-                        }
+                    if (__instance.name.Contains("PoisonSkeleton"))
+                    {
+                        __instance.gameObject.AddComponent<PoisonSkeletonMinion>();
+                    }
+                    else if (__instance.name.Contains("Skeleton"))
+                    {
+                        __instance.gameObject.AddComponent<SkeletonMinion>();
+                    }
+                    else if (__instance.name.Contains("Draugr"))
+                    {
+                        __instance.gameObject.AddComponent<DraugrMinion>();
                     }
                 }
             }

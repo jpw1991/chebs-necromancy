@@ -267,6 +267,7 @@ namespace ChebsNecromancy
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
             LeechMinion.CreateConfigs(this);
+            BattleNeckroMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
 
@@ -422,6 +423,7 @@ namespace ChebsNecromancy
                 prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 prefabNames.Add("ChebGonaz_Bat.prefab");
+                prefabNames.Add(BattleNeckroMinion.PrefabName+".prefab");
                 
                 foreach (LeechMinion.LeechType value in Enum.GetValues(typeof(LeechMinion.LeechType)))
                 {

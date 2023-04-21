@@ -138,6 +138,7 @@
     <Compile Include="Items\Wands\OrbOfBeckoning.cs" />
     <Compile Include="Items\Wands\SkeletonWand.cs" />
     <Compile Include="Items\Wands\Wand.cs" />
+    <Compile Include="Minions\BattleNeckroMinion.cs" />
     <Compile Include="Minions\LeechMinion.cs" />
     <Compile Include="Minions\SkeletonMinerMinion.cs" />
     <Compile Include="Minions\SkeletonWoodcutterMinion.cs" />

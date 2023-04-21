@@ -155,7 +155,7 @@ namespace ChebsNecromancy.Items
 
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
         {
-            ItemConfig config = new ItemConfig();
+            var config = new ItemConfig();
             config.Name = "$item_friendlyskeletonwand_draugrwand";
             config.Description = "$item_friendlyskeletonwand_draugrwand_desc";
 
@@ -179,7 +179,7 @@ namespace ChebsNecromancy.Items
                 config.Enabled = false;
             }
 
-            CustomItem customItem = new CustomItem(prefab, false, config);
+            var customItem = new CustomItem(prefab, false, config);
             if (customItem == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
@@ -200,7 +200,7 @@ namespace ChebsNecromancy.Items
 
         public override KeyHintConfig GetKeyHint()
         {
-            List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
+            var buttonConfigs = new List<ButtonConfig>();
 
             if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
             if (NextMinionButton != null) buttonConfigs.Add(NextMinionButton);
@@ -252,6 +252,9 @@ namespace ChebsNecromancy.Items
                             case MinionOption.Archer:
                                 SpawnRangedDraugr();
                                 break;
+                            case MinionOption.BattleNeckro:
+                                SpawnBattleNeckro();
+                                break;
                         }
                     
                         return true;
@@ -296,22 +299,22 @@ namespace ChebsNecromancy.Items
 
         private void ConsumeResources(DraugrMinion.DraugrType draugrType, ChebGonazMinion.ArmorType armorType, Dictionary<string, int> meatTypesFound)
         {
-            Player player = Player.m_localPlayer;
+            var player = Player.m_localPlayer;
 
             // consume bones
             player.GetInventory().RemoveItem("$item_bonefragments", DraugrBoneFragmentsRequiredConfig.Value);
             
             // consume the meat
-            int meatConsumed = 0;
-            Stack<Tuple<string, int>> meatToConsume = new Stack<Tuple<string, int>>();
-            foreach (string key in meatTypesFound.Keys)
+            var meatConsumed = 0;
+            var meatToConsume = new Stack<Tuple<string, int>>();
+            foreach (var key in meatTypesFound.Keys)
             {
                 if (meatConsumed >= DraugrMeatRequiredConfig.Value)
                 {
                     break;
                 }
 
-                int meatAvailable = meatTypesFound[key];
+                var meatAvailable = meatTypesFound[key];
 
                 if (meatAvailable <= DraugrMeatRequiredConfig.Value)
                 {
@@ -327,7 +330,7 @@ namespace ChebsNecromancy.Items
 
             while (meatToConsume.Count > 0)
             {
-                Tuple<string, int> keyValue = meatToConsume.Pop();
+                var keyValue = meatToConsume.Pop();
                 player.GetInventory().RemoveItem(keyValue.Item1, keyValue.Item2);
             }
 
@@ -399,6 +402,40 @@ namespace ChebsNecromancy.Items
                     break;
             }
         }
+        
+        private void ConsumeResources(Dictionary<string, int> meatTypesFound, int amount)
+        {
+            var player = Player.m_localPlayer;
+            
+            var meatConsumed = 0;
+            var meatToConsume = new Stack<Tuple<string, int>>();
+            foreach (var key in meatTypesFound.Keys)
+            {
+                if (meatConsumed >= amount)
+                {
+                    break;
+                }
+
+                var meatAvailable = meatTypesFound[key];
+
+                if (meatAvailable <= amount)
+                {
+                    meatToConsume.Push(new Tuple<string, int>(key, meatAvailable));
+                    meatConsumed += meatAvailable;
+                }
+                else
+                {
+                    meatToConsume.Push(new Tuple<string, int>(key, amount));
+                    meatConsumed += amount;
+                }
+            }
+
+            while (meatToConsume.Count > 0)
+            {
+                var keyValue = meatToConsume.Pop();
+                player.GetInventory().RemoveItem(keyValue.Item1, keyValue.Item2);
+            }
+        }
 
 
         private DraugrMinion.DraugrType SpawnDraugrArcher()
@@ -411,7 +448,7 @@ namespace ChebsNecromancy.Items
             // check for bones
             if (DraugrBoneFragmentsRequiredConfig.Value > 0)
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+                var boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
                 if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
                 {
@@ -497,7 +534,7 @@ namespace ChebsNecromancy.Items
             // check for bones
             if (DraugrBoneFragmentsRequiredConfig.Value > 0)
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+                var boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
                 if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
                 {
@@ -537,7 +574,7 @@ namespace ChebsNecromancy.Items
             }
 
             // scale according to skill
-            int quality = DraugrTierOneQuality.Value;
+            var quality = DraugrTierOneQuality.Value;
             if (playerNecromancyLevel >= DraugrTierThreeLevelReq.Value)
             {
                 quality = DraugrTierThreeQuality.Value;
@@ -578,12 +615,12 @@ namespace ChebsNecromancy.Items
 
         private Tuple<int, Dictionary<string, int>> LookForMeat()
         {
-            Player player = Player.m_localPlayer;
+            var player = Player.m_localPlayer;
             var meatTypesFound = new Dictionary<string, int>();
             var meatInInventory = 0;
             if (DraugrMeatRequiredConfig.Value > 0)
             {
-                List<string> allowedMeatTypes = new List<string>()
+                var allowedMeatTypes = new List<string>()
                 {
                     "$item_meat_rotten",
                     "$item_boar_meat",
@@ -599,7 +636,7 @@ namespace ChebsNecromancy.Items
                 
                 allowedMeatTypes.ForEach(meatTypeStr =>
                     {
-                        int meatFound = player.GetInventory().CountItems(meatTypeStr);
+                        var meatFound = player.GetInventory().CountItems(meatTypeStr);
                         if (meatFound > 0)
                         {
                             meatInInventory += meatFound;
@@ -633,7 +670,7 @@ namespace ChebsNecromancy.Items
             // check for bones
             if (DraugrBoneFragmentsRequiredConfig.Value > 0)
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
+                var boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
 
                 if (boneFragmentsInInventory < DraugrBoneFragmentsRequiredConfig.Value)
                 {
@@ -671,7 +708,7 @@ namespace ChebsNecromancy.Items
             }
 
             // scale according to skill
-            int quality = DraugrTierOneQuality.Value;
+            var quality = DraugrTierOneQuality.Value;
             if (playerNecromancyLevel >= DraugrTierThreeLevelReq.Value)
             {
                 quality = DraugrTierThreeQuality.Value;
@@ -690,22 +727,22 @@ namespace ChebsNecromancy.Items
         {
             if (draugrType is DraugrMinion.DraugrType.None) return;
             
-            Player player = Player.m_localPlayer;
+            var player = Player.m_localPlayer;
             // go on to spawn draugr
-            string prefabName = InternalName.GetName(draugrType);
-            GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
+            var prefabName = InternalName.GetName(draugrType);
+            var prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
                 Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
                 Logger.LogError($"SpawnFriendlyDraugr: spawning {prefabName} failed");
             }
 
-            GameObject spawnedChar = Object.Instantiate(prefab,
+            var spawnedChar = Object.Instantiate(prefab,
                 player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
             spawnedChar.AddComponent<FreshMinion>();
-            DraugrMinion minion = spawnedChar.AddComponent<DraugrMinion>();
+            var minion = spawnedChar.AddComponent<DraugrMinion>();
             minion.SetCreatedAtLevel(playerNecromancyLevel);
-            Character character = spawnedChar.GetComponent<Character>();
+            var character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
             minion.ScaleStats(playerNecromancyLevel);
             minion.ScaleEquipment(playerNecromancyLevel, armorType);
@@ -775,6 +812,113 @@ namespace ChebsNecromancy.Items
                 case ChebGonazMinion.ArmorType.BlackMetal:
                     ChebGonazMinion.AddOrUpdateDrop(characterDrop, "BlackMetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
                     break;
+            }
+
+            // the component won't be remembered by the game on logout because
+            // only what is on the prefab is remembered. Even changes to the prefab
+            // aren't remembered. So we must write what we're dropping into
+            // the ZDO as well and then read & restore this on Awake
+            minion.RecordDrops(characterDrop);
+        }
+        
+        private void SpawnBattleNeckro()
+        {
+            if (!BattleNeckroMinion.Allowed.Value) return;
+            
+            var player = Player.m_localPlayer;
+
+            var meatTypesFound = LookForMeat();
+            if (BattleNeckroMinion.MeatRequired.Value > 0)
+            {
+                var meatInInventory = meatTypesFound.Item1;
+                if (meatInInventory < BattleNeckroMinion.MeatRequired.Value)
+                {
+                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                        "$friendlyskeletonwand_notenoughmeat");
+                    return;
+                }
+            }
+
+            var playerNecromancyLevel =
+                player.GetSkillLevel(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
+
+            // if players have decided to foolishly restrict their power and
+            // create a *cough* LIMIT *spits*... check that here
+            var minionLimitIsSet = BattleNeckroMinion.MaxBattleNeckros.Value > 0; 
+            if (minionLimitIsSet)
+            {
+                // re-count the current active draugr
+                UndeadMinion.CountActive<BattleNeckroMinion>(
+                    BattleNeckroMinion.MinionLimitIncrementsEveryXLevels.Value, 
+                    BattleNeckroMinion.MaxBattleNeckros.Value);
+            }
+
+            // scale according to skill
+            var quality = BattleNeckroMinion.TierOneQuality.Value;
+            if (playerNecromancyLevel >= BattleNeckroMinion.TierThreeLevelReq.Value)
+            {
+                quality = BattleNeckroMinion.TierThreeQuality.Value;
+            }
+            else if (playerNecromancyLevel >= BattleNeckroMinion.TierTwoLevelReq.Value)
+            {
+                quality = BattleNeckroMinion.TierTwoQuality.Value;
+            }
+
+            ConsumeResources(meatTypesFound.Item2, BattleNeckroMinion.MeatRequired.Value);
+
+            InstantiateBattleNeckro(quality, playerNecromancyLevel);
+        }
+        
+        protected void InstantiateBattleNeckro(int quality, float playerNecromancyLevel)
+        {
+            var player = Player.m_localPlayer;
+            // go on to spawn draugr
+            var prefabName = BattleNeckroMinion.PrefabName;
+            var prefab = ZNetScene.instance.GetPrefab(prefabName);
+            if (!prefab)
+            {
+                Player.m_localPlayer.Message(MessageHud.MessageType.TopLeft, $"{prefabName} does not exist");
+                Logger.LogError($"InstantiateBattleNeckro: spawning {prefabName} failed");
+            }
+
+            var spawnedChar = Object.Instantiate(prefab,
+                player.transform.position + player.transform.forward * 2f + Vector3.up, Quaternion.identity);
+            spawnedChar.AddComponent<FreshMinion>();
+            var minion = spawnedChar.AddComponent<BattleNeckroMinion>();
+            minion.SetCreatedAtLevel(playerNecromancyLevel);
+            var character = spawnedChar.GetComponent<Character>();
+            character.SetLevel(quality);
+            minion.ScaleStats(playerNecromancyLevel);
+
+            player.RaiseSkill(SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill,
+                necromancyLevelIncrease.Value);
+
+            if (FollowByDefault.Value)
+            {
+                minion.Follow(player.gameObject);
+            }
+            else
+            {
+                minion.Wait(player.transform.position);
+            }
+
+            minion.UndeadMinionMaster = player.GetPlayerName();
+
+            // handle refunding of resources on death
+            if (BattleNeckroMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Everything) return;
+            
+            // we have to be a little bit cautious. It normally shouldn't exist yet, but maybe some other mod
+            // added it? Who knows
+            var characterDrop = minion.gameObject.GetComponent<CharacterDrop>();
+            if (characterDrop == null)
+            {
+                characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
+            }
+
+            // meat. For now, assume Neck tails
+            if (DraugrMeatRequiredConfig.Value > 0)
+            {
+                ChebGonazMinion.AddOrUpdateDrop(characterDrop, "NeckTail", BattleNeckroMinion.MeatRequired.Value);
             }
 
             // the component won't be remembered by the game on logout because
