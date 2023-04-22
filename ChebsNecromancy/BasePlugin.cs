@@ -34,11 +34,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.0.7";
+        public const string PluginVersion = "3.1.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
         
-        public readonly System.Version ChebsValheimLibraryVersion = new("1.1.2");
+        public readonly System.Version ChebsValheimLibraryVersion = new("1.1.3");
 
         private readonly Harmony harmony = new(PluginGuid);
 
@@ -267,6 +267,7 @@ namespace ChebsNecromancy
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
             LeechMinion.CreateConfigs(this);
+            BattleNeckroMinion.CreateConfigs(this);
 
             wands.ForEach(w => w.CreateConfigs(this));
 
@@ -422,6 +423,7 @@ namespace ChebsNecromancy
                 prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 prefabNames.Add("ChebGonaz_Bat.prefab");
+                prefabNames.Add(BattleNeckroMinion.PrefabName+".prefab");
                 
                 foreach (LeechMinion.LeechType value in Enum.GetValues(typeof(LeechMinion.LeechType)))
                 {

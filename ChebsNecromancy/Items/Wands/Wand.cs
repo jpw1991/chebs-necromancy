@@ -214,6 +214,11 @@ namespace ChebsNecromancy.Items
                 var minion = character.GetComponent<ChebGonazMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
+
+                if (!character.IsOwner())
+                {
+                    character.m_nview.ClaimOwnership();
+                }
                 
                 if (character.GetComponent<MonsterAI>().GetFollowTarget() != player.gameObject) continue;
 
@@ -227,22 +232,27 @@ namespace ChebsNecromancy.Items
             var player = Player.m_localPlayer;
             // based off BaseAI.FindClosestCreature
             var allCharacters = Character.GetAllCharacters();
-            foreach (var item in allCharacters)
+            foreach (var character in allCharacters)
             {
-                if (item.IsDead())
+                if (character.IsDead())
                 {
                     continue;
                 }
 
-                var minion = item.GetComponent<ChebGonazMinion>();
+                var minion = character.GetComponent<ChebGonazMinion>();
                 if (minion == null || !minion.canBeCommanded
                                    || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
                 
-                var distance = Vector3.Distance(item.transform.position, player.transform.position);
+                if (!character.IsOwner())
+                {
+                    character.m_nview.ClaimOwnership();
+                }
+                
+                var distance = Vector3.Distance(character.transform.position, player.transform.position);
                 
                 // if within radius OR it's set to the targetObject so you can recall those you've commanded
                 // to be somewhere that's beyond the radius
-                var minionFollowTarget = item.GetComponent<MonsterAI>().GetFollowTarget();
+                var minionFollowTarget = character.GetComponent<MonsterAI>().GetFollowTarget();
                 var minionFollowingOrb = minionFollowTarget != null &&
                                           minionFollowTarget.TryGetComponent(out OrbOfBeckoningProjectile _);
                 //var minionFollowingPlayer = !minionFollowingOrb && minionFollowTarget == player.gameObject;
@@ -275,18 +285,23 @@ namespace ChebsNecromancy.Items
             
             // based off BaseAI.FindClosestCreature
             var allCharacters = Character.GetAllCharacters();
-            foreach (var item in allCharacters)
+            foreach (var character in allCharacters)
             {
-                if (item.IsDead())
+                if (character.IsDead())
                 {
                     continue;
                 }
 
-                if (item.GetComponent<ChebGonazMinion>() != null
-                    && item.TryGetComponent(out MonsterAI monsterAI)
+                if (character.GetComponent<ChebGonazMinion>() != null
+                    && character.TryGetComponent(out MonsterAI monsterAI)
                     && monsterAI.GetFollowTarget() == player.gameObject)
                 {
-                    item.transform.position = player.transform.position;
+                    if (!character.IsOwner())
+                    {
+                        character.m_nview.ClaimOwnership();
+                    }
+                    
+                    character.transform.position = player.transform.position;
                     // forget position of current enemy so they don't start chasing after it. Cannot set it to null
                     // via monsterAI.SetTarget(null) because this has no effect. Code below inspired by reading
                     // MonsterAI.UpdateTarget
