@@ -53,8 +53,8 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 	+ [**Necromancer Hood**](https://github.com/jpw1991/chebs-necromancy/wiki/item_necromancerhood): A cool hood to match the cloak.
 	+ [**Necromancer's Backpack**](https://github.com/jpw1991/chebs-necromancy/wiki/NecromancyBackpack): An optional integration with **AdventureBackpacks** ([Nexus](https://www.nexusmods.com/valheim/mods/2204), [Thunderstore](https://valheim.thunderstore.io/package/Vapok/AdventureBackpacks/)), which offers a Necromancy backpack that doubles as a Spectral Shroud.
 - While holding a Skeleton Wand, Draugr Wand, or Orb of Beckoning you can control the minions:
-	+ **B** will make a warrior.
-	+ **H** will make an archer.
+	+ **B** will make a minion.
+	+ **H** will cycle minion types (eg. switch from Warrior to Archer) created by **B**.
 	+ **F** will make all nearby minions **follow** you.
 	+ **T** will make all nearby minions **wait**.
 	+ **Shift+T** will make minions **roam**.
@@ -65,10 +65,14 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 - Minions do not deal damage to player structures and are not affected by sharpened stakes.
 - Minions remember who created them and cannot be commanded by other players.
 - **Upgrades:** Having additional items in your inventory when you summon can create an upgraded version of a minion. As a safety measure to prevent you from accidentally consuming stuff, hold Left Shift when creating a minion to permit these resources to be consumed (or set to None in the config if you want no checking whatsoever):
-  - Boar scraps, Deer Hide, Troll Hide, Wolf Pelt, Lox Pelt, Scale Hide -> leather armor
+  - Boar scraps, Deer Hide, Scale Hide -> leather armor
+  - Troll Hide -> Troll armor
+  - Wolf Pelt -> Wolf armor
+  - Lox Pelt -> Lox armor
   - Bronze -> Bronze armor
   - Iron -> Iron armor
   - Black Metal -> Black Iron armor
+- Some minions require more than bones:
   - Guck -> poison skeleton
   - Surtling core -> skeleton mage
   - Flint -> skeleton lumberjack
