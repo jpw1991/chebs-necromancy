@@ -6,7 +6,6 @@ namespace ChebsNecromancy.Minions
 {
     internal class SkeletonMinerMinion : SkeletonMinion
     {
-        public static ConfigEntry<int> ToolTier;
         public static ConfigEntry<float> UpdateDelay, LookRadius;
         public static ConfigEntry<string> RockInternalIDsList;
 
@@ -14,9 +13,6 @@ namespace ChebsNecromancy.Minions
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            ToolTier = plugin.Config.Bind("SkeletonMiner (Server Synced)", "ToolTier",
-                3, new ConfigDescription("The tier of the skeleton's tool: 0 (deerbone), 1 (bronze), 2 (iron), 3 (black metal).", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
             UpdateDelay = plugin.Config.Bind("SkeletonMiner (Server Synced)", "SkeletonMinerUpdateDelay",
                 6f, new ConfigDescription("The delay, in seconds, between rock/ore searching attempts. Attention: small values may impact performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));

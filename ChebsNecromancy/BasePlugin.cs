@@ -34,11 +34,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.1.0";
+        public const string PluginVersion = "3.2.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
         
-        public readonly System.Version ChebsValheimLibraryVersion = new("1.1.3");
+        public readonly System.Version ChebsValheimLibraryVersion = new("1.2.0");
 
         private readonly Harmony harmony = new(PluginGuid);
 
@@ -116,8 +116,6 @@ namespace ChebsNecromancy
             
             SkeletonMinerMinion.SyncInternalsWithConfigs();
             SkeletonWoodcutterMinion.SyncInternalsWithConfigs();
-            SkeletonPickaxe.SyncInternalsWithConfigs(SkeletonMinerMinion.ToolTier.Value);
-            SkeletonWoodAxe.SyncInternalsWithConfigs(SkeletonWoodcutterMinion.ToolTier.Value);
 
             SetupWatcher();
         }
