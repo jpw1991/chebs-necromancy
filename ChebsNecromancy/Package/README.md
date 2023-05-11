@@ -142,7 +142,8 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
-02/05/2023 | 1.2.0 | Commandable workers; If a woodcutter is swinging, but missing, the damage gets dealt anyway; remove tooltier stuff for simplicity and streamlining. People can use 3rd party item-alteration mods instead
+11/05/2023 | 3.2.1 | Unbundle DLL to fix bug of wands not working; ignore collision with carts
+02/05/2023 | 3.2.0 | Commandable workers; If a woodcutter is swinging, but missing, the damage gets dealt anyway; remove tooltier stuff for simplicity and streamlining. People can use 3rd party item-alteration mods instead
 21/04/2023 | 3.1.0 | Battle Neckro and possible fix to frozen minions
 17/04/2023 | 3.0.7 | Cycling minion selection for greater control
 13/04/2023 | 3.0.6 | fix Farming Pylon to no longer say Armor stand on hover text; merge ChebsValheimLibrary.dll into ChebsNecromancy.dll for user convenience
