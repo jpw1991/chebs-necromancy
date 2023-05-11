@@ -38,7 +38,7 @@ namespace ChebsNecromancy
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
         
-        public readonly System.Version ChebsValheimLibraryVersion = new("1.2.0");
+        public readonly System.Version ChebsValheimLibraryVersion = new("1.2.1");
 
         private readonly Harmony harmony = new(PluginGuid);
 

@@ -39,25 +39,27 @@ if [ ! -f "$BEPINEX" ]; then
     exit 1
 fi
 
-#cp -f "$DLL" "$PLUGINS" || { echo "Error: Failed to copy $DLL"; exit 1; }
-#cp -f "$LIB" "$PLUGINS" || { echo "Error: Failed to copy $LIB"; exit 1; }
+cp -f "$DLL" "$PLUGINS" || { echo "Error: Failed to copy $DLL"; exit 1; }
+cp -f "$LIB" "$PLUGINS" || { echo "Error: Failed to copy $LIB"; exit 1; }
 cp -f "$BUN" "$PLUGINS" || { echo "Error: Failed to copy $BUN"; exit 1; }
 cp -f "$BUN.manifest" "$PLUGINS" || { echo "Error: Failed to copy $BUN.manifest"; exit 1; }
 
+# merging causes problems with the mods when installed together, so I'm disabling this
+#
 # create dir if not existing
-if [ ! -d "$DEBUGDIR/merged" ]; then
-    mkdir $DEBUGDIR/merged
-fi
-
-cp -f $BEPINEX $DEBUGDIR
-cd $DEBUGDIR
-
-mono ../../../packages/ILRepack.2.0.18/tools/ILRepack.exe /out:merged/ChebsNecromancy.dll $(basename "$LIB") $(basename "$DLL")
-
-if [ $? != 0 ]; then
-    echo "Merging failed"
-    exit 1
-fi
-
-cp -f "merged/ChebsNecromancy.dll" "$PLUGINS" || { echo "Error: Failed to copy merged dll"; exit 1; }
+#if [ ! -d "$DEBUGDIR/merged" ]; then
+#    mkdir $DEBUGDIR/merged
+#fi
+#
+#cp -f $BEPINEX $DEBUGDIR
+#cd $DEBUGDIR
+#
+#mono ../../../packages/ILRepack.2.0.18/tools/ILRepack.exe /out:merged/ChebsNecromancy.dll $(basename "$LIB") $(basename "$DLL")
+#
+#if [ $? != 0 ]; then
+#    echo "Merging failed"
+#    exit 1
+#fi
+#
+#cp -f "merged/ChebsNecromancy.dll" "$PLUGINS" || { echo "Error: Failed to copy merged dll"; exit 1; }
 
