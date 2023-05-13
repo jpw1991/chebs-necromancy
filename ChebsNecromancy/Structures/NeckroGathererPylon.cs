@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 
@@ -14,9 +16,10 @@ namespace ChebsNecromancy.Structures
     internal class NeckroGathererPylon : Structure
     {
         public static ConfigEntry<float> SpawnInterval;
-        public static ConfigEntry<int> NeckTailsConsumedPerSpawn;
+        public static MemoryConfigEntry<string, List<string>> NeckroCost;
 
         private Container _container;
+        private Inventory _inventory;
         
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -43,8 +46,10 @@ namespace ChebsNecromancy.Structures
             SpawnInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererSpawnInterval", 60f,
                 "How often the pylon will attempt to create a Neckro Gatherer.", plugin.FloatQuantityValue, true);
 
-            NeckTailsConsumedPerSpawn = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererCreationCost", 1,
-                "How many Neck Tails get consumed when creating a Neckro Gatherer.", plugin.IntQuantityValue, true);
+            var neckroCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererCost", "NeckTail:1",
+                "The items that are consumed when creating a Neckro Gatherer. Please use a comma-delimited list of prefab names with a : and integer for amount.",
+                null, true);
+            NeckroCost = new MemoryConfigEntry<string, List<string>>(neckroCost, s => s?.Split(',').ToList());
         }
         
         public new static void UpdateRecipe()
@@ -57,6 +62,7 @@ namespace ChebsNecromancy.Structures
 #pragma warning restore IDE0051 // Remove unused private members
         {
             _container = GetComponent<Container>();
+            _inventory = _container.GetInventory();
             StartCoroutine(SpawnNeckros());
         }
         
@@ -77,6 +83,73 @@ namespace ChebsNecromancy.Structures
                 SpawnNeckro();
             }
         }
+        
+        private bool CanSpawnNeckro
+        {
+            get
+            {
+                var canSpawn = false;
+                foreach (var fuel in NeckroCost.Value)
+                {
+                    var splut = fuel.Split(':');
+                    if (splut.Length != 2)
+                    {
+                        Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
+                        return false;
+                    }
+                    
+                    var itemRequired = splut[0];
+                    if (!int.TryParse(splut[1], out int itemAmountRequired))
+                    {
+                        Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
+                        return false;
+                    }
+                    
+                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
+                    if (requiredItemPrefab == null)
+                    {
+                        Logger.LogError($"Error processing config for Neckro Gatherer Costs: {itemRequired} doesn't exist.");
+                        return false;
+                    }
+                    var amountInInv = _inventory.CountItems(requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name);
+                    if (amountInInv >= itemAmountRequired)
+                    {
+                        canSpawn = true;
+                    }
+                        
+                }
+                return canSpawn;
+            }
+        }
+
+        private void ConsumeRequirements()
+        {
+            foreach (var fuel in NeckroCost.Value)
+            {
+                var splut = fuel.Split(':');
+                if (splut.Length != 2)
+                {
+                    Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
+                    return;
+                }
+                    
+                var itemRequired = splut[0];
+                if (!int.TryParse(splut[1], out int itemAmountRequired))
+                {
+                    Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
+                    return;
+                }
+                    
+                var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
+                if (requiredItemPrefab == null)
+                {
+                    Logger.LogError($"Error processing config for Neckro Gatherer Costs: {itemRequired} doesn't exist.");
+                    return;
+                }
+                var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
+                _inventory.RemoveItem(requiredItemName, itemAmountRequired);
+            }
+        }
 
         protected void SpawnNeckro()
         {
@@ -87,28 +160,30 @@ namespace ChebsNecromancy.Structures
                 // no master? no neckro
                 return;
             }
+
+            if (!CanSpawnNeckro)
+            {
+                return;
+            }
             
-            int neckTailsInInventory = _container.GetInventory().CountItems("$item_necktail");
-            if (neckTailsInInventory < NeckTailsConsumedPerSpawn.Value) return;
+            ConsumeRequirements();
 
-            _container.GetInventory().RemoveItem("$item_necktail", NeckTailsConsumedPerSpawn.Value);
+            var quality = 1;
 
-            int quality = 1;
-
-            string prefabName = "ChebGonaz_NeckroGatherer";
-            GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
+            var prefabName = "ChebGonaz_NeckroGatherer";
+            var prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
                 Logger.LogError($"spawning {prefabName} failed!");
                 return;
             }
 
-            GameObject spawnedChar = Instantiate(
+            var spawnedChar = Instantiate(
                 prefab,
                 transform.position + transform.forward * 2f + Vector3.up,
                 Quaternion.identity);
 
-            Character character = spawnedChar.GetComponent<Character>();
+            var character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
             
             spawnedChar.GetComponent<NeckroGathererMinion>().UndeadMinionMaster = player.GetPlayerName();
