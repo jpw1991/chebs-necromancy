@@ -1,4 +1,5 @@
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 

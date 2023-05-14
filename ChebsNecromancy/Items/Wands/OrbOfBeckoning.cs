@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Items;
 using ChebsValheimLibrary.Minions;
 using Jotunn;
@@ -11,7 +12,7 @@ using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Wands
 {
     internal class OrbOfBeckoning : Wand
     {
@@ -213,31 +214,12 @@ namespace ChebsNecromancy.Items
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
 
-            Player player = Player.m_localPlayer;
+            var inventory = Player.m_localPlayer.GetInventory();
             
-            // check for bones
-            if (SkeletonWand.BoneFragmentsRequiredConfig.Value > 0)
+            if (!UndeadMinion.CanSpawn(SkeletonMageMinion.ItemsCost, inventory, out var message))
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                if (boneFragmentsInInventory < SkeletonWand.BoneFragmentsRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$friendlyskeletonwand_notenoughbones");
-                    return SkeletonMinion.SkeletonType.None;
-                }
-            }
-
-            // check for surtling cores
-            if (BasePlugin.SurtlingCoresRequiredConfig.Value > 0)
-            {
-                int surtlingCoresInInventory = player.GetInventory().CountItems("$item_surtlingcore");
-                if (surtlingCoresInInventory < BasePlugin.SurtlingCoresRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$chebgonaz_notenoughcores");
-                    return SkeletonMinion.SkeletonType.None;
-                }
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
+                return SkeletonMinion.SkeletonType.None;
             }
 
             // determine quality
@@ -311,20 +293,10 @@ namespace ChebsNecromancy.Items
         private LeechMinion.LeechType SpawnLeechMinion()
         {
             var player = Player.m_localPlayer;
-            
-            var bloodBagsInInventory = player.GetInventory().CountItems("$item_bloodbag");
-            if (bloodBagsInInventory < LeechMinion.BloodBagsRequired.Value)
+
+            if (!UndeadMinion.CanSpawn(LeechMinion.ItemsCost, player.GetInventory(), out var message))
             {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    "$chebgonaz_notenoughbloodbags");
-                return LeechMinion.LeechType.None;
-            }
-            
-            var intestinesInInventory = player.GetInventory().CountItems("$item_entrails");
-            if (intestinesInInventory < LeechMinion.IntestinesRequired.Value)
-            {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    "$chebgonaz_notenoughentrails");
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return LeechMinion.LeechType.None;
             }
 

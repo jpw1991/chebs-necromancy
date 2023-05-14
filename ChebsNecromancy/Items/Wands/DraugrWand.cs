@@ -16,7 +16,7 @@ using Logger = Jotunn.Logger;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Wands
 {
     internal class DraugrWand : Wand
     {

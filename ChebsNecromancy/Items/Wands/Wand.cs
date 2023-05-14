@@ -2,14 +2,13 @@
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
-using ChebsNecromancy.Minions;
 using ChebsValheimLibrary.Items;
 using ChebsValheimLibrary.Minions;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using UnityEngine;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Wands
 {
     internal class Wand : Item
     {

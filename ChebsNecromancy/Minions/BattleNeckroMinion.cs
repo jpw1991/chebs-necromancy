@@ -2,6 +2,7 @@ using System.Collections;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using UnityEngine;
@@ -17,9 +18,6 @@ namespace ChebsNecromancy.Minions
         private static int _createdOrderIncrementer;
 
         public static ConfigEntry<bool> Allowed;
-        
-        public static ConfigEntry<DropType> DropOnDeath;
-        public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
 
         public static ConfigEntry<int> MaxBattleNeckros;
         public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
@@ -37,17 +35,6 @@ namespace ChebsNecromancy.Minions
         {
             Allowed = plugin.Config.Bind("BattleNeckroMinion (Server Synced)", "Allowed",
                 true, new ConfigDescription("Whether this minion can be made or not.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            DropOnDeath = plugin.Config.Bind("BattleNeckroMinion (Server Synced)", "DropOnDeath",
-                DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            PackDropItemsIntoCargoCrate = plugin.Config.Bind("BattleNeckroMinion (Server Synced)",
-                "PackDroppedItemsIntoCargoCrate",
-                true, new ConfigDescription(
-                    "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.",
-                    null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             MaxBattleNeckros = plugin.Config.Bind("BattleNeckroMinion (Server Synced)", "MaximumBattleNeckros",

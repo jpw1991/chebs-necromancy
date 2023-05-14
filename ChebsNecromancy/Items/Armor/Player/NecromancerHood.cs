@@ -6,7 +6,7 @@ using Jotunn.Entities;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Armor.Player
 {
     internal class NecromancerHood : Item
     {
