@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Minions;
 using HarmonyLib;

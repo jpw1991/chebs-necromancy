@@ -89,24 +89,29 @@ namespace ChebsNecromancy.Minions
                     return false;
                 }
 
-                var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
-                if (requiredItemPrefab == null)
+                var acceptedItems = itemRequired.Split('|');
+                foreach (var acceptedItem in acceptedItems)
                 {
-                    message = $"Error processing config for ItemsCost: {itemRequired} doesn't exist.";
-                    Logger.LogError(message);
-                    return false;
-                }
+                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                    if (requiredItemPrefab == null)
+                    {
+                        message = $"Error processing config for ItemsCost: {acceptedItem} doesn't exist.";
+                        Logger.LogError(message);
+                        return false;
+                    }
 
-                var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
-                var amountInInv = inventory.CountItems(requiredItemName);
-                if (amountInInv >= itemAmountRequired)
-                {
-                    canSpawn = true;
-                }
-                else
-                {
-                    // todo localize
-                    message = $"Not enough {requiredItemName}";
+                    var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
+                    var amountInInv = inventory.CountItems(requiredItemName);
+                    if (amountInInv >= itemAmountRequired)
+                    {
+                        canSpawn = true;
+                        break;
+                    }
+                    else
+                    {
+                        // todo localize
+                        message = $"Not enough {requiredItemName}";
+                    }
                 }
             }
 
@@ -133,15 +138,23 @@ namespace ChebsNecromancy.Minions
                     return;
                 }
 
-                var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
-                if (requiredItemPrefab == null)
+                var acceptedItems = itemRequired.Split('|');
+                foreach (var acceptedItem in acceptedItems)
                 {
-                    Logger.LogError($"Error processing config for ItemsCost: {itemRequired} doesn't exist.");
-                    return;
+                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                    if (requiredItemPrefab == null)
+                    {
+                        Logger.LogError($"Error processing config for ItemsCost: {itemRequired} doesn't exist.");
+                        return;
+                    }
+                    
+                    var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
+                    if (inventory.CountItems(requiredItemName) >= itemAmountRequired)
+                    {
+                        inventory.RemoveItem(requiredItemName, itemAmountRequired);
+                        break;
+                    }
                 }
-
-                var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
-                inventory.RemoveItem(requiredItemName, itemAmountRequired);
             }
         }
 
@@ -167,22 +180,28 @@ namespace ChebsNecromancy.Minions
                     Logger.LogError("Error in config for ItemsCost - please revise.");
                     return null;
                 }
-
-                var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
-                if (requiredItemPrefab == null)
+                
+                var acceptedItems = itemRequired.Split('|');
+                foreach (var acceptedItem in acceptedItems)
                 {
-                    Logger.LogError($"Error processing config for ItemsCost: {itemRequired} doesn't exist.");
-                    return null;
+                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                    if (requiredItemPrefab == null)
+                    {
+                        Logger.LogError($"Error processing config for ItemsCost: {acceptedItem} doesn't exist.");
+                        return null;
+                    }
+
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = requiredItemPrefab,
+                        m_onePerPlayer = true,
+                        m_amountMin = itemAmountRequired,
+                        m_amountMax = itemAmountRequired,
+                        m_chance = 1f
+                    });
+
+                    break; // just take the first one in the list for now
                 }
-
-                characterDrop.m_drops.Add(new CharacterDrop.Drop
-                {
-                    m_prefab = requiredItemPrefab,
-                    m_onePerPlayer = true,
-                    m_amountMin = itemAmountRequired,
-                    m_amountMax = itemAmountRequired,
-                    m_chance = 1f
-                });
             }
 
             return characterDrop;

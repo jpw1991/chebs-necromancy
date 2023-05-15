@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Items;
 using ChebsValheimLibrary.Minions;

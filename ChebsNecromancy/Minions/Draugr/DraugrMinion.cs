@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Minions
+namespace ChebsNecromancy.Minions.Draugr
 {
     internal class DraugrMinion : UndeadMinion
     {

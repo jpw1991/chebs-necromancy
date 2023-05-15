@@ -14,6 +14,7 @@ using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Armor.Player;
 using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
@@ -37,7 +38,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.2.2";
+        public const string PluginVersion = "3.3.0";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
         
@@ -260,13 +261,26 @@ namespace ChebsNecromancy
                 1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));
             #endregion
-            
+
             UndeadMinion.CreateConfigs(this);
+            
             SkeletonMinion.CreateConfigs(this);
-            DraugrMinion.CreateConfigs(this);
-            GuardianWraithMinion.CreateConfigs(this);
+            PoisonSkeletonMinion.CreateConfigs(this);
+            SkeletonArcherFireMinion.CreateConfigs(this);
+            SkeletonArcherFrostMinion.CreateConfigs(this);
+            SkeletonArcherPoisonMinion.CreateConfigs(this);
+            SkeletonArcherSilverMinion.CreateConfigs(this);
+            SkeletonArcherTier1Minion.CreateConfigs(this);
+            SkeletonArcherTier2Minion.CreateConfigs(this);
+            SkeletonArcherTier3Minion.CreateConfigs(this);
+            SkeletonMageMinion.CreateConfigs(this);
+            SkeletonWarriorMinion.CreateConfigs(this);
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
+            
+            DraugrMinion.CreateConfigs(this);
+            GuardianWraithMinion.CreateConfigs(this);
+            
             LeechMinion.CreateConfigs(this);
             BattleNeckroMinion.CreateConfigs(this);
 
