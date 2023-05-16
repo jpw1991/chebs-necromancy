@@ -19,7 +19,7 @@ namespace ChebsNecromancy.Minions.Skeletons
             LookRadius = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "LookRadius",
                 50f, new ConfigDescription("How far it can see wood. High values may damage performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            var itemsCost = plugin.ModConfig("SkeletonWoodcutter (Server Synced)", "ItemsCost", "BoneFragments:3,Flint:1",
+            var itemsCost = plugin.ModConfig("SkeletonWoodcutter (Server Synced)", "ItemsCost", "BoneFragments:6,Flint:1",
                 "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount.",
                 null, true);
             ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());

@@ -74,7 +74,7 @@ namespace ChebsNecromancy.Minions.Draugr
             // VisEquipment remembers what armor the draugr is wearing.
             // Exploit this to reapply the armor so the armor values work
             // again.
-            List<int> equipmentHashes = new List<int>()
+            var equipmentHashes = new List<int>()
             {
                 humanoid.m_visEquipment.m_currentChestItemHash,
                 humanoid.m_visEquipment.m_currentLegItemHash,
@@ -84,7 +84,7 @@ namespace ChebsNecromancy.Minions.Draugr
             {
                 ZNetScene.instance.GetPrefab(hash);
 
-                GameObject equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
+                var equipmentPrefab = ZNetScene.instance.GetPrefab(hash);
                 if (equipmentPrefab != null)
                 {
                     //Jotunn.Logger.LogInfo($"Giving default item {equipmentPrefab.name}");
@@ -96,8 +96,8 @@ namespace ChebsNecromancy.Minions.Draugr
 
             // wondering what the code below does? Check comments in the
             // FreshMinion.cs file.
-            FreshMinion freshMinion = GetComponent<FreshMinion>();
-            MonsterAI monsterAI = GetComponent<MonsterAI>();
+            var freshMinion = GetComponent<FreshMinion>();
+            var monsterAI = GetComponent<MonsterAI>();
             monsterAI.m_randomMoveRange = RoamRange.Value;
             if (!Wand.FollowByDefault.Value || freshMinion == null)
             {
@@ -115,24 +115,24 @@ namespace ChebsNecromancy.Minions.Draugr
 
         public void ScaleStats(float necromancyLevel)
         {
-            Character character = GetComponent<Character>();
+            var character = GetComponent<Character>();
             if (character == null)
             {
                 Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
 
-            float health = DraugrWand.DraugrBaseHealth.Value +
-                           necromancyLevel * DraugrWand.DraugrHealthMultiplier.Value;
+            var health = DraugrWand.DraugrBaseHealth.Value +
+                         necromancyLevel * DraugrWand.DraugrHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
 
         public virtual void ScaleEquipment(float necromancyLevel, ArmorType armorType)
         {
-            List<GameObject> defaultItems = new List<GameObject>();
+            var defaultItems = new List<GameObject>();
 
-            Humanoid humanoid = GetComponent<Humanoid>();
+            var humanoid = GetComponent<Humanoid>();
             if (humanoid == null)
             {
                 Logger.LogError("ScaleEquipment: humanoid is null!");

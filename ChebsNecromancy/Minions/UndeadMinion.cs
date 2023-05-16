@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
@@ -67,10 +68,35 @@ namespace ChebsNecromancy.Minions
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
+        private static Tuple<int, string, List<string>> CountItems(string item, Inventory inventory)
+        {
+            var acceptedItemsFound = 0;
+            var acceptedItemsLocalizedNames = new List<string>();
+            var acceptedItems = item.Split('|');
+            foreach (var acceptedItem in acceptedItems)
+            {
+                var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                if (requiredItemPrefab == null)
+                {
+                    var message = $"Error processing config for ItemsCost: {acceptedItem} doesn't exist.";
+                    Logger.LogError(message);
+                    return new Tuple<int, string, List<string>>(0, message, acceptedItemsLocalizedNames);
+                }
+
+                var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
+                acceptedItemsLocalizedNames.Add(requiredItemName);
+                var amountInInv = inventory.CountItems(requiredItemName);
+                acceptedItemsFound += amountInInv;
+            }
+
+            return new Tuple<int, string, List<string>>(acceptedItemsFound, "", acceptedItemsLocalizedNames);
+        }
+
         public static bool CanSpawn(MemoryConfigEntry<string, List<string>> itemsCost, Inventory inventory,
             out string message)
         {
-            var canSpawn = false;
+            message = "";
+            var requirementsSatisfied = new List<Tuple<bool, string>>();
             foreach (var fuel in itemsCost.Value)
             {
                 var splut = fuel.Split(':');
@@ -89,34 +115,20 @@ namespace ChebsNecromancy.Minions
                     return false;
                 }
 
-                var acceptedItems = itemRequired.Split('|');
-                foreach (var acceptedItem in acceptedItems)
-                {
-                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
-                    if (requiredItemPrefab == null)
-                    {
-                        message = $"Error processing config for ItemsCost: {acceptedItem} doesn't exist.";
-                        Logger.LogError(message);
-                        return false;
-                    }
-
-                    var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
-                    var amountInInv = inventory.CountItems(requiredItemName);
-                    if (amountInInv >= itemAmountRequired)
-                    {
-                        canSpawn = true;
-                        break;
-                    }
-                    else
-                    {
-                        // todo localize
-                        message = $"Not enough {requiredItemName}";
-                    }
-                }
+                var result = CountItems(itemRequired, inventory);
+                var canSpawn = result.Item1 >= itemAmountRequired;
+                message = canSpawn ? "" : $"Not enough {string.Join("/", result.Item3)}";
+                requirementsSatisfied.Add(new Tuple<bool, string>(canSpawn, message));
             }
 
-            message = "";
-            return canSpawn;
+            var cantSpawn = requirementsSatisfied.Find(t => !t.Item1);
+            if (cantSpawn != null)
+            {
+                message = cantSpawn.Item2;
+                return false;
+            }
+            
+            return true;
         }
 
         protected static void ConsumeRequirements(MemoryConfigEntry<string, List<string>> itemsCost,
@@ -138,9 +150,12 @@ namespace ChebsNecromancy.Minions
                     return;
                 }
 
+                var acceptedItemAccumulator = 0;
                 var acceptedItems = itemRequired.Split('|');
                 foreach (var acceptedItem in acceptedItems)
                 {
+                    if (acceptedItemAccumulator >= itemAmountRequired) break;
+                    
                     var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
                     if (requiredItemPrefab == null)
                     {
@@ -149,10 +164,14 @@ namespace ChebsNecromancy.Minions
                     }
                     
                     var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
-                    if (inventory.CountItems(requiredItemName) >= itemAmountRequired)
+                    var itemsInInv = inventory.CountItems(requiredItemName);
+
+                    for (var i = 0; i < itemsInInv; i++)
                     {
-                        inventory.RemoveItem(requiredItemName, itemAmountRequired);
-                        break;
+                        if (acceptedItemAccumulator >= itemAmountRequired) break;
+
+                        inventory.RemoveItem(requiredItemName, 1);
+                        acceptedItemAccumulator++;
                     }
                 }
             }
