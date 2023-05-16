@@ -139,6 +139,13 @@
     <Compile Include="Items\Wands\SkeletonWand.cs" />
     <Compile Include="Items\Wands\Wand.cs" />
     <Compile Include="Minions\BattleNeckroMinion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherFireMinion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherFrostMinion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherPoisonMinion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherSilverMinion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherTier1Minion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherTier2Minion.cs" />
+    <Compile Include="Minions\Draugr\DraugrArcherTier3Minion.cs" />
     <Compile Include="Minions\Draugr\DraugrMinion.cs" />
     <Compile Include="Minions\Draugr\DraugrWarriorMinion.cs" />
     <Compile Include="Minions\LeechMinion.cs" />

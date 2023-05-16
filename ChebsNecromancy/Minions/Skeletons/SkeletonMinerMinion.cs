@@ -27,7 +27,7 @@ namespace ChebsNecromancy.Minions.Skeletons
                 new ConfigDescription("The types of rock the miner will attempt to mine. Internal IDs only.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             var itemsCost = plugin.ModConfig(serverSyncedHeading, "ItemsCost", "BoneFragments:6,HardAntler:1",
-                "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount.",
+                "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount. Alternative items can be specified with a | eg. Wood|Coal:5 to mean wood and/or coal.",
                 null, true);
             ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
         }
