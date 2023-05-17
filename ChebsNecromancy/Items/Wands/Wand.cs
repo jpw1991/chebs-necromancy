@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.CustomPrefabs;
@@ -7,6 +8,7 @@ using ChebsValheimLibrary.Minions;
 using Jotunn.Configs;
 using Jotunn.Managers;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items.Wands
 {
@@ -16,37 +18,43 @@ namespace ChebsNecromancy.Items.Wands
         public static ConfigEntry<float> FollowDistance;
         public static ConfigEntry<float> RunDistance;
 
-        public ConfigEntry<KeyCode> CreateMinionConfig;
-        public ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;
-        public ButtonConfig CreateMinionButton;
+        protected ConfigEntry<KeyCode> CreateMinionConfig;
+        protected ConfigEntry<InputManager.GamepadButton> CreateMinionGamepadConfig;
+        protected ButtonConfig CreateMinionButton;
 
-        public ConfigEntry<KeyCode> FollowConfig;
-        public ConfigEntry<InputManager.GamepadButton> FollowGamepadConfig;
-        public ButtonConfig FollowButton;
+        protected ConfigEntry<KeyCode> FollowConfig;
+        protected ConfigEntry<InputManager.GamepadButton> FollowGamepadConfig;
+        protected ButtonConfig FollowButton;
 
-        public ConfigEntry<KeyCode> WaitConfig;
-        public ConfigEntry<InputManager.GamepadButton> WaitGamepadConfig;
-        public ButtonConfig WaitButton;
+        protected ConfigEntry<KeyCode> WaitConfig;
+        protected ConfigEntry<InputManager.GamepadButton> WaitGamepadConfig;
+        protected ButtonConfig WaitButton;
 
-        public ConfigEntry<KeyCode> TeleportConfig;
-        public ConfigEntry<InputManager.GamepadButton> TeleportGamepadConfig;
-        public ButtonConfig TeleportButton;
+        protected ConfigEntry<KeyCode> TeleportConfig;
+        protected ConfigEntry<InputManager.GamepadButton> TeleportGamepadConfig;
+        protected ButtonConfig TeleportButton;
 
-        public ConfigEntry<float> TeleportDurabilityCost;
-        public ConfigEntry<float> TeleportCooldown;
-        protected float lastTeleport;
-
-        public bool CanTeleport =>
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected ConfigEntry<float> TeleportDurabilityCost;
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected ConfigEntry<float> TeleportCooldown;
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected static float lastTeleport;
+        
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected bool CanTeleport =>
             TeleportCooldown.Value == 0f || Time.time - lastTeleport > TeleportCooldown.Value;
 
-        public ConfigEntry<KeyCode> NextMinionConfig;
-        public ConfigEntry<InputManager.GamepadButton> NextMinionGamepadConfig;
-        public ButtonConfig NextMinionButton;
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected ConfigEntry<KeyCode> NextMinionConfig;
+        // ReSharper disable once MemberCanBePrivate.Global
+        protected ConfigEntry<InputManager.GamepadButton> NextMinionGamepadConfig;
+        protected ButtonConfig NextMinionButton;
 
-        public ConfigEntry<KeyCode> UnlockExtraResourceConsumptionConfig;
-        public ButtonConfig UnlockExtraResourceConsumptionButton;
+        protected ConfigEntry<KeyCode> UnlockExtraResourceConsumptionConfig;
+        protected ButtonConfig UnlockExtraResourceConsumptionButton;
 
-        public bool ExtraResourceConsumptionUnlocked = false;
+        protected bool ExtraResourceConsumptionUnlocked = false;
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -122,7 +130,7 @@ namespace ChebsNecromancy.Items.Wands
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, CreateMinionButton);
             }
-
+            
             if (NextMinionConfig.Value != KeyCode.None)
             {
                 NextMinionButton = new ButtonConfig
@@ -135,7 +143,7 @@ namespace ChebsNecromancy.Items.Wands
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, NextMinionButton);
             }
-
+            
             if (FollowConfig.Value != KeyCode.None)
             {
                 FollowButton = new ButtonConfig
@@ -148,7 +156,7 @@ namespace ChebsNecromancy.Items.Wands
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, FollowButton);
             }
-
+            
             if (WaitConfig.Value != KeyCode.None)
             {
                 WaitButton = new ButtonConfig
@@ -161,7 +169,7 @@ namespace ChebsNecromancy.Items.Wands
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, WaitButton);
             }
-
+            
             if (TeleportConfig.Value != KeyCode.None)
             {
                 TeleportButton = new ButtonConfig
@@ -174,7 +182,7 @@ namespace ChebsNecromancy.Items.Wands
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, TeleportButton);
             }
-
+            
             if (UnlockExtraResourceConsumptionConfig.Value != KeyCode.None)
             {
                 UnlockExtraResourceConsumptionButton = new ButtonConfig

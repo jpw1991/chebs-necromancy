@@ -10,6 +10,7 @@ using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
+using UnityEngine.UI;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items.Wands
@@ -23,17 +24,35 @@ namespace ChebsNecromancy.Items.Wands
         public override string DescriptionLocalization => "$item_chebgonaz_orbofbeckoning_desc";
         
         protected override string DefaultRecipe => "Crystal:5,SurtlingCore:5,Tar:25";
-        
+
         public static ConfigEntry<CraftingTable> CraftingStationRequired;
         public static ConfigEntry<int> CraftingStationLevel;
         
         public static ConfigEntry<string> CraftingCost;
+        
+        #region MinionSelector
+        public enum MinionOption
+        {
+            Mage,
+            Leech,
+        }
+
+        private List<MinionOption> _minionOptions = new()
+        {
+            MinionOption.Mage,
+            MinionOption.Leech,
+        };
+
+        private int _selectedMinionOptionIndex;
+        private MinionOption SelectedMinionOption => _minionOptions[_selectedMinionOptionIndex];
+
+        private Text _createMinionButtonText;
+        
+        #endregion
 
         public override void CreateConfigs(BaseUnityPlugin plugin)
         {
-            // orb
-            //
-            // don't call base.CreateConfig because we want to omit the archer button
+            base.CreateConfigs(plugin);
 
             Allowed = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "OrbOfBeckoningAllowed",
                 true, new ConfigDescription("Whether crafting an Orb of Beckoning is allowed or not.", null,
@@ -50,48 +69,6 @@ namespace ChebsNecromancy.Items.Wands
             CraftingCost = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "OrbOfBeckoningCraftingCosts",
                 DefaultRecipe, new ConfigDescription("Materials needed to craft it. None or Blank will use Default settings.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            // wand
-            
-            FollowByDefault = plugin.Config.Bind("Wands (Client)", "FollowByDefault",
-                false, new ConfigDescription("Whether minions will automatically be set to follow upon being created or not."));
-            
-            FollowDistance = plugin.Config.Bind("Wands (Client)", "FollowDistance",
-                3f, new ConfigDescription("How closely a minion will follow you (0 = standing on top of you, 3 = default)."));
-            
-            RunDistance = plugin.Config.Bind("Wands (Client)", "RunDistance",
-                3f, new ConfigDescription("How close a following minion needs to be to you before it stops running and starts walking (0 = always running, 10 = default)."));
-
-            CreateMinionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateMageMinion",
-                KeyCode.B, new ConfigDescription("The key to create a mage minion with."));
-
-            CreateMinionGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"CreateMageMinionGamepad",
-                InputManager.GamepadButton.ButtonSouth,
-                new ConfigDescription("The key to gamepad button to create a mage minion with."));
-
-            FollowConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Follow",
-                KeyCode.F, new ConfigDescription("The key to tell minions to follow."));
-
-            FollowGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"FollowGamepad",
-                InputManager.GamepadButton.ButtonWest,
-                new ConfigDescription("The gamepad button to tell minions to follow."));
-
-            WaitConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Wait",
-                KeyCode.T, new ConfigDescription("The key to tell minions to wait."));
-
-            WaitGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"WaitGamepad",
-                InputManager.GamepadButton.ButtonEast,
-                new ConfigDescription("The gamepad button to tell minions to wait."));
-
-            TeleportConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"Teleport",
-                KeyCode.G, new ConfigDescription("The key to teleport following minions to you."));
-
-            TeleportGamepadConfig = plugin.Config.Bind("Keybinds (Client)", ItemName+"TeleportGamepad",
-                InputManager.GamepadButton.SelectButton,
-                new ConfigDescription("The gamepad button to teleport following minions to you."));
-            
-            UnlockExtraResourceConsumptionConfig = plugin.Config.Bind("Keybinds (Client)", ItemName + "UnlockExtraResourceConsumption",
-                KeyCode.LeftShift, new ConfigDescription("The key to permit consumption of additional resources when creating the minion eg. iron to make an armored skeleton."));
         }
         
         public override void UpdateRecipe()
@@ -141,9 +118,10 @@ namespace ChebsNecromancy.Items.Wands
         
         public override KeyHintConfig GetKeyHint()
         {
-            var buttonConfigs = new List<ButtonConfig>();
+            List<ButtonConfig> buttonConfigs = new List<ButtonConfig>();
 
             if (CreateMinionButton != null) buttonConfigs.Add(CreateMinionButton);
+            if (NextMinionButton != null) buttonConfigs.Add(NextMinionButton);
             if (FollowButton != null) buttonConfigs.Add(FollowButton);
             if (WaitButton != null) buttonConfigs.Add(WaitButton);
             if (TeleportButton != null) buttonConfigs.Add(TeleportButton);
@@ -167,16 +145,40 @@ namespace ChebsNecromancy.Items.Wands
                 UnlockExtraResourceConsumptionButton == null
                 || ZInput.GetButton(UnlockExtraResourceConsumptionButton.Name);
 
-            if (CreateMinionButton != null && ZInput.GetButton(CreateMinionButton.Name))
+            if (CreateMinionButton != null)
             {
-                if (ExtraResourceConsumptionUnlocked)
+                // https://github.com/Valheim-Modding/Jotunn/issues/398
+                if (_createMinionButtonText == null)
                 {
-                    SpawnLeech();
+                    var button = GameObject.Find(CreateMinionButton.Name);
+                    if (button != null)
+                    {
+                        _createMinionButtonText = button.GetComponentInChildren<Text>();
+                    }   
                 }
-                else
+                
+                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+
+                if (ZInput.GetButton(CreateMinionButton.Name))
                 {
-                    SpawnSkeleton();   
+                    switch (SelectedMinionOption)
+                    {
+                        case MinionOption.Mage:
+                            SpawnSkeleton();
+                            break;
+                        case MinionOption.Leech:
+                            SpawnLeech();
+                            break;
+                    }
+                    return true;   
                 }
+            }
+            
+            if (NextMinionButton != null && ZInput.GetButton(NextMinionButton.Name))
+            {
+                _selectedMinionOptionIndex++;
+                if (_selectedMinionOptionIndex >= _minionOptions.Count) _selectedMinionOptionIndex = 0;
+                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
                 return true;
             }
 
@@ -342,74 +344,6 @@ namespace ChebsNecromancy.Items.Wands
             LeechMinion.ConsumeResources(leechType);
 
             LeechMinion.InstantiateLeech(quality, playerNecromancyLevel, leechType);
-        }
-        
-        public override void CreateButtons()
-        {
-            if (CreateMinionConfig.Value != KeyCode.None)
-            {
-                CreateMinionButton = new ButtonConfig
-                {
-                    Name = ItemName + "CreateMinion",
-                    Config = CreateMinionConfig,
-                    GamepadConfig = CreateMinionGamepadConfig,
-                    HintToken = "$chebgonaz_orbofbeckoning_create",
-                    BlockOtherInputs = true
-                };
-                InputManager.Instance.AddButton(BasePlugin.PluginGuid, CreateMinionButton);
-            }
-
-            if (FollowConfig.Value != KeyCode.None)
-            {
-                FollowButton = new ButtonConfig
-                {
-                    Name = ItemName + "Follow",
-                    Config = FollowConfig,
-                    GamepadConfig = FollowGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_follow",
-                    BlockOtherInputs = true
-                };
-                InputManager.Instance.AddButton(BasePlugin.PluginGuid, FollowButton);
-            }
-
-            if (WaitConfig.Value != KeyCode.None)
-            {
-                WaitButton = new ButtonConfig
-                {
-                    Name = ItemName + "Wait",
-                    Config = WaitConfig,
-                    GamepadConfig = WaitGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_wait",
-                    BlockOtherInputs = true
-                };
-                InputManager.Instance.AddButton(BasePlugin.PluginGuid, WaitButton);
-            }
-
-            if (TeleportConfig.Value != KeyCode.None)
-            {
-                TeleportButton = new ButtonConfig
-                {
-                    Name = ItemName + "Teleport",
-                    Config = TeleportConfig,
-                    GamepadConfig = TeleportGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_teleport",
-                    BlockOtherInputs = true
-                };
-                InputManager.Instance.AddButton(BasePlugin.PluginGuid, TeleportButton);
-            }
-            
-            if (UnlockExtraResourceConsumptionConfig.Value != KeyCode.None)
-            {
-                UnlockExtraResourceConsumptionButton = new ButtonConfig
-                {
-                    Name = ItemName + "UnlockExtraResourceConsumption",
-                    Config = UnlockExtraResourceConsumptionConfig,
-                    //GamepadConfig = AttackTargetGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_unlockextraresourceconsumption",
-                    BlockOtherInputs = false
-                };
-                InputManager.Instance.AddButton(BasePlugin.PluginGuid, UnlockExtraResourceConsumptionButton);
-            }
         }
     }
 }
