@@ -36,7 +36,7 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<int> TierThreeQuality;
         public static ConfigEntry<int> TierThreeLevelReq;
 
-        public new static void CreateConfigs(BasePlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
             const string serverSynced = "BattleNeckroMinion(Server Synced)";
             
@@ -83,10 +83,15 @@ namespace ChebsNecromancy.Minions
                 75, new ConfigDescription("Necromancy skill level required to summon Tier 3", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            var itemsCost = plugin.ModConfig(serverSynced, "ItemsCost", "BoneFragments:6",
+            var itemsCost = plugin.ModConfig(serverSynced, "ItemsCost", 
+                "RawMeat|DeerMeat|WolfMeat|LoxMeat|SerpentMeat|HareMeat|BugMeat|ChickenMeat:50",
                 "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount. Alternative items can be specified with a | eg. Wood|Coal:5 to mean wood and/or coal.",
                 null, true);
             ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
+            
+            NecromancyLevelIncrease = plugin.Config.Bind(serverSynced, "NecromancyLevelIncrease",
+                5f, new ConfigDescription("The Necromancy level increase factor when creating this minion.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void Awake()

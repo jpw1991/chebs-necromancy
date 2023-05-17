@@ -8,7 +8,7 @@ namespace ChebsNecromancy.Minions.Skeletons
     {
         public static MemoryConfigEntry<string, List<string>> ItemsCost;
 
-        public new static void CreateConfigs(BasePlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
             const string serverSyncedHeading = "SkeletonWarrior (Server Synced)";
             

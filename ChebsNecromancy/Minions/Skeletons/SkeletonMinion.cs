@@ -540,6 +540,7 @@ namespace ChebsNecromancy.Minions.Skeletons
                 
                 case SkeletonType.WarriorNeedle:
                     inventory.RemoveItem("$item_needle", BasePlugin.NeedlesRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonWarriorMinion.ItemsCost, inventory);
                     break;
         
                 case SkeletonType.MageTier1:
@@ -552,6 +553,9 @@ namespace ChebsNecromancy.Minions.Skeletons
                 case SkeletonType.PoisonTier2:
                 case SkeletonType.PoisonTier3:
                     ConsumeRequirements(PoisonSkeletonMinion.ItemsCost, inventory);
+                    break;
+                default:
+                    ConsumeRequirements(SkeletonWarriorMinion.ItemsCost, inventory);
                     break;
             }
         

@@ -42,7 +42,7 @@ namespace ChebsNecromancy.Minions
 
         public static MemoryConfigEntry<string, List<string>> ItemsCost;
 
-        public new static void CreateConfigs(BasePlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
             const string serverSynced = "LeechMinion (Server Synced)";
             Allowed = plugin.Config.Bind(serverSynced,
@@ -71,7 +71,7 @@ namespace ChebsNecromancy.Minions
                 .5f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            var itemsCost = plugin.ModConfig(serverSynced, "ItemsCost", "Entrails:1,Bloodbag:1",
+            var itemsCost = plugin.ModConfig(serverSynced, "ItemsCost", "Entrails|Bloodbag:1",
                 "The items that are consumed when creating a Leech. Please use a comma-delimited list of prefab names with a : and integer for amount.",
                 null, true);
             ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());

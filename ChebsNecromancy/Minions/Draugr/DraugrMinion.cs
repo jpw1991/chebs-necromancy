@@ -296,7 +296,12 @@ namespace ChebsNecromancy.Minions.Draugr
                     break;
                 
                 case DraugrType.WarriorNeedle:
+                    ConsumeRequirements(DraugrWarriorMinion.ItemsCost, inventory);
                     inventory.RemoveItem("$item_needle", BasePlugin.NeedlesRequiredConfig.Value);
+                    break;
+                
+                default:
+                    ConsumeRequirements(DraugrWarriorMinion.ItemsCost, inventory);
                     break;
             }
         

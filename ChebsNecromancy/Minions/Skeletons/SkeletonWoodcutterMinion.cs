@@ -11,7 +11,7 @@ namespace ChebsNecromancy.Minions.Skeletons
         public static ConfigEntry<float> UpdateDelay, LookRadius;
         public static MemoryConfigEntry<string, List<string>> ItemsCost;
 
-        public new static void CreateConfigs(BasePlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
             UpdateDelay = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "SkeletonWoodcutterUpdateDelay",
                 6f, new ConfigDescription("The delay, in seconds, between wood searching attempts. Attention: small values may impact performance.", null,

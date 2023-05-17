@@ -79,14 +79,6 @@ namespace ChebsNecromancy
         public static ConfigEntry<int> ArmorBronzeRequiredConfig;
         public static ConfigEntry<int> ArmorIronRequiredConfig;
         public static ConfigEntry<int> ArmorBlackIronRequiredConfig;
-        public static ConfigEntry<int> SurtlingCoresRequiredConfig;
-        public static ConfigEntry<int> ArcherTier1ArrowsRequiredConfig;
-        public static ConfigEntry<int> ArcherTier2ArrowsRequiredConfig;
-        public static ConfigEntry<int> ArcherTier3ArrowsRequiredConfig;
-        public static ConfigEntry<int> ArcherFrostArrowsRequiredConfig;
-        public static ConfigEntry<int> ArcherFireArrowsRequiredConfig;
-        public static ConfigEntry<int> ArcherPoisonArrowsRequiredConfig;
-        public static ConfigEntry<int> ArcherSilverArrowsRequiredConfig;
         public static ConfigEntry<int> NeedlesRequiredConfig;
         
         public static ConfigEntry<bool> DurabilityDamage;
@@ -183,42 +175,10 @@ namespace ChebsNecromancy
                 1, new ConfigDescription("The amount of Iron required to craft a minion in iron armor.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            SurtlingCoresRequiredConfig = Config.Bind("General (Server Synced)", "MageSurtlingCoresRequired",
-                1, new ConfigDescription("The amount of surtling cores required to craft a mage.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
             ArmorBlackIronRequiredConfig = Config.Bind("General (Server Synced)", "ArmorBlackIronRequired",
                 1, new ConfigDescription("The amount of Black Metal required to craft a minion in black iron armor.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            ArcherTier1ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier1ArrowsRequired",
-                10, new ConfigDescription("The amount of wood arrows required to craft a tier 1 archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            ArcherTier2ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier2ArrowsRequired",
-                10, new ConfigDescription("The amount of bronze arrows required to craft a tier 2 archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            ArcherTier3ArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherTier3ArrowsRequired",
-                10, new ConfigDescription("The amount of iron arrows required to craft a tier 3 archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            ArcherFrostArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherFrostArrowsRequired",
-                10, new ConfigDescription("The amount of frost arrows required to craft a frost archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            ArcherFireArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherFireArrowsRequired",
-                10, new ConfigDescription("The amount of fire arrows required to craft a fire archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            ArcherPoisonArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherPoisonArrowsRequired",
-                10, new ConfigDescription("The amount of poison arrows required to craft a poison archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            ArcherSilverArrowsRequiredConfig = Config.Bind("General (Server Synced)", "ArcherSilverArrowsRequired",
-                10, new ConfigDescription("The amount of silver arrows required to craft a silver archer.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
             NeedlesRequiredConfig = Config.Bind("General (Server Synced)", "NeedlesRequired",
                 5, new ConfigDescription("The amount of needles required to craft a needle warrior.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -279,6 +239,15 @@ namespace ChebsNecromancy
             SkeletonMinerMinion.CreateConfigs(this);
             
             DraugrMinion.CreateConfigs(this);
+            DraugrWarriorMinion.CreateConfigs(this);
+            DraugrArcherFireMinion.CreateConfigs(this);
+            DraugrArcherFrostMinion.CreateConfigs(this);
+            DraugrArcherPoisonMinion.CreateConfigs(this);
+            DraugrArcherSilverMinion.CreateConfigs(this);
+            DraugrArcherTier1Minion.CreateConfigs(this);
+            DraugrArcherTier2Minion.CreateConfigs(this);
+            DraugrArcherTier3Minion.CreateConfigs(this);
+            
             GuardianWraithMinion.CreateConfigs(this);
             
             LeechMinion.CreateConfigs(this);
