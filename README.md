@@ -128,6 +128,7 @@ A special thanks to the people who've helped me along the way:
 	+ **S970X** - German language localization.
 	+ [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) - Korean language localization.
 - Other
+    - **Hugo the Dwarf** and **Pfhoenix** for advice and help for fixing the frozen minions problem.
 	- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
 	- **redseiko** for helpful advice on the official Valheim modding Discord.
 	- **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell).
@@ -142,6 +143,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+16/05/2023 | 3.3.0 | Make Orb behave like modern wands; Permit alternative materials for minion making via piping
 11/05/2023 | 3.2.1 | Unbundle DLL to fix bug of wands not working; ignore collision with carts
 02/05/2023 | 3.2.0 | Commandable workers; If a woodcutter is swinging, but missing, the damage gets dealt anyway; remove tooltier stuff for simplicity and streamlining. People can use 3rd party item-alteration mods instead
 21/04/2023 | 3.1.0 | Battle Neckro and possible fix to frozen minions
