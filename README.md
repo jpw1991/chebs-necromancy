@@ -142,6 +142,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+18/05/2023 | 3.2.3 | Extra safe-guarding against null objects on m_piece and GetInventory when Neckro Gatherer is attempting to find containers. These things shouldn't ever be null as far as I understand - but other mods can do wild things apparently.
 12/05/2023 | 3.2.2 | Configurable item cost for Neckro Gatherers
 11/05/2023 | 3.2.1 | Unbundle DLL to fix bug of wands not working; ignore collision with carts
 02/05/2023 | 3.2.0 | Commandable workers; If a woodcutter is swinging, but missing, the damage gets dealt anyway; remove tooltier stuff for simplicity and streamlining. People can use 3rd party item-alteration mods instead
