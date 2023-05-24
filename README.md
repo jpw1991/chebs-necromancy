@@ -6,7 +6,7 @@ This mod was formerly called Friendly Skeleton Wand, but was renamed since it as
 
 ## Confused? Try the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki).
 
-**Pre-release versions:** To get the latest improvements but with less testing, check the [GitHub's releases page](https://github.com/jpw1991/chebs-necromancy/releases). Although less tested than the official releases, they are still tested pretty well.
+## Important: Updating to 3.3.1 from an old version, read [here](https://github.com/jpw1991/chebs-necromancy/wiki/Upgrading-from-3.2.0-to-3.3.1)
 
 ##  About Me
 
@@ -38,7 +38,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ## Installation (manual)
 
-- Drag the `ChebsNecromancy` folder from inside the archive to your BepInEx plugins folder in the Valheim directory.
+- Drag the contents of the `plugins` folder from inside the archive to your BepInEx plugins folder in the Valheim directory.
 
 ## Features
 

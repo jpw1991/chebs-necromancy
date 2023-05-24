@@ -48,7 +48,18 @@ def parse_config_file(filepath):
 
 
 def render_markdown(data):
-    markdown = "# Configs\n\n"
+    markdown = """# Configs\n\n## 3.3.0 minion cost rules
+
+As of 3.3.0 and onwards, minion costs are fully tweakable. If you want your skeletons to cost blueberries, you can do that!
+
+Syntax: `<Prefab1[[|Prefab2...]]>:<quantity>[[,<PreFab2>:<quantity>], ...]`
+
+- Six blueberries or bonefragments (or a mixture like 3 blueberries, 3 bone fragments
+  - `Blueberries|BoneFragments:6`
+- A real example for creating a draugr fire archer - six bone fragments, two of any of the listed meats, and ten fire arrows
+  - `BoneFragments:6,RawMeat|DeerMeat|WolfMeat|LoxMeat|SerpentMeat|HareMeat|BugMeat|ChickenMeat:2,ArrowFire:10`
+
+Item must be the prefab name (internal ID as listed on wiki pages).\n\n"""
 
     for key in data.keys():
         markdown += f"## {key}\n\n"
