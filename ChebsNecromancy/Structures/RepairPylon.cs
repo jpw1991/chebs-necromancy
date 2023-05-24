@@ -14,7 +14,8 @@ namespace ChebsNecromancy.Structures
     {
         public static ConfigEntry<float> SightRadius;
         public static ConfigEntry<float> RepairUpdateInterval, FuelConsumedPerPointOfDamage, RepairWoodWhen, RepairOtherWhen;
-        public static ConfigEntry<int> RepairContainerWidth, RepairContainerHeight;
+        // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
+        // public static ConfigEntry<int> RepairContainerWidth, RepairContainerHeight;
         public static MemoryConfigEntry<string, List<string>> Fuels, AlwaysRepair;
 
         private readonly int pieceMask = LayerMask.GetMask("piece");
@@ -58,11 +59,11 @@ namespace ChebsNecromancy.Structures
                 "How long a Repair Pylon waits between checking containers (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
 
-            RepairContainerWidth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonContainerWidth", 4,
-                "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(2, 10), true);
-
-            RepairContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonContainerHeight", 4,
-                "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
+            // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
+            // RepairContainerWidth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonContainerWidth", 4,
+            //     "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(2, 10), true);
+            // RepairContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonContainerHeight", 4,
+            //     "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
 
             FuelConsumedPerPointOfDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FuelConsumedPerPointOfDamage", .01f,
                 "How much fuel is consumed per point of damage. For example at 0.01 it will cost 1 fuel per 100 points of damage healed.",
@@ -89,12 +90,6 @@ namespace ChebsNecromancy.Structures
         
         private void Awake()
         {
-            _container = GetComponent<Container>();
-            _inventory = _container.GetInventory();
-
-            _container.m_width = RepairContainerWidth.Value;
-            _container.m_height = RepairContainerHeight.Value;
-
             StartCoroutine(LookForPieces());
         }
 
@@ -106,6 +101,22 @@ namespace ChebsNecromancy.Structures
             // yet constructed
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
+            
+            // originally the Container was set on the prefab in unity and set up properly, but it will cause the
+            // problem here:  https://github.com/jpw1991/chebs-necromancy/issues/100
+            // So we add it here like this instead.
+            // Pros: No bug
+            // Cons: Cannot set custom width/height
+            _container = gameObject.AddComponent<Container>();
+            _container.m_name = "$chebgonaz_repairpylon_name";
+            // _container.m_width = ContainerWidth.Value;
+            // _container.m_height = ContainerHeight.Value;
+
+            _inventory = _container.GetInventory();
+            _inventory.m_name = Localization.instance.Localize(_container.m_name);
+            // trying to set width causes error here: https://github.com/jpw1991/chebs-necromancy/issues/100
+            // inv.m_width = ContainerWidth.Value;
+            // inv.m_height = ContainerHeight.Value;
 
             while (true)
             {
