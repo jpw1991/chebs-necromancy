@@ -293,8 +293,10 @@ namespace ChebsNecromancy.Minions
                 return null;
             }
             var closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, pieceMask,
-                c => c.m_piece.IsPlacedByPlayer() 
+                c => c.m_piece != null
+                     && c.m_piece.IsPlacedByPlayer() 
                      && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName())
+                     && c.GetInventory() != null
                      && c.GetInventory().GetEmptySlots() > 0, true);
             if (closestContainer == null) return null;
             
