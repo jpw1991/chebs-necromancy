@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.Armor.Player;
+using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Minions
+namespace ChebsNecromancy.Minions.Skeletons
 {
     internal class SkeletonMinion : UndeadMinion
     {
@@ -42,9 +43,9 @@ namespace ChebsNecromancy.Minions
         // for limits checking
         private static int _createdOrderIncrementer;
 
-        public static ConfigEntry<DropType> DropOnDeath;
-        public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
-        
+        public static ConfigEntry<float> SkeletonBaseHealth;
+        public static ConfigEntry<float> SkeletonHealthMultiplier;
+
         public static ConfigEntry<float> NecromancyLevelIncrease;
         public static ConfigEntry<float> PoisonNecromancyLevelIncrease;
         public static ConfigEntry<float> ArcherNecromancyLevelIncrease;
@@ -55,45 +56,44 @@ namespace ChebsNecromancy.Minions
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            DropOnDeath = plugin.Config.Bind("SkeletonMinion (Server Synced)", 
-                "DropOnDeath",
-                DropType.JustResources, new ConfigDescription("Whether a minion refunds anything when it dies.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            const string serverSynced = "SkeletonMinion (Server Synced)";
+            SkeletonBaseHealth = plugin.Config.Bind(serverSynced, "SkeletonBaseHealth",
+                20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            PackDropItemsIntoCargoCrate = plugin.Config.Bind("SkeletonMinion (Server Synced)", 
-                "PackDroppedItemsIntoCargoCrate",
-                true, new ConfigDescription("If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            NecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)", 
+            SkeletonHealthMultiplier = plugin.Config.Bind(serverSynced, "SkeletonHealthMultiplier",
+                1.25f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            NecromancyLevelIncrease = plugin.Config.Bind(serverSynced, 
                 "NecromancyLevelIncrease",
                 .75f, new ConfigDescription(
                     "How much crafting a skeleton contributes to your Necromancy level increasing.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            PoisonNecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+            PoisonNecromancyLevelIncrease = plugin.Config.Bind(serverSynced,
                 "PoisonSkeletonNecromancyLevelIncrease",
                 1f, new ConfigDescription(
                     "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            ArcherNecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+            ArcherNecromancyLevelIncrease = plugin.Config.Bind(serverSynced,
                 "ArcherSkeletonNecromancyLevelIncrease",
                 1f, new ConfigDescription(
                     "How much crafting an Archer Skeleton contributes to your Necromancy level increasing.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            MageNecromancyLevelIncrease = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+            MageNecromancyLevelIncrease = plugin.Config.Bind(serverSynced,
                 "MageSkeletonNecromancyLevelIncrease",
                 1f, new ConfigDescription(
                     "How much crafting a Poison Skeleton contributes to your Necromancy level increasing.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            MaxSkeletons = plugin.Config.Bind("SkeletonMinion (Server Synced)", "MaximumSkeletons",
+            MaxSkeletons = plugin.Config.Bind(serverSynced, "MaximumSkeletons",
                 0, new ConfigDescription("The maximum amount of skeletons that can be made (0 = unlimited).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            MinionLimitIncrementsEveryXLevels = plugin.Config.Bind("SkeletonMinion (Server Synced)",
+            MinionLimitIncrementsEveryXLevels = plugin.Config.Bind(serverSynced,
                 "MinionLimitIncrementsEveryXLevels",
                 10, new ConfigDescription(
                     "Attention: has no effect if minion limits are off. Increases player's maximum minion count by 1 every X levels. For example, if the limit is 3 skeletons and this is set to 10, then at level 10 Necromancy the player can have 4 minions. Then 5 at level 20, and so on.", null,
@@ -194,7 +194,7 @@ namespace ChebsNecromancy.Minions
                 return;
             }
 
-            var health = SkeletonWand.SkeletonBaseHealth.Value + necromancyLevel * SkeletonWand.SkeletonHealthMultiplier.Value;
+            var health = SkeletonBaseHealth.Value + necromancyLevel * SkeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }
@@ -417,39 +417,57 @@ namespace ChebsNecromancy.Minions
             minion.UndeadMinionMaster = player.GetPlayerName();
 
             // handle refunding of resources on death
-            if (DropOnDeath.Value == DropType.Nothing) return;
-            
-            // we have to be a little bit cautious. It normally shouldn't exist yet, but maybe some other mod
-            // added it? Who knows
-            var characterDrop = minion.gameObject.GetComponent<CharacterDrop>();
-            if (characterDrop == null)
+            CharacterDrop characterDrop = null;
+
+            switch (skeletonType)
             {
-                characterDrop = minion.gameObject.AddComponent<CharacterDrop>();
+                case SkeletonType.WarriorTier1:
+                case SkeletonType.WarriorTier2:
+                case SkeletonType.WarriorTier3:
+                case SkeletonType.WarriorTier4:
+                case SkeletonType.WarriorNeedle:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonWarriorMinion.DropOnDeath, SkeletonWarriorMinion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherTier1:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherTier1Minion.DropOnDeath, SkeletonArcherTier1Minion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherTier2:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherTier2Minion.DropOnDeath, SkeletonArcherTier2Minion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherTier3:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherTier3Minion.DropOnDeath, SkeletonArcherTier3Minion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherPoison:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherPoisonMinion.DropOnDeath, SkeletonArcherPoisonMinion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherFire:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherFireMinion.DropOnDeath, SkeletonArcherFireMinion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherFrost:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherFrostMinion.DropOnDeath, SkeletonArcherFrostMinion.ItemsCost);
+                    break;
+                case SkeletonType.ArcherSilver:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherSilverMinion.DropOnDeath, SkeletonArcherSilverMinion.ItemsCost);
+                    break;
+                case SkeletonType.MageTier1:
+                case SkeletonType.MageTier2:
+                case SkeletonType.MageTier3:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonMageMinion.DropOnDeath, SkeletonMageMinion.ItemsCost);
+                    break;
+                case SkeletonType.PoisonTier1:
+                case SkeletonType.PoisonTier2:
+                case SkeletonType.PoisonTier3:
+                    characterDrop = minion.GenerateDeathDrops(PoisonSkeletonMinion.DropOnDeath, PoisonSkeletonMinion.ItemsCost);
+                    break;
+                case SkeletonType.Woodcutter:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonWoodcutterMinion.DropOnDeath, SkeletonWoodcutterMinion.ItemsCost);
+                    break;
+                case SkeletonType.Miner:
+                    characterDrop = minion.GenerateDeathDrops(SkeletonMinerMinion.DropOnDeath, SkeletonMinerMinion.ItemsCost);
+                    break;
             }
 
-            if (DropOnDeath.Value == DropType.Everything
-                && SkeletonWand.BoneFragmentsRequiredConfig.Value > 0)
-            {
-                // bones
-                AddOrUpdateDrop(characterDrop, "BoneFragments", SkeletonWand.BoneFragmentsRequiredConfig.Value);
-            }
-
-            if (skeletonType == SkeletonType.Miner)
-            {
-                AddOrUpdateDrop(characterDrop, "HardAntler", SkeletonWand.MinerSkeletonAntlerRequiredConfig.Value);
-            }
-
-            if (skeletonType == SkeletonType.Woodcutter)
-            {
-                AddOrUpdateDrop(characterDrop, "Flint", SkeletonWand.WoodcutterSkeletonFlintRequiredConfig.Value);
-            }
-
-            if (skeletonType is SkeletonType.MageTier1
-                or SkeletonType.MageTier2
-                or SkeletonType.MageTier3)
-            {
-                AddOrUpdateDrop(characterDrop, "SurtlingCore", BasePlugin.SurtlingCoresRequiredConfig.Value);
-            }
+            if (characterDrop == null) return;
 
             switch (armorType)
             {
@@ -487,64 +505,60 @@ namespace ChebsNecromancy.Minions
         
         public static void ConsumeResources(SkeletonType skeletonType, ArmorType armorType)
         {
-            var player = Player.m_localPlayer;
-
-            // consume bones
-            player.GetInventory().RemoveItem("$item_bonefragments", SkeletonWand.BoneFragmentsRequiredConfig.Value);
-
-            // consume other
+            var inventory = Player.m_localPlayer.GetInventory();
+            
             switch (skeletonType)
             {
                 case SkeletonType.Miner:
-                    player.GetInventory().RemoveItem("$item_hardantler", SkeletonWand.MinerSkeletonAntlerRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonMinerMinion.ItemsCost, inventory);
                     break;
                 case SkeletonType.Woodcutter:
-                    player.GetInventory().RemoveItem("$item_flint", SkeletonWand.WoodcutterSkeletonFlintRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonWoodcutterMinion.ItemsCost, inventory);
                     break;
-
+        
                 case SkeletonType.ArcherTier1:
-                    player.GetInventory()
-                        .RemoveItem("$item_arrow_wood", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherTier1Minion.ItemsCost, inventory);
                     break;
                 case SkeletonType.ArcherTier2:
-                    player.GetInventory().RemoveItem("$item_arrow_bronze",
-                        BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherTier2Minion.ItemsCost, inventory);
                     break;
                 case SkeletonType.ArcherTier3:
-                    player.GetInventory()
-                        .RemoveItem("$item_arrow_iron", BasePlugin.ArcherTier3ArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherTier3Minion.ItemsCost, inventory);
                     break;
                 case SkeletonType.ArcherPoison:
-                    player.GetInventory().RemoveItem("$item_arrow_poison", BasePlugin.ArcherPoisonArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherPoisonMinion.ItemsCost, inventory);
                     break;
                 case SkeletonType.ArcherFire:
-                    player.GetInventory().RemoveItem("$item_arrow_fire", BasePlugin.ArcherFireArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherFireMinion.ItemsCost, inventory);
                     break;
                 case SkeletonType.ArcherFrost:
-                    player.GetInventory().RemoveItem("$item_arrow_frost", BasePlugin.ArcherFrostArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherFrostMinion.ItemsCost, inventory);
                     break;
                 case SkeletonType.ArcherSilver:
-                    player.GetInventory().RemoveItem("$item_arrow_silver", BasePlugin.ArcherSilverArrowsRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonArcherSilverMinion.ItemsCost, inventory);
                     break;
                 
                 case SkeletonType.WarriorNeedle:
-                    player.GetInventory().RemoveItem("$item_needle", BasePlugin.NeedlesRequiredConfig.Value);
+                    inventory.RemoveItem("$item_needle", BasePlugin.NeedlesRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonWarriorMinion.ItemsCost, inventory);
                     break;
-
+        
                 case SkeletonType.MageTier1:
                 case SkeletonType.MageTier2:
                 case SkeletonType.MageTier3:
-                    player.GetInventory()
-                        .RemoveItem("$item_surtlingcore", BasePlugin.SurtlingCoresRequiredConfig.Value);
+                    ConsumeRequirements(SkeletonMageMinion.ItemsCost, inventory);
                     break;
-
+        
                 case SkeletonType.PoisonTier1:
                 case SkeletonType.PoisonTier2:
                 case SkeletonType.PoisonTier3:
-                    player.GetInventory().RemoveItem("$item_guck", SkeletonWand.PoisonSkeletonGuckRequiredConfig.Value);
+                    ConsumeRequirements(PoisonSkeletonMinion.ItemsCost, inventory);
+                    break;
+                default:
+                    ConsumeRequirements(SkeletonWarriorMinion.ItemsCost, inventory);
                     break;
             }
-
+        
             // consume armor materials
             switch (armorType)
             {
@@ -559,32 +573,32 @@ namespace ChebsNecromancy.Minions
                     
                     foreach (var leatherItem in leatherItemTypes)
                     {
-                        var leatherItemsInInventory = player.GetInventory().CountItems(leatherItem);
+                        var leatherItemsInInventory = inventory.CountItems(leatherItem);
                         if (leatherItemsInInventory >= BasePlugin.ArmorLeatherScrapsRequiredConfig.Value)
                         {
-                            player.GetInventory().RemoveItem(leatherItem,
+                            inventory.RemoveItem(leatherItem,
                                 BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                             break;
                         }
                     }
                     break;
                 case ArmorType.LeatherTroll:
-                    player.GetInventory().RemoveItem("$item_trollhide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    inventory.RemoveItem("$item_trollhide", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
                 case ArmorType.LeatherWolf:
-                    player.GetInventory().RemoveItem("$item_wolfpelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    inventory.RemoveItem("$item_wolfpelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
                 case ArmorType.LeatherLox:
-                    player.GetInventory().RemoveItem("$item_loxpelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+                    inventory.RemoveItem("$item_loxpelt", BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
                     break;
                 case ArmorType.Bronze:
-                    player.GetInventory().RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
+                    inventory.RemoveItem("$item_bronze", BasePlugin.ArmorBronzeRequiredConfig.Value);
                     break;
                 case ArmorType.Iron:
-                    player.GetInventory().RemoveItem("$item_iron", BasePlugin.ArmorIronRequiredConfig.Value);
+                    inventory.RemoveItem("$item_iron", BasePlugin.ArmorIronRequiredConfig.Value);
                     break;
                 case ArmorType.BlackMetal:
-                    player.GetInventory().RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
+                    inventory.RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
                     break;
             }
         }

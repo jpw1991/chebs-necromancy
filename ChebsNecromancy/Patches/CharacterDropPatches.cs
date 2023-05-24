@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
+using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 using UnityEngine;
@@ -56,23 +58,21 @@ namespace ChebsNecromancy.Patches
             // For all other minions, check if they're supposed to be dropping
             // items and whether these should be packed into a crate or not.
             // We don't want ppls surtling cores and things to be claimed by davey jones
-            else if (__instance.TryGetComponent(out UndeadMinion undeadMinion))
+            else if (__instance.TryGetComponent(out UndeadMinion undeadMinion)
+                     && UndeadMinion.PackDropItemsIntoCargoCrate.Value)
             {
                 if (undeadMinion is SkeletonMinion
-                    && SkeletonMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Nothing
-                    && SkeletonMinion.PackDropItemsIntoCargoCrate.Value)
+                    && SkeletonMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Nothing)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);
                 }
                 else if (undeadMinion is DraugrMinion
-                    && DraugrMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Nothing
-                    && DraugrMinion.PackDropItemsIntoCargoCrate.Value)
+                    && DraugrMinion.DropOnDeath.Value != ChebGonazMinion.DropType.Nothing)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);
                 }
                 else if (undeadMinion is BattleNeckroMinion
-                         && BattleNeckroMinion.DropOnDeath.Value == ChebGonazMinion.DropType.Everything
-                         && BattleNeckroMinion.PackDropItemsIntoCargoCrate.Value)
+                         && BattleNeckroMinion.DropOnDeath.Value == ChebGonazMinion.DropType.Everything)
                 {
                     undeadMinion.DepositIntoNearbyDeathCrate(__instance);
                 }

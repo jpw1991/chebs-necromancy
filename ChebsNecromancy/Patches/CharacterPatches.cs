@@ -1,5 +1,8 @@
 using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
+using ChebsNecromancy.Minions.Skeletons;
 using HarmonyLib;
 
 // ReSharper disable InconsistentNaming

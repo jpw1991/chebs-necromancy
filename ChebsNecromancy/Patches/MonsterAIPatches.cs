@@ -1,4 +1,6 @@
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
+using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 
@@ -18,63 +20,157 @@ using HarmonyLib;
 namespace ChebsNecromancy.Patches
 {
     [HarmonyPatch(typeof(MonsterAI))]
-    class FriendlySkeletonPatch
+    class MonsterAIPatches
     {
         [HarmonyPostfix]
         [HarmonyPatch(nameof(MonsterAI.Awake))]
         static void AwakePostfix(ref Character __instance)
         {
-            if (__instance.name.StartsWith("ChebGonaz") && !__instance.TryGetComponent(out ChebGonazMinion _))
+            // we use "Contains" because the creature name usually has Clone or something else on the end - so we can't
+            // do an "Equals"
+            if (!__instance.name.StartsWith("ChebGonaz") || __instance.TryGetComponent(out ChebGonazMinion _)) return;
+            
+            if (__instance.name.Contains("Wraith"))
             {
-                if (__instance.name.Contains("Wraith"))
+                __instance.gameObject.AddComponent<GuardianWraithMinion>();
+                return;
+            }
+            if (__instance.name.Contains("SpiritPylonGhost"))
+            {
+                __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
+                return;
+            }
+            if (__instance.name.Contains("NeckroGatherer"))
+            {
+                __instance.gameObject.AddComponent<NeckroGathererMinion>();
+                return;
+            }
+            if (__instance.name.Contains("BattleNeckro"))
+            {
+                __instance.gameObject.AddComponent<BattleNeckroMinion>();
+                return;
+            }
+            if (__instance.name.Contains("Bat"))
+            {
+                __instance.gameObject.AddComponent<BatBeaconBatMinion>();
+                return;
+            }
+            if (__instance.name.Contains("Leech"))
+            {
+                __instance.gameObject.AddComponent<LeechMinion>();
+                return;
+            }
+            if (__instance.name.Contains("Skeleton"))
+            {
+                if (__instance.name.Contains("Miner"))
                 {
-                    __instance.gameObject.AddComponent<GuardianWraithMinion>();
+                    __instance.gameObject.AddComponent<SkeletonMinerMinion>();
+                    return;
                 }
-                else if (__instance.name.Contains("SpiritPylonGhost"))
-                {
-                    __instance.gameObject.AddComponent<SpiritPylonGhostMinion>();
-                }
-                else if (__instance.name.Contains("NeckroGatherer"))
-                {
-                    __instance.gameObject.AddComponent<NeckroGathererMinion>();
-                }
-                else if (__instance.name.Contains("BattleNeckro"))
-                {
-                    __instance.gameObject.AddComponent<BattleNeckroMinion>();
-                }
-                else if (__instance.name.Contains("Bat"))
-                {
-                    __instance.gameObject.AddComponent<BatBeaconBatMinion>();
-                }
-                else if (__instance.name.Contains("Leech"))
-                {
-                    __instance.gameObject.AddComponent<LeechMinion>();
-                }
-                else if (__instance.name.Contains("Skeleton") || __instance.name.Contains("Draugr"))
-                {
-                    if (__instance.name.Contains("Miner"))
-                    {
-                        __instance.gameObject.AddComponent<SkeletonMinerMinion>();
-                    }
                         
-                    if (__instance.name.Contains("Woodcutter"))
-                    {
-                        __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();
-                    }
-
-                    if (__instance.name.Contains("PoisonSkeleton"))
-                    {
-                        __instance.gameObject.AddComponent<PoisonSkeletonMinion>();
-                    }
-                    else if (__instance.name.Contains("Skeleton"))
-                    {
-                        __instance.gameObject.AddComponent<SkeletonMinion>();
-                    }
-                    else if (__instance.name.Contains("Draugr"))
-                    {
-                        __instance.gameObject.AddComponent<DraugrMinion>();
-                    }
+                if (__instance.name.Contains("Woodcutter"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonWoodcutterMinion>();
+                    return;
                 }
+
+                if (__instance.name.Contains("PoisonSkeleton"))
+                {
+                    __instance.gameObject.AddComponent<PoisonSkeletonMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherFire"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherFireMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherFrost"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherFrostMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherPoison"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherPoisonMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherSilver"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherSilverMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherTier3"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherTier3Minion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherTier2"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherTier2Minion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("Archer"))
+                {
+                    __instance.gameObject.AddComponent<SkeletonArcherTier1Minion>();
+                    return;
+                }
+                
+                __instance.gameObject.AddComponent<SkeletonMinion>();
+                return;
+            }
+
+            if (__instance.name.Contains("Draugr"))
+            {
+                if (__instance.name.Contains("ArcherFire"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherFireMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherFrost"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherFrostMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherPoison"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherPoisonMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherSilver"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherSilverMinion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherTier3"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherTier3Minion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("ArcherTier2"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherTier2Minion>();
+                    return;
+                }
+                
+                if (__instance.name.Contains("Archer"))
+                {
+                    __instance.gameObject.AddComponent<DraugrArcherTier1Minion>();
+                    return;
+                }
+                
+                __instance.gameObject.AddComponent<DraugrMinion>();
             }
         }
     }

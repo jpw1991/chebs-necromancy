@@ -5,7 +5,7 @@ using BepInEx.Configuration;
 using ChebsValheimLibrary.Common;
 using UnityEngine;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Armor.Player
 {
     internal class NecromancerCape
     {

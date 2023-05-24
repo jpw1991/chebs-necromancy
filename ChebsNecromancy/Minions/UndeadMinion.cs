@@ -1,11 +1,15 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items;
+using ChebsNecromancy.Items.Armor.Player;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Minions
 {
@@ -13,30 +17,213 @@ namespace ChebsNecromancy.Minions
     {
         public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
         public const string MinionEmblemZdoKey = "UndeadMinionEmblem";
-        
+
         #region CleanupAfterLogout
+
         private const float NextPlayerOnlineCheckInterval = 15f;
         private float nextPlayerOnlineCheckAt;
         protected float CleanupAt;
+
         #endregion
-        
+
+        public static ConfigEntry<DropType> DropOnDeath;
         public static ConfigEntry<CleanupType> CleanupAfter;
         public static ConfigEntry<int> CleanupDelay;
         public static ConfigEntry<bool> Commandable;
         public static ConfigEntry<float> RoamRange;
-        
+        public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
+
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            CleanupAfter = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupAfter",
+            const string client = "UndeadMinion (Client)";
+            const string serverSynced = "UndeadMinion (Server Synced)";
+            
+            DropOnDeath = plugin.Config.Bind(serverSynced, "DropOnDeath",
+                DropType.JustResources, new ConfigDescription("Whether minions refund resources when they dies.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            CleanupAfter = plugin.Config.Bind(serverSynced, "CleanupAfter",
                 CleanupType.None, new ConfigDescription("Whether a minion should be cleaned up or not.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            CleanupDelay = plugin.Config.Bind("UndeadMinion (Server Synced)", "CleanupDelay",
-                300, new ConfigDescription("The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.", null,
+            
+            CleanupDelay = plugin.Config.Bind(serverSynced, "CleanupDelay",
+                300, new ConfigDescription(
+                    "The delay, in seconds, after which a minion will be destroyed. It has no effect if CleanupAfter is set to None.",
+                    null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            Commandable = plugin.Config.Bind("UndeadMinion (Client)", "Commandable",
-                true, new ConfigDescription("If true, minions can be commanded individually with E (or equivalent) keybind."));
-            RoamRange = plugin.Config.Bind("UndeadMinion (Client)", "RoamRange",
+            
+            Commandable = plugin.Config.Bind(client, "Commandable",
+                true,
+                new ConfigDescription(
+                    "If true, minions can be commanded individually with E (or equivalent) keybind."));
+            
+            RoamRange = plugin.Config.Bind(client, "RoamRange",
                 10f, new ConfigDescription("How far a unit is allowed to roam from its current position."));
+            
+            PackDropItemsIntoCargoCrate = plugin.Config.Bind(serverSynced,
+                "PackDroppedItemsIntoCargoCrate",
+                true, new ConfigDescription(
+                    "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+        }
+
+        private static Tuple<int, string, List<string>> CountItems(string item, Inventory inventory)
+        {
+            var acceptedItemsFound = 0;
+            var acceptedItemsLocalizedNames = new List<string>();
+            var acceptedItems = item.Split('|');
+            foreach (var acceptedItem in acceptedItems)
+            {
+                var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                if (requiredItemPrefab == null)
+                {
+                    var message = $"Error processing config for ItemsCost: {acceptedItem} doesn't exist.";
+                    Logger.LogError(message);
+                    return new Tuple<int, string, List<string>>(0, message, acceptedItemsLocalizedNames);
+                }
+
+                var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
+                acceptedItemsLocalizedNames.Add(requiredItemName);
+                var amountInInv = inventory.CountItems(requiredItemName);
+                acceptedItemsFound += amountInInv;
+            }
+
+            return new Tuple<int, string, List<string>>(acceptedItemsFound, "", acceptedItemsLocalizedNames);
+        }
+
+        public static bool CanSpawn(MemoryConfigEntry<string, List<string>> itemsCost, Inventory inventory,
+            out string message)
+        {
+            message = "";
+            var requirementsSatisfied = new List<Tuple<bool, string>>();
+            foreach (var fuel in itemsCost.Value)
+            {
+                var splut = fuel.Split(':');
+                if (splut.Length != 2)
+                {
+                    message = "Error in config for ItemsCost - please revise.";
+                    Logger.LogError(message);
+                    return false;
+                }
+
+                var itemRequired = splut[0];
+                if (!int.TryParse(splut[1], out int itemAmountRequired))
+                {
+                    message = "Error in config for ItemsCost - please revise.";
+                    Logger.LogError(message);
+                    return false;
+                }
+
+                var result = CountItems(itemRequired, inventory);
+                var canSpawn = result.Item1 >= itemAmountRequired;
+                message = canSpawn ? "" : $"Not enough {string.Join("/", result.Item3)}";
+                requirementsSatisfied.Add(new Tuple<bool, string>(canSpawn, message));
+            }
+
+            var cantSpawn = requirementsSatisfied.Find(t => !t.Item1);
+            if (cantSpawn != null)
+            {
+                message = cantSpawn.Item2;
+                return false;
+            }
+            
+            return true;
+        }
+
+        protected static void ConsumeRequirements(MemoryConfigEntry<string, List<string>> itemsCost,
+            Inventory inventory)
+        {
+            foreach (var fuel in itemsCost.Value)
+            {
+                var splut = fuel.Split(':');
+                if (splut.Length != 2)
+                {
+                    Logger.LogError("Error in config for ItemsCost - please revise.");
+                    return;
+                }
+
+                var itemRequired = splut[0];
+                if (!int.TryParse(splut[1], out int itemAmountRequired))
+                {
+                    Logger.LogError("Error in config for ItemsCost - please revise.");
+                    return;
+                }
+
+                var acceptedItemAccumulator = 0;
+                var acceptedItems = itemRequired.Split('|');
+                foreach (var acceptedItem in acceptedItems)
+                {
+                    if (acceptedItemAccumulator >= itemAmountRequired) break;
+                    
+                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                    if (requiredItemPrefab == null)
+                    {
+                        Logger.LogError($"Error processing config for ItemsCost: {itemRequired} doesn't exist.");
+                        return;
+                    }
+                    
+                    var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
+                    var itemsInInv = inventory.CountItems(requiredItemName);
+
+                    for (var i = 0; i < itemsInInv; i++)
+                    {
+                        if (acceptedItemAccumulator >= itemAmountRequired) break;
+
+                        inventory.RemoveItem(requiredItemName, 1);
+                        acceptedItemAccumulator++;
+                    }
+                }
+            }
+        }
+
+        protected CharacterDrop GenerateDeathDrops(ConfigEntry<DropType> dropOnDeath,
+            MemoryConfigEntry<string, List<string>> itemsCost)
+        {
+            if (dropOnDeath.Value == DropType.Nothing) return null;
+
+            var characterDrop = gameObject.AddComponent<CharacterDrop>();
+
+            foreach (var fuel in itemsCost.Value)
+            {
+                var splut = fuel.Split(':');
+                if (splut.Length != 2)
+                {
+                    Logger.LogError("Error in config for ItemsCost - please revise.");
+                    return null;
+                }
+
+                var itemRequired = splut[0];
+                if (!int.TryParse(splut[1], out int itemAmountRequired))
+                {
+                    Logger.LogError("Error in config for ItemsCost - please revise.");
+                    return null;
+                }
+                
+                var acceptedItems = itemRequired.Split('|');
+                foreach (var acceptedItem in acceptedItems)
+                {
+                    var requiredItemPrefab = ZNetScene.instance.GetPrefab(acceptedItem);
+                    if (requiredItemPrefab == null)
+                    {
+                        Logger.LogError($"Error processing config for ItemsCost: {acceptedItem} doesn't exist.");
+                        return null;
+                    }
+
+                    characterDrop.m_drops.Add(new CharacterDrop.Drop
+                    {
+                        m_prefab = requiredItemPrefab,
+                        m_onePerPlayer = true,
+                        m_amountMin = itemAmountRequired,
+                        m_amountMax = itemAmountRequired,
+                        m_chance = 1f
+                    });
+
+                    break; // just take the first one in the list for now
+                }
+            }
+
+            return characterDrop;
         }
 
         public virtual void Awake()
@@ -45,9 +232,11 @@ namespace ChebsNecromancy.Minions
             if (tameable != null)
             {
                 // let the minions generate a little necromancy XP for their master
-                tameable.m_levelUpOwnerSkill = SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill;
+                tameable.m_levelUpOwnerSkill =
+                    SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill;
                 tameable.m_commandable = Commandable.Value;
             }
+
             if (CleanupAfter.Value == CleanupType.Time)
             {
                 CleanupAt = Time.time + CleanupDelay.Value;
@@ -58,11 +247,11 @@ namespace ChebsNecromancy.Minions
                 nextPlayerOnlineCheckAt = Time.time + NextPlayerOnlineCheckInterval;
             }
         }
-        
+
         private void Update()
         {
             if (CleanupAt > 0
-                && Time.time > CleanupAt 
+                && Time.time > CleanupAt
                 && CleanupAfter.Value != CleanupType.None)
             {
                 //Jotunn.Logger.LogInfo($"Cleaning up {name} because current time {Time.time} > {cleanupAt}");
@@ -71,6 +260,7 @@ namespace ChebsNecromancy.Minions
                 // 99.9% of cases the 2nd check will never occur because the character will be dead
                 CleanupAt += 5;
             }
+
             if (nextPlayerOnlineCheckAt > 0
                 && Time.time > nextPlayerOnlineCheckAt)
             {
@@ -83,36 +273,42 @@ namespace ChebsNecromancy.Minions
                 {
                     CleanupAt = 0;
                 }
+
                 nextPlayerOnlineCheckAt = Time.time + NextPlayerOnlineCheckInterval;
             }
         }
-        
+
         #region CreatedAtLevelZDO
+
         public void SetCreatedAtLevel(float necromancyLevel)
         {
             // We store the level the minion was created at so it can be scaled
             // correctly in the Awake function
             if (!TryGetComponent(out ZNetView zNetView))
             {
-                Jotunn.Logger.LogError($"Cannot SetCreatedAtLevel to {necromancyLevel} because it has no ZNetView component.");
+                Logger.LogError($"Cannot SetCreatedAtLevel to {necromancyLevel} because it has no ZNetView component.");
                 return;
             }
+
             zNetView.GetZDO().Set(MinionCreatedAtLevelKey, necromancyLevel);
         }
+
         protected float GetCreatedAtLevel()
         {
             if (!TryGetComponent(out ZNetView zNetView))
             {
-                Jotunn.Logger.LogError($"Cannot read {MinionCreatedAtLevelKey} because it has no ZNetView component.");
+                Logger.LogError($"Cannot read {MinionCreatedAtLevelKey} because it has no ZNetView component.");
                 return 1f;
             }
+
             return zNetView.GetZDO().GetFloat(MinionCreatedAtLevelKey, 1f);
         }
+
         #endregion
-        
+
         public static void CountActive<T>(int minionLimitIncrementsEveryXLevels, int maxMinions) where T : UndeadMinion
         {
-            Jotunn.Logger.LogInfo($"increments: {minionLimitIncrementsEveryXLevels}, max: {maxMinions}");
+            Logger.LogInfo($"increments: {minionLimitIncrementsEveryXLevels}, max: {maxMinions}");
             // Get all active skeleton minions that belong to the local player
             var minions = Character.GetAllCharacters()
                 .Where(c => !c.IsDead())
@@ -128,19 +324,23 @@ namespace ChebsNecromancy.Minions
                 : 0;
             var maxMinionsPlusBonus = maxMinions + bonusMinions;
             maxMinionsPlusBonus -= 1;
-            Jotunn.Logger.LogInfo($"maxMinionsPlusBonus: {maxMinionsPlusBonus}");
-            
+            Logger.LogInfo($"maxMinionsPlusBonus: {maxMinionsPlusBonus}");
+
             // Kill off surplus minions
             for (var i = maxMinionsPlusBonus; i < minions.Count; i++)
             {
                 minions[i].Item2.SetHealth(0);
             }
         }
+
         #region EmblemZDO
+
         public string Emblem
         {
             // todo: refactor to store (int)Emblem value instead
-            get => TryGetComponent(out ZNetView zNetView) ? zNetView.GetZDO().GetString(MinionEmblemZdoKey) : InternalName.GetName(NecromancerCape.Emblem.Blank);
+            get => TryGetComponent(out ZNetView zNetView)
+                ? zNetView.GetZDO().GetString(MinionEmblemZdoKey)
+                : InternalName.GetName(NecromancerCape.Emblem.Blank);
             set
             {
                 if (TryGetComponent(out ZNetView zNetView))
@@ -149,10 +349,11 @@ namespace ChebsNecromancy.Minions
                 }
                 else
                 {
-                    Jotunn.Logger.LogError($"Cannot set emblem to {value} because it has no ZNetView component.");
+                    Logger.LogError($"Cannot set emblem to {value} because it has no ZNetView component.");
                 }
             }
         }
+
         #endregion
     }
 }

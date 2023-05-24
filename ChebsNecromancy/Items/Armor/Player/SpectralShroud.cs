@@ -11,7 +11,7 @@ using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Armor.Player
 {
     internal class SpectralShroud : Item
     {
@@ -146,7 +146,7 @@ namespace ChebsNecromancy.Items
         {
             if (SpawnWraith.Value
                 && ZInput.instance != null
-                && Player.m_localPlayer != null)
+                && global::Player.m_localPlayer != null)
             {
                 if (Time.time > DoOnUpdateDelay)
                 {
@@ -162,7 +162,7 @@ namespace ChebsNecromancy.Items
 
             List<Character> charactersInRange = new List<Character>();
             Character.GetCharactersInRange(
-                Player.m_localPlayer.transform.position,
+                global::Player.m_localPlayer.transform.position,
                 30f,
                 charactersInRange
                 );
@@ -180,7 +180,7 @@ namespace ChebsNecromancy.Items
 
         private void GuardianWraithStuff()
         {
-            Player player = Player.m_localPlayer;
+            global::Player player = global::Player.m_localPlayer;
             float playerNecromancyLevel = player.GetSkillLevel(
                 SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
 

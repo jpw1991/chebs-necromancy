@@ -13,7 +13,6 @@ namespace ChebsNecromancy.CustomPrefabs
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
-
             Allowed = plugin.Config.Bind("NecroNeckGatherer (Server Synced)", "LargeCargoCrateAllowed",
                 true, new ConfigDescription("Disallowing this will cause the ChebGonaz_LargeCargoCrate to not be loaded. Attention: it is essential for the correct functioning of the NecroNeck Gatherer minion.", null,
                 new ConfigurationManagerAttributes { IsAdminOnly = true }));

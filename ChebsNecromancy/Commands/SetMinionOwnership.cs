@@ -4,6 +4,8 @@
 
 using System.Collections.Generic;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Draugr;
+using ChebsNecromancy.Minions.Skeletons;
 using Jotunn.Entities;
 using Jotunn.Managers;
 

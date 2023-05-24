@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
+using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Items;
 using ChebsValheimLibrary.Minions;
 using Jotunn;
@@ -13,7 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Logger = Jotunn.Logger;
 
-namespace ChebsNecromancy.Items
+namespace ChebsNecromancy.Items.Wands
 {
     internal class SkeletonWand : Wand
     {
@@ -24,23 +24,15 @@ namespace ChebsNecromancy.Items
         public static ConfigEntry<string> CraftingCost;
 
         public static ConfigEntry<bool> SkeletonsAllowed;
-
-        public static ConfigEntry<int> BoneFragmentsRequiredConfig;
-        public static ConfigEntry<float> SkeletonBaseHealth;
-        public static ConfigEntry<float> SkeletonHealthMultiplier;
+        
         public static ConfigEntry<int> SkeletonTierOneQuality;
         public static ConfigEntry<int> SkeletonTierTwoQuality;
         public static ConfigEntry<int> SkeletonTierTwoLevelReq;
         public static ConfigEntry<int> SkeletonTierThreeQuality;
         public static ConfigEntry<int> SkeletonTierThreeLevelReq;
         public static ConfigEntry<float> SkeletonSetFollowRange;
-
-        public static ConfigEntry<int> PoisonSkeletonLevelRequirementConfig;
-        public static ConfigEntry<float> PoisonSkeletonBaseHealth;
-        public static ConfigEntry<int> PoisonSkeletonGuckRequiredConfig;
+        
         public static ConfigEntry<float> SkeletonArmorValueMultiplier;
-        public static ConfigEntry<int> WoodcutterSkeletonFlintRequiredConfig;
-        public static ConfigEntry<int> MinerSkeletonAntlerRequiredConfig;
 
         #endregion
 
@@ -104,18 +96,6 @@ namespace ChebsNecromancy.Items
                 true, new ConfigDescription("If false, skeletons can't be summoned.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
-            BoneFragmentsRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "BoneFragmentsRequired",
-                6, new ConfigDescription("The amount of Bone Fragments required to craft a skeleton.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            SkeletonBaseHealth = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonBaseHealth",
-                20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            SkeletonHealthMultiplier = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonHealthMultiplier",
-                1.25f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
             SkeletonTierOneQuality = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierOneQuality",
                 1, new ConfigDescription("Star Quality of tier 1 Skeleton minions", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -134,30 +114,6 @@ namespace ChebsNecromancy.Items
 
             SkeletonTierThreeLevelReq = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "SkeletonTierThreeLevelReq",
                 90, new ConfigDescription("Necromancy skill level required to summon Tier 3 Skeleton", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            PoisonSkeletonBaseHealth = plugin.Config.Bind($"{GetType().Name} (Server Synced)", "PoisonSkeletonBaseHealth",
-                100f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            PoisonSkeletonLevelRequirementConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
-                "PoisonSkeletonLevelRequired",
-                50, new ConfigDescription("The Necromancy level needed to summon a Poison Skeleton.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            PoisonSkeletonGuckRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
-                "PoisonSkeletonGuckRequired",
-                1, new ConfigDescription("The amount of Guck required to craft a Poison Skeleton.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            WoodcutterSkeletonFlintRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
-                "WoodcutterSkeletonFlintRequired",
-                1, new ConfigDescription("The amount of Flint required to craft a Woodcutter Skeleton.", null,
-                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
-
-            MinerSkeletonAntlerRequiredConfig = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
-                "MinerSkeletonAntlerRequired",
-                1, new ConfigDescription("The amount of HardAntler required to craft a Miner Skeleton.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             SkeletonArmorValueMultiplier = plugin.Config.Bind($"{GetType().Name} (Server Synced)",
@@ -344,73 +300,31 @@ namespace ChebsNecromancy.Items
         {
             // Determine type of archer to spawn and consume resources.
             // Return None if unable to determine archer type, or if necessary resources are missing.
-
-            var player = Player.m_localPlayer;
-
-            // check for bones
-            if (BoneFragmentsRequiredConfig.Value > 0)
-            {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$friendlyskeletonwand_notenoughbones");
-                    return SkeletonMinion.SkeletonType.None;
-                }
-            }
-
-            // check for arrows
-            var silverRequirement = BasePlugin.ArcherSilverArrowsRequiredConfig.Value;
-            if (silverRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_silver") >= silverRequirement)
-            {
-                return SkeletonMinion.SkeletonType.ArcherSilver;
-            }
             
-            var fireRequirement = BasePlugin.ArcherFireArrowsRequiredConfig.Value;
-            if (fireRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_fire") >= fireRequirement)
-            {
+            var inventory = Player.m_localPlayer.GetInventory();
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherSilverMinion.ItemsCost, inventory, out _))
+                return SkeletonMinion.SkeletonType.ArcherSilver;
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherFireMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherFire;
-            }
-
-            var frostRequirement = BasePlugin.ArcherFrostArrowsRequiredConfig.Value;
-            if (frostRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_frost") >= frostRequirement)
-            {
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherFrostMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherFrost;
-            }
-
-            var poisonRequirement = BasePlugin.ArcherPoisonArrowsRequiredConfig.Value;
-            if (poisonRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_poison") >= poisonRequirement)
-            {
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherPoisonMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherPoison;
-            }
-
-            var ironRequirement = BasePlugin.ArcherTier3ArrowsRequiredConfig.Value;
-            if (ironRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_iron") >= ironRequirement)
-            {
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherTier3Minion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherTier3;
-            }
-
-            var bronzeRequirement = BasePlugin.ArcherTier2ArrowsRequiredConfig.Value;
-            if (bronzeRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_bronze") >= bronzeRequirement)
-            {
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherTier2Minion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherTier2;
-            }
-
-            var woodRequirement = BasePlugin.ArcherTier1ArrowsRequiredConfig.Value;
-            if (woodRequirement <= 0
-                || player.GetInventory().CountItems("$item_arrow_wood") >= woodRequirement)
-            {
+            
+            if (UndeadMinion.CanSpawn(SkeletonArcherTier1Minion.ItemsCost, inventory, out var message))
                 return SkeletonMinion.SkeletonType.ArcherTier1;
-            }
 
-            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, "$friendlyskeletonwand_notenougharrows");
+            MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
             return SkeletonMinion.SkeletonType.None;
         }
 
@@ -419,29 +333,9 @@ namespace ChebsNecromancy.Items
             // Return None if necessary resources are missing.
             var player = Player.m_localPlayer;
 
-            // check for bones
-            if (BoneFragmentsRequiredConfig.Value > 0)
+            if (!UndeadMinion.CanSpawn(SkeletonWoodcutterMinion.ItemsCost, player.GetInventory(), out var message))
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$friendlyskeletonwand_notenoughbones");
-                    return SkeletonMinion.SkeletonType.None;
-                }
-            }
-            
-            if (WoodcutterSkeletonFlintRequiredConfig.Value <= 0)
-            {
-                return SkeletonMinion.SkeletonType.Woodcutter;
-            }
-            
-            var flintInInventory = player.GetInventory().CountItems("$item_flint");
-            if (flintInInventory < WoodcutterSkeletonFlintRequiredConfig.Value)
-            {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    "$chebgonaz_notenoughflint");
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;
             }
 
@@ -453,29 +347,9 @@ namespace ChebsNecromancy.Items
             // Return None if necessary resources are missing.
             var player = Player.m_localPlayer;
 
-            // check for bones
-            if (BoneFragmentsRequiredConfig.Value > 0)
+            if (!UndeadMinion.CanSpawn(SkeletonMinerMinion.ItemsCost, player.GetInventory(), out var message))
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$friendlyskeletonwand_notenoughbones");
-                    return SkeletonMinion.SkeletonType.None;
-                }
-            }
-
-            if (MinerSkeletonAntlerRequiredConfig.Value <= 0)
-            {
-                return SkeletonMinion.SkeletonType.Miner;
-            }
-            
-            int antlerInInventory = player.GetInventory().CountItems("$item_hardantler");
-            if (antlerInInventory < MinerSkeletonAntlerRequiredConfig.Value)
-            {
-                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    "$chebgonaz_notenoughhardantler");
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;
             }
 
@@ -490,35 +364,17 @@ namespace ChebsNecromancy.Items
 
             var player = Player.m_localPlayer;
             
-            // check for bones
-            if (BoneFragmentsRequiredConfig.Value > 0)
-            {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$friendlyskeletonwand_notenoughbones");
-                    return SkeletonMinion.SkeletonType.None;
-                }
-            }
-
-            if (playerNecromancyLevel < PoisonSkeletonLevelRequirementConfig.Value)
+            if (playerNecromancyLevel < PoisonSkeletonMinion.LevelRequirementConfig.Value)
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
                     "$chebgonaz_necromancyleveltoolow");
                 return SkeletonMinion.SkeletonType.None;   
             }
-
-            if (PoisonSkeletonGuckRequiredConfig.Value > 0)
+            
+            if (!UndeadMinion.CanSpawn(PoisonSkeletonMinion.ItemsCost, player.GetInventory(), out var message))
             {
-                int guckInInventory = player.GetInventory().CountItems("$item_guck");
-                if (guckInInventory < PoisonSkeletonGuckRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$chebgonaz_notenoughguck");
-                    return SkeletonMinion.SkeletonType.None;
-                }
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
+                return SkeletonMinion.SkeletonType.None;
             }
 
             // determine quality
@@ -537,21 +393,14 @@ namespace ChebsNecromancy.Items
             // Determine type of minion to spawn and consume resources.
             // Return None if unable to determine minion type, or if necessary resources are missing.
             
-            Player player = Player.m_localPlayer;
+            var player = Player.m_localPlayer;
             
-            // check for bones
-            if (BoneFragmentsRequiredConfig.Value > 0)
+            if (!UndeadMinion.CanSpawn(SkeletonWarriorMinion.ItemsCost, player.GetInventory(), out var message))
             {
-                int boneFragmentsInInventory = player.GetInventory().CountItems("$item_bonefragments");
-
-                if (boneFragmentsInInventory < BoneFragmentsRequiredConfig.Value)
-                {
-                    MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                        "$friendlyskeletonwand_notenoughbones");
-                    return SkeletonMinion.SkeletonType.None;
-                }
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
+                return SkeletonMinion.SkeletonType.None;
             }
-            
+
             // determine quality
             var needleRequirement = BasePlugin.NeedlesRequiredConfig.Value;
             if (needleRequirement <= 0

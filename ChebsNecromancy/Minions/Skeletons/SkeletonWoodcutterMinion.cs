@@ -1,14 +1,17 @@
-using BepInEx;
+using System.Collections.Generic;
+using System.Linq;
 using BepInEx.Configuration;
+using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions.AI;
 
-namespace ChebsNecromancy.Minions
+namespace ChebsNecromancy.Minions.Skeletons
 {
     internal class SkeletonWoodcutterMinion : SkeletonMinion
     {
         public static ConfigEntry<float> UpdateDelay, LookRadius;
+        public static MemoryConfigEntry<string, List<string>> ItemsCost;
 
-        public new static void CreateConfigs(BaseUnityPlugin plugin)
+        public static void CreateConfigs(BasePlugin plugin)
         {
             UpdateDelay = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "SkeletonWoodcutterUpdateDelay",
                 6f, new ConfigDescription("The delay, in seconds, between wood searching attempts. Attention: small values may impact performance.", null,
@@ -16,6 +19,10 @@ namespace ChebsNecromancy.Minions
             LookRadius = plugin.Config.Bind("SkeletonWoodcutter (Server Synced)", "LookRadius",
                 50f, new ConfigDescription("How far it can see wood. High values may damage performance.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            var itemsCost = plugin.ModConfig("SkeletonWoodcutter (Server Synced)", "ItemsCost", "BoneFragments:6,Flint:1",
+                "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount. Alternative items can be specified with a | eg. Wood|Coal:5 to mean wood and/or coal.",
+                null, true);
+            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
         }
 
         public override void Awake()
