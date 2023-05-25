@@ -37,7 +37,7 @@ namespace ChebsNecromancy.Minions.Skeletons
                 Logger.LogError("ScaleStats: Character component is null!");
                 return;
             }
-            var health = BaseHealth.Value + necromancyLevel * SkeletonMinion.SkeletonHealthMultiplier.Value;
+            var health = BaseHealth.Value + necromancyLevel * SkeletonHealthMultiplier.Value;
             character.SetMaxHealth(health);
             character.SetHealth(health);
         }

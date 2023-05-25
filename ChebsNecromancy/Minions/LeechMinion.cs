@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
@@ -208,7 +206,10 @@ namespace ChebsNecromancy.Minions
             minion.UndeadMinionMaster = player.GetPlayerName();
 
             // handle refunding of resources on death
-            var characterDrop = minion.GenerateDeathDrops(DropOnDeath, ItemsCost);
+            if (DropOnDeath.Value != DropType.Everything) return;
+
+            var characterDrop = spawnedChar.AddComponent<CharacterDrop>();
+            GenerateDeathDrops(characterDrop, ItemsCost);
 
             // the component won't be remembered by the game on logout because
             // only what is on the prefab is remembered. Even changes to the prefab

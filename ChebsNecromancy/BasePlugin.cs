@@ -10,7 +10,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Armor.Player;
 using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
@@ -19,7 +18,6 @@ using ChebsNecromancy.Minions.Skeletons;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
-using ChebsValheimLibrary.Items.Tools;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -38,11 +36,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.3.2";
+        public const string PluginVersion = "3.3.3";
         private const string ConfigFileName =  PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
         
-        public readonly System.Version ChebsValheimLibraryVersion = new("1.2.2");
+        public readonly System.Version ChebsValheimLibraryVersion = new("1.2.3");
 
         private readonly Harmony harmony = new(PluginGuid);
 
@@ -93,7 +91,7 @@ namespace ChebsNecromancy
         
         private void Awake()
         {
-            if (!ChebsValheimLibrary.Base.VersionCheck(ChebsValheimLibraryVersion, out string message))
+            if (!Base.VersionCheck(ChebsValheimLibraryVersion, out string message))
             {
                 Jotunn.Logger.LogWarning(message);
             }

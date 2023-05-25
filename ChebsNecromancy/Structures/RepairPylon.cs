@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
-
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Structures;
 using UnityEngine;

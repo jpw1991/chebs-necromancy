@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
-using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Items;
 using ChebsValheimLibrary.Minions;
 using Jotunn;
@@ -14,8 +12,6 @@ using Jotunn.Managers;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = Jotunn.Logger;
-using Object = UnityEngine.Object;
-using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Items.Wands
 {

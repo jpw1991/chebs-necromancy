@@ -419,41 +419,43 @@ namespace ChebsNecromancy.Minions.Draugr
             minion.UndeadMinionMaster = player.GetPlayerName();
 
             // handle refunding of resources on death
-            CharacterDrop characterDrop = null;
-
-            switch (skeletonType)
+            if (DropOnDeath.Value == DropType.Nothing) return;
+            
+            var characterDrop = spawnedChar.AddComponent<CharacterDrop>();
+            if (DropOnDeath.Value == DropType.Everything)
             {
-                case DraugrType.WarriorTier1:
-                case DraugrType.WarriorTier2:
-                case DraugrType.WarriorTier3:
-                case DraugrType.WarriorTier4:
-                case DraugrType.WarriorNeedle:
-                    characterDrop = minion.GenerateDeathDrops(DraugrWarriorMinion.DropOnDeath, DraugrWarriorMinion.ItemsCost);
-                    break;
-                case DraugrType.ArcherTier1:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherTier1Minion.DropOnDeath, DraugrArcherTier1Minion.ItemsCost);
-                    break;
-                case DraugrType.ArcherTier2:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherTier2Minion.DropOnDeath, DraugrArcherTier2Minion.ItemsCost);
-                    break;
-                case DraugrType.ArcherTier3:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherTier3Minion.DropOnDeath, DraugrArcherTier3Minion.ItemsCost);
-                    break;
-                case DraugrType.ArcherPoison:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherPoisonMinion.DropOnDeath, DraugrArcherPoisonMinion.ItemsCost);
-                    break;
-                case DraugrType.ArcherFire:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherFireMinion.DropOnDeath, DraugrArcherFireMinion.ItemsCost);
-                    break;
-                case DraugrType.ArcherFrost:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherFrostMinion.DropOnDeath, DraugrArcherFrostMinion.ItemsCost);
-                    break;
-                case DraugrType.ArcherSilver:
-                    characterDrop = minion.GenerateDeathDrops(DraugrArcherSilverMinion.DropOnDeath, DraugrArcherSilverMinion.ItemsCost);
-                    break;
+                switch (skeletonType)
+                {
+                    case DraugrType.WarriorTier1:
+                    case DraugrType.WarriorTier2:
+                    case DraugrType.WarriorTier3:
+                    case DraugrType.WarriorTier4:
+                    case DraugrType.WarriorNeedle:
+                        GenerateDeathDrops(characterDrop, DraugrWarriorMinion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherTier1:
+                        GenerateDeathDrops(characterDrop, DraugrArcherTier1Minion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherTier2:
+                        GenerateDeathDrops(characterDrop, DraugrArcherTier2Minion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherTier3:
+                        GenerateDeathDrops(characterDrop, DraugrArcherTier3Minion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherPoison:
+                        GenerateDeathDrops(characterDrop, DraugrArcherPoisonMinion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherFire:
+                        GenerateDeathDrops(characterDrop, DraugrArcherFireMinion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherFrost:
+                        GenerateDeathDrops(characterDrop, DraugrArcherFrostMinion.ItemsCost);
+                        break;
+                    case DraugrType.ArcherSilver:
+                        GenerateDeathDrops(characterDrop, DraugrArcherSilverMinion.ItemsCost);
+                        break;
+                }
             }
-
-            if (characterDrop == null) return;
 
             switch (armorType)
             {

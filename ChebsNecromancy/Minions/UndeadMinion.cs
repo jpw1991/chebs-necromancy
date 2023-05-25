@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Armor.Player;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;

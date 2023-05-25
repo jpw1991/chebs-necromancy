@@ -1,9 +1,7 @@
 using System.Collections.Generic;
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
 using UnityEngine;
-using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.CustomPrefabs
 {
