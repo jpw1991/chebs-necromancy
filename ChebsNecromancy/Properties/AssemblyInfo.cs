@@ -4,14 +4,15 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ChebsNecromancy")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ChebsNecromancy")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyTitle("Cheb's Necromancy")]
+[assembly: AssemblyDescription("Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. " +
+                               "Minions will follow you, guard your base, and perform menial tasks.")]
+[assembly: AssemblyConfiguration("Release")]
+[assembly: AssemblyCompany("Cheb Gonaz")]
+[assembly: AssemblyProduct("Cheb's Necromancy")]
+[assembly: AssemblyCopyright("Copyright Â©  2022")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCulture("en")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -31,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.0.1.0")]
-[assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: AssemblyVersion("3.3.3.0")]
+[assembly: AssemblyFileVersion("3.3.3.0")]
 

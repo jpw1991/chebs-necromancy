@@ -416,58 +416,60 @@ namespace ChebsNecromancy.Minions.Skeletons
 
             minion.UndeadMinionMaster = player.GetPlayerName();
 
+            if (DropOnDeath.Value == DropType.Nothing) return;
+
             // handle refunding of resources on death
-            CharacterDrop characterDrop = null;
-
-            switch (skeletonType)
+            var characterDrop = spawnedChar.AddComponent<CharacterDrop>();
+            if (DropOnDeath.Value == DropType.Everything)
             {
-                case SkeletonType.WarriorTier1:
-                case SkeletonType.WarriorTier2:
-                case SkeletonType.WarriorTier3:
-                case SkeletonType.WarriorTier4:
-                case SkeletonType.WarriorNeedle:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonWarriorMinion.DropOnDeath, SkeletonWarriorMinion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherTier1:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherTier1Minion.DropOnDeath, SkeletonArcherTier1Minion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherTier2:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherTier2Minion.DropOnDeath, SkeletonArcherTier2Minion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherTier3:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherTier3Minion.DropOnDeath, SkeletonArcherTier3Minion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherPoison:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherPoisonMinion.DropOnDeath, SkeletonArcherPoisonMinion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherFire:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherFireMinion.DropOnDeath, SkeletonArcherFireMinion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherFrost:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherFrostMinion.DropOnDeath, SkeletonArcherFrostMinion.ItemsCost);
-                    break;
-                case SkeletonType.ArcherSilver:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonArcherSilverMinion.DropOnDeath, SkeletonArcherSilverMinion.ItemsCost);
-                    break;
-                case SkeletonType.MageTier1:
-                case SkeletonType.MageTier2:
-                case SkeletonType.MageTier3:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonMageMinion.DropOnDeath, SkeletonMageMinion.ItemsCost);
-                    break;
-                case SkeletonType.PoisonTier1:
-                case SkeletonType.PoisonTier2:
-                case SkeletonType.PoisonTier3:
-                    characterDrop = minion.GenerateDeathDrops(PoisonSkeletonMinion.DropOnDeath, PoisonSkeletonMinion.ItemsCost);
-                    break;
-                case SkeletonType.Woodcutter:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonWoodcutterMinion.DropOnDeath, SkeletonWoodcutterMinion.ItemsCost);
-                    break;
-                case SkeletonType.Miner:
-                    characterDrop = minion.GenerateDeathDrops(SkeletonMinerMinion.DropOnDeath, SkeletonMinerMinion.ItemsCost);
-                    break;
+                switch (skeletonType)
+                {
+                    case SkeletonType.WarriorTier1:
+                    case SkeletonType.WarriorTier2:
+                    case SkeletonType.WarriorTier3:
+                    case SkeletonType.WarriorTier4:
+                    case SkeletonType.WarriorNeedle:
+                        GenerateDeathDrops(characterDrop, SkeletonWarriorMinion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherTier1:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherTier1Minion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherTier2:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherTier2Minion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherTier3:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherTier3Minion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherPoison:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherPoisonMinion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherFire:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherFireMinion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherFrost:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherFrostMinion.ItemsCost);
+                        break;
+                    case SkeletonType.ArcherSilver:
+                        GenerateDeathDrops(characterDrop, SkeletonArcherSilverMinion.ItemsCost);
+                        break;
+                    case SkeletonType.MageTier1:
+                    case SkeletonType.MageTier2:
+                    case SkeletonType.MageTier3:
+                        GenerateDeathDrops(characterDrop, SkeletonMageMinion.ItemsCost);
+                        break;
+                    case SkeletonType.PoisonTier1:
+                    case SkeletonType.PoisonTier2:
+                    case SkeletonType.PoisonTier3:
+                        GenerateDeathDrops(characterDrop, PoisonSkeletonMinion.ItemsCost);
+                        break;
+                    case SkeletonType.Woodcutter:
+                        GenerateDeathDrops(characterDrop, SkeletonWoodcutterMinion.ItemsCost);
+                        break;
+                    case SkeletonType.Miner:
+                        GenerateDeathDrops(characterDrop, SkeletonMinerMinion.ItemsCost);
+                        break;
+                }
             }
-
-            if (characterDrop == null) return;
 
             switch (armorType)
             {

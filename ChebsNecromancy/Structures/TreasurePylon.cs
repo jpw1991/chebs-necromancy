@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
-
-using ChebsNecromancy.Minions;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using ChebsValheimLibrary.Structures;

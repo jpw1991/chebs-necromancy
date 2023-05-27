@@ -29,9 +29,8 @@ namespace ChebsNecromancy.Patches
         {
             if (BasePlugin.BoneFragmentsDroppedAmountMin.Value >= 0
                 && BasePlugin.BoneFragmentsDroppedAmountMax.Value > 0
-                // for some stupid reason, the GuardianWraith somehow drops bones even though it shouldn't even have
-                // a CharacterDrop component on it. I guess somehow it's being added on. Just ignore it
-                && !__instance.TryGetComponent(out GuardianWraithMinion _))
+                // no extra bones from undead minions
+                && !__instance.TryGetComponent(out UndeadMinion _))
             {
                 CharacterDrop.Drop bones = new()
                 {
