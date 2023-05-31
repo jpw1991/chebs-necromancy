@@ -89,7 +89,8 @@ namespace ChebsNecromancy.Structures
         
         private void Awake()
         {
-            StartCoroutine(LookForPieces());
+            if (ZNet.instance.IsServer())
+                StartCoroutine(LookForPieces());
         }
 
         IEnumerator LookForPieces()
@@ -120,7 +121,12 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RepairUpdateInterval.Value);
-                yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
+                
+                var playersInRange = new List<Player>();
+                Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
+                if (playersInRange.Count < 1) continue;
+
+                yield return new WaitWhile(() => playersInRange[0].IsSleeping());
 
                 var piecesInRange = PiecesInRange();
                 foreach (var wearNTear in piecesInRange)
@@ -128,27 +134,24 @@ namespace ChebsNecromancy.Structures
                     var healthPercent = wearNTear.GetHealthPercentage();
                     if (RepairDamage(wearNTear))
                     {
-                        var player = Player.m_localPlayer;
-                        if (player != null)
+                        // show repair text if player is near the pylon
+                        if (playersInRange.Any(player => Vector3.Distance(player.transform.position, transform.position) < 5))
                         {
-                            // show repair text if player is near the pylon
-                            if (Vector3.Distance(player.transform.position, transform.position) < 5)
+                            Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
+                                $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
+                        }
+
+                        // make the hammer sound and puff of smoke etc. if the player is nearby the thing being repaired
+                        var playersInRangeOfRepairedObject = new List<Player>();
+                        Player.GetPlayersInRange(wearNTear.transform.position, 20f, playersInRangeOfRepairedObject);
+                        if (playersInRangeOfRepairedObject.Count > 0)
+                        {
+                            var localPiece = wearNTear.m_piece;
+                            if (localPiece is not null)
                             {
-                                Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
-                                    $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
-                            }
-                        
-                            // make the hammer sound and puff of smoke etc. if the player is nearby the thing being repaired
-                            var distance = Vector3.Distance(player.transform.position, wearNTear.transform.position);
-                            if (distance < 20)
-                            {
-                                var localPiece = wearNTear.m_piece;
-                                if (localPiece is not null)
-                                {
-                                    var localPieceTransform = localPiece.transform;
-                                    localPiece.m_placeEffect.Create(localPieceTransform.position,
-                                        localPieceTransform.rotation);
-                                }
+                                var localPieceTransform = localPiece.transform;
+                                localPiece.m_placeEffect.Create(localPieceTransform.position,
+                                    localPieceTransform.rotation);
                             }
                         }
                         

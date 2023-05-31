@@ -77,7 +77,8 @@ namespace ChebsNecromancy.Structures
         
         private void Awake()
         {
-            StartCoroutine(LookForPieces());
+            if (ZNet.instance.IsServer())
+                StartCoroutine(LookForPieces());
         }
 
         IEnumerator LookForPieces()
@@ -108,14 +109,19 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RefuelerUpdateInterval.Value);
-                yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
+                
+                var playersInRange = new List<Player>();
+                Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
+                if (playersInRange.Count < 1) continue;
 
-                Tuple<List<Smelter>, List<Fireplace>, List<CookingStation>> tuple = GetNearbySmeltersAndFireplaces();
+                yield return new WaitWhile(() => playersInRange[0].IsSleeping());
 
-                List<Smelter> smelters = tuple.Item1;
+                var tuple = GetNearbySmeltersAndFireplaces();
+
+                var smelters = tuple.Item1;
                 if (smelters != null) smelters.ForEach(ManageSmelter);
 
-                List<Fireplace> fireplaces = tuple.Item2;
+                var fireplaces = tuple.Item2;
                 if (fireplaces != null) fireplaces.ForEach(ManageFireplace);
 
                 var cookingStations = tuple.Item3;
@@ -136,13 +142,13 @@ namespace ChebsNecromancy.Structures
             {
                 if (ManageSmelters.Value)
                 {
-                    Smelter smelter = nearbyCollider.GetComponentInParent<Smelter>();
+                    var smelter = nearbyCollider.GetComponentInParent<Smelter>();
                     if (smelter != null) smelters.Add(smelter);
                 }
 
                 if (ManageFireplaces.Value)
                 {
-                    Fireplace fireplace = nearbyCollider.GetComponentInParent<Fireplace>();
+                    var fireplace = nearbyCollider.GetComponentInParent<Fireplace>();
                     if (fireplace != null) fireplaces.Add(fireplace);
                 }
             }
@@ -153,7 +159,7 @@ namespace ChebsNecromancy.Structures
                     SightRadius.Value, pieceMaskNonSolid);
                 foreach (var nearbyPieceNonSolidCollider in nearbyPieceNonSolidColliders)
                 {
-                    CookingStation cookingStation = nearbyPieceNonSolidCollider.GetComponentInParent<CookingStation>();
+                    var cookingStation = nearbyPieceNonSolidCollider.GetComponentInParent<CookingStation>();
                     if (cookingStation != null) cookingStations.Add(cookingStation);
                 }
             }
@@ -178,7 +184,7 @@ namespace ChebsNecromancy.Structures
             {
                 while (_inventory.CountItems(fuel) > 0)
                 {
-                    float currentFuel = smelter.GetFuel();
+                    var currentFuel = smelter.GetFuel();
                     if (currentFuel < smelter.m_maxFuel)
                     {
                         smelter.SetFuel(currentFuel + 1);
@@ -203,7 +209,7 @@ namespace ChebsNecromancy.Structures
             // eg.
             // copper ore --> copper
             // wood --> coal
-            ItemDrop.ItemData itemData = smelter.FindCookableItem(_inventory);
+            var itemData = smelter.FindCookableItem(_inventory);
             if (itemData != null)
             {
                 // adapted from Smelter.OnAddOre
@@ -230,7 +236,7 @@ namespace ChebsNecromancy.Structures
 
         private void ManageFireplace(Fireplace fireplace)
         {
-            float currentFuel = fireplace.m_nview.GetZDO().GetFloat("fuel");
+            var currentFuel = fireplace.m_nview.GetZDO().GetFloat("fuel");
             // fuel is always an incomplete number like 5.98/6.00 because the moment you add the fuel
             // it begins decreasing. So minus 1 from the max so we only add fuel if it is something like
             // 4.98/6.00

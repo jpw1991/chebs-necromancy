@@ -74,7 +74,8 @@ namespace ChebsNecromancy.Structures
                     slot.m_switch.m_hoverText = armorStand.m_name;
                 });
             }
-            StartCoroutine(LookForCrops());
+            if (ZNet.instance.IsServer())
+                StartCoroutine(LookForCrops());
         }
 
         IEnumerator LookForCrops()
@@ -89,10 +90,16 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value);
-                yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
+                
+                var playersInRange = new List<Player>();
+                Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
+                if (playersInRange.Count < 1) continue;
+
+                yield return new WaitWhile(() => playersInRange[0].IsSleeping());
 
                 PickPickables();
             }
+            // ReSharper disable once IteratorNeverReturns
         }
 
         private void PickPickables()
@@ -107,7 +114,7 @@ namespace ChebsNecromancy.Structures
             foreach (var col in nearbyPickables)
             {
                 var pickable = col.GetComponentInParent<Pickable>();
-                if (pickable != null && PickableList.Value.Exists(item => pickable.name.Contains(item)))//.Contains(pickable.m_itemPrefab.name))
+                if (pickable != null && PickableList.Value.Exists(item => pickable.name.Contains(item)))
                 {
                     pickable.m_nview.InvokeRPC("Pick");
                 }

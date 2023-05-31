@@ -66,7 +66,8 @@ namespace ChebsNecromancy.Structures
         
         private void Awake()
         {
-            StartCoroutine(SpawnNeckros());
+            if (ZNet.instance.IsServer())
+                StartCoroutine(SpawnNeckros());
         }
 
         private IEnumerator SpawnNeckros()
@@ -97,10 +98,16 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(SpawnInterval.Value);
-                yield return new WaitWhile(() => Player.m_localPlayer == null || Player.m_localPlayer.m_sleeping);
+                
+                var playersInRange = new List<Player>();
+                Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
+                if (playersInRange.Count < 1) continue;
+
+                yield return new WaitWhile(() => playersInRange[0].IsSleeping());
 
                 SpawnNeckro();
             }
+            // ReSharper disable once IteratorNeverReturns
         }
         
         private bool CanSpawnNeckro

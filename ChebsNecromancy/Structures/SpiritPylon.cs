@@ -59,10 +59,8 @@ namespace ChebsNecromancy.Structures
             MaxGhosts = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonMaxGhosts", 3,
                 "The maximum number of ghosts that a Spirit Pylon can spawn.", plugin.IntQuantityValue, true);
         }
-
-#pragma warning disable IDE0051 // Remove unused private members
+        
         private void Awake()
-#pragma warning restore IDE0051 // Remove unused private members
         {
             StartCoroutine(LookForEnemies());
         }

@@ -62,12 +62,11 @@ namespace ChebsNecromancy.Structures
                 15, "The maximum number of bats that a bat beacon can spawn.", plugin.IntQuantityValue,
                 true);
         }
-
-#pragma warning disable IDE0051 // Remove unused private members
+        
         private void Awake()
-#pragma warning restore IDE0051 // Remove unused private members
         {
-            StartCoroutine(LookForEnemies());
+            if (ZNet.instance.IsServer())
+                StartCoroutine(LookForEnemies());
         }
         
         IEnumerator LookForEnemies()
