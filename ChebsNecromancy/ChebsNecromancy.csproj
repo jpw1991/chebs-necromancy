@@ -169,7 +169,6 @@
     <Compile Include="Patches\BaseAIPatches.cs" />
     <Compile Include="Patches\CharacterDropPatches.cs" />
     <Compile Include="Patches\CharacterPatches.cs" />
-    <Compile Include="Patches\MonsterAIPatches.cs" />
     <Compile Include="Patches\TameablePatches.cs" />
     <Compile Include="Patches\WearNTearPatches.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />

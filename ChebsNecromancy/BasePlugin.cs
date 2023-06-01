@@ -450,7 +450,6 @@ namespace ChebsNecromancy
                 prefabNames.ForEach(prefabName =>
                 {
                     var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, RadeonFriendly.Value);
-                    Logger.LogInfo(prefabName);
                     switch (prefabName)
                     {
                         case "ChebGonaz_DraugrWarrior.prefab":
