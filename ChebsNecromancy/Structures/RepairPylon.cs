@@ -12,7 +12,12 @@ namespace ChebsNecromancy.Structures
     internal class RepairPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
-        public static ConfigEntry<float> RepairUpdateInterval, FuelConsumedPerPointOfDamage, RepairWoodWhen, RepairOtherWhen;
+
+        public static ConfigEntry<float> RepairUpdateInterval,
+            FuelConsumedPerPointOfDamage,
+            RepairWoodWhen,
+            RepairOtherWhen;
+
         // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
         // public static ConfigEntry<int> RepairContainerWidth, RepairContainerHeight;
         public static MemoryConfigEntry<string, List<string>> Fuels, AlwaysRepair;
@@ -39,7 +44,7 @@ namespace ChebsNecromancy.Structures
         {
             ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
         }
-        
+
         public static void CreateConfigs(BasePlugin plugin)
         {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonAllowed", true,
@@ -64,44 +69,45 @@ namespace ChebsNecromancy.Structures
             // RepairContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairPylonContainerHeight", 4,
             //     "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
 
-            FuelConsumedPerPointOfDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FuelConsumedPerPointOfDamage", .01f,
+            FuelConsumedPerPointOfDamage = plugin.ModConfig(ChebsRecipeConfig.ObjectName,
+                "FuelConsumedPerPointOfDamage", .01f,
                 "How much fuel is consumed per point of damage. For example at 0.01 it will cost 1 fuel per 100 points of damage healed.",
                 null, true);
-            
+
             RepairWoodWhen = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairWoodWhen", .25f,
                 "How low a wooden structure's health must drop in order for it to be repaired. Set to 0 to repair regardless of damage.",
                 null, true);
-            
+
             RepairOtherWhen = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RepairOtherWhen", 0f,
                 "How low a non-wood structure's health must drop in order for it to be repaired. Set to 0 to repair regardless of damage.",
                 null, true);
-            
-            var alwaysRepair = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "AlwaysRepair", "piece_sharpstakes,piece_dvergr_sharpstakes",
+
+            var alwaysRepair = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "AlwaysRepair",
+                "piece_sharpstakes,piece_dvergr_sharpstakes",
                 "These prefabs are always repaired no matter their damage and ignore the RepairWoodWhen/RepairOtherWhen thresholds. This is good for defensive things like stakes which should always be kept at maximum health. Please use a comma-delimited list of prefab names.",
                 null, true);
             AlwaysRepair = new MemoryConfigEntry<string, List<string>>(alwaysRepair, s => s?.Split(',').ToList());
-            
+
             var fuels = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Fuels", "Resin,GreydwarfEye,Pukeberries",
                 "The items that are consumed as fuel when repairing. Please use a comma-delimited list of prefab names.",
                 null, true);
             Fuels = new MemoryConfigEntry<string, List<string>>(fuels, s => s?.Split(',').ToList());
         }
-        
+
         private void Awake()
         {
-            if (ZNet.instance.IsServer())
-                StartCoroutine(LookForPieces());
+            StartCoroutine(LookForPieces());
         }
 
         IEnumerator LookForPieces()
         {
-            yield return new WaitWhile(() => ZInput.instance == null);
+            //yield return new WaitWhile(() => ZInput.instance == null);
 
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
-            
+
             // originally the Container was set on the prefab in unity and set up properly, but it will cause the
             // problem here:  https://github.com/jpw1991/chebs-necromancy/issues/100
             // So we add it here like this instead.
@@ -121,7 +127,9 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RepairUpdateInterval.Value);
-                
+
+                if (!piece.m_nview.IsOwner()) continue;
+
                 var playersInRange = new List<Player>();
                 Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
                 if (playersInRange.Count < 1) continue;
@@ -135,10 +143,12 @@ namespace ChebsNecromancy.Structures
                     if (RepairDamage(wearNTear))
                     {
                         // show repair text if player is near the pylon
-                        if (playersInRange.Any(player => Vector3.Distance(player.transform.position, transform.position) < 5))
+                        if (playersInRange.Any(player =>
+                                Vector3.Distance(player.transform.position, transform.position) < 5))
                         {
-                            Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "", 
-                                $"Repairing {wearNTear.gameObject.name} ({(healthPercent*100).ToString("0.##")}%)...", false);
+                            Chat.instance.SetNpcText(gameObject, Vector3.up, 5f, 2f, "",
+                                $"Repairing {wearNTear.gameObject.name} ({(healthPercent * 100).ToString("0.##")}%)...",
+                                false);
                         }
 
                         // make the hammer sound and puff of smoke etc. if the player is nearby the thing being repaired
@@ -154,7 +164,7 @@ namespace ChebsNecromancy.Structures
                                     localPieceTransform.rotation);
                             }
                         }
-                        
+
                         yield return new WaitForSeconds(1);
                     }
                 }
@@ -173,19 +183,21 @@ namespace ChebsNecromancy.Structures
             {
                 if (wearNTear.m_materialType is WearNTear.MaterialType.Wood or WearNTear.MaterialType.HardWood)
                 {
-                    if (RepairWoodWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairWoodWhen.Value) return false;
+                    if (RepairWoodWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairWoodWhen.Value)
+                        return false;
                 }
                 else
                 {
-                    if (RepairOtherWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairOtherWhen.Value) return false;
-                }   
+                    if (RepairOtherWhen.Value != 0.0f && wearNTear.GetHealthPercentage() >= RepairOtherWhen.Value)
+                        return false;
+                }
             }
 
             var consumedFuel = ConsumeFuel(wearNTear);
             if (consumedFuel) wearNTear.Repair();
             return consumedFuel;
         }
-        
+
         private int FuelInInventory
         {
             get
@@ -198,6 +210,7 @@ namespace ChebsNecromancy.Structures
                     accumulator +=
                         _inventory.CountItems(fuelPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name);
                 }
+
                 return accumulator;
             }
         }
@@ -220,7 +233,7 @@ namespace ChebsNecromancy.Structures
 
             // not enough fuel
             if (fuelAvailable < fuelToConsume) return false;
-            
+
             // enough fuel; consume
             foreach (var key in consumableFuels.Keys)
             {
@@ -230,7 +243,7 @@ namespace ChebsNecromancy.Structures
                     _inventory.RemoveItem(key, fuelToConsume);
                     return true;
                 }
-                
+
                 fuelToConsume -= fuel;
                 _inventory.RemoveItem(key, fuel);
             }
@@ -246,7 +259,7 @@ namespace ChebsNecromancy.Structures
                 ConsumeFuel((int)_fuelAccumulator);
                 _fuelAccumulator -= (int)_fuelAccumulator;
             }
-            
+
             // debts paid - continue on to repair the current damage
             var percentage = wearNTear.GetHealthPercentage();
             if (percentage <= 0) return false;
@@ -278,6 +291,7 @@ namespace ChebsNecromancy.Structures
                     //repairPylonSkipped.Add($"{nearbyCollider.name}");
                     continue;
                 }
+
                 result.Add(wearAndTear);
             }
             //Jotunn.Logger.LogInfo($"Skipped {string.Join(",", repairPylonSkipped)}");

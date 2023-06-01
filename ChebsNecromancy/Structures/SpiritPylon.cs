@@ -15,7 +15,7 @@ namespace ChebsNecromancy.Structures
         public static ConfigEntry<float> GhostDuration;
         public static ConfigEntry<float> DelayBetweenGhosts;
         public static ConfigEntry<int> MaxGhosts;
-        
+
         protected List<GameObject> SpawnedGhosts = new();
         private float ghostLastSpawnedAt;
 
@@ -30,7 +30,7 @@ namespace ChebsNecromancy.Structures
             PrefabName = "ChebGonaz_SpiritPylon.prefab",
             ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
         };
-        
+
         public new static void UpdateRecipe()
         {
             ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
@@ -43,7 +43,8 @@ namespace ChebsNecromancy.Structures
 
             ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonBuildCosts",
                 ChebsRecipeConfig.DefaultRecipe,
-                "Materials needed to build Spirit Pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue,
+                "Materials needed to build Spirit Pylon. None or Blank will use Default settings. Format: " +
+                ChebsRecipeConfig.RecipeValue,
                 null, true);
 
             SightRadius = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonSightRadius", 30f,
@@ -59,34 +60,27 @@ namespace ChebsNecromancy.Structures
             MaxGhosts = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "SpiritPylonMaxGhosts", 3,
                 "The maximum number of ghosts that a Spirit Pylon can spawn.", plugin.IntQuantityValue, true);
         }
-        
+
         private void Awake()
         {
             StartCoroutine(LookForEnemies());
         }
-        
+
         IEnumerator LookForEnemies()
         {
-            while (ZInput.instance == null)
-            {
-                yield return new WaitForSeconds(2);
-            }
-
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
-            Piece piece = GetComponent<Piece>();
-            while (!piece.IsPlacedByPlayer())
-            {
-                //Jotunn.Logger.LogInfo("Waiting for player to place pylon...");
-                yield return new WaitForSeconds(2);
-            }
+            var piece = GetComponent<Piece>();
+            yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
 
             while (true)
             {
                 yield return new WaitForSeconds(2);
 
+                if (!piece.m_nview.IsOwner()) continue;
+
                 // clear out any dead/destroyed ghosts
-                for (int i=SpawnedGhosts.Count-1; i>=0; i--)
+                for (var i = SpawnedGhosts.Count - 1; i >= 0; i--)
                 {
                     if (SpawnedGhosts[i] == null)
                     {
@@ -94,9 +88,8 @@ namespace ChebsNecromancy.Structures
                     }
                 }
 
-                if (Player.m_localPlayer == null) continue;
-                if (!EnemiesNearby(out Character characterInRange, SightRadius.Value)) continue;
-                
+                if (!EnemiesNearby(out var characterInRange, SightRadius.Value)) continue;
+
                 // spawn ghosts up until the limit
                 if (SpawnedGhosts.Count < MaxGhosts.Value)
                 {
@@ -104,7 +97,7 @@ namespace ChebsNecromancy.Structures
                     {
                         ghostLastSpawnedAt = Time.time;
 
-                        GameObject friendlyGhost = SpawnFriendlyGhost();
+                        var friendlyGhost = SpawnFriendlyGhost();
                         friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
                         SpawnedGhosts.Add(friendlyGhost);
                     }
@@ -114,22 +107,22 @@ namespace ChebsNecromancy.Structures
 
         protected GameObject SpawnFriendlyGhost()
         {
-            int quality = 1;
+            var quality = 1;
 
-            string prefabName = "ChebGonaz_SpiritPylonGhost";
-            GameObject prefab = ZNetScene.instance.GetPrefab(prefabName);
+            var prefabName = "ChebGonaz_SpiritPylonGhost";
+            var prefab = ZNetScene.instance.GetPrefab(prefabName);
             if (!prefab)
             {
                 Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed!");
                 return null;
             }
 
-            GameObject spawnedChar = Instantiate(
+            var spawnedChar = Instantiate(
                 prefab,
                 transform.position + transform.forward * 2f + Vector3.up,
                 Quaternion.identity);
 
-            Character character = spawnedChar.GetComponent<Character>();
+            var character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
 
             return spawnedChar;

@@ -18,6 +18,12 @@ I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy 
 
 Thank you and I hope you enjoy the mod! If you have questions or need help please join my [Discord](https://discord.com/invite/EB96ASQ).
 
+### Bisect Hosting
+
+I'm partnered with [Bisect Hosting](https://bisecthosting.com/chebgonaz) to give you a discount when you use promocode `chebgonaz`.
+
+![bisectbanner](https://www.bisecthosting.com/partners/custom-banners/b2629ae1-293a-4094-9d2d-002d14529a82.webp)
+
 ## Reporting Bugs & Requesting Features
 
 If you would like to report a bug or request a feature, the best way to do it (in order from most preferable to least preferable) is:

@@ -51,11 +51,12 @@ namespace ChebsNecromancy.Structures
                 "How long a Farming Pylon waits between checking containers and crops (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
 
-            var pickableList = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FarmingPylonPickableList", DefaultPickables,
+            var pickableList = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "FarmingPylonPickableList",
+                DefaultPickables,
                 "A list of pickable IDs.", null, true);
             PickableList = new MemoryConfigEntry<string, List<string>>(pickableList, s => s?.Split(',').ToList());
         }
-        
+
         public new static void UpdateRecipe()
         {
             ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
@@ -69,19 +70,14 @@ namespace ChebsNecromancy.Structures
             {
                 // for some reason, you gotta go through each slot and adjust the name otherwise it will remain as
                 // the basic armorstand localization rather than the cheb one
-                armorStand.m_slots.ForEach(slot =>
-                {
-                    slot.m_switch.m_hoverText = armorStand.m_name;
-                });
+                armorStand.m_slots.ForEach(slot => { slot.m_switch.m_hoverText = armorStand.m_name; });
             }
-            if (ZNet.instance.IsServer())
-                StartCoroutine(LookForCrops());
+
+            StartCoroutine(LookForCrops());
         }
 
         IEnumerator LookForCrops()
         {
-            yield return new WaitWhile(() => ZInput.instance == null);
-
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
             var piece = GetComponent<Piece>();
@@ -90,7 +86,9 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value);
-                
+
+                if (!piece.m_nview.IsOwner()) continue;
+
                 var playersInRange = new List<Player>();
                 Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
                 if (playersInRange.Count < 1) continue;

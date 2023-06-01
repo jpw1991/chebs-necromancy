@@ -18,7 +18,7 @@ namespace ChebsNecromancy.Structures
             ZNetScene.instance.Destroy(gameObject);
         }
     }
-    
+
     internal class TreasurePylon : Structure
     {
         public const string EffectName = "ChebGonaz_TreasurePylonEffect";
@@ -63,32 +63,33 @@ namespace ChebsNecromancy.Structures
             UpdateInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "UpdateInterval", 30f,
                 "How long a Treasure Pylon waits between checking containers (lower values may negatively impact performance).",
                 plugin.FloatQuantityValue, true);
-            
-            var containerWhitelist = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWhitelist", "piece_chest_wood",
+
+            var containerWhitelist = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWhitelist",
+                "piece_chest_wood",
                 "The containers that are sorted. Please use a comma-delimited list of prefab names.",
                 null, true);
-            ContainerWhitelist = new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
+            ContainerWhitelist =
+                new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
         }
 
         private void Awake()
         {
-            if (ZNet.instance.IsServer())
-                StartCoroutine(LookForPieces());
+            StartCoroutine(LookForPieces());
         }
 
         IEnumerator LookForPieces()
         {
-            yield return new WaitWhile(() => ZInput.instance == null);
-
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
-            
+
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value + Random.value);
-                
+
+                if (!piece.m_nview.IsOwner()) continue;
+
                 var playersInRange = new List<Player>();
                 Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
                 if (playersInRange.Count < 1) continue;
@@ -97,13 +98,13 @@ namespace ChebsNecromancy.Structures
 
                 var allowedContainers = ContainerWhitelist.Value;
                 var nearbyContainers = ChebGonazMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
-                    c => c.m_piece.IsPlacedByPlayer() 
+                    c => c.m_piece.IsPlacedByPlayer()
                          && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);
 
                 for (int i = 0; i < nearbyContainers.Count; i++)
                 {
                     yield return new WaitWhile(() => playersInRange[0].IsSleeping());
-                    
+
                     // make a fancy effect on the container being processed
                     var effect = Instantiate(ZNetScene.instance.GetPrefab(EffectName));
                     effect.transform.position = nearbyContainers[i].transform.position + Vector3.up;
@@ -142,7 +143,7 @@ namespace ChebsNecromancy.Structures
                                 {
                                     currentContainerInventory.AddItem(jItem);
                                     itemsMoved = currentContainerInventory.CountItems(jItem.m_shared.m_name) -
-                                                currentContainerItemCount;
+                                                 currentContainerItemCount;
                                 }
 
                                 if (itemsMoved > 0)
@@ -153,7 +154,7 @@ namespace ChebsNecromancy.Structures
                             }
                         }
                     }
-                    
+
                     //Jotunn.Logger.LogInfo($"Moved {string.Join(",", movedLog)} to {currentContainerInventory.GetName()}");
                     yield return new WaitForSeconds(5);
                 }

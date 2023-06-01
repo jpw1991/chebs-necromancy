@@ -12,7 +12,9 @@ namespace ChebsNecromancy.Structures
     internal class RefuelerPylon : Structure
     {
         public static ConfigEntry<float> SightRadius;
+
         public static ConfigEntry<float> RefuelerUpdateInterval;
+
         // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
         //public static ConfigEntry<int> RefuelerContainerWidth, RefuelerContainerHeight;
         public static ConfigEntry<bool> ManageFireplaces, ManageSmelters, ManageCookingStations;
@@ -39,7 +41,7 @@ namespace ChebsNecromancy.Structures
         {
             ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
         }
-        
+
         public static void CreateConfigs(BasePlugin plugin)
         {
             ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "RefuelerPylonAllowed", true,
@@ -74,22 +76,21 @@ namespace ChebsNecromancy.Structures
             ManageCookingStations = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ManageCookingStations", true,
                 "Whether making a Refueler Pylon will manage cooking stations.", plugin.BoolValue, true);
         }
-        
+
         private void Awake()
         {
-            if (ZNet.instance.IsServer())
-                StartCoroutine(LookForPieces());
+            StartCoroutine(LookForPieces());
         }
 
         IEnumerator LookForPieces()
         {
-            yield return new WaitWhile(() => ZInput.instance == null);
+            //yield return new WaitWhile(() => ZInput.instance == null);
 
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
-            
+
             // originally the Container was set on the prefab in unity and set up properly, but it will cause the
             // problem here:  https://github.com/jpw1991/chebs-necromancy/issues/100
             // So we add it here like this instead.
@@ -109,7 +110,9 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(RefuelerUpdateInterval.Value);
-                
+
+                if (!piece.m_nview.IsOwner()) continue;
+
                 var playersInRange = new List<Player>();
                 Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
                 if (playersInRange.Count < 1) continue;

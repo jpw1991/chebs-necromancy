@@ -15,6 +15,7 @@ namespace ChebsNecromancy.Structures
     internal class NeckroGathererPylon : Structure
     {
         public static ConfigEntry<float> SpawnInterval;
+
         public static MemoryConfigEntry<string, List<string>> NeckroCost;
         // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
         //public static ConfigEntry<int> ContainerWidth, ContainerHeight;
@@ -35,12 +36,15 @@ namespace ChebsNecromancy.Structures
 
         public static void CreateConfigs(BasePlugin plugin)
         {
-            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonAllowed", true,
+            ChebsRecipeConfig.Allowed = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonAllowed",
+                true,
                 "Whether making a the pylon is allowed or not.", plugin.BoolValue, true);
 
-            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererPylonBuildCosts", 
-                ChebsRecipeConfig.DefaultRecipe, 
-                "Materials needed to build the pylon. None or Blank will use Default settings. Format: " + ChebsRecipeConfig.RecipeValue, 
+            ChebsRecipeConfig.CraftingCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName,
+                "NeckroGathererPylonBuildCosts",
+                ChebsRecipeConfig.DefaultRecipe,
+                "Materials needed to build the pylon. None or Blank will use Default settings. Format: " +
+                ChebsRecipeConfig.RecipeValue,
                 null, true);
 
             SpawnInterval = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererSpawnInterval", 60f,
@@ -50,7 +54,7 @@ namespace ChebsNecromancy.Structures
                 "The items that are consumed when creating a Neckro Gatherer. Please use a comma-delimited list of prefab names with a : and integer for amount.",
                 null, true);
             NeckroCost = new MemoryConfigEntry<string, List<string>>(neckroCost, s => s?.Split(',').ToList());
-            
+
             // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
             // ContainerWidth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWidth", 4,
             //     "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(2, 10), true);
@@ -58,21 +62,20 @@ namespace ChebsNecromancy.Structures
             // ContainerHeight = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerHeight", 4,
             //     "Inventory size = width * height = 4 * 4 = 16.", new AcceptableValueRange<int>(4, 20), true);
         }
-        
+
         public new static void UpdateRecipe()
         {
             ChebsRecipeConfig.UpdateRecipe(ChebsRecipeConfig.CraftingCost);
         }
-        
+
         private void Awake()
         {
-            if (ZNet.instance.IsServer())
-                StartCoroutine(SpawnNeckros());
+            StartCoroutine(SpawnNeckros());
         }
 
         private IEnumerator SpawnNeckros()
         {
-            yield return new WaitWhile(() => ZInput.instance == null);
+            //yield return new WaitWhile(() => ZInput.instance == null);
 
             // prevent coroutine from doing its thing while the pylon isn't
             // yet constructed
@@ -94,11 +97,13 @@ namespace ChebsNecromancy.Structures
             // trying to set width causes error here: https://github.com/jpw1991/chebs-necromancy/issues/100
             // inv.m_width = ContainerWidth.Value;
             // inv.m_height = ContainerHeight.Value;
-            
+
             while (true)
             {
                 yield return new WaitForSeconds(SpawnInterval.Value);
-                
+
+                if (!piece.m_nview.IsOwner()) continue;
+
                 var playersInRange = new List<Player>();
                 Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
                 if (playersInRange.Count < 1) continue;
@@ -109,7 +114,7 @@ namespace ChebsNecromancy.Structures
             }
             // ReSharper disable once IteratorNeverReturns
         }
-        
+
         private bool CanSpawnNeckro
         {
             get
@@ -123,27 +128,30 @@ namespace ChebsNecromancy.Structures
                         Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
                         return false;
                     }
-                    
+
                     var itemRequired = splut[0];
                     if (!int.TryParse(splut[1], out var itemAmountRequired))
                     {
                         Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
                         return false;
                     }
-                    
+
                     var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
                     if (requiredItemPrefab == null)
                     {
-                        Logger.LogError($"Error processing config for Neckro Gatherer Costs: {itemRequired} doesn't exist.");
+                        Logger.LogError(
+                            $"Error processing config for Neckro Gatherer Costs: {itemRequired} doesn't exist.");
                         return false;
                     }
-                    var amountInInv = _container.GetInventory().CountItems(requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name);
+
+                    var amountInInv = _container.GetInventory()
+                        .CountItems(requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name);
                     if (amountInInv >= itemAmountRequired)
                     {
                         canSpawn = true;
                     }
-                        
                 }
+
                 return canSpawn;
             }
         }
@@ -158,20 +166,22 @@ namespace ChebsNecromancy.Structures
                     Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
                     return;
                 }
-                    
+
                 var itemRequired = splut[0];
                 if (!int.TryParse(splut[1], out var itemAmountRequired))
                 {
                     Logger.LogError("Error in config for Neckro Gatherer Costs - please revise.");
                     return;
                 }
-                    
+
                 var requiredItemPrefab = ZNetScene.instance.GetPrefab(itemRequired);
                 if (requiredItemPrefab == null)
                 {
-                    Logger.LogError($"Error processing config for Neckro Gatherer Costs: {itemRequired} doesn't exist.");
+                    Logger.LogError(
+                        $"Error processing config for Neckro Gatherer Costs: {itemRequired} doesn't exist.");
                     return;
                 }
+
                 var requiredItemName = requiredItemPrefab.GetComponent<ItemDrop>()?.m_itemData.m_shared.m_name;
                 _container.GetInventory().RemoveItem(requiredItemName, itemAmountRequired);
             }
@@ -191,7 +201,7 @@ namespace ChebsNecromancy.Structures
             {
                 return;
             }
-            
+
             ConsumeRequirements();
 
             var quality = 1;
@@ -211,7 +221,7 @@ namespace ChebsNecromancy.Structures
 
             var character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
-            
+
             spawnedChar.GetComponent<NeckroGathererMinion>().UndeadMinionMaster = player.GetPlayerName();
             spawnedChar.AddComponent<FreshMinion>();
         }

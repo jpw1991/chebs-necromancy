@@ -36,10 +36,10 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.4.0";
-        private const string ConfigFileName =  PluginGuid + ".cfg";
+        public const string PluginVersion = "3.4.1";
+        private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
-        
+
         public readonly System.Version ChebsValheimLibraryVersion = new("1.2.4");
 
         private readonly Harmony harmony = new(PluginGuid);
@@ -65,20 +65,20 @@ namespace ChebsNecromancy
         public AcceptableValueList<bool> BoolValue = new(true, false);
         public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
         public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
-        
+
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
-        
+
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMax;
         public static ConfigEntry<float> BoneFragmentsDroppedChance;
-        
+
         public static ConfigEntry<int> ArmorLeatherScrapsRequiredConfig;
         public static ConfigEntry<int> ArmorBronzeRequiredConfig;
         public static ConfigEntry<int> ArmorIronRequiredConfig;
         public static ConfigEntry<int> ArmorBlackIronRequiredConfig;
         public static ConfigEntry<int> NeedlesRequiredConfig;
-        
+
         public static ConfigEntry<bool> DurabilityDamage;
         public static ConfigEntry<float> DurabilityDamageWarrior;
         public static ConfigEntry<float> DurabilityDamageMage;
@@ -88,14 +88,14 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> DurabilityDamageBronze;
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
-        
+
         private void Awake()
         {
-            if (!Base.VersionCheck(ChebsValheimLibraryVersion, out string message))
+            if (!Base.VersionCheck(ChebsValheimLibraryVersion, out var message))
             {
                 Jotunn.Logger.LogWarning(message);
             }
-            
+
             CreateConfigValues();
 
             LoadChebGonazAssetBundle();
@@ -107,12 +107,13 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new KillAllNeckros());
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
-            
+
             SkeletonMinerMinion.SyncInternalsWithConfigs();
             SkeletonWoodcutterMinion.SyncInternalsWithConfigs();
 
             SetupWatcher();
         }
+
         public ConfigEntry<T> ModConfig<T>(
             string group,
             string name,
@@ -148,6 +149,7 @@ namespace ChebsNecromancy
                                              "this setting on."));
 
             #region BoneFragments
+
             BoneFragmentsDroppedAmountMin = Config.Bind("General (Server Synced)", "BoneFragmentsDroppedAmountMin",
                 1, new ConfigDescription("The minimum amount of bones dropped by creatures.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -155,14 +157,18 @@ namespace ChebsNecromancy
             BoneFragmentsDroppedAmountMax = Config.Bind("General (Server Synced)", "BoneFragmentsDroppedAmountMax",
                 3, new ConfigDescription("The maximum amount of bones dropped by creatures.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
+
             BoneFragmentsDroppedChance = Config.Bind("General (Server Synced)", "BoneFragmentsDroppedChance",
                 .25f, new ConfigDescription("The chance of bones dropped by creatures (0 = 0%, 1 = 100%).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
             #endregion
+
             #region MinionUpgrades
+
             ArmorLeatherScrapsRequiredConfig = Config.Bind("General (Server Synced)", "ArmorLeatherScrapsRequired",
-                2, new ConfigDescription("The amount of LeatherScraps required to craft a minion in leather armor.", null,
+                2, new ConfigDescription("The amount of LeatherScraps required to craft a minion in leather armor.",
+                    null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             ArmorBronzeRequiredConfig = Config.Bind("General (Server Synced)", "ArmorBronzeRequired",
@@ -174,7 +180,8 @@ namespace ChebsNecromancy
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             ArmorBlackIronRequiredConfig = Config.Bind("General (Server Synced)", "ArmorBlackIronRequired",
-                1, new ConfigDescription("The amount of Black Metal required to craft a minion in black iron armor.", null,
+                1, new ConfigDescription("The amount of Black Metal required to craft a minion in black iron armor.",
+                    null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             NeedlesRequiredConfig = Config.Bind("General (Server Synced)", "NeedlesRequired",
@@ -182,46 +189,57 @@ namespace ChebsNecromancy
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             #endregion
+
             #region Durability
+
             DurabilityDamage = Config.Bind("General (Server Synced)", "DurabilityDamage",
                 true, new ConfigDescription("Whether using a wand damages its durability.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageWarrior = Config.Bind("General (Server Synced)", "DurabilityDamageWarrior",
                 1f, new ConfigDescription("How much creating a warrior damages a wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageArcher = Config.Bind("General (Server Synced)", "DurabilityDamageArcher",
                 3f, new ConfigDescription("How much creating an archer damages a wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageMage = Config.Bind("General (Server Synced)", "DurabilityDamageMage",
                 5f, new ConfigDescription("How much creating a mage damages a wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamagePoison = Config.Bind("General (Server Synced)", "DurabilityDamagePoison",
                 5f, new ConfigDescription("How much creating a poison skeleton damages a wand.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageLeather = Config.Bind("General (Server Synced)", "DurabilityDamageLeather",
-                1f, new ConfigDescription("How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                1f, new ConfigDescription(
+                    "How much armoring the minion in leather damages the wand (value is added on top of damage from minion type).",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageBronze = Config.Bind("General (Server Synced)", "DurabilityDamageBronze",
-                1f, new ConfigDescription("How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                1f, new ConfigDescription(
+                    "How much armoring the minion in bronze damages the wand (value is added on top of damage from minion type)",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageIron = Config.Bind("General (Server Synced)", "DurabilityDamageIron",
-                1f, new ConfigDescription("How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                1f, new ConfigDescription(
+                    "How much armoring the minion in iron damages the wand (value is added on top of damage from minion type)",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             DurabilityDamageBlackIron = Config.Bind("General (Server Synced)", "DurabilityDamageBlackIron",
-                1f, new ConfigDescription("How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                1f, new ConfigDescription(
+                    "How much armoring the minion in black iron damages the wand (value is added on top of damage from minion type)",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
             #endregion
 
             UndeadMinion.CreateConfigs(this);
-            
+
             SkeletonMinion.CreateConfigs(this);
             PoisonSkeletonMinion.CreateConfigs(this);
             SkeletonArcherFireMinion.CreateConfigs(this);
@@ -235,7 +253,7 @@ namespace ChebsNecromancy
             SkeletonWarriorMinion.CreateConfigs(this);
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
-            
+
             DraugrMinion.CreateConfigs(this);
             DraugrWarriorMinion.CreateConfigs(this);
             DraugrArcherFireMinion.CreateConfigs(this);
@@ -245,9 +263,9 @@ namespace ChebsNecromancy
             DraugrArcherTier1Minion.CreateConfigs(this);
             DraugrArcherTier2Minion.CreateConfigs(this);
             DraugrArcherTier3Minion.CreateConfigs(this);
-            
+
             GuardianWraithMinion.CreateConfigs(this);
-            
+
             LeechMinion.CreateConfigs(this);
             BattleNeckroMinion.CreateConfigs(this);
 
@@ -290,7 +308,7 @@ namespace ChebsNecromancy
             {
                 Logger.LogInfo("Read updated config values");
                 Config.Reload();
-                
+
                 wands.ForEach(wand => wand.UpdateRecipe());
                 necromancersHoodItem.UpdateRecipe();
                 spectralShroudItem.UpdateRecipe();
@@ -300,7 +318,7 @@ namespace ChebsNecromancy
                 NeckroGathererPylon.UpdateRecipe();
                 RefuelerPylon.UpdateRecipe();
                 SpiritPylon.UpdateRecipe();
-                
+
                 SkeletonMinerMinion.SyncInternalsWithConfigs();
                 SkeletonWoodcutterMinion.SyncInternalsWithConfigs();
             }
@@ -321,31 +339,38 @@ namespace ChebsNecromancy
                 SE_Stats LoadSetEffectFromBundle(string setEffectName, AssetBundle bundle)
                 {
                     //Jotunn.Logger.LogInfo($"Loading {setEffectName}...");
-                    SE_Stats seStat = bundle.LoadAsset<SE_Stats>(setEffectName);
+                    var seStat = bundle.LoadAsset<SE_Stats>(setEffectName);
                     if (seStat == null)
                     {
                         Jotunn.Logger.LogError($"LoadSetEffectFromBundle: {setEffectName} is null!");
                     }
+
                     return seStat;
                 }
 
                 #region SetEffects
+
                 SetEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
                 SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
+
                 #endregion
 
                 #region Items
-                GameObject spectralShroudPrefab = Base.LoadPrefabFromBundle(spectralShroudItem.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+
+                var spectralShroudPrefab = Base.LoadPrefabFromBundle(spectralShroudItem.PrefabName,
+                    chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
 
-                GameObject necromancersHoodPrefab = Base.LoadPrefabFromBundle(necromancersHoodItem.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+                var necromancersHoodPrefab = Base.LoadPrefabFromBundle(necromancersHoodItem.PrefabName,
+                    chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
-                
+
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
 
                 // Orb of Beckoning
-                GameObject orbOfBeckoningProjectilePrefab = 
-                    Base.LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+                var orbOfBeckoningProjectilePrefab =
+                    Base.LoadPrefabFromBundle(OrbOfBeckoning.ProjectilePrefabName, chebgonazAssetBundle,
+                        RadeonFriendly.Value);
                 orbOfBeckoningProjectilePrefab.AddComponent<OrbOfBeckoningProjectile>();
 
                 // minion items
@@ -355,22 +380,27 @@ namespace ChebsNecromancy
                 {
                     // we do the keyhints later after vanilla items are available
                     // so we can override what's in the prefab
-                    GameObject wandPrefab = Base.LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+                    var wandPrefab =
+                        Base.LoadPrefabFromBundle(wand.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
                     wand.CreateButtons();
                     KeyHintManager.Instance.AddKeyHint(wand.GetKeyHint());
-                    
+
                     // for orb of beckoning, make sure the custom projectile is set
                     if (wand is OrbOfBeckoning)
                     {
-                        wandPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile = orbOfBeckoningProjectilePrefab;                        
+                        wandPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
+                            orbOfBeckoningProjectilePrefab;
                     }
 
                     ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
                 });
+
                 #endregion
 
                 #region CustomPrefabs
-                GameObject largeCargoCratePrefab = Base.LoadPrefabFromBundle(LargeCargoCrate.PrefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+
+                var largeCargoCratePrefab = Base.LoadPrefabFromBundle(LargeCargoCrate.PrefabName,
+                    chebgonazAssetBundle, RadeonFriendly.Value);
                 if (largeCargoCratePrefab.TryGetComponent(out Container container))
                 {
                     container.m_width = LargeCargoCrate.ContainerWidth.Value;
@@ -378,12 +408,16 @@ namespace ChebsNecromancy
                 }
                 else
                 {
-                    Jotunn.Logger.LogError($"Failed to retrieve Container component from {LargeCargoCrate.PrefabName}.");
+                    Jotunn.Logger.LogError(
+                        $"Failed to retrieve Container component from {LargeCargoCrate.PrefabName}.");
                 }
+
                 PrefabManager.Instance.AddPrefab(new CustomPrefab(largeCargoCratePrefab, false));
+
                 #endregion
 
                 #region Creatures
+
                 List<string> prefabNames = new();
 
                 foreach (DraugrMinion.DraugrType value in Enum.GetValues(typeof(DraugrMinion.DraugrType)))
@@ -405,8 +439,8 @@ namespace ChebsNecromancy
                 prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
                 prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 prefabNames.Add("ChebGonaz_Bat.prefab");
-                prefabNames.Add(BattleNeckroMinion.PrefabName+".prefab");
-                
+                prefabNames.Add(BattleNeckroMinion.PrefabName + ".prefab");
+
                 foreach (LeechMinion.LeechType value in Enum.GetValues(typeof(LeechMinion.LeechType)))
                 {
                     if (value is LeechMinion.LeechType.None) continue;
@@ -416,67 +450,184 @@ namespace ChebsNecromancy
                 prefabNames.ForEach(prefabName =>
                 {
                     var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+                    Logger.LogInfo(prefabName);
+                    switch (prefabName)
+                    {
+                        case "ChebGonaz_DraugrWarrior.prefab":
+                        case "ChebGonaz_DraugrWarriorTier2.prefab":
+                        case "ChebGonaz_DraugrWarriorTier3.prefab":
+                        case "ChebGonaz_DraugrWarriorTier4.prefab":
+                        case "ChebGonaz_DraugrWarriorNeedle.prefab":
+                            prefab.AddComponent<DraugrWarriorMinion>();
+                            break;
+                        case "ChebGonaz_DraugrArcher.prefab":
+                            prefab.AddComponent<DraugrArcherTier1Minion>();
+                            break;
+                        case "ChebGonaz_DraugrArcherTier2.prefab":
+                            prefab.AddComponent<DraugrArcherTier2Minion>();
+                            break;
+                        case "ChebGonaz_DraugrArcherTier3.prefab":
+                            prefab.AddComponent<DraugrArcherTier3Minion>();
+                            break;
+                        case "ChebGonaz_DraugrArcherPoison.prefab":
+                            prefab.AddComponent<DraugrArcherPoisonMinion>();
+                            break;
+                        case "ChebGonaz_DraugrArcherFire.prefab":
+                            prefab.AddComponent<DraugrArcherFireMinion>();
+                            break;
+                        case "ChebGonaz_DraugrArcherFrost.prefab":
+                            prefab.AddComponent<DraugrArcherFrostMinion>();
+                            break;
+                        case "ChebGonaz_DraugrArcherSilver.prefab":
+                            prefab.AddComponent<DraugrArcherSilverMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonWarrior.prefab":
+                        case "ChebGonaz_SkeletonWarriorTier2.prefab":
+                        case "ChebGonaz_SkeletonWarriorTier3.prefab":
+                        case "ChebGonaz_SkeletonWarriorTier4.prefab":
+                        case "ChebGonaz_SkeletonWarriorNeedle.prefab":
+                            prefab.AddComponent<SkeletonWarriorMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcher.prefab":
+                            prefab.AddComponent<SkeletonArcherTier1Minion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcherTier2.prefab":
+                            prefab.AddComponent<SkeletonArcherTier2Minion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcherTier3.prefab":
+                            prefab.AddComponent<SkeletonArcherTier3Minion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcherPoison.prefab":
+                            prefab.AddComponent<SkeletonArcherPoisonMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcherFire.prefab":
+                            prefab.AddComponent<SkeletonArcherFireMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcherFrost.prefab":
+                            prefab.AddComponent<SkeletonArcherFrostMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonArcherSilver.prefab":
+                            prefab.AddComponent<SkeletonArcherSilverMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonMage.prefab":
+                        case "ChebGonaz_SkeletonMageTier2.prefab":
+                        case "ChebGonaz_SkeletonMageTier3.prefab":
+                            prefab.AddComponent<SkeletonMageMinion>();
+                            break;
+                        case "ChebGonaz_PoisonSkeleton.prefab":
+                        case "ChebGonaz_PoisonSkeleton2.prefab":
+                        case "ChebGonaz_PoisonSkeleton3.prefab":
+                            prefab.AddComponent<PoisonSkeletonMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonWoodcutter.prefab":
+                            prefab.AddComponent<SkeletonWoodcutterMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonMiner.prefab":
+                            prefab.AddComponent<SkeletonMinerMinion>();
+                            break;
+                        case "ChebGonaz_GuardianWraith.prefab":
+                            prefab.AddComponent<GuardianWraithMinion>();
+                            break;
+                        case "ChebGonaz_SpiritPylonGhost.prefab":
+                            prefab.AddComponent<SpiritPylonGhostMinion>();
+                            break;
+                        case "ChebGonaz_NeckroGatherer.prefab":
+                            prefab.AddComponent<NeckroGathererMinion>();
+                            break;
+                        case "ChebGonaz_Bat.prefab":
+                            prefab.AddComponent<BatBeaconBatMinion>();
+                            break;
+                        case "ChebGonaz_BattleNeckro.prefab":
+                            prefab.AddComponent<BattleNeckroMinion>();
+                            break;
+                        case "ChebGonaz_Leech.prefab":
+                            prefab.AddComponent<LeechMinion>();
+                            break;
+                        default:
+                            Logger.LogError($"Unknown prefab {prefabName}");
+                            break;
+                    }
+
                     CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 });
+
                 #endregion
 
-                #region Structures   
-                GameObject spiritPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
+                #region Structures
+
+                var spiritPylonPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(SpiritPylon.ChebsRecipeConfig.PrefabName);
+                spiritPylonPrefab.AddComponent<SpiritPylon>();
                 PieceManager.Instance.AddPiece(
                     SpiritPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(spiritPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.ChebsRecipeConfig.IconName))
-                    );
+                        chebgonazAssetBundle.LoadAsset<Sprite>(SpiritPylon.ChebsRecipeConfig.IconName))
+                );
 
-                GameObject refuelerPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
+                var refuelerPylonPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(RefuelerPylon.ChebsRecipeConfig.PrefabName);
+                refuelerPylonPrefab.AddComponent<RefuelerPylon>();
                 PieceManager.Instance.AddPiece(
                     RefuelerPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(refuelerPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.ChebsRecipeConfig.IconName))
-                    );
+                        chebgonazAssetBundle.LoadAsset<Sprite>(RefuelerPylon.ChebsRecipeConfig.IconName))
+                );
 
-                GameObject neckroGathererPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
+                var neckroGathererPylonPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(NeckroGathererPylon.ChebsRecipeConfig.PrefabName);
+                neckroGathererPylonPrefab.AddComponent<NeckroGathererPylon>();
                 PieceManager.Instance.AddPiece(
                     NeckroGathererPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(neckroGathererPylonPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.ChebsRecipeConfig.IconName))
-                    );
+                        chebgonazAssetBundle.LoadAsset<Sprite>(NeckroGathererPylon.ChebsRecipeConfig.IconName))
+                );
 
-                GameObject batBeaconPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.ChebsRecipeConfig.PrefabName);
+                var batBeaconPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(BatBeacon.ChebsRecipeConfig.PrefabName);
+                batBeaconPrefab.AddComponent<BatBeacon>();
                 PieceManager.Instance.AddPiece(
                     BatBeacon.ChebsRecipeConfig.GetCustomPieceFromPrefab(batBeaconPrefab,
-                    chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
-                    );
-                
-                GameObject batLanternPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(BatLantern.ChebsRecipeConfig.PrefabName);
+                        chebgonazAssetBundle.LoadAsset<Sprite>(BatBeacon.ChebsRecipeConfig.IconName))
+                );
+
+                var batLanternPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(BatLantern.ChebsRecipeConfig.PrefabName);
+                batLanternPrefab.AddComponent<BatLantern>();
                 PieceManager.Instance.AddPiece(
                     BatLantern.ChebsRecipeConfig.GetCustomPieceFromPrefab(batLanternPrefab,
                         chebgonazAssetBundle.LoadAsset<Sprite>(BatLantern.ChebsRecipeConfig.IconName))
                 );
-                
-                GameObject farmingPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(FarmingPylon.ChebsRecipeConfig.PrefabName);
+
+                var farmingPylonPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(FarmingPylon.ChebsRecipeConfig.PrefabName);
+                farmingPylonPrefab.AddComponent<FarmingPylon>();
                 PieceManager.Instance.AddPiece(
                     FarmingPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(farmingPylonPrefab,
                         chebgonazAssetBundle.LoadAsset<Sprite>(FarmingPylon.ChebsRecipeConfig.IconName))
                 );
-                
-                GameObject repairPylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(RepairPylon.ChebsRecipeConfig.PrefabName);
+
+                var repairPylonPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(RepairPylon.ChebsRecipeConfig.PrefabName);
+                repairPylonPrefab.AddComponent<RepairPylon>();
                 PieceManager.Instance.AddPiece(
                     RepairPylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(repairPylonPrefab,
                         chebgonazAssetBundle.LoadAsset<Sprite>(RepairPylon.ChebsRecipeConfig.IconName))
                 );
-                
-                GameObject treasurePylonPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.ChebsRecipeConfig.PrefabName);
+
+                var treasurePylonPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.ChebsRecipeConfig.PrefabName);
+                treasurePylonPrefab.AddComponent<TreasurePylon>();
                 PieceManager.Instance.AddPiece(
                     TreasurePylon.ChebsRecipeConfig.GetCustomPieceFromPrefab(treasurePylonPrefab,
                         chebgonazAssetBundle.LoadAsset<Sprite>(TreasurePylon.ChebsRecipeConfig.IconName))
                 );
-                GameObject treasurePylonEffectPrefab =
-                    chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.EffectName);
+                var treasurePylonEffectPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.EffectName);
                 PrefabManager.Instance.AddPrefab(treasurePylonEffectPrefab);
 
                 #endregion
-                
+
                 #region Skills
+
                 var iconSprite = chebgonazAssetBundle.LoadAsset<Sprite>("necromancy_icon.png");
                 AddNecromancy(iconSprite);
+
                 #endregion
             }
             catch (Exception ex)
@@ -508,16 +659,15 @@ namespace ChebsNecromancy
             SetEffectNecromancyArmor2.m_skillLevel = SkillManager.Instance.GetSkill(NecromancySkillIdentifier).m_skill;
             SetEffectNecromancyArmor2.m_skillLevelModifier = NecromancerHood.NecromancySkillBonus.Value;
         }
-
-#pragma warning disable IDE0051 // Remove unused private members
+        
         private void Update()
-#pragma warning restore IDE0051 // Remove unused private members
         {
             if (ZInput.instance != null)
             {
                 if (Time.time > inputDelay)
                 {
-                    wands.ForEach(wand => {
+                    wands.ForEach(wand =>
+                    {
                         if (wand.HandleInputs())
                         {
                             inputDelay = Time.time + .5f;
@@ -530,4 +680,3 @@ namespace ChebsNecromancy
         }
     }
 }
-
