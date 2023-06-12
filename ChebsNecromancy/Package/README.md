@@ -149,6 +149,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+12/06/2023 | 3.5.0 | Update for new Valheim version
 24/05/2023 | 3.3.2 | Functions created in 3.3.0 moved into Cheb's Valheim Library for Cheb's Mercenaries
 24/05/2023 | 3.3.1 | Come up with a solution for issue 100 by removing ability to set custom container sizes.
 18/05/2023 | 3.2.3 | Extra safe-guarding against null objects on m_piece and GetInventory when Neckro Gatherer is attempting to find containers. These things shouldn't ever be null as far as I understand - but other mods can do wild things apparently.
