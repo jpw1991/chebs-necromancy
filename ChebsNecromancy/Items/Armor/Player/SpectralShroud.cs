@@ -185,7 +185,7 @@ namespace ChebsNecromancy.Items.Armor.Player
                 SkillManager.Instance.GetSkill(BasePlugin.NecromancySkillIdentifier).m_skill);
 
             bool shroudEquipped = false, backpackEquipped = false;
-            foreach (var equippedItem in player.GetInventory().GetEquipedtems())
+            foreach (var equippedItem in player.GetInventory().GetEquippedItems())
             {
                 if (!shroudEquipped
                     && equippedItem.TokenName().Equals("$item_friendlyskeletonwand_spectralshroud"))
@@ -222,7 +222,7 @@ namespace ChebsNecromancy.Items.Armor.Player
                     character.SetLevel(quality);
                     character.m_faction = Character.Faction.Players;
                     // set owner to player
-                    character.GetComponent<ZNetView>().GetZDO().SetOwner(ZDOMan.instance.GetMyID());
+                    character.GetComponent<ZNetView>().GetZDO().SetOwner(ZDOMan.instance.m_sessionID);
 
                     MonsterAI monsterAI = instance.GetComponent<MonsterAI>();
                     monsterAI.SetFollowTarget(player.gameObject);

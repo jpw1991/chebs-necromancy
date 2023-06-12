@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props" Condition="Exists('packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props')" />
   <Import Project="..\packages\ILRepack.2.0.18\build\ILRepack.props" Condition="Exists('..\packages\ILRepack.2.0.18\build\ILRepack.props')" />
   <Import Project="..\packages\JotunnLib.2.11.2\build\JotunnLib.props" Condition="Exists('..\packages\JotunnLib.2.11.2\build\JotunnLib.props')" />
   <PropertyGroup>
@@ -47,17 +48,38 @@
     <StartWorkingDirectory>$(VALHEIM_INSTALL)</StartWorkingDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="assembly_guiutils">
-      <HintPath>libs\assembly_guiutils_publicized.dll</HintPath>
+    <Reference Include="AsmResolver, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_postprocessing">
-      <HintPath>libs\assembly_postprocessing_publicized.dll</HintPath>
+    <Reference Include="AsmResolver.DotNet, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.DotNet.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_utils">
-      <HintPath>libs\assembly_utils_publicized.dll</HintPath>
+    <Reference Include="AsmResolver.PE, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.PE.dll</HintPath>
     </Reference>
-    <Reference Include="assembly_valheim_">
-      <HintPath>libs\assembly_valheim_publicized.dll</HintPath>
+    <Reference Include="AsmResolver.PE.File, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.PE.File.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.AssemblyPublicizer, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\BepInEx.AssemblyPublicizer.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx.AssemblyPublicizer.MSBuild, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\BepInEx.AssemblyPublicizer.MSBuild.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_guiutils" Publicize="true">
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_guiutils.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_postprocessing" Publicize="true">
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_postprocessing.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_utils" Publicize="true">
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_utils.dll</HintPath>
+    </Reference>
+    <Reference Include="assembly_valheim" Publicize="true">
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
     </Reference>
     <Reference Include="ChebsValheimLibrary">
       <HintPath>..\..\chebs-valheim-library\ChebsValheimLibrary\ChebsValheimLibrary\bin\Release\ChebsValheimLibrary.dll</HintPath>
@@ -87,9 +109,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="BepInEx">
-      <HintPath>libs\BepInEx.dll</HintPath>
-    </Reference>
     <Reference Include="MonoMod.Utils">
       <HintPath>..\packages\MonoMod.Utils.22.7.31.1\lib\net452\MonoMod.Utils.dll</HintPath>
     </Reference>
@@ -224,5 +243,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\JotunnLib.2.11.2\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.11.2\build\JotunnLib.props'))" />
     <Error Condition="!Exists('..\packages\ILRepack.2.0.18\build\ILRepack.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.2.0.18\build\ILRepack.props'))" />
+    <Error Condition="!Exists('packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props'))" />
   </Target>
 </Project>
