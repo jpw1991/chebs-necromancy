@@ -195,7 +195,7 @@ namespace ChebsNecromancy.Items.Wands
         {
             if (MessageHud.instance == null
                 || Player.m_localPlayer == null
-                || Player.m_localPlayer.GetInventory().GetEquipedtems().Find(
+                || Player.m_localPlayer.GetInventory().GetEquippedItems().Find(
                     equippedItem => equippedItem.TokenName().Equals("$item_friendlyskeletonwand")
                 ) == null) return false;
 
