@@ -103,7 +103,6 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 ## Known issues
 
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but it's linked to the particle effects. You can switch them off by turning `RadeonFriendly = true` in the config.
-- Pylons won't show inventory unless you open a normal container first.
 
 ## Known Incompatibilities
 
@@ -149,6 +148,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+16/06/2023 | 3.5.1 | Option to toggle smoke effects off wraiths (some players getting blinded out here)
 12/06/2023 | 3.5.0 | Update for new Valheim version
 24/05/2023 | 3.3.2 | Functions created in 3.3.0 moved into Cheb's Valheim Library for Cheb's Mercenaries
 24/05/2023 | 3.3.1 | Come up with a solution for issue 100 by removing ability to set custom container sizes.

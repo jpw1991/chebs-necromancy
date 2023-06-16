@@ -36,7 +36,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.5.0";
+        public const string PluginVersion = "3.5.1";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -68,6 +68,8 @@ namespace ChebsNecromancy
 
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
+        // so that players may disable smoke on wraiths, if they wish (feature request)
+        public static ConfigEntry<bool> NoWraithSmoke;
 
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMin;
         public static ConfigEntry<int> BoneFragmentsDroppedAmountMax;
@@ -147,6 +149,9 @@ namespace ChebsNecromancy
                                              "which seem to give users with Radeon cards trouble for unknown " +
                                              "reasons. If you have problems with lag it might also help to switch" +
                                              "this setting on."));
+            
+            NoWraithSmoke = Config.Bind("General (Client)", "NoWraithSmoke",
+                false, new ConfigDescription("Set this to true if you want to disable smoke on the wraith."));
 
             #region BoneFragments
 
@@ -449,7 +454,9 @@ namespace ChebsNecromancy
 
                 prefabNames.ForEach(prefabName =>
                 {
-                    var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, RadeonFriendly.Value);
+                    var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, 
+                        RadeonFriendly.Value
+                        || NoWraithSmoke.Value && prefabName.Equals("ChebGonaz_GuardianWraith.prefab"));
                     switch (prefabName)
                     {
                         case "ChebGonaz_DraugrWarrior.prefab":
