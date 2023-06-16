@@ -39,6 +39,6 @@ jobs:
           description: Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
           token: ${{ secrets.TS_KEY }} 
           #wrap: mods/${{ github.repository_owner }}.${{ env.name }} # This will wrap your Author.ModName folder in a mods/ folder before publishing
-          deps: "ValheimModding-Jotunn-2.11.2" # dependencies separated by spaces
+          deps: "ValheimModding-Jotunn@2.11.2" # dependencies separated by spaces
           categories: "Mods" # categories separated by spaces
           file: ${{ github.event.release.assets[0].name }} # Use the first asset from the release
