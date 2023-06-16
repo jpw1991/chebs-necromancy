@@ -31,9 +31,14 @@ jobs:
       - name: Create dist directory
         run: |
           mkdir dist
+      - name: Download release asset
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          name: release-assets
       - name: Move package file to dist directory
         run: |
-          mv ${{github.event.release.assets[0].name}} dist/${{ github.event.release.assets[0].name }}
+          mv ${{ steps.download.outputs.artifact_paths }} dist/
       - name: Upload Thunderstore Package
         uses: GreenTF/upload-thunderstore-package@v3.1
         with:
@@ -43,7 +48,14 @@ jobs:
           version: ${{ github.ref_name }} # This is the tag that was created in the release
           description: Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
           token: ${{ secrets.TS_KEY }} 
-          file: dist/${{ github.event.release.assets[0].name }}
+          file: dist/${{ steps.download.outputs.artifact_paths }}
           deps: "ValheimModding-Jotunn@2.11.2" # dependencies separated by spaces
           categories: "Mods" # categories separated by spaces
+
+      # Define release-assets artifact
+      - name: Archive release assets
+        uses: actions/upload-artifact@v2
+        with:
+          name: release-assets
+          path: dist/
 
