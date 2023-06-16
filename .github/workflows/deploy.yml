@@ -20,7 +20,7 @@ jobs:
         run: |
           if [[ "$(jq -r '.version_number' $(find ./ -name ${{env.jsonf}}))" != "${{ env.cleanVersion }}" ]]; then
             echo "::debug::${{env.cleanVersion}}"
-            echo "::debug::$(cat $(find ./ -name ${{env.jsonf}} ))"
+            echo "::debug::$(cat $(find ./ -name ${{env.jsonf}}))"
             echo "::error::Version in ${{env.jsonf}} does not match tag version"
             exit 1
           fi
@@ -29,6 +29,17 @@ jobs:
     needs: verify
     steps:
       - uses: actions/checkout@v3
+      - name: Download package file
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          name: release-assets
+      - name: Create dist directory
+        run: |
+          mkdir dist
+      - name: Move package file to dist directory
+        run: |
+          mv ${{ steps.download.outputs.artifact_paths }} dist/${{ github.event.release.assets[0].name }}
       - name: Upload Thunderstore Package
         uses: GreenTF/upload-thunderstore-package@v3.1
         with:
@@ -38,7 +49,7 @@ jobs:
           version: ${{ github.ref_name }} # This is the tag that was created in the release
           description: Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
           token: ${{ secrets.TS_KEY }} 
-          #wrap: mods/${{ github.repository_owner }}.${{ env.name }} # This will wrap your Author.ModName folder in a mods/ folder before publishing
+          file: dist/${{ github.event.release.assets[0].name }}
           deps: "ValheimModding-Jotunn@2.11.2" # dependencies separated by spaces
           categories: "Mods" # categories separated by spaces
-          file: ${{ github.event.release.assets[0].name }} # Use the first asset from the release
+
