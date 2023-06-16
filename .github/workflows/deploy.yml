@@ -18,7 +18,7 @@ jobs:
           echo cleanVersion=$(echo ${{github.ref_name}} | sed s/v//g) >> $GITHUB_ENV
       - name: Check that version matches
         run: |
-          if [[ "$(grep -Po "\d+\.\d+\.\d+" $(find ./ -name ${{env.jsonf}}))" != "${{ env.cleanVersion }}" ]]; then
+          if [[ "$(jq -r '.version_number' $(find ./ -name ${{env.jsonf}}))" != "${{ env.cleanVersion }}" ]]; then
             echo "::debug::${{env.cleanVersion}}"
             echo "::debug::$(cat $(find ./ -name ${{env.jsonf}} ))"
             echo "::error::Version in ${{env.jsonf}} does not match tag version"
