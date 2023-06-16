@@ -29,7 +29,7 @@ jobs:
     needs: verify
     steps:
       - name: Upload Thunderstore Package
-        uses: GreenTF/upload-thunderstore-package@v3.1
+        uses: GreenTF/upload-thunderstore-package@v4
         with:
           community: Valheim
           namespace: ChebGonaz
