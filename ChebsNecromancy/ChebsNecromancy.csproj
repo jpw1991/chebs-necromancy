@@ -82,7 +82,7 @@
       <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
     </Reference>
     <Reference Include="ChebsValheimLibrary">
-      <HintPath>..\..\chebs-valheim-library\ChebsValheimLibrary\ChebsValheimLibrary\bin\Release\ChebsValheimLibrary.dll</HintPath>
+      <HintPath>..\..\chebs-valheim-library\ChebsValheimLibrary\bin\Release\ChebsValheimLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Jotunn, Version=2.11.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JotunnLib.2.11.2\lib\net462\Jotunn.dll</HintPath>

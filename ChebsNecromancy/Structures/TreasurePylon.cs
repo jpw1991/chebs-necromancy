@@ -98,8 +98,8 @@ namespace ChebsNecromancy.Structures
 
                 var allowedContainers = ContainerWhitelist.Value;
                 var nearbyContainers = ChebGonazMinion.FindNearby<Container>(transform, SightRadius.Value, pieceMask,
-                    c => c.m_piece.IsPlacedByPlayer()
-                         && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);
+                    c => c.m_piece != null && c.m_piece.IsPlacedByPlayer() 
+                                           && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);
 
                 for (int i = 0; i < nearbyContainers.Count; i++)
                 {
