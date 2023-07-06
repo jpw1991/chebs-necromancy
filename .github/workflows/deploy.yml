@@ -7,6 +7,10 @@ on:
 env:
   name: ChebsNecromancy
   jsonf: manifest.json
+  dlpath: https://github.com/jpw1991/chebs-necromancy/releases/download
+  dependencies: "ValheimModding-Jotunn@2.11.2" # dependencies separated by spaces
+  categories: "Mods" # categories separated by spaces
+  namespace: ChebGonaz
 
 jobs:
   verify:
@@ -14,32 +18,36 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get clean version
-        run: |
-          echo cleanVersion=$(echo ${{github.ref_name}} | sed s/v//g) >> $GITHUB_ENV
+        run: echo "cleanVersion=$(echo ${{github.ref_name}} | sed s/v//g)" >> $GITHUB_ENV
       - name: Check that version matches
         run: |
-          if [[ "$(jq -r '.version_number' $(find ./ -name ${{env.jsonf}}))" != "${{ env.cleanVersion }}" ]]; then
+          if [[ "$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))" != "${{ env.cleanVersion }}" ]]; then
             echo "::debug::${{env.cleanVersion}}"
             echo "::debug::$(cat $(find ./ -name ${{env.jsonf}}))"
             echo "::error::Version in ${{env.jsonf}} does not match tag version"
             exit 1
           fi
+      - name: Get Description
+        id: get_description
+        run: |
+          description=$(jq -r '.description' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))
+          echo "DESCRIPTION=${description}" >> $GITHUB_ENV
   publish:
     runs-on: ubuntu-latest
     needs: verify
     steps:
       - uses: actions/checkout@v3
-      - run: wget https://github.com/jpw1991/chebs-necromancy/releases/download/${{ github.ref_name }}/ChebsNecromancy.${{ github.ref_name }}.zip
+      - run: wget ${{ env.dlpath }}/${{ github.ref_name }}/${{ env.name }}.${{ github.ref_name }}.zip
       - name: Upload Thunderstore Package
         uses: GreenTF/upload-thunderstore-package@v4
         with:
           community: valheim
-          namespace: ChebGonaz
+          namespace: ${{ env.namespace }}
           name: ${{ env.name }}
           version: ${{ github.ref_name }} # This is the tag that was created in the release
-          description: Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.
-          token: ${{ secrets.TS_KEY }} 
-          deps: "ValheimModding-Jotunn@2.11.2" # dependencies separated by spaces
-          categories: "Mods" # categories separated by spaces
-          file: ChebsNecromancy.${{ github.ref_name }}.zip
+          description: ${{ env.DESCRIPTION }}
+          token: ${{ secrets.TS_KEY }}
+          deps: ${{ env.dependencies }}
+          categories: ${{ env.categories }}
+          file: ${{ env.name }}.${{ github.ref_name }}.zip
 
