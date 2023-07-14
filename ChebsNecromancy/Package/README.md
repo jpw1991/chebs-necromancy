@@ -148,6 +148,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+13/07/2023 | 3.6.0 | Try to make workers behave better; update CVL to 2.1.0 to prepare for upcoming changes
 21/06/2023 | 3.5.2 | Treasure pylon checks that Piece is not null before processing container
 16/06/2023 | 3.5.1 | Option to toggle smoke effects off wraiths (some players getting blinded out here)
 12/06/2023 | 3.5.0 | Update for new Valheim version

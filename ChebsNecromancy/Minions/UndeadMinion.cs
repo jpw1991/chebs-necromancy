@@ -65,8 +65,10 @@ namespace ChebsNecromancy.Minions
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
-        public virtual void Awake()
+        public override void Awake()
         {
+            base.Awake();
+            
             var tameable = GetComponent<Tameable>();
             if (tameable != null)
             {
