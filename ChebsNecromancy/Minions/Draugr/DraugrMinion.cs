@@ -35,12 +35,14 @@ namespace ChebsNecromancy.Minions.Draugr
 
         public static ConfigEntry<int> MaxDraugr;
         public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
-        
+        public static ConfigEntry<bool> IdleSoundsEnabled;
+
         public static ConfigEntry<float> NecromancyLevelIncrease, ArcherNecromancyLevelIncrease;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
             const string serverSynced = "DraugrMinion (Server Synced)";
+            const string client = "DraugrMinion (Client)";
             MaxDraugr = plugin.Config.Bind(serverSynced, "MaximumDraugr",
                 0, new ConfigDescription("The maximum Draugr allowed to be created (0 = unlimited).", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
@@ -60,6 +62,9 @@ namespace ChebsNecromancy.Minions.Draugr
                 2f, new ConfigDescription(
                     "How much creating a Draugr Archer contributes to your Necromancy level increasing.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            IdleSoundsEnabled = plugin.Config.Bind(client, "IdleSoundsEnabled",
+                true, new ConfigDescription("Set to false to make the draugr quiet."));
         }
 
         public override void Awake()
@@ -70,6 +75,14 @@ namespace ChebsNecromancy.Minions.Draugr
             createdOrder = _createdOrderIncrementer;
 
             StartCoroutine(WaitForZNet());
+
+            if (!IdleSoundsEnabled.Value && TryGetComponent(out MonsterAI monsterAI))
+            {
+                foreach (var effectPrefab in monsterAI.m_idleSound.m_effectPrefabs)
+                {
+                    effectPrefab.m_enabled = false;
+                }
+            }
         }
 
         IEnumerator WaitForZNet()
