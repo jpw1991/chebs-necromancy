@@ -82,6 +82,18 @@ namespace ChebsNecromancy.Patches
                     ___m_drops.RemoveAll(a => true);
                 }
             }
+            
+            /// dumb testy
+            var undeadm = __instance.GetComponent<UndeadMinion>();
+            if (undeadm != null)
+            {
+                var drops = undeadm.GetComponent<ZNetView>()?.GetZDO().GetString(ChebGonazMinion.MinionDropsZdoKey, "");
+                Jotunn.Logger.LogInfo($"Drops zdo = {drops}");
+
+                var characterDrop = __instance.GetComponent<CharacterDrop>();
+                characterDrop.m_drops.ForEach(d => Jotunn.Logger.LogInfo($"Drop {d.m_prefab.name} min={d.m_amountMin} max={d.m_amountMax} chance={d.m_chance}"));
+            }
+            /// dumb testy
         }
     }
 }
