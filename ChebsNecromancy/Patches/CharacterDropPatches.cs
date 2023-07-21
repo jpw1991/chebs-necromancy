@@ -35,7 +35,7 @@ namespace ChebsNecromancy.Patches
                 CharacterDrop.Drop bones = new()
                 {
                     m_prefab = ZNetScene.instance.GetPrefab("BoneFragments"),
-                    m_onePerPlayer = true,
+                    m_onePerPlayer = false,
                     m_amountMin = BasePlugin.BoneFragmentsDroppedAmountMin.Value,
                     m_amountMax = BasePlugin.BoneFragmentsDroppedAmountMax.Value,
                     m_chance = BasePlugin.BoneFragmentsDroppedChance.Value
