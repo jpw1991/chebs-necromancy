@@ -36,7 +36,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "3.6.2";
+        public const string PluginVersion = "3.7.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -289,8 +289,6 @@ namespace ChebsNecromancy
             RepairPylon.CreateConfigs(this);
             TreasurePylon.CreateConfigs(this);
 
-            LargeCargoCrate.CreateConfigs(this);
-
             NeckroGathererMinion.CreateConfigs(this);
         }
 
@@ -406,17 +404,6 @@ namespace ChebsNecromancy
 
                 var largeCargoCratePrefab = Base.LoadPrefabFromBundle(LargeCargoCrate.PrefabName,
                     chebgonazAssetBundle, RadeonFriendly.Value);
-                if (largeCargoCratePrefab.TryGetComponent(out Container container))
-                {
-                    container.m_width = LargeCargoCrate.ContainerWidth.Value;
-                    container.m_height = LargeCargoCrate.ContainerHeight.Value;
-                }
-                else
-                {
-                    Jotunn.Logger.LogError(
-                        $"Failed to retrieve Container component from {LargeCargoCrate.PrefabName}.");
-                }
-
                 PrefabManager.Instance.AddPrefab(new CustomPrefab(largeCargoCratePrefab, false));
 
                 #endregion

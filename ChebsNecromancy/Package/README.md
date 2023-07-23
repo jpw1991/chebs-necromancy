@@ -148,6 +148,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+21/07/2023 | 3.7.0 | Remove configurable Neckro Gatherer container size because containers have not been configurable since 3.3.1 (it resulted in a bug - see issue 100 on GitHub)
 21/07/2023 | 3.6.2 | fix bug where onePerPlayer was set to true for character drops, which would result in incorrect resource amounts getting refunded
 20/07/2023 | 3.6.1 | Add config option to make draugr quiet; update CVL to 2.1.1
 13/07/2023 | 3.6.0 | Try to make workers behave better; update CVL to 2.1.0 to prepare for upcoming changes

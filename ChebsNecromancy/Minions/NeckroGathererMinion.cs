@@ -14,25 +14,30 @@ namespace ChebsNecromancy.Minions
     internal class NeckroGathererMinion : UndeadMinion
     {
         public const string NeckroHomeZdoKey = "NeckroHome";
-        
+
         // for limits checking
         private static int _createdOrderIncrementer;
 
-        private float lastUpdate;
+        private float _lastUpdate;
 
-        public static ConfigEntry<bool> Allowed;
-        public static ConfigEntry<float> UpdateDelay, LookRadius, DropoffPointRadius, PickupDelay, PickupDistance, MaxSecondsBeforeDropoff;
+        public static ConfigEntry<float> UpdateDelay,
+            LookRadius,
+            DropoffPointRadius,
+            PickupDelay,
+            PickupDistance,
+            MaxSecondsBeforeDropoff;
+
         public static MemoryConfigEntry<string, List<string>> ContainerWhitelist;
 
         private static List<ItemDrop> _itemDrops = new();
 
         public string NeckroStatus { get; set; }
 
-        private int autoPickupMask, pieceMask;
+        private int _autoPickupMask, _pieceMask;
 
-        private Container container;
+        private Container _container;
 
-        private Container dropoffTarget;
+        private Container _dropoffTarget;
 
         private MonsterAI _monsterAI;
 
@@ -42,59 +47,62 @@ namespace ChebsNecromancy.Minions
 
         private float _lastDropoffAt;
 
-        private GameObject homeObject;
+        private GameObject _homeObject;
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
-            Allowed = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererAllowed",
-                true, new ConfigDescription("Whether the Neckro Gatherer is allowed or not.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
             LookRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererLookRadius",
                 500f, new ConfigDescription("The radius in which the Neckro Gatherer can see items from.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            DropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererDropoffPointRadius",
-                1000f, new ConfigDescription("The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            DropoffPointRadius = plugin.Config.Bind("NeckroGatherer (Server Synced)",
+                "NeckroGathererDropoffPointRadius",
+                1000f, new ConfigDescription(
+                    "The radius in which the Neckro Gatherer looks for a container to store its load in.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
             UpdateDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererUpdateDelay",
-                6f, new ConfigDescription("The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.", null,
-                new ConfigurationManagerAttributes { IsAdminOnly = true }));
+                6f, new ConfigDescription(
+                    "The delay, in seconds, between item searching & pickup attempts. Attention: small values may impact performance.",
+                    null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
             PickupDelay = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDelay",
-                10f, new ConfigDescription("The Neckro won't pick up items immediately upon seeing them. Rather, it will make note of them and pick them up if they're still on the ground after this delay.", null,
+                10f, new ConfigDescription(
+                    "The Neckro won't pick up items immediately upon seeing them. Rather, it will make note of them and pick them up if they're still on the ground after this delay.",
+                    null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             PickupDistance = plugin.Config.Bind("NeckroGatherer (Server Synced)", "NeckroGathererPickupDistance",
                 5f, new ConfigDescription("How close a Neckro needs to be to an item to pick it up.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             MaxSecondsBeforeDropoff = plugin.Config.Bind("NeckroGatherer (Client)", "MaxSecondsBeforeDropoff",
-                0f, new ConfigDescription("The maximum amount of time, in seconds, before a Neckro is forced to return whatever it is currently carrying. If set to 0, this condition is ignored."));
-            
+                0f,
+                new ConfigDescription(
+                    "The maximum amount of time, in seconds, before a Neckro is forced to return whatever it is currently carrying. If set to 0, this condition is ignored."));
+
             var containerWhitelist = plugin.Config.Bind("NeckroGatherer (Server Synced)", "ContainerWhitelist",
                 "piece_chest_wood", new ConfigDescription(
                     "The containers that are considered dropoff points. Please use a comma-delimited list of prefab names.",
                     null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }
                 ));
-            ContainerWhitelist = new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
+            ContainerWhitelist =
+                new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
         }
 
         public override void Awake()
         {
-            base.Awake(); 
+            base.Awake();
             _createdOrderIncrementer++;
             createdOrder = _createdOrderIncrementer;
 
-            container = GetComponent<Container>();
+            _container = GetComponent<Container>();
 
-            container.m_height = LargeCargoCrate.ContainerHeight.Value;
-            container.m_width = LargeCargoCrate.ContainerWidth.Value;
-
-            autoPickupMask = LayerMask.GetMask("item");
-            pieceMask = LayerMask.GetMask("piece");
+            _autoPickupMask = LayerMask.GetMask("item");
+            _pieceMask = LayerMask.GetMask("piece");
 
             canBeCommanded = false;
 
             _monsterAI = GetComponent<MonsterAI>();
             _humanoid = GetComponent<Humanoid>();
-            
+
             StartCoroutine(WaitForZNet());
         }
 
@@ -112,7 +120,7 @@ namespace ChebsNecromancy.Minions
             {
                 // record home position as current position
                 Home = transform.position;
-                
+
                 // remove the component
                 Destroy(freshMinion);
             }
@@ -121,16 +129,17 @@ namespace ChebsNecromancy.Minions
         private void Update()
         {
             if (ZNet.instance == null
-                || !(Time.time > lastUpdate)) return;
-            
+                || !(Time.time > _lastUpdate)) return;
+
             // Some users get null object exceptions inside the neckro's Update method. IDK why exactly that would be.
             // Mod conflicts? Don't know. So to mitigate this, just be extra careful about nulls and abort if anything
             // is null.
-            if (container == null && !TryGetComponent(out container))
+            if (_container == null && !TryGetComponent(out _container))
             {
                 Logger.LogError("Neckro container is null and cannot be retrieved!");
                 return;
             }
+
             if (_monsterAI == null && !TryGetComponent(out _monsterAI))
             {
                 Logger.LogError("Neckro MonsterAI is null and cannot be retrieved!");
@@ -144,34 +153,34 @@ namespace ChebsNecromancy.Minions
             }
             else
             {
-                if (container.GetInventory().NrOfItems() > 0)
+                if (_container.GetInventory().NrOfItems() > 0)
                 {
                     var home = Home;
                     if (home.Equals(Vector3.negativeInfinity) // unset for some reason
                         || Vector3.Distance(home, transform.position) <= DropoffPointRadius.Value)
                     {
-                        dropoffTarget = GetNearestDropOffPoint();
-                        if (dropoffTarget == null || dropoffTarget.gameObject == null)
+                        _dropoffTarget = GetNearestDropOffPoint();
+                        if (_dropoffTarget == null || _dropoffTarget.gameObject == null)
                         {
                             NeckroStatus = "Can't find a container";
                         }
                         else
                         {
-                            _monsterAI.SetFollowTarget(dropoffTarget.gameObject);
-                            NeckroStatus = $"Moving toward {dropoffTarget.name}";
+                            _monsterAI.SetFollowTarget(_dropoffTarget.gameObject);
+                            NeckroStatus = $"Moving toward {_dropoffTarget.name}";
                             if (CloseToDropoffPoint())
                             {
                                 DepositItems();
                             }
-                        }              
+                        }
                     }
                     else
                     {
                         NeckroStatus = $"Returning home! ({home})";
-                        if (homeObject != null) Destroy(homeObject);
-                        homeObject = new GameObject();
-                        homeObject.transform.position = home;
-                        _monsterAI.SetFollowTarget(homeObject);
+                        if (_homeObject != null) Destroy(_homeObject);
+                        _homeObject = new GameObject();
+                        _homeObject.transform.position = home;
+                        _monsterAI.SetFollowTarget(_homeObject);
                     }
                 }
                 else
@@ -183,25 +192,26 @@ namespace ChebsNecromancy.Minions
 
             _humanoid.m_name = NeckroStatus;
 
-            lastUpdate = Time.time
-                         + UpdateDelay.Value
-                         + Random.value; // add a fraction of a second so that multiple
-                                         // workers don't all simultaneously scan
+            _lastUpdate = Time.time
+                          + UpdateDelay.Value
+                          + Random.value; // add a fraction of a second so that multiple
+            // workers don't all simultaneously scan
         }
 
         private bool LookForNearbyItems()
         {
             if (InventoryFull
                 || (InventoryHasItems
-                    && MaxSecondsBeforeDropoff.Value > 0 
+                    && MaxSecondsBeforeDropoff.Value > 0
                     && Time.time - _lastDropoffAt >= MaxSecondsBeforeDropoff.Value)) return false;
 
             if (_currentItem == null)
             {
-                _currentItem = FindClosest<ItemDrop>(transform, LookRadius.Value, autoPickupMask, 
+                _currentItem = FindClosest<ItemDrop>(transform, LookRadius.Value, _autoPickupMask,
                     drop => drop.GetTimeSinceSpawned() > PickupDelay.Value
                             && !_itemDrops.Contains(drop), true);
             }
+
             if (_currentItem == null) return false;
             _itemDrops.Add(_currentItem);
             // move toward that item
@@ -221,7 +231,7 @@ namespace ChebsNecromancy.Minions
 
             if (_currentItem.CanPickup()
                 && Vector3.Distance(_currentItem.transform.position, transform.position) <= PickupDistance.Value
-                && StoreItem(_currentItem, container))
+                && StoreItem(_currentItem, _container))
             {
                 NeckroStatus = $"Picking up {string.Join(", ", _currentItem.m_itemData.m_shared.m_name)}";
                 if (_itemDrops.Contains(_currentItem)) _itemDrops.Remove(_currentItem);
@@ -235,7 +245,7 @@ namespace ChebsNecromancy.Minions
             if (itemData == null) return false;
 
             if (itemData.m_stack < 1) return false;
-            
+
             NeckroStatus = $"Storing {itemData.m_shared.m_name} in {depositContainer.m_name}";
 
             int originalStackSize = itemData.m_stack;
@@ -244,7 +254,7 @@ namespace ChebsNecromancy.Minions
             var depositInventory = depositContainer.GetInventory();
 
             var itemsOfTypeInInventoryBefore = depositInventory.CountItems(itemData.m_shared.m_name);
-            
+
             while (itemData.m_stack-- > 0 && depositInventory.CanAddItem(itemData, 1))
             {
                 ItemDrop.ItemData newItemData = itemData.Clone();
@@ -256,7 +266,7 @@ namespace ChebsNecromancy.Minions
             itemData.m_stack -= itemsDeposited;
 
             depositContainer.Save();
-            
+
             // do a sanity check to make sure that nothing has been lost
             var itemsOfTypeInInventoryAfter = depositInventory.CountItems(itemData.m_shared.m_name);
             var completelyDeposited = originalStackSize == itemsDeposited;
@@ -279,43 +289,46 @@ namespace ChebsNecromancy.Minions
             return itemsDeposited > 0;
         }
 
-        private bool InventoryFull => container.GetInventory().GetEmptySlots() < 1;
+        private bool InventoryFull => _container.GetInventory().GetEmptySlots() < 1;
 
-        private bool InventoryHasItems => container.GetInventory().NrOfItems() > 0;
+        private bool InventoryHasItems => _container.GetInventory().NrOfItems() > 0;
 
         private Container GetNearestDropOffPoint()
         {
             var allowedContainers = ContainerWhitelist.Value;
             if (allowedContainers == null)
-            { 
+            {
                 Logger.LogError("allowedContainers is null");
-                Logger.LogInfo($"allowedContainers = {ContainerWhitelist.Value}, ContainerWhitelist.ConfigEntry.Value = {ContainerWhitelist.ConfigEntry.Value}");
+                Logger.LogInfo(
+                    $"allowedContainers = {ContainerWhitelist.Value}, ContainerWhitelist.ConfigEntry.Value = {ContainerWhitelist.ConfigEntry.Value}");
                 return null;
             }
-            var closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, pieceMask,
+
+            var closestContainer = FindClosest<Container>(transform, DropoffPointRadius.Value, _pieceMask,
                 c => c.m_piece != null
-                     && c.m_piece.IsPlacedByPlayer() 
+                     && c.m_piece.IsPlacedByPlayer()
                      && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName())
                      && c.GetInventory() != null
                      && c.GetInventory().GetEmptySlots() > 0, true);
             if (closestContainer == null) return null;
-            
+
             return closestContainer;
         }
 
         private bool CloseToDropoffPoint()
         {
-            return dropoffTarget != null 
-                   && Vector3.Distance(transform.position, dropoffTarget.transform.position) < PickupDistance.Value;
+            return _dropoffTarget != null
+                   && Vector3.Distance(transform.position, _dropoffTarget.transform.position) < PickupDistance.Value;
         }
 
         private void DepositItems()
         {
             _lastDropoffAt = Time.time;
-            dropoffTarget.GetInventory().MoveAll(container.GetInventory());
+            _dropoffTarget.GetInventory().MoveAll(_container.GetInventory());
         }
-        
+
         #region HomeZDO
+
         public Vector3 Home
         {
             get => TryGetComponent(out ZNetView zNetView)
@@ -333,11 +346,12 @@ namespace ChebsNecromancy.Minions
                 }
             }
         }
+
         #endregion
 
         private void OnDestroy()
         {
-            if (homeObject != null) Destroy(homeObject);
+            if (_homeObject != null) Destroy(_homeObject);
         }
     }
 }
