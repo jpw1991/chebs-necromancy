@@ -156,12 +156,6 @@ namespace ChebsNecromancy.Items.Wands
             }
 
             CustomItem customItem = new CustomItem(prefab, false, config);
-            if (customItem == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
-
             if (customItem.ItemPrefab == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
@@ -220,8 +214,20 @@ namespace ChebsNecromancy.Items.Wands
                         _createMinionButtonText = button.GetComponentInChildren<Text>();
                     }   
                 }
-                
-                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+
+                if (_createMinionButtonText != null)
+                {
+                    var createLocalized = BasePlugin.Localization.TryTranslate("$chebgonaz_wand_create");
+                    var minionLocalized = BasePlugin.Localization.TryTranslate(SelectedMinionOption switch
+                    {
+                        MinionOption.Archer => "$chebgonaz_miniontype_archer",
+                        MinionOption.Miner => "$chebgonaz_miniontype_miner",
+                        MinionOption.Woodcutter => "$chebgonaz_miniontype_woodcutter",
+                        MinionOption.Warrior => "$chebgonaz_miniontype_warrior",
+                        _ => "Error"
+                    });
+                    _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
+                }
 
                 if (ZInput.GetButton(CreateMinionButton.Name))
                 {
@@ -263,7 +269,19 @@ namespace ChebsNecromancy.Items.Wands
             {
                 _selectedMinionOptionIndex++;
                 if (_selectedMinionOptionIndex >= _minionOptions.Count) _selectedMinionOptionIndex = 0;
-                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+                if (_createMinionButtonText != null)
+                {
+                    var createLocalized = BasePlugin.Localization.TryTranslate("$chebgonaz_wand_create");
+                    var minionLocalized = BasePlugin.Localization.TryTranslate(SelectedMinionOption switch
+                    {
+                        MinionOption.Archer => "$chebgonaz_miniontype_archer",
+                        MinionOption.Miner => "$chebgonaz_miniontype_miner",
+                        MinionOption.Woodcutter => "$chebgonaz_miniontype_woodcutter",
+                        MinionOption.Warrior => "$chebgonaz_miniontype_warrior",
+                        _ => "Error"
+                    });
+                    _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
+                }
                 return true;
             }
 
@@ -303,25 +321,25 @@ namespace ChebsNecromancy.Items.Wands
             
             var inventory = Player.m_localPlayer.GetInventory();
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherSilverMinion.ItemsCost, inventory, out _))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherSilverMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherSilver;
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherFireMinion.ItemsCost, inventory, out _))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherFireMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherFire;
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherFrostMinion.ItemsCost, inventory, out _))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherFrostMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherFrost;
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherPoisonMinion.ItemsCost, inventory, out _))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherPoisonMinion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherPoison;
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherTier3Minion.ItemsCost, inventory, out _))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherTier3Minion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherTier3;
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherTier2Minion.ItemsCost, inventory, out _))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherTier2Minion.ItemsCost, inventory, out _))
                 return SkeletonMinion.SkeletonType.ArcherTier2;
             
-            if (UndeadMinion.CanSpawn(SkeletonArcherTier1Minion.ItemsCost, inventory, out var message))
+            if (ChebGonazMinion.CanSpawn(SkeletonArcherTier1Minion.ItemsCost, inventory, out var message))
                 return SkeletonMinion.SkeletonType.ArcherTier1;
 
             MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
@@ -333,7 +351,7 @@ namespace ChebsNecromancy.Items.Wands
             // Return None if necessary resources are missing.
             var player = Player.m_localPlayer;
 
-            if (!UndeadMinion.CanSpawn(SkeletonWoodcutterMinion.ItemsCost, player.GetInventory(), out var message))
+            if (!ChebGonazMinion.CanSpawn(SkeletonWoodcutterMinion.ItemsCost, player.GetInventory(), out var message))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;
@@ -347,7 +365,7 @@ namespace ChebsNecromancy.Items.Wands
             // Return None if necessary resources are missing.
             var player = Player.m_localPlayer;
 
-            if (!UndeadMinion.CanSpawn(SkeletonMinerMinion.ItemsCost, player.GetInventory(), out var message))
+            if (!ChebGonazMinion.CanSpawn(SkeletonMinerMinion.ItemsCost, player.GetInventory(), out var message))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;
@@ -371,7 +389,7 @@ namespace ChebsNecromancy.Items.Wands
                 return SkeletonMinion.SkeletonType.None;   
             }
             
-            if (!UndeadMinion.CanSpawn(PoisonSkeletonMinion.ItemsCost, player.GetInventory(), out var message))
+            if (!ChebGonazMinion.CanSpawn(PoisonSkeletonMinion.ItemsCost, player.GetInventory(), out var message))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;
@@ -395,7 +413,7 @@ namespace ChebsNecromancy.Items.Wands
             
             var player = Player.m_localPlayer;
             
-            if (!UndeadMinion.CanSpawn(SkeletonWarriorMinion.ItemsCost, player.GetInventory(), out var message))
+            if (!ChebGonazMinion.CanSpawn(SkeletonWarriorMinion.ItemsCost, player.GetInventory(), out var message))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;

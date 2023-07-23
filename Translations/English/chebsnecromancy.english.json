@@ -71,5 +71,17 @@
     "friendlyskeletonwand_limitexceeded": "Weakling! You cannot command more minions!",
     "friendlyskeletonwand_notargetfound": "No target found.",
     "friendlyskeletonwand_skeletonwaiting": "Waiting, master...",
-    "friendlyskeletonwand_targetfound": "Go forth, minions!"
+    "friendlyskeletonwand_targetfound": "Go forth, minions!",
+    "chebgonaz_minionstatus_following": "Following",
+    "chebgonaz_minionstatus_waiting": "Waiting",
+    "chebgonaz_minionstatus_roaming": "Roaming",
+    "chebgonaz_wand_create": "Create",
+    "chebgonaz_miniontype_warrior": "Warrior",
+    "chebgonaz_miniontype_archer": "Archer",
+    "chebgonaz_miniontype_miner": "Miner",
+    "chebgonaz_miniontype_woodcutter": "Woodcutter",
+    "chebgonaz_miniontype_poison": "Poison",
+    "chebgonaz_miniontype_mage": "Mage",
+    "chebgonaz_miniontype_leech": "Leech",
+    "chebgonaz_miniontype_battleneckro": "Battle Neckro"
 }

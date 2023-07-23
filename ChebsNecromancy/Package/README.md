@@ -132,6 +132,7 @@ A special thanks to the people who've helped me along the way:
 - Translations
 	+ **S970X** - German language localization.
 	+ [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) - Korean language localization.
+	+ **007LEXX** - Russian language localization.
 - Other
     - **Hugo the Dwarf** and **Pfhoenix** for advice and help for fixing the frozen minions problem.
 	- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
@@ -148,7 +149,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
-21/07/2023 | 3.7.0 | Remove configurable Neckro Gatherer container size because containers have not been configurable since 3.3.1 (it resulted in a bug - see issue 100 on GitHub)
+21/07/2023 | 3.7.0 | Remove configurable Neckro Gatherer container size because containers have not been configurable since 3.3.1 (it resulted in a bug - see issue 100 on GitHub); add Russian translation
 21/07/2023 | 3.6.2 | fix bug where onePerPlayer was set to true for character drops, which would result in incorrect resource amounts getting refunded
 20/07/2023 | 3.6.1 | Add config option to make draugr quiet; update CVL to 2.1.1
 13/07/2023 | 3.6.0 | Try to make workers behave better; update CVL to 2.1.0 to prepare for upcoming changes

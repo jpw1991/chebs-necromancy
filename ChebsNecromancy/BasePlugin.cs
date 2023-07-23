@@ -43,6 +43,8 @@ namespace ChebsNecromancy
         public readonly System.Version ChebsValheimLibraryVersion = new("2.1.2");
 
         private readonly Harmony harmony = new(PluginGuid);
+        
+        public static CustomLocalization Localization = LocalizationManager.Instance.GetLocalization();
 
         private readonly List<Wand> wands = new()
         {

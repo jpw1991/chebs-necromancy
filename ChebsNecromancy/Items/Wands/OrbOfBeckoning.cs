@@ -102,11 +102,6 @@ namespace ChebsNecromancy.Items.Wands
             }
 
             CustomItem customItem = new (prefab, false, config);
-            if (customItem == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
             if (customItem.ItemPrefab == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
@@ -156,8 +151,18 @@ namespace ChebsNecromancy.Items.Wands
                         _createMinionButtonText = button.GetComponentInChildren<Text>();
                     }   
                 }
-                
-                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+
+                if (_createMinionButtonText != null)
+                {
+                    var createLocalized = BasePlugin.Localization.TryTranslate("$chebgonaz_wand_create");
+                    var minionLocalized = BasePlugin.Localization.TryTranslate(SelectedMinionOption switch
+                    {
+                        MinionOption.Leech => "$chebgonaz_miniontype_leech",
+                        MinionOption.Mage => "$chebgonaz_miniontype_mage",
+                        _ => "Error"
+                    });
+                    _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
+                }
 
                 if (ZInput.GetButton(CreateMinionButton.Name))
                 {
@@ -178,7 +183,17 @@ namespace ChebsNecromancy.Items.Wands
             {
                 _selectedMinionOptionIndex++;
                 if (_selectedMinionOptionIndex >= _minionOptions.Count) _selectedMinionOptionIndex = 0;
-                if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+                if (_createMinionButtonText != null)
+                {
+                    var createLocalized = BasePlugin.Localization.TryTranslate("$chebgonaz_wand_create");
+                    var minionLocalized = BasePlugin.Localization.TryTranslate(SelectedMinionOption switch
+                    {
+                        MinionOption.Leech => "$chebgonaz_miniontype_leech",
+                        MinionOption.Mage => "$chebgonaz_miniontype_mage",
+                        _ => "Error"
+                    });
+                    _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
+                }
                 return true;
             }
 
@@ -218,7 +233,7 @@ namespace ChebsNecromancy.Items.Wands
 
             var inventory = Player.m_localPlayer.GetInventory();
             
-            if (!UndeadMinion.CanSpawn(SkeletonMageMinion.ItemsCost, inventory, out var message))
+            if (!ChebGonazMinion.CanSpawn(SkeletonMageMinion.ItemsCost, inventory, out var message))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return SkeletonMinion.SkeletonType.None;
@@ -296,7 +311,7 @@ namespace ChebsNecromancy.Items.Wands
         {
             var player = Player.m_localPlayer;
 
-            if (!UndeadMinion.CanSpawn(LeechMinion.ItemsCost, player.GetInventory(), out var message))
+            if (!ChebGonazMinion.CanSpawn(LeechMinion.ItemsCost, player.GetInventory(), out var message))
             {
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
                 return LeechMinion.LeechType.None;

@@ -153,12 +153,6 @@ namespace ChebsNecromancy.Items.Wands
             }
 
             var customItem = new CustomItem(prefab, false, config);
-            if (customItem == null)
-            {
-                Logger.LogError($"AddCustomItems: {PrefabName}'s CustomItem is null!");
-                return null;
-            }
-
             if (customItem.ItemPrefab == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
@@ -212,8 +206,19 @@ namespace ChebsNecromancy.Items.Wands
                             _createMinionButtonText = button.GetComponentInChildren<Text>();
                         }   
                     }
-                    
-                    if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+
+                    if (_createMinionButtonText != null)
+                    {
+                        var createLocalized = BasePlugin.Localization.TryTranslate("$chebgonaz_wand_create");
+                        var minionLocalized = BasePlugin.Localization.TryTranslate(SelectedMinionOption switch
+                        {
+                            MinionOption.Archer => "$chebgonaz_miniontype_archer",
+                            MinionOption.Warrior => "$chebgonaz_miniontype_warrior",
+                            MinionOption.BattleNeckro => "$chebgonaz_miniontype_battleneckro",
+                            _ => "Error"
+                        });
+                        _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
+                    }
                 
                     if (ZInput.GetButton(CreateMinionButton.Name))
                     {
@@ -226,7 +231,18 @@ namespace ChebsNecromancy.Items.Wands
                 {
                     _selectedMinionOptionIndex++;
                     if (_selectedMinionOptionIndex >= _minionOptions.Count) _selectedMinionOptionIndex = 0;
-                    if (_createMinionButtonText != null) _createMinionButtonText.text = $"Create {SelectedMinionOption}";
+                    if (_createMinionButtonText != null)
+                    {
+                        var createLocalized = BasePlugin.Localization.TryTranslate("$chebgonaz_wand_create");
+                        var minionLocalized = BasePlugin.Localization.TryTranslate(SelectedMinionOption switch
+                        {
+                            MinionOption.Archer => "$chebgonaz_miniontype_archer",
+                            MinionOption.Warrior => "$chebgonaz_miniontype_warrior",
+                            MinionOption.BattleNeckro => "$chebgonaz_miniontype_battleneckro",
+                            _ => "Error"
+                        });
+                        _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
+                    }
                     return true;
                 }
                 
