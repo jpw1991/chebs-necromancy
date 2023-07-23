@@ -224,6 +224,7 @@ namespace ChebsNecromancy.Items.Wands
                         MinionOption.Miner => "$chebgonaz_miniontype_miner",
                         MinionOption.Woodcutter => "$chebgonaz_miniontype_woodcutter",
                         MinionOption.Warrior => "$chebgonaz_miniontype_warrior",
+                        MinionOption.Poison => "$chebgonaz_miniontype_poison",
                         _ => "Error"
                     });
                     _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
@@ -278,6 +279,7 @@ namespace ChebsNecromancy.Items.Wands
                         MinionOption.Miner => "$chebgonaz_miniontype_miner",
                         MinionOption.Woodcutter => "$chebgonaz_miniontype_woodcutter",
                         MinionOption.Warrior => "$chebgonaz_miniontype_warrior",
+                        MinionOption.Poison => "$chebgonaz_miniontype_poison",
                         _ => "Error"
                     });
                     _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
