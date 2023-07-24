@@ -103,7 +103,10 @@ namespace ChebsNecromancy.Patches
             if (__instance.m_nview.IsValid()
                 && __instance.TryGetComponent(out UndeadMinion undeadMinion))
             {
-                __result = $"{Localization.instance.Localize("$chebgonaz_owner")}: {undeadMinion.UndeadMinionMaster} ({undeadMinion.Status})";
+                __result = $@"{Localization.instance.Localize("$chebgonaz_owner")}: {undeadMinion.UndeadMinionMaster} ({undeadMinion.Status switch {
+                    ChebGonazMinion.State.Following => Localization.instance.Localize("$chebgonaz_minionstatus_following"),
+                    ChebGonazMinion.State.Roaming => Localization.instance.Localize("$chebgonaz_minionstatus_roaming"),
+                    _ => Localization.instance.Localize("$chebgonaz_minionstatus_waiting") }})";
             }
         }
     }
