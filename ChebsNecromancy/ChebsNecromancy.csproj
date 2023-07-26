@@ -181,6 +181,8 @@
     <Compile Include="Minions\Skeletons\SkeletonMinion.cs" />
     <Compile Include="Minions\Skeletons\SkeletonWarriorMinion.cs" />
     <Compile Include="Minions\Skeletons\SkeletonWoodcutterMinion.cs" />
+    <Compile Include="Minions\Skeletons\WorkerAI\SkeletonMinerAI.cs" />
+    <Compile Include="Minions\Skeletons\WorkerAI\SkeletonWoodcutterAI.cs" />
     <Compile Include="Minions\UndeadMinion.cs" />
     <Compile Include="Patches\AoePatches.cs" />
     <Compile Include="Patches\ImpactEffectPatches.cs" />

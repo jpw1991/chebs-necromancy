@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx.Configuration;
+using ChebsNecromancy.Minions.Skeletons.WorkerAI;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions.AI;
 
@@ -8,7 +9,8 @@ namespace ChebsNecromancy.Minions.Skeletons
 {
     internal class SkeletonMinerMinion : SkeletonMinion
     {
-        public static ConfigEntry<float> UpdateDelay, LookRadius;
+        public static ConfigEntry<float> UpdateDelay, LookRadius, ToolDamage, ChatInterval, ChatDistance;
+        public static ConfigEntry<short> ToolTier;
         public static ConfigEntry<string> RockInternalIDsList;
         public static MemoryConfigEntry<string, List<string>> ItemsCost;
 
@@ -30,6 +32,18 @@ namespace ChebsNecromancy.Minions.Skeletons
                 "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount. Alternative items can be specified with a | eg. Wood|Coal:5 to mean wood and/or coal.",
                 null, true);
             ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
+            ToolDamage = plugin.Config.Bind(serverSyncedHeading, "ToolDamage", 6f,
+                new ConfigDescription("Damage dealt by the worker's tool to stuff it's harvesting.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ToolTier = plugin.Config.Bind(serverSyncedHeading, "ToolTier", (short)2,
+                new ConfigDescription("Worker's tool tier (determines what stuff it can mine/harvest).", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChatInterval = plugin.Config.Bind(serverSyncedHeading, "ChatInterval", 6f,
+                new ConfigDescription("The delay, in seconds, between worker updates. Set to 0 for no chatting.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            ChatDistance = plugin.Config.Bind(serverSyncedHeading, "ChatDistance", 6f,
+                new ConfigDescription("How close a player must be for the worker to speak.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public override void Awake()
@@ -38,16 +52,7 @@ namespace ChebsNecromancy.Minions.Skeletons
 
             canBeCommanded = false;
 
-            if (!TryGetComponent(out MinerAI _)) gameObject.AddComponent<MinerAI>();
-        }
-        
-        public static void SyncInternalsWithConfigs()
-        {
-            // awful stuff. Is there a better way?
-            MinerAI.UpdateDelay = UpdateDelay.Value;
-            MinerAI.LookRadius = LookRadius.Value;
-            MinerAI.RoamRange = RoamRange.Value;
-            MinerAI.RockInternalIDsList = RockInternalIDsList.Value;
+            if (!TryGetComponent(out SkeletonMinerAI _)) gameObject.AddComponent<SkeletonMinerAI>();
         }
     }
 }
