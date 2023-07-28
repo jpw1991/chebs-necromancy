@@ -149,6 +149,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+28/07/2023 | 4.0.0 | Workers should behave more realistically with gradual destruction of rocks, trees, etc.
 23/07/2023 | 3.7.1 | Fix problem where the minion state wasn't getting localized in the hover text
 22/07/2023 | 3.7.0 | Remove configurable Neckro Gatherer container size because containers have not been configurable since 3.3.1 (it resulted in a bug - see issue 100 on GitHub); add Russian translation
 21/07/2023 | 3.6.2 | fix bug where onePerPlayer was set to true for character drops, which would result in incorrect resource amounts getting refunded
