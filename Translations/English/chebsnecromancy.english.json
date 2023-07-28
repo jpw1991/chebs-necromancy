@@ -83,5 +83,8 @@
     "chebgonaz_miniontype_poison": "Poison",
     "chebgonaz_miniontype_mage": "Mage",
     "chebgonaz_miniontype_leech": "Leech",
-    "chebgonaz_miniontype_battleneckro": "Battle Neckro"
+    "chebgonaz_miniontype_battleneckro": "Battle Neckro",
+    "chebgonaz_worker_target": "Target",
+    "chebgonaz_worker_cantfindtarget": "Can't find target.",
+    "chebgonaz_minionstatus_following": "Following"
 }
