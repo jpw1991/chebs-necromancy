@@ -3,7 +3,9 @@ using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
+using ChebsNecromancy.Structures;
 using HarmonyLib;
+using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
@@ -37,16 +39,47 @@ namespace ChebsNecromancy.Patches
                 {
                     float bodyArmor = 0f;
                     bodyArmor += humanoid.m_chestItem != null
-                        ? humanoid.m_chestItem.m_shared.m_armor : 0;
+                        ? humanoid.m_chestItem.m_shared.m_armor
+                        : 0;
 
                     bodyArmor += humanoid.m_legItem != null
-                        ? humanoid.m_legItem.m_shared.m_armor : 0;
+                        ? humanoid.m_legItem.m_shared.m_armor
+                        : 0;
 
                     bodyArmor += humanoid.m_helmetItem != null
-                        ? humanoid.m_helmetItem.m_shared.m_armor : 0;
-                    
+                        ? humanoid.m_helmetItem.m_shared.m_armor
+                        : 0;
+
                     bodyArmor *= SkeletonWand.SkeletonArmorValueMultiplier.Value;
                     hit.ApplyArmor(bodyArmor);
+                }
+            }
+
+            if (__instance.IsPlayer())
+            {
+                var player = (Player)__instance;
+                var playerPhylactery = Phylactery.Phylacteries.Find(phylactery =>
+                    phylactery.TryGetComponent(out Piece piece)
+                    && piece.m_creator == player.GetPlayerID());
+                if (playerPhylactery != null && playerPhylactery.ConsumeFuel())
+                {
+                    // save player's life
+                    hit.m_damage = new HitData.DamageTypes
+                    {
+                        m_damage = 0,
+                        m_blunt = 0,
+                        m_slash = 0,
+                        m_pierce = 0,
+                        m_chop = 0,
+                        m_pickaxe = 0,
+                        m_fire = 0,
+                        m_frost = 0,
+                        m_lightning = 0,
+                        m_poison = 0,
+                        m_spirit = 0,
+                    };
+                    player.TeleportTo(playerPhylactery.transform.position + Vector3.forward,
+                        Quaternion.identity, true);
                 }
             }
         }

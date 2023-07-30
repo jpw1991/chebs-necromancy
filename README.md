@@ -129,6 +129,7 @@ A special thanks to the people who've helped me along the way:
 	+ [**WalterWillis**](https://github.com/WalterWillis) - Improvements to Treasure Pylon & Testing.
 - Artists
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
+	+ [**piacenti**](https://opengameart.org/users/piacenti) for the [skull prop](https://opengameart.org/content/skull-prop) that I use as part of the phylactery.
 - Translations
 	+ **S970X** - German language localization.
 	+ [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) - Korean language localization.

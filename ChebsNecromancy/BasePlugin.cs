@@ -36,7 +36,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.0.0";
+        public const string PluginVersion = "4.1.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -287,6 +287,7 @@ namespace ChebsNecromancy
             FarmingPylon.CreateConfigs(this);
             RepairPylon.CreateConfigs(this);
             TreasurePylon.CreateConfigs(this);
+            Phylactery.CreateConfigs(this);
 
             NeckroGathererMinion.CreateConfigs(this);
         }
@@ -315,11 +316,14 @@ namespace ChebsNecromancy
                 necromancersHoodItem.UpdateRecipe();
                 spectralShroudItem.UpdateRecipe();
 
+                SpiritPylon.UpdateRecipe();
+                RefuelerPylon.UpdateRecipe();
+                NeckroGathererPylon.UpdateRecipe();
                 BatBeacon.UpdateRecipe();
                 FarmingPylon.UpdateRecipe();
-                NeckroGathererPylon.UpdateRecipe();
-                RefuelerPylon.UpdateRecipe();
-                SpiritPylon.UpdateRecipe();
+                RepairPylon.UpdateRecipe();
+                TreasurePylon.UpdateRecipe();
+                Phylactery.UpdateRecipe();
             }
             catch (Exception exc)
             {
@@ -609,6 +613,14 @@ namespace ChebsNecromancy
                 );
                 var treasurePylonEffectPrefab = chebgonazAssetBundle.LoadAsset<GameObject>(TreasurePylon.EffectName);
                 PrefabManager.Instance.AddPrefab(treasurePylonEffectPrefab);
+                
+                var phylacteryPrefab =
+                    chebgonazAssetBundle.LoadAsset<GameObject>(Phylactery.ChebsRecipeConfig.PrefabName);
+                phylacteryPrefab.AddComponent<Phylactery>();
+                PieceManager.Instance.AddPiece(
+                    Phylactery.ChebsRecipeConfig.GetCustomPieceFromPrefab(phylacteryPrefab,
+                        chebgonazAssetBundle.LoadAsset<Sprite>(Phylactery.ChebsRecipeConfig.IconName))
+                );
 
                 #endregion
 
