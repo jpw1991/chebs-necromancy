@@ -79,6 +79,14 @@ namespace ChebsNecromancy.Structures
 
         private void Awake()
         {
+            StartCoroutine(Wait());
+        }
+
+        private IEnumerator Wait()
+        {
+            var piece = GetComponent<Piece>();
+            yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
+            
             if (!Phylacteries.Contains(this))
                 Phylacteries.Add(this);
             
