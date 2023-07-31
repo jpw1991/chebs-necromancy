@@ -91,7 +91,7 @@ namespace ChebsNecromancy.Structures
                 Phylacteries.Add(this);
             
             _container = gameObject.AddComponent<Container>();
-            _container.m_name = "$chebgonaz_refuelerpylon_name";
+            _container.m_name = "$chebgonaz_phylactery_name";
 
             _inventory = _container.GetInventory();
             _inventory.m_name = Localization.instance.Localize(_container.m_name);
