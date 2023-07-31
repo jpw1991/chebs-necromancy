@@ -58,26 +58,47 @@ namespace ChebsNecromancy.Patches
             if (__instance.IsPlayer())
             {
                 var player = (Player)__instance;
+
+                var incomingDamage = hit.Clone();
+                incomingDamage.ApplyArmor(player.GetBodyArmor());
+                incomingDamage.ApplyResistance(player.m_damageModifiers, out _);
+
+                // check if damage would kill player
+                //Jotunn.Logger.LogInfo($"player health {player.GetHealth()}\ntotal hit damage {incomingDamage.GetTotalDamage()}");
+                if (player.GetHealth() > incomingDamage.GetTotalDamage())
+                {
+                    //Jotunn.Logger.LogInfo($"player health {player.GetHealth()} > total hit damage {incomingDamage.GetTotalDamage()}");
+                    return;
+                }
+                
+                var noDamage = new HitData.DamageTypes
+                {
+                    m_damage = 0,
+                    m_blunt = 0,
+                    m_slash = 0,
+                    m_pierce = 0,
+                    m_chop = 0,
+                    m_pickaxe = 0,
+                    m_fire = 0,
+                    m_frost = 0,
+                    m_lightning = 0,
+                    m_poison = 0,
+                    m_spirit = 0,
+                };
+
+                if (player.IsTeleporting())
+                {
+                    Jotunn.Logger.LogInfo($"player is teleporting; ignore damage");
+                    hit.m_damage = noDamage;
+                    return;
+                }
+                
                 var playerPhylactery = Phylactery.Phylacteries.Find(phylactery =>
                     phylactery.TryGetComponent(out Piece piece)
                     && piece.m_creator == player.GetPlayerID());
                 if (playerPhylactery != null && playerPhylactery.ConsumeFuel())
                 {
-                    // save player's life
-                    hit.m_damage = new HitData.DamageTypes
-                    {
-                        m_damage = 0,
-                        m_blunt = 0,
-                        m_slash = 0,
-                        m_pierce = 0,
-                        m_chop = 0,
-                        m_pickaxe = 0,
-                        m_fire = 0,
-                        m_frost = 0,
-                        m_lightning = 0,
-                        m_poison = 0,
-                        m_spirit = 0,
-                    };
+                    hit.m_damage = noDamage;
                     player.TeleportTo(playerPhylactery.transform.position + Vector3.forward,
                         Quaternion.identity, true);
                 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -6,6 +5,7 @@ using BepInEx.Configuration;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Structures;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Structures
 {
@@ -56,13 +56,13 @@ namespace ChebsNecromancy.Structures
             var fuelPrefab = ZNetScene.instance.GetPrefab(FuelPrefab.Value);
             if (fuelPrefab == null)
             {
-                Jotunn.Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
+                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
                 return false;
             }
             
             if (!fuelPrefab.TryGetComponent(out ItemDrop itemDrop))
             {
-                Jotunn.Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab has no ItemDrop");
+                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab has no ItemDrop");
                 return false;
             }
 
