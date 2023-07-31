@@ -91,6 +91,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
 	+ [**Repair Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
 	+ [**Treasure Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/TreasurePylon): Organizes your chests in a rather chaotic way. By default only works on the basic wooden boxes but can be told to sort other things too via config. The idea is that Neckros haul all this stuff back, then the Treasure Pylon organizes it.
+	+ [**Phylactery**](https://github.com/jpw1991/chebs-necromancy/wiki/Phylactery): The player who creates the phylactery will be saved from death by being teleported to the phylactery rather than killed. Each rescue costs one dragon egg and if there are no dragon eggs loaded into the phylactery, then the player will die normally.
 
 ### Config
 
@@ -103,6 +104,7 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 ## Known issues
 
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but it's linked to the particle effects. You can switch them off by turning `RadeonFriendly = true` in the config.
+- Phylactery won't save you from falling to your death
 
 ## Known Incompatibilities
 
@@ -150,6 +152,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+30/07/2023 | 4.1.0 | add phylactery that consumes dragon eggs when you die and teleports you back to its location
 28/07/2023 | 4.0.0 | Workers should behave more realistically with gradual destruction of rocks, trees, etc.
 23/07/2023 | 3.7.1 | Fix problem where the minion state wasn't getting localized in the hover text
 22/07/2023 | 3.7.0 | Remove configurable Neckro Gatherer container size because containers have not been configurable since 3.3.1 (it resulted in a bug - see issue 100 on GitHub); add Russian translation
