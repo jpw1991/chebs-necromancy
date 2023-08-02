@@ -1,0 +1,34 @@
+name: Generate BBCode
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  outf: README.bbc
+  readmef: README.md
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Install markdown_to_bbcodenm tool
+        run: dotnet tool install -g Converter.MarkdownToBBCodeNM.Tool
+
+      - name: Convert README.md to README.bbc
+        run: markdown_to_bbcodenm -i "README.md" -o "${{ env.outf }}"
+
+      - name: Archive README.bbc
+        uses: actions/upload-artifact@v2
+        with:
+          name: bbcode-artifact
+          path: ${{ env.outf }}
