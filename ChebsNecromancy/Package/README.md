@@ -152,6 +152,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+02/08/2023 | 4.1.1 | strengthen null checks in Phylactery patch
 30/07/2023 | 4.1.0 | add phylactery that consumes dragon eggs when you die and teleports you back to its location
 28/07/2023 | 4.0.0 | Workers should behave more realistically with gradual destruction of rocks, trees, etc.
 23/07/2023 | 3.7.1 | Fix problem where the minion state wasn't getting localized in the hover text

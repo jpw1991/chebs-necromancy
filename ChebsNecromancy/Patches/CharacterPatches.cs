@@ -28,6 +28,8 @@ namespace ChebsNecromancy.Patches
         [HarmonyPrefix]
         static void Prefix(ref long sender, ref HitData hit, Character __instance)
         {
+            if (__instance == null) return;
+            
             if (__instance.TryGetComponent(out UndeadMinion minion)
                 && minion is SkeletonMinion or DraugrMinion)
             {
@@ -59,7 +61,19 @@ namespace ChebsNecromancy.Patches
             {
                 var player = (Player)__instance;
 
-                var incomingDamage = hit.Clone();
+                if (player == null)
+                {
+                    Jotunn.Logger.LogError($"player is null");
+                    return;
+                }
+
+                var incomingDamage = hit?.Clone();
+                if (incomingDamage == null)
+                {
+                    Jotunn.Logger.LogError($"hit is null");
+                    return;
+                }
+                
                 incomingDamage.ApplyArmor(player.GetBodyArmor());
                 incomingDamage.ApplyResistance(player.m_damageModifiers, out _);
 
