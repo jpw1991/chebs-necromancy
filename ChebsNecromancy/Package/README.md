@@ -152,6 +152,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+23/08/2023 | 4.2.0 | update for new valheim patch
 02/08/2023 | 4.1.1 | strengthen null checks in Phylactery patch
 30/07/2023 | 4.1.0 | add phylactery that consumes dragon eggs when you die and teleports you back to its location
 28/07/2023 | 4.0.0 | Workers should behave more realistically with gradual destruction of rocks, trees, etc.

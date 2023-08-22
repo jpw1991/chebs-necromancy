@@ -36,11 +36,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.1.1";
+        public const string PluginVersion = "4.2.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.2.0");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.3.0");
 
         private readonly Harmony harmony = new(PluginGuid);
         
