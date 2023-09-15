@@ -22,7 +22,7 @@ namespace ChebsNecromancy.Structures
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
             DefaultRecipe = "FineWood:10,Silver:5,Guck:15",
-            IconName = "chebgonaz_batbeacon_icon.png",
+            IconName = "chebgonaz_batpylon_icon.png",
             PieceTable = "_HammerPieceTable",
             PieceCategory = "Misc",
             PieceName = "$chebgonaz_batbeacon_name",
