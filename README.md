@@ -6,8 +6,6 @@ This mod was formerly called Friendly Skeleton Wand, but was renamed since it as
 
 ## Confused? Try the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki).
 
-## Important: Updating to 3.3.1 from an old version, read [here](https://github.com/jpw1991/chebs-necromancy/wiki/Upgrading-from-3.2.0-to-3.3.1)
-
 ##  About Me
 
 [![image1](https://imgur.com/Fahi6sP.png)](https://chebgonaz.pythonanywhere.com)
@@ -38,7 +36,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 ## Requirements
 
-- Valheim Mistlands
+- Valheim
 - BepInEx
 - Jotunn
 
@@ -129,6 +127,7 @@ A special thanks to the people who've helped me along the way:
 	+ [**Dracbjorn**](https://github.com/Dracbjorn) - Extensive work on the configuration files & parsing (including server-sync); general help & testing.
 	+ [**CW-Jesse**](https://github.com/CW-Jesse) - Refinements and improvements on networking code and minion AI; general help & testing.
 	+ [**WalterWillis**](https://github.com/WalterWillis) - Improvements to Treasure Pylon & Testing.
+	+ [**jneb802**](https://github.com/jneb802) - Finding and fixing a wrongly named sprite.
 - Artists
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
 	+ [**piacenti**](https://opengameart.org/users/piacenti) for the [skull prop](https://opengameart.org/content/skull-prop) that I use as part of the phylactery.
@@ -152,6 +151,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+06/10/2023 | 4.3.0 | update for hildr's request; fix [issue related to bat icon](https://github.com/jpw1991/chebs-necromancy/pull/240)
 23/08/2023 | 4.2.0 | update for new valheim patch
 02/08/2023 | 4.1.1 | strengthen null checks in Phylactery patch
 30/07/2023 | 4.1.0 | add phylactery that consumes dragon eggs when you die and teleports you back to its location
