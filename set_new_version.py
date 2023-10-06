@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # There's too many places where the version has to be set, so I've made a little script to do it for me each time.
 #
 # Locations (why):

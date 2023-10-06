@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
@@ -153,7 +154,7 @@ namespace ChebsNecromancy.Minions
             // Get all active skeleton minions that belong to the local player
             var minions = Character.GetAllCharacters()
                 .Where(c => !c.IsDead())
-                .Select(c => (c.GetComponent<T>(), c))
+                .Select(c => new Tuple<T, Character>(c.GetComponent<T>(), c))
                 .Where(t => t.Item1 != null && t.Item1.BelongsToPlayer(Player.m_localPlayer.GetPlayerName()))
                 .OrderByDescending(t => t.Item1.createdOrder)
                 .ToList();
