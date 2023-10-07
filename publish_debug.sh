@@ -4,7 +4,8 @@ DEBUGDIR=ChebsNecromancy/bin/Debug
 DLL=$DEBUGDIR/ChebsNecromancy.dll
 LIB=../chebs-valheim-library/ChebsValheimLibrary/bin/Release/ChebsValheimLibrary.dll
 BUN=ChebsNecromancyUnity/Assets/AssetBundles/chebgonaz
-PLUGINS=/home/joshua/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins
+#PLUGINS=/home/joshua/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins
+PLUGINS=/home/$USER/.config/r2modmanPlus-local/Valheim/profiles/cheb-development/BepInEx/plugins/ChebGonaz-ChebsNecromancy
 BEPINEX=ChebsNecromancy/libs/BepInEx.dll
 
 # Check that source files exist and are readable
