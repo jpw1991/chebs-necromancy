@@ -151,6 +151,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+07/10/2023 | 4.3.1 | add custom two-sided shader that was missing from chebgonaz bundle which caused a pink wand
 06/10/2023 | 4.3.0 | update for hildr's request; fix [issue related to bat icon](https://github.com/jpw1991/chebs-necromancy/pull/240)
 23/08/2023 | 4.2.0 | update for new valheim patch
 02/08/2023 | 4.1.1 | strengthen null checks in Phylactery patch
