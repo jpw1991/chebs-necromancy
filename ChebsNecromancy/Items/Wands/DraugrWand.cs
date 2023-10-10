@@ -9,6 +9,7 @@ using Jotunn;
 using Jotunn.Configs;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = Jotunn.Logger;
@@ -57,7 +58,7 @@ namespace ChebsNecromancy.Items.Wands
         private int _selectedMinionOptionIndex;
         private MinionOption SelectedMinionOption => _minionOptions[_selectedMinionOptionIndex];
         
-        private Text _createMinionButtonText;
+        private TextMeshProUGUI _createMinionButtonText;
         
         #endregion
 
@@ -203,7 +204,7 @@ namespace ChebsNecromancy.Items.Wands
                         var button = GameObject.Find(CreateMinionButton.Name);
                         if (button != null)
                         {
-                            _createMinionButtonText = button.GetComponentInChildren<Text>();
+                            _createMinionButtonText = button.GetComponentInChildren<TextMeshProUGUI>();
                         }   
                     }
 
