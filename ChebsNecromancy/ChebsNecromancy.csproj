@@ -156,6 +156,9 @@
     <Reference Include="UnityEngine.UI">
       <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.UI.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
