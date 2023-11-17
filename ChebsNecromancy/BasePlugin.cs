@@ -36,7 +36,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.3.2";
+        public const string PluginVersion = "4.4.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -102,6 +102,8 @@ namespace ChebsNecromancy
 
             CreateConfigValues();
 
+            Phylactery.ConfigureRPC();
+
             LoadChebGonazAssetBundle();
 
             harmony.PatchAll();
@@ -111,6 +113,8 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new KillAllNeckros());
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
+
+            StartCoroutine(Phylactery.PhylacteriesCheck());
 
             SetupWatcher();
         }

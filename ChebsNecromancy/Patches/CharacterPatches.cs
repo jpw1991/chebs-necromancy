@@ -107,15 +107,16 @@ namespace ChebsNecromancy.Patches
                     return;
                 }
                 
-                var playerPhylactery = Phylactery.Phylacteries.Find(phylactery =>
-                    phylactery.TryGetComponent(out Piece piece)
-                    && piece.m_creator == player.GetPlayerID());
-                if (playerPhylactery != null && playerPhylactery.ConsumeFuel())
-                {
-                    hit.m_damage = noDamage;
-                    player.TeleportTo(playerPhylactery.transform.position + Vector3.forward,
-                        Quaternion.identity, true);
-                }
+                // var playerPhylactery = Phylactery.Phylacteries.Find(phylactery =>
+                //     phylactery.TryGetComponent(out Piece piece)
+                //     && piece.m_creator == player.GetPlayerID());
+                // if (playerPhylactery != null &&  && playerPhylactery.ConsumeFuel())
+                // if (Phylactery.HasPhylactery)
+                // {
+                //     hit.m_damage = noDamage;
+                //     player.TeleportTo(playerPhylactery.transform.position + Vector3.forward,
+                //         Quaternion.identity, true);
+                // }
             }
         }
     }
