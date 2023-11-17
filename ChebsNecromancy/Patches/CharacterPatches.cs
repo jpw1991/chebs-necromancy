@@ -110,7 +110,8 @@ namespace ChebsNecromancy.Patches
                 // var playerPhylactery = Phylactery.Phylacteries.Find(phylactery =>
                 //     phylactery.TryGetComponent(out Piece piece)
                 //     && piece.m_creator == player.GetPlayerID());
-                // if (playerPhylactery != null &&  && playerPhylactery.ConsumeFuel())
+                // if (playerPhylactery != null && playerPhylactery.ConsumeFuel())
+                // todo: if player has phylactery, teleport to it and consume the fuel
                 // if (Phylactery.HasPhylactery)
                 // {
                 //     hit.m_damage = noDamage;

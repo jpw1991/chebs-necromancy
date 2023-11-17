@@ -99,9 +99,10 @@ namespace ChebsNecromancy.Structures
                     var s = Encoding.Convert(Encoding.UTF8, Encoding.UTF8, packageContent);
                     if (zdo.GetPrefab() == phylacteryHash && zdo.GetOwner().ToString() == s.ToString())
                     {
+                        // checking prefab is wrong -> must instead get the instance of the prefab from the ZDO. But how?
                         var prefab = ObjectDB.instance.GetItemPrefab(zdo.GetPrefab());
                         if (prefab != null && prefab.TryGetComponent(out Phylactery phylactery)
-                                           && phylactery.ConsumeFuel(0))
+                                           && phylactery.HasFuel())
                         {
                             phylacteryFound = "y";
                             break;
@@ -151,7 +152,7 @@ namespace ChebsNecromancy.Structures
             // }
         }
 
-        public bool ConsumeFuel(int amount = 1)
+        private bool HasFuel()
         {
             var fuelPrefab = ZNetScene.instance.GetPrefab(FuelPrefab.Value);
             if (fuelPrefab == null)
@@ -166,15 +167,27 @@ namespace ChebsNecromancy.Structures
                 return false;
             }
 
-            // why in the nine hells won't this work?
-            //return _inventory.RemoveOneItem(fuelPrefab.GetComponent<ItemDrop>().m_itemData);
+            return _inventory.HaveItem(itemDrop.m_itemData.m_shared.m_name);
+        }
 
-            if (_inventory.HaveItem(itemDrop.m_itemData.m_shared.m_name))
+        public bool ConsumeFuel(int amount)
+        {
+            var fuelPrefab = ZNetScene.instance.GetPrefab(FuelPrefab.Value);
+            if (fuelPrefab == null)
             {
-                if (amount > 0)
-                {
-                    _inventory.RemoveItem(itemDrop.m_itemData.m_shared.m_name, amount);   
-                }
+                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
+                return false;
+            }
+            
+            if (!fuelPrefab.TryGetComponent(out ItemDrop itemDrop))
+            {
+                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab has no ItemDrop");
+                return false;
+            }
+
+            if (_inventory.CountItems(itemDrop.m_itemData.m_shared.m_name) >= amount)
+            {
+                _inventory.RemoveItem(itemDrop.m_itemData.m_shared.m_name, amount);
                 return true;
             }
             return false;
