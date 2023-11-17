@@ -17,12 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Get clean version
-        run: echo "cleanVersion=$(echo ${{github.ref_name}} | sed s/v//g)" >> $GITHUB_ENV
       - name: Check that version matches
         run: |
-          if [[ "$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))" != "${{ env.cleanVersion }}" ]]; then
-            echo "::debug::${{env.cleanVersion}}"
+          if [[ "$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))" != "${{github.event.release.tag_name}}" ]]; then
+            echo "::debug::${{github.event.release.tag_name}}"
             echo "::debug::$(cat $(find ./ -name ${{env.jsonf}}))"
             echo "::error::Version in ${{env.jsonf}} does not match tag version"
             exit 1
@@ -37,17 +35,17 @@ jobs:
     needs: verify
     steps:
       - uses: actions/checkout@v3
-      - run: wget ${{ env.dlpath }}/${{ github.ref_name }}/${{ env.name }}.${{ github.ref_name }}.zip
+      - run: wget ${{env.dlpath}}/${{github.ref_name}}/${{env.name}}.${{github.ref_name}}.zip
       - name: Upload Thunderstore Package
         uses: GreenTF/upload-thunderstore-package@v4
         with:
           community: valheim
-          namespace: ${{ env.namespace }}
-          name: ${{ env.name }}
-          version: ${{ github.ref_name }} # This is the tag that was created in the release
-          description: ${{ env.DESCRIPTION }}
-          token: ${{ secrets.TS_KEY }}
-          deps: ${{ env.dependencies }}
-          categories: ${{ env.categories }}
-          file: ${{ env.name }}.${{ github.ref_name }}.zip
+          namespace: ${{env.namespace}}
+          name: ${{env.name}}
+          version: ${{github.event.release.tag_name}}
+          description: ${{env.DESCRIPTION}}
+          token: ${{secrets.TS_KEY}}
+          deps: ${{env.dependencies}}
+          categories: ${{env.categories}}
+          file: ${{env.name}}.${{github.event.release.tag_name}}.zip
 
