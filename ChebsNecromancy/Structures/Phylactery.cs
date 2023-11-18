@@ -160,6 +160,11 @@ namespace ChebsNecromancy.Structures
             StartCoroutine(Wait());
         }
 
+        private void OnDestroy()
+        {
+            _phylacteries.Remove(this);
+        }
+
         private IEnumerator Wait()
         {
             var piece = GetComponent<Piece>();
