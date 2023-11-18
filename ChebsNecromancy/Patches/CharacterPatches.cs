@@ -112,6 +112,7 @@ namespace ChebsNecromancy.Patches
                     hit.m_damage = noDamage;
                     player.TeleportTo(Phylactery.PhylacteryLocation + Vector3.forward,
                         Quaternion.identity, true);
+                    // to do: send RPC to consume fuel
                 }
             }
         }

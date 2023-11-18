@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using BepInEx.Configuration;
@@ -27,8 +28,12 @@ namespace ChebsNecromancy.Structures
         
         private Container _container;
         private Inventory _inventory;
-        
+
         public static CustomRPC PhylacteryCheckRPC;
+        private const string PhylacteryCheckString1 = "CG_1";
+        private const string PhylacteryCheckString2 = "CG_2";
+        // private static byte[] PhylacteryCheckString1Encoded => Encoding.UTF8.GetBytes(PhylacteryCheckString1);
+        // private static byte[] PhylacteryCheckString2Encoded => Encoding.UTF8.GetBytes(PhylacteryCheckString2);
 
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -68,32 +73,113 @@ namespace ChebsNecromancy.Structures
             PhylacteryCheckRPC = NetworkManager.Instance.AddRPC("PhylacteryCheckRPC",
                 PhylacteryCheckRPCServerReceive, PhylacteryCheckRPCClientReceive);
         }
+
+        private static Player GetPlayerFromSender(long sender)
+        {
+            foreach (var playerInfo in ZNet.instance.m_players)
+            {
+                var playerInfoSender = playerInfo.m_characterID.UserID;
+                if (playerInfoSender == sender)
+                {
+                    return Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name);
+                }
+            }
+
+            return null;
+        }
         
         private static IEnumerator PhylacteryCheckRPCServerReceive(long sender, ZPackage package)
         {
-            Logger.LogInfo("receive 1");
+            Logger.LogInfo($"receive 1 - _phylacteries.Count={_phylacteries.Count}");
             if (ZNet.instance == null) yield return null;
             Logger.LogInfo("receive 2");
             if (ZNet.instance.IsServerInstance() || ZNet.instance.IsLocalInstance())
             {
-                var playerPhylactery = _phylacteries.Find(phylactery =>
-                    phylactery.TryGetComponent(out Piece piece)
-                    && piece.m_creator == sender
-                    && phylactery.HasFuel());
-                var location = playerPhylactery != null
-                    ? Encoding.UTF8.GetBytes(playerPhylactery.transform.position.ToString())
-                    : Array.Empty<byte>();
-                PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
+                // in the case of IsLocalInstance, client and server are the same so we need to filter out messages
+                // that are coming from ourselves
+                // if (ZDOMan.s_compareReceiver == sender) yield return null;
+                
+                // client only ever sends empty byte array, so abort if not this
+                var payload = package.GetArray();
+                Logger.LogInfo($"receive 3 (length={payload.Length})");
+                if (payload.SequenceEqual(Encoding.UTF8.GetBytes(PhylacteryCheckString1)))
+                {
+                    // receiving from client
+                    
+                    foreach (var playerInfo in ZNet.instance.m_players)
+                    {
+                        var playerInfoSender = playerInfo.m_characterID.UserID;
+                        //Logger.LogInfo($"receive 3.1 playerInfoSender={playerInfoSender}, playerInfoName={playerInfo.m_name}");
+                        if (playerInfoSender == sender)
+                        {
+                            var playerCreatorID =
+                                Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name)?.GetPlayerID();
+                            if (playerCreatorID != null)
+                            {
+                                Logger.LogInfo($"receive 4 - playerInfoSender={playerInfoSender} playerCreatorID={playerCreatorID}");
+                                var playerPhylactery = _phylacteries.Find(phylactery =>
+                                    phylactery.TryGetComponent(out Piece piece)
+                                    && piece.m_creator == playerCreatorID
+                                    && phylactery.HasFuel());
+                                Logger.LogInfo($"receive 5 - {_phylacteries[0].GetComponent<Piece>().m_creator} {sender}");
+                                var location = playerPhylactery != null
+                                    ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + playerPhylactery.transform.position)
+                                    : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
+                                Logger.LogInfo($"receive 6 - sending {Encoding.UTF8.GetString(location)}");
+                                PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
+                                break;
+                            }
+                        }
+                    }
+                }
+                else if (payload.Length >= 3)
+                {
+                    var decoded = Encoding.UTF8.GetString(payload);
+                    if (decoded.StartsWith(PhylacteryCheckString2))
+                    {
+                        ReceivePhylacteryLocation(decoded, sender);
+                    }
+                }
             }
 
             yield return null;
         }
 
+        private static void ReceivePhylacteryLocation(string decoded, long sender)
+        {
+            Logger.LogInfo($"ReceivePhylacteryLocation {decoded} {sender}");
+            // cthulhu, help me
+            var phylacteryPositionStr = decoded.Replace(PhylacteryCheckString2, "")
+                .Replace("(", "")
+                .Replace(")", "")
+                .Replace(" ", "");
+            var phylacteryPositionXYZStr = phylacteryPositionStr.Split(',');
+            Logger.LogInfo($"{phylacteryPositionXYZStr[0]} {phylacteryPositionXYZStr[1]} {phylacteryPositionXYZStr[2]}");
+            var phylacteryVector3 = new Vector3(
+                float.Parse(phylacteryPositionXYZStr[0]), 
+                float.Parse(phylacteryPositionXYZStr[1]), 
+                float.Parse(phylacteryPositionXYZStr[2])
+            );
+            var player = GetPlayerFromSender(sender);
+            if (player != null)
+            {
+                HasPhylactery = true;
+                PhylacteryLocation = phylacteryVector3;
+            }
+        }
+
         public static IEnumerator PhylacteryCheckRPCClientReceive(long sender, ZPackage package)
         {
-            var locationString = package.ReadString();
-            Logger.LogMessage($"Phylactery found: {locationString}");
-            //HasPhylactery = package.ReadString() == "y";
+            Logger.LogMessage($"PhylacteryCheckRPCClientReceive");
+            var payload = package.GetArray();
+            if (payload.Length >= 3)
+            {
+                var decoded = Encoding.UTF8.GetString(payload);
+                if (decoded.StartsWith(PhylacteryCheckString2))
+                {
+                    ReceivePhylacteryLocation(decoded, sender);
+                }
+            }
             yield return null;
         }
         
@@ -107,7 +193,7 @@ namespace ChebsNecromancy.Structures
                 if (ZNet.instance.IsClientInstance() || ZNet.instance.IsLocalInstance())
                 {
                     Jotunn.Logger.LogInfo("tock");
-                    var package = new ZPackage(Array.Empty<byte>());
+                    var package = new ZPackage(Encoding.UTF8.GetBytes(PhylacteryCheckString1));
                     PhylacteryCheckRPC.SendPackage(ZRoutedRpc.instance.GetServerPeerID(), package);
                 }
                 yield return new WaitForSeconds(5);
