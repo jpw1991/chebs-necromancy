@@ -16,16 +16,19 @@ namespace ChebsNecromancy.Structures
 {
     internal class Phylactery : Structure
     {
-        //public static List<Phylactery> Phylacteries = new ();
-
         public static ConfigEntry<string> FuelPrefab;
 
+        // updated by client with info from server
+        public static bool HasPhylactery;
+        public static Vector3 PhylacteryLocation = Vector3.zero;
+
+        // updated by server periodically
+        private static List<Phylactery> _phylacteries = new ();
+        
         private Container _container;
         private Inventory _inventory;
         
         public static CustomRPC PhylacteryCheckRPC;
-        // updated by server periodically if the client has a phylactery
-        public static bool HasPhylactery = false;
 
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -60,24 +63,6 @@ namespace ChebsNecromancy.Structures
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
-        // public IEnumerator PhylacteryCheckRPCServerReceive(long sender, ZPackage package)
-        // {
-        //     var phylacteryHash = "ChebGonaz_Phylactery".GetStableHashCode();
-        //     var phylacteryFound = "n";
-        //     foreach (var zdo in ZDOMan.instance.m_objectsByID.Values)
-        //     {
-        //         if (zdo.GetPrefab() == phylacteryHash && zdo.GetOwner() == package.ReadLong())
-        //         {
-        //             phylacteryFound = "y";
-        //             break;
-        //         }
-        //     }
-        //     
-        //     PhylacteryCheckRPC.SendPackage(sender, new ZPackage(phylacteryFound));
-        //
-        //     yield return null;
-        // }
-
         public static void ConfigureRPC()
         {
             PhylacteryCheckRPC = NetworkManager.Instance.AddRPC("PhylacteryCheckRPC",
@@ -91,26 +76,14 @@ namespace ChebsNecromancy.Structures
             Logger.LogInfo("receive 2");
             if (ZNet.instance.IsServerInstance() || ZNet.instance.IsLocalInstance())
             {
-                var phylacteryHash = "ChebGonaz_Phylactery".GetStableHashCode();
-                var phylacteryFound = "n";
-                foreach (var zdo in ZDOMan.instance.m_objectsByID.Values)
-                {
-                    var packageContent = package.ReadByteArray();
-                    var s = Encoding.Convert(Encoding.UTF8, Encoding.UTF8, packageContent);
-                    if (zdo.GetPrefab() == phylacteryHash && zdo.GetOwner().ToString() == s.ToString())
-                    {
-                        // checking prefab is wrong -> must instead get the instance of the prefab from the ZDO. But how?
-                        var prefab = ObjectDB.instance.GetItemPrefab(zdo.GetPrefab());
-                        if (prefab != null && prefab.TryGetComponent(out Phylactery phylactery)
-                                           && phylactery.HasFuel())
-                        {
-                            phylacteryFound = "y";
-                            break;
-                        }
-                    }
-                }
-            
-                PhylacteryCheckRPC.SendPackage(ZNet.instance.m_peers, new ZPackage(phylacteryFound));
+                var playerPhylactery = _phylacteries.Find(phylactery =>
+                    phylactery.TryGetComponent(out Piece piece)
+                    && piece.m_creator == sender
+                    && phylactery.HasFuel());
+                var location = playerPhylactery != null
+                    ? Encoding.UTF8.GetBytes(playerPhylactery.transform.position.ToString())
+                    : Array.Empty<byte>();
+                PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
             }
 
             yield return null;
@@ -118,8 +91,9 @@ namespace ChebsNecromancy.Structures
 
         public static IEnumerator PhylacteryCheckRPCClientReceive(long sender, ZPackage package)
         {
-            Logger.LogMessage($"Phylactery found: {package.ReadString()}");
-            HasPhylactery = package.ReadString() == "y";
+            var locationString = package.ReadString();
+            Logger.LogMessage($"Phylactery found: {locationString}");
+            //HasPhylactery = package.ReadString() == "y";
             yield return null;
         }
         
@@ -133,28 +107,16 @@ namespace ChebsNecromancy.Structures
                 if (ZNet.instance.IsClientInstance() || ZNet.instance.IsLocalInstance())
                 {
                     Jotunn.Logger.LogInfo("tock");
-                    var package = new ZPackage(Encoding.UTF8.GetBytes(Player.m_localPlayer.GetPlayerID().ToString()));
-                    //package.Write(Player.m_localPlayer.GetPlayerID());
+                    var package = new ZPackage(Array.Empty<byte>());
                     PhylacteryCheckRPC.SendPackage(ZRoutedRpc.instance.GetServerPeerID(), package);
                 }
                 yield return new WaitForSeconds(5);
             }
-            // yield return new WaitUntil(() => ZNet.instance != null);
-            // if (ZNet.instance.IsClientInstance())
-            // {
-            //     while (true)
-            //     {
-            //         var package = new ZPackage();
-            //         package.Write(Player.m_localPlayer.GetPlayerID());
-            //         PhylacteryCheckRPC.SendPackage(ZRoutedRpc.instance.GetServerPeerID(), package);
-            //         yield return new WaitForSeconds(5);   
-            //     }
-            // }
         }
 
         private bool HasFuel()
         {
-            var fuelPrefab = ZNetScene.instance.GetPrefab(FuelPrefab.Value);
+            var fuelPrefab = PrefabManager.Instance.GetPrefab(FuelPrefab.Value);
             if (fuelPrefab == null)
             {
                 Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
@@ -172,7 +134,7 @@ namespace ChebsNecromancy.Structures
 
         public bool ConsumeFuel(int amount)
         {
-            var fuelPrefab = ZNetScene.instance.GetPrefab(FuelPrefab.Value);
+            var fuelPrefab = PrefabManager.Instance.GetPrefab(FuelPrefab.Value);
             if (fuelPrefab == null)
             {
                 Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
@@ -193,17 +155,6 @@ namespace ChebsNecromancy.Structures
             return false;
         }
 
-        // public static bool TeleportPossible(Player player)
-        // {
-        //     var connectionZdoid = player.m_nview.GetZDO().GetConnectionZDOID(ZDOExtraData.ConnectionType.Portal);
-        //     if (connectionZdoid == ZDOID.None)
-        //         return false;
-        //     if (ZDOMan.instance.GetZDO(connectionZdoid) != null)
-        //         return true;
-        //     ZDOMan.instance.RequestZDO(connectionZdoid);
-        //     return false;
-        // }
-
         private void Awake()
         {
             StartCoroutine(Wait());
@@ -214,22 +165,18 @@ namespace ChebsNecromancy.Structures
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
             
-            // if (!Phylacteries.Contains(this))
-            //     Phylacteries.Add(this);
-            
+            if (ZNet.instance.IsServerInstance() || ZNet.instance.IsLocalInstance())
+            {
+                // add to phylactery list if on server
+                if (!_phylacteries.Contains(this))
+                    _phylacteries.Add(this);
+            }
+
             _container = gameObject.AddComponent<Container>();
             _container.m_name = "$chebgonaz_phylactery_name";
 
             _inventory = _container.GetInventory();
             _inventory.m_name = Localization.instance.Localize(_container.m_name);
-            
-            // register portal - see TeleportWorld.RPC_SetTag. We set the phylactery up as a one-way portal
-            // var zdo = Player.m_localPlayer.m_nview.GetZDO();
-            // var connectionZdoid = zdo.GetConnectionZDOID(ZDOExtraData.ConnectionType.Portal);
-            // zdo.UpdateConnection(ZDOExtraData.ConnectionType.Portal, ZDOID.None);
-            // ZDOMan.instance.GetZDO(connectionZdoid)?.UpdateConnection(ZDOExtraData.ConnectionType.Portal, ZDOID.None);
-            // zdo.Set(ZDOVars.s_tag, ZDOVars.s_tag);
-            // zdo.Set(ZDOVars.s_tagauthor, ZDOVars.s_tagauthor);
         }
     }
 }
