@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,8 +31,7 @@ namespace ChebsNecromancy.Structures
         public static CustomRPC PhylacteryCheckRPC;
         private const string PhylacteryCheckString1 = "CG_1";
         private const string PhylacteryCheckString2 = "CG_2";
-        // private static byte[] PhylacteryCheckString1Encoded => Encoding.UTF8.GetBytes(PhylacteryCheckString1);
-        // private static byte[] PhylacteryCheckString2Encoded => Encoding.UTF8.GetBytes(PhylacteryCheckString2);
+        private const string PhylacteryConsumeFuelString1 = "CG_3";
 
         public new static ChebsRecipe ChebsRecipeConfig = new()
         {
@@ -88,11 +86,11 @@ namespace ChebsNecromancy.Structures
             return null;
         }
         
+        //private static
+        
         private static IEnumerator PhylacteryCheckRPCServerReceive(long sender, ZPackage package)
         {
-            Logger.LogInfo($"receive 1 - _phylacteries.Count={_phylacteries.Count}");
             if (ZNet.instance == null) yield return null;
-            Logger.LogInfo("receive 2");
             if (ZNet.instance.IsServerInstance() || ZNet.instance.IsLocalInstance())
             {
                 // in the case of IsLocalInstance, client and server are the same so we need to filter out messages
@@ -101,42 +99,68 @@ namespace ChebsNecromancy.Structures
                 
                 // client only ever sends empty byte array, so abort if not this
                 var payload = package.GetArray();
-                Logger.LogInfo($"receive 3 (length={payload.Length})");
                 if (payload.SequenceEqual(Encoding.UTF8.GetBytes(PhylacteryCheckString1)))
                 {
-                    // receiving from client
+                    Logger.LogInfo($"Received request from {sender} to check for an existing phylactery.");
                     
                     foreach (var playerInfo in ZNet.instance.m_players)
                     {
                         var playerInfoSender = playerInfo.m_characterID.UserID;
-                        //Logger.LogInfo($"receive 3.1 playerInfoSender={playerInfoSender}, playerInfoName={playerInfo.m_name}");
                         if (playerInfoSender == sender)
                         {
                             var playerCreatorID =
                                 Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name)?.GetPlayerID();
                             if (playerCreatorID != null)
                             {
-                                Logger.LogInfo($"receive 4 - playerInfoSender={playerInfoSender} playerCreatorID={playerCreatorID}");
                                 var playerPhylactery = _phylacteries.Find(phylactery =>
                                     phylactery.TryGetComponent(out Piece piece)
                                     && piece.m_creator == playerCreatorID
                                     && phylactery.HasFuel());
-                                Logger.LogInfo($"receive 5 - {_phylacteries[0].GetComponent<Piece>().m_creator} {sender}");
                                 var location = playerPhylactery != null
                                     ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + playerPhylactery.transform.position)
                                     : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
-                                Logger.LogInfo($"receive 6 - sending {Encoding.UTF8.GetString(location)}");
                                 PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
                                 break;
                             }
                         }
                     }
                 }
+                else if (payload.SequenceEqual(Encoding.UTF8.GetBytes(PhylacteryConsumeFuelString1)))
+                {
+                    Logger.LogInfo($"Received request from {sender} to consume fuel.");
+                    var consumptionSuccessful = false;
+                    foreach (var playerInfo in ZNet.instance.m_players)
+                    {
+                        var playerInfoSender = playerInfo.m_characterID.UserID;
+                        if (playerInfoSender == sender)
+                        {
+                            var playerCreatorID =
+                                Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name)?.GetPlayerID();
+                            if (playerCreatorID != null)
+                            {
+                                var playerPhylactery = _phylacteries.Find(phylactery =>
+                                    phylactery.TryGetComponent(out Piece piece)
+                                    && piece.m_creator == playerCreatorID);
+                                if (playerPhylactery == null)
+                                {
+                                    Logger.LogError($"Trying to consume fuel for {playerInfo.m_name}'s phylactery, but it is null.");
+                                }
+                                else
+                                {
+                                    consumptionSuccessful = playerPhylactery.ConsumeFuel(1);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (!consumptionSuccessful) Logger.LogWarning($"Received request from {sender} to consume fuel, but was unable to do so.");
+                }
                 else if (payload.Length >= 3)
                 {
                     var decoded = Encoding.UTF8.GetString(payload);
                     if (decoded.StartsWith(PhylacteryCheckString2))
                     {
+                        Logger.LogInfo($"Received request from {sender} for phylactery location.");
                         ReceivePhylacteryLocation(decoded, sender);
                     }
                 }
@@ -148,12 +172,19 @@ namespace ChebsNecromancy.Structures
         private static void ReceivePhylacteryLocation(string decoded, long sender)
         {
             Logger.LogInfo($"ReceivePhylacteryLocation {decoded} {sender}");
+
             // cthulhu, help me
             var phylacteryPositionStr = decoded.Replace(PhylacteryCheckString2, "")
                 .Replace("(", "")
                 .Replace(")", "")
                 .Replace(" ", "");
             var phylacteryPositionXYZStr = phylacteryPositionStr.Split(',');
+            if (phylacteryPositionXYZStr.Length != 3)
+            {
+                // if no vector is sent with it, then no phylactery must exist
+                HasPhylactery = false;
+                return;
+            }
             Logger.LogInfo($"{phylacteryPositionXYZStr[0]} {phylacteryPositionXYZStr[1]} {phylacteryPositionXYZStr[2]}");
             var phylacteryVector3 = new Vector3(
                 float.Parse(phylacteryPositionXYZStr[0]), 
@@ -188,11 +219,9 @@ namespace ChebsNecromancy.Structures
             // Client should constantly check with the server for phylacteries
             while (true)
             {
-                Jotunn.Logger.LogInfo("tick");
                 yield return new WaitUntil(() => ZNet.instance != null && Player.m_localPlayer != null);
                 if (ZNet.instance.IsClientInstance() || ZNet.instance.IsLocalInstance())
                 {
-                    Jotunn.Logger.LogInfo("tock");
                     var package = new ZPackage(Encoding.UTF8.GetBytes(PhylacteryCheckString1));
                     PhylacteryCheckRPC.SendPackage(ZRoutedRpc.instance.GetServerPeerID(), package);
                 }
@@ -200,40 +229,40 @@ namespace ChebsNecromancy.Structures
             }
         }
 
-        private bool HasFuel()
+        public static void RequestConsumptionOfFuelForPlayerPhylactery()
+        {
+            var package = new ZPackage(Encoding.UTF8.GetBytes(PhylacteryConsumeFuelString1));
+            PhylacteryCheckRPC.SendPackage(ZRoutedRpc.instance.GetServerPeerID(), package);
+        }
+
+        private ItemDrop GetFuelItemDrop()
         {
             var fuelPrefab = PrefabManager.Instance.GetPrefab(FuelPrefab.Value);
             if (fuelPrefab == null)
             {
-                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
-                return false;
+                Logger.LogError("Phylactery.GetFuelItemDrop: fuelPrefab is null");
+                return null;
             }
             
             if (!fuelPrefab.TryGetComponent(out ItemDrop itemDrop))
             {
-                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab has no ItemDrop");
-                return false;
+                Logger.LogError("Phylactery.GetFuelItemDrop: fuelPrefab has no ItemDrop");
+                return null;
             }
 
-            return _inventory.HaveItem(itemDrop.m_itemData.m_shared.m_name);
+            return itemDrop;
+        }
+
+        private bool HasFuel()
+        {
+            var itemDrop = GetFuelItemDrop();
+            return itemDrop != null && _inventory.HaveItem(itemDrop.m_itemData.m_shared.m_name);
         }
 
         public bool ConsumeFuel(int amount)
         {
-            var fuelPrefab = PrefabManager.Instance.GetPrefab(FuelPrefab.Value);
-            if (fuelPrefab == null)
-            {
-                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab is null");
-                return false;
-            }
-            
-            if (!fuelPrefab.TryGetComponent(out ItemDrop itemDrop))
-            {
-                Logger.LogError("Phylactery.ConsumeFuel: fuelPrefab has no ItemDrop");
-                return false;
-            }
-
-            if (_inventory.CountItems(itemDrop.m_itemData.m_shared.m_name) >= amount)
+            var itemDrop = GetFuelItemDrop();
+            if (itemDrop != null && _inventory.CountItems(itemDrop.m_itemData.m_shared.m_name) >= amount)
             {
                 _inventory.RemoveItem(itemDrop.m_itemData.m_shared.m_name, amount);
                 return true;
