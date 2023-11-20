@@ -173,6 +173,188 @@ namespace ChebsNecromancy.Structures
             return new KeyValuePair<bool, Vector3>(false, Vector3.zero);
         }
 
+        private struct ItemInfoHolder
+        {
+            public string Name;
+            public int Stack;
+            public float Durability;
+            public Vector2i GridPosition;
+            public bool Equipped;
+            public int Quality;
+            public int Variant;
+            public long CrafterID;
+            public string CrafterName;
+            public Dictionary<string, string> CustomData;
+            public int WorldLevel;
+            public bool PickedUp;
+
+            public ItemInfoHolder(string name, int stack, float durability, Vector2i gridPosition, bool equipped, int quality, 
+                int variant, long crafterID, string crafterName, Dictionary<string, string> customData, int worldLevel,
+                bool pickedUp)
+            {
+                Name = name;
+                Stack = stack;
+                Durability = durability;
+                GridPosition = gridPosition;
+                Equipped = equipped;
+                Quality = quality;
+                Variant = variant;
+                CrafterID = crafterID;
+                CrafterName = crafterName;
+                CustomData = customData;
+                WorldLevel = worldLevel;
+                PickedUp = pickedUp;
+            }
+        }
+
+        public static void RemoveFuelFromPhylactery(long creator)
+        {
+            var fuelPrefab = FuelPrefab.Value;
+            
+            // To remove one item:
+            // 1. read all items
+            // 2. write all items, except for one
+            var items = new List<ItemInfoHolder>();
+            var fuelConsumed = false;
+            foreach (var zdo in ZDOMan.instance.m_objectsByID.Values)
+            {
+                if (zdo.GetPrefab() == PhylacteryHash)
+                {
+                    // read Piece's creator from ZDO to ensure the player created it
+                    var phylacteryCreator = zdo.GetLong(ZDOVars.s_creator);
+                    if (phylacteryCreator != creator) continue;
+
+                    // read items from ZDO
+                    //
+                    // Copied from: Container.Load()
+                    var zdoItemsBase64String = zdo.GetString(ZDOVars.s_items);
+                    var zPackage = new ZPackage(zdoItemsBase64String);
+                    // Copied from: Inventory.Load(ZPackage pkg)
+                    var num1 = zPackage.ReadInt();
+                    var num2 = zPackage.ReadInt();
+                    if (num1 == 106)
+                    {
+                        for (var index1 = 0; index1 < num2; ++index1)
+                        {
+                            var name = zPackage.ReadString();
+                            var stack = zPackage.ReadInt();
+                            var durability = zPackage.ReadSingle();
+                            var pos = zPackage.ReadVector2i();
+                            var equipped = zPackage.ReadBool();
+                            var quality = zPackage.ReadInt();
+                            var variant = zPackage.ReadInt();
+                            var crafterID = zPackage.ReadLong();
+                            var crafterName = zPackage.ReadString();
+                            var customData = new Dictionary<string, string>();
+                            var num3 = zPackage.ReadInt();
+                            for (var index2 = 0; index2 < num3; ++index2)
+                                customData[zPackage.ReadString()] = zPackage.ReadString();
+                            var worldLevel = zPackage.ReadInt();
+                            var pickedUp = zPackage.ReadBool();
+                            Logger.LogInfo($"Found {name} in phylactery's inventory");
+                            if (name == fuelPrefab && !fuelConsumed)
+                            {
+                                // omit
+                                fuelConsumed = true;
+                            }
+                            else
+                            {
+                                // write
+                                items.Add(new ItemInfoHolder(name, stack, durability, pos, equipped, quality, variant,
+                                    crafterID, crafterName, customData, worldLevel, pickedUp));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (var index3 = 0; index3 < num2; ++index3)
+                        {
+                            var name = zPackage.ReadString();
+                            var stack = zPackage.ReadInt();
+                            var durability = zPackage.ReadSingle();
+                            var pos = zPackage.ReadVector2i();
+                            var equipped = zPackage.ReadBool();
+                            var quality = 1;
+                            if (num1 >= 101)
+                                quality = zPackage.ReadInt();
+                            var variant = 0;
+                            if (num1 >= 102)
+                                variant = zPackage.ReadInt();
+                            long crafterID = 0;
+                            var crafterName = "";
+                            if (num1 >= 103)
+                            {
+                                crafterID = zPackage.ReadLong();
+                                crafterName = zPackage.ReadString();
+                            }
+
+                            var customData = new Dictionary<string, string>();
+                            if (num1 >= 104)
+                            {
+                                var num4 = zPackage.ReadInt();
+                                for (var index4 = 0; index4 < num4; ++index4)
+                                {
+                                    var key = zPackage.ReadString();
+                                    var str = zPackage.ReadString();
+                                    customData[key] = str;
+                                }
+                            }
+
+                            var worldLevel = 0;
+                            if (num1 >= 105)
+                                worldLevel = zPackage.ReadInt();
+                            var pickedUp = false;
+                            if (num1 >= 106)
+                                pickedUp = zPackage.ReadBool();
+                            Logger.LogInfo($"Found {name} in phylactery's inventory");
+                            if (name == fuelPrefab && !fuelConsumed)
+                            {
+                                // omit
+                                fuelConsumed = true;
+                            }
+                            else
+                            {
+                                // write
+                                items.Add(new ItemInfoHolder(name, stack, durability, pos, equipped, quality, variant,
+                                    crafterID, crafterName, customData, worldLevel, pickedUp));
+                            }
+                        }
+                    }
+                    
+                    // write all items
+                    var zPackageWrite = new ZPackage();
+                    zPackageWrite.Write(106);
+                    zPackageWrite.Write(items.Count);
+                    foreach (var itemInfoHolder in items)
+                    {
+                        zPackageWrite.Write(itemInfoHolder.Name);
+                        zPackageWrite.Write(itemInfoHolder.Stack);
+                        zPackageWrite.Write(itemInfoHolder.Durability);
+                        zPackageWrite.Write(itemInfoHolder.GridPosition);
+                        zPackageWrite.Write(itemInfoHolder.Equipped);
+                        zPackageWrite.Write(itemInfoHolder.Quality);
+                        zPackageWrite.Write(itemInfoHolder.Variant);
+                        zPackageWrite.Write(itemInfoHolder.CrafterID);
+                        zPackageWrite.Write(itemInfoHolder.CrafterName);
+                        zPackageWrite.Write(itemInfoHolder.CustomData.Count);
+                        foreach (KeyValuePair<string, string> keyValuePair in itemInfoHolder.CustomData)
+                        {
+                            zPackageWrite.Write(keyValuePair.Key);
+                            zPackageWrite.Write(keyValuePair.Value);
+                        }
+                        zPackageWrite.Write(itemInfoHolder.WorldLevel);
+                        zPackageWrite.Write(itemInfoHolder.PickedUp);
+                    }
+            
+                    var writeItemsBase64String = zPackageWrite.GetBase64();
+                    zdo.Set(ZDOVars.s_items, writeItemsBase64String);
+
+                    // finished
+                    return;
+                }
+            }
+        }
+
         private static Player GetPlayerFromSender(long sender)
         {
             foreach (var playerInfo in ZNet.instance.m_players)
@@ -232,21 +414,10 @@ namespace ChebsNecromancy.Structures
                         {
                             var playerCreatorID =
                                 Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name)?.GetPlayerID();
-                            if (playerCreatorID != null)
+                            if (playerCreatorID.HasValue)
                             {
-                                // var playerPhylactery = _phylacteries.Find(phylactery =>
-                                //     phylactery.TryGetComponent(out Piece piece)
-                                //     && piece.m_creator == playerCreatorID);
-                                // if (playerPhylactery == null)
-                                // {
-                                //     Logger.LogError($"Trying to consume fuel for {playerInfo.m_name}'s phylactery, but it is null.");
-                                // }
-                                // else
-                                // {
-                                //     consumptionSuccessful = playerPhylactery.ConsumeFuel(1);
-                                // }
-                                // todo: consume fuel
-                                Logger.LogInfo("todo: Consume phylactery fuel");
+                                RemoveFuelFromPhylactery(playerCreatorID.Value);
+                                consumptionSuccessful = true;
                                 break;
                             }
                         }
@@ -349,23 +520,6 @@ namespace ChebsNecromancy.Structures
             }
 
             return itemDrop;
-        }
-
-        private bool HasFuel()
-        {
-            var itemDrop = GetFuelItemDrop();
-            return itemDrop != null && _inventory.HaveItem(itemDrop.m_itemData.m_shared.m_name);
-        }
-
-        public bool ConsumeFuel(int amount)
-        {
-            var itemDrop = GetFuelItemDrop();
-            if (itemDrop != null && _inventory.CountItems(itemDrop.m_itemData.m_shared.m_name) >= amount)
-            {
-                _inventory.RemoveItem(itemDrop.m_itemData.m_shared.m_name, amount);
-                return true;
-            }
-            return false;
         }
 
         private void Awake()
