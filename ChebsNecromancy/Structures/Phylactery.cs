@@ -16,15 +16,14 @@ namespace ChebsNecromancy.Structures
 {
     internal class Phylactery : Structure
     {
+        public static readonly int PhylacteryHash = "ChebGonaz_Phylactery".GetHashCode();
+        
         public static ConfigEntry<string> FuelPrefab;
 
         // updated by client with info from server
         public static bool HasPhylactery;
         public static Vector3 PhylacteryLocation = Vector3.zero;
 
-        // updated by server periodically
-        private static List<Phylactery> _phylacteries = new ();
-        
         private Container _container;
         private Inventory _inventory;
 
@@ -72,6 +71,108 @@ namespace ChebsNecromancy.Structures
                 PhylacteryCheckRPCServerReceive, PhylacteryCheckRPCClientReceive);
         }
 
+        private static KeyValuePair<bool, Vector3> GetPhylacteriesInWorld(long creator)
+        {
+            var fuelPrefab = FuelPrefab.Value;
+            
+            foreach (var zdo in ZDOMan.instance.m_objectsByID.Values)
+            {
+                if (zdo.GetPrefab() == PhylacteryHash)
+                {
+                    //Logger.LogInfo($"Found a phylactery at {zdo.m_position}");
+                    var fuelFound = 0;
+
+                    // read Piece's creator from ZDO to ensure the player created it
+                    var phylacteryCreator = zdo.GetLong(ZDOVars.s_creator);
+                    if (phylacteryCreator != creator) continue;
+
+                    // read items from ZDO
+                    //
+                    // Copied from: Container.Load()
+                    var zdoItemsBase64String = zdo.GetString(ZDOVars.s_items);
+                    var zPackage = new ZPackage(zdoItemsBase64String);
+                    // Copied from: Inventory.Load(ZPackage pkg)
+                    var num1 = zPackage.ReadInt();
+                    var num2 = zPackage.ReadInt();
+                    if (num1 == 106)
+                    {
+                        for (var index1 = 0; index1 < num2; ++index1)
+                        {
+                            var name = zPackage.ReadString();
+                            var stack = zPackage.ReadInt();
+                            var durability = zPackage.ReadSingle();
+                            var pos = zPackage.ReadVector2i();
+                            var equipped = zPackage.ReadBool();
+                            var quality = zPackage.ReadInt();
+                            var variant = zPackage.ReadInt();
+                            var crafterID = zPackage.ReadLong();
+                            var crafterName = zPackage.ReadString();
+                            var customData = new Dictionary<string, string>();
+                            var num3 = zPackage.ReadInt();
+                            for (var index2 = 0; index2 < num3; ++index2)
+                                customData[zPackage.ReadString()] = zPackage.ReadString();
+                            var worldLevel = zPackage.ReadInt();
+                            var pickedUp = zPackage.ReadBool();
+                            Logger.LogInfo($"Found {name} in phylactery's inventory");
+                            if (name == fuelPrefab) fuelFound++;
+                        }
+                    }
+                    else
+                    {
+                        for (var index3 = 0; index3 < num2; ++index3)
+                        {
+                            var name = zPackage.ReadString();
+                            var stack = zPackage.ReadInt();
+                            var durability = zPackage.ReadSingle();
+                            var pos = zPackage.ReadVector2i();
+                            var equipped = zPackage.ReadBool();
+                            var quality = 1;
+                            if (num1 >= 101)
+                                quality = zPackage.ReadInt();
+                            var variant = 0;
+                            if (num1 >= 102)
+                                variant = zPackage.ReadInt();
+                            long crafterID = 0;
+                            var crafterName = "";
+                            if (num1 >= 103)
+                            {
+                                crafterID = zPackage.ReadLong();
+                                crafterName = zPackage.ReadString();
+                            }
+
+                            var customData = new Dictionary<string, string>();
+                            if (num1 >= 104)
+                            {
+                                var num4 = zPackage.ReadInt();
+                                for (var index4 = 0; index4 < num4; ++index4)
+                                {
+                                    var key = zPackage.ReadString();
+                                    var str = zPackage.ReadString();
+                                    customData[key] = str;
+                                }
+                            }
+
+                            var worldLevel = 0;
+                            if (num1 >= 105)
+                                worldLevel = zPackage.ReadInt();
+                            var pickedUp = false;
+                            if (num1 >= 106)
+                                pickedUp = zPackage.ReadBool();
+                            Logger.LogInfo($"Found {name} in phylactery's inventory");
+                            if (name == fuelPrefab) fuelFound++;
+                        }
+                    }
+
+                    if (fuelFound > 0)
+                    {
+                        Logger.LogInfo($"Player {phylacteryCreator} has phylactery at {zdo.m_position} with {fuelFound} fuel.");
+                        return new KeyValuePair<bool, Vector3>(true, zdo.m_position);
+                    }
+                }
+            }
+            return new KeyValuePair<bool, Vector3>(false, Vector3.zero);
+        }
+
         private static Player GetPlayerFromSender(long sender)
         {
             foreach (var playerInfo in ZNet.instance.m_players)
@@ -85,9 +186,7 @@ namespace ChebsNecromancy.Structures
 
             return null;
         }
-        
-        //private static
-        
+
         private static IEnumerator PhylacteryCheckRPCServerReceive(long sender, ZPackage package)
         {
             if (ZNet.instance == null) yield return null;
@@ -110,14 +209,11 @@ namespace ChebsNecromancy.Structures
                         {
                             var playerCreatorID =
                                 Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name)?.GetPlayerID();
-                            if (playerCreatorID != null)
+                            if (playerCreatorID.HasValue)
                             {
-                                var playerPhylactery = _phylacteries.Find(phylactery =>
-                                    phylactery.TryGetComponent(out Piece piece)
-                                    && piece.m_creator == playerCreatorID
-                                    && phylactery.HasFuel());
-                                var location = playerPhylactery != null
-                                    ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + playerPhylactery.transform.position)
+                                var hasPhylacteryAndLocation = GetPhylacteriesInWorld(playerCreatorID.Value);
+                                var location = hasPhylacteryAndLocation.Key
+                                    ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + hasPhylacteryAndLocation.Value)
                                     : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
                                 PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
                                 break;
@@ -138,17 +234,19 @@ namespace ChebsNecromancy.Structures
                                 Player.s_players.Find(player => player.GetPlayerName() == playerInfo.m_name)?.GetPlayerID();
                             if (playerCreatorID != null)
                             {
-                                var playerPhylactery = _phylacteries.Find(phylactery =>
-                                    phylactery.TryGetComponent(out Piece piece)
-                                    && piece.m_creator == playerCreatorID);
-                                if (playerPhylactery == null)
-                                {
-                                    Logger.LogError($"Trying to consume fuel for {playerInfo.m_name}'s phylactery, but it is null.");
-                                }
-                                else
-                                {
-                                    consumptionSuccessful = playerPhylactery.ConsumeFuel(1);
-                                }
+                                // var playerPhylactery = _phylacteries.Find(phylactery =>
+                                //     phylactery.TryGetComponent(out Piece piece)
+                                //     && piece.m_creator == playerCreatorID);
+                                // if (playerPhylactery == null)
+                                // {
+                                //     Logger.LogError($"Trying to consume fuel for {playerInfo.m_name}'s phylactery, but it is null.");
+                                // }
+                                // else
+                                // {
+                                //     consumptionSuccessful = playerPhylactery.ConsumeFuel(1);
+                                // }
+                                // todo: consume fuel
+                                Logger.LogInfo("todo: Consume phylactery fuel");
                                 break;
                             }
                         }
@@ -275,22 +373,10 @@ namespace ChebsNecromancy.Structures
             StartCoroutine(Wait());
         }
 
-        private void OnDestroy()
-        {
-            _phylacteries.Remove(this);
-        }
-
         private IEnumerator Wait()
         {
             var piece = GetComponent<Piece>();
             yield return new WaitWhile(() => !piece.IsPlacedByPlayer());
-            
-            if (ZNet.instance.IsServerInstance() || ZNet.instance.IsLocalInstance())
-            {
-                // add to phylactery list if on server
-                if (!_phylacteries.Contains(this))
-                    _phylacteries.Add(this);
-            }
 
             _container = gameObject.AddComponent<Container>();
             _container.m_name = "$chebgonaz_phylactery_name";
