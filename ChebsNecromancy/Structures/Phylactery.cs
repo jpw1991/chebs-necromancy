@@ -19,6 +19,7 @@ namespace ChebsNecromancy.Structures
         public static readonly int PhylacteryHash = "ChebGonaz_Phylactery".GetHashCode();
 
         public static ConfigEntry<string> FuelPrefab;
+        public static ConfigEntry<bool> HeavyLogging;
 
         // updated by client with info from server
         public static bool HasPhylactery;
@@ -63,6 +64,11 @@ namespace ChebsNecromancy.Structures
             FuelPrefab = plugin.Config.Bind(ChebsRecipeConfig.ObjectName, "Fuel",
                 "DragonEgg", new ConfigDescription("The prefab name that is consumed as fuel.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+
+            HeavyLogging = plugin.Config.Bind(ChebsRecipeConfig.ObjectName, "HeavyLogging",
+                false, new ConfigDescription("Switch on to fill the logs (server and local) with excessive " +
+                                             "logging to assist with debugging.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
         }
 
         public static void ConfigureRPC()
@@ -103,7 +109,7 @@ namespace ChebsNecromancy.Structures
                         customData[zPackage.ReadString()] = zPackage.ReadString();
                     var worldLevel = zPackage.ReadInt();
                     var pickedUp = zPackage.ReadBool();
-                    Logger.LogInfo($"Found {name} in phylactery's inventory");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
                     if (name == fuelPrefab) fuelFound++;
                 }
             }
@@ -148,7 +154,7 @@ namespace ChebsNecromancy.Structures
                     var pickedUp = false;
                     if (num1 >= 106)
                         pickedUp = zPackage.ReadBool();
-                    Logger.LogInfo($"Found {name} in phylactery's inventory");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
                     if (name == fuelPrefab) fuelFound++;
                 }
             }
@@ -228,7 +234,7 @@ namespace ChebsNecromancy.Structures
                         customData[zPackage.ReadString()] = zPackage.ReadString();
                     var worldLevel = zPackage.ReadInt();
                     var pickedUp = zPackage.ReadBool();
-                    Logger.LogInfo($"Found {name} in phylactery's inventory");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
                     if (name == fuelPrefab && !fuelConsumed)
                     {
                         // omit
@@ -283,7 +289,7 @@ namespace ChebsNecromancy.Structures
                     var pickedUp = false;
                     if (num1 >= 106)
                         pickedUp = zPackage.ReadBool();
-                    Logger.LogInfo($"Found {name} in phylactery's inventory");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
                     if (name == fuelPrefab && !fuelConsumed)
                     {
                         // omit
@@ -337,7 +343,7 @@ namespace ChebsNecromancy.Structures
                 var payloadDecoded = Encoding.UTF8.GetString(payload);
                 if (payloadDecoded.StartsWith(PhylacteryCheckString1))
                 {
-                    Logger.LogInfo($"Received request from {sender} to check for an existing phylactery ({payloadDecoded}).");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Received request from {sender} to check for an existing phylactery ({payloadDecoded}).");
 
                     var split = payloadDecoded.Split(' ');
                     long playerCreatorID = 0;
@@ -355,7 +361,7 @@ namespace ChebsNecromancy.Structures
                         .FirstOrDefault();
                     if (phylacteryBelongingToPlayer != null)
                     {
-                        Logger.LogInfo("Phylactery found belonging to player.");
+                        if (HeavyLogging.Value) Logger.LogInfo("Phylactery found belonging to player.");
                         var location = PhylacteryZDOHasFuel(phylacteryBelongingToPlayer)
                             ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + phylacteryBelongingToPlayer.m_position)
                             : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
@@ -363,12 +369,12 @@ namespace ChebsNecromancy.Structures
                     }
                     else
                     {
-                        Logger.LogInfo("no phylactery found for player.");
+                        if (HeavyLogging.Value) Logger.LogInfo("no phylactery found for player.");
                     }
                 }
                 else if (payloadDecoded.StartsWith(PhylacteryConsumeFuelString1))
                 {
-                    Logger.LogInfo($"Received request from {sender} to consume fuel.");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Received request from {sender} to consume fuel.");
 
                     var split = payloadDecoded.Split(' ');
                     long playerCreatorID = 0;
@@ -392,7 +398,7 @@ namespace ChebsNecromancy.Structures
                 }
                 else if (payloadDecoded.StartsWith(PhylacteryCheckString2))
                 {
-                    Logger.LogInfo($"Received request from {sender} for phylactery location.");
+                    if (HeavyLogging.Value) Logger.LogInfo($"Received request from {sender} for phylactery location.");
                     ReceivePhylacteryLocation(payloadDecoded, sender);
                 }
             }
@@ -402,7 +408,7 @@ namespace ChebsNecromancy.Structures
 
         private static void ReceivePhylacteryLocation(string decoded, long sender)
         {
-            Logger.LogInfo($"ReceivePhylacteryLocation {decoded} {sender}");
+            if (HeavyLogging.Value) Logger.LogInfo($"ReceivePhylacteryLocation {decoded} {sender}");
 
             // cthulhu, help me
             var phylacteryPositionStr = decoded.Replace(PhylacteryCheckString2, "")
@@ -417,7 +423,7 @@ namespace ChebsNecromancy.Structures
                 return;
             }
 
-            Logger.LogInfo(
+            if (HeavyLogging.Value) Logger.LogInfo(
                 $"{phylacteryPositionXYZStr[0]} {phylacteryPositionXYZStr[1]} {phylacteryPositionXYZStr[2]}");
             var phylacteryVector3 = new Vector3(
                 float.Parse(phylacteryPositionXYZStr[0]),
@@ -431,7 +437,7 @@ namespace ChebsNecromancy.Structures
 
         public static IEnumerator PhylacteryCheckRPCClientReceive(long sender, ZPackage package)
         {
-            Logger.LogMessage($"PhylacteryCheckRPCClientReceive");
+            if (HeavyLogging.Value) Logger.LogMessage($"PhylacteryCheckRPCClientReceive");
             var payload = package.GetArray();
             if (payload.Length >= 3)
             {
