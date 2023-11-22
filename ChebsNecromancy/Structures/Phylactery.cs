@@ -346,38 +346,24 @@ namespace ChebsNecromancy.Structures
                         Logger.LogError($"Failed to parse playerCreatorID out of payload ({split.Length})");
                     }
                     
-                    var peer = ZNet.instance.m_peers
-                        .Find(peer => peer.m_characterID.UserID == sender);
-                    if (peer != null)
+                    var phylacteryBelongingToPlayer = ZDOMan.instance.m_objectsByID
+                        .Values
+                        .ToList()
+                        .FindAll(zdo => zdo.GetPrefab() == PhylacteryHash)
+                        .Where(zdo => zdo.GetLong(ZDOVars.s_creator) == playerCreatorID)
+                        .ToList()
+                        .FirstOrDefault();
+                    if (phylacteryBelongingToPlayer != null)
                     {
-                        Logger.LogInfo($"Peer found. peer.m_uid = {peer.m_uid}");
-
-                        var phylacteryBelongingToPeer = ZDOMan.instance.m_objectsByID
-                            .Values
-                            .ToList()
-                            .FindAll(zdo => zdo.GetPrefab() == PhylacteryHash)
-                            //.Where(zdo => zdo.GetString(ZDOVars.s_creatorName) == peer.m_playerName)
-                            .Where(zdo => zdo.GetLong(ZDOVars.s_creator) == playerCreatorID)
-                            .ToList()
-                            .FirstOrDefault();
-                        if (phylacteryBelongingToPeer != null)
-                        {
-                            Logger.LogInfo("Phylactery found belonging to peer.");
-                            var location = PhylacteryZDOHasFuel(phylacteryBelongingToPeer)
-                                ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + phylacteryBelongingToPeer.m_position)
-                                : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
-                            PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
-                        }
-                        else
-                        {
-                            Logger.LogInfo("no phylactery found for peer.");
-                        }
+                        Logger.LogInfo("Phylactery found belonging to player.");
+                        var location = PhylacteryZDOHasFuel(phylacteryBelongingToPlayer)
+                            ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + phylacteryBelongingToPlayer.m_position)
+                            : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
+                        PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
                     }
                     else
                     {
-                        Logger.LogError($"Received request from {sender} to check for an existing " +
-                                        $"phylactery, but was unable to respond. Server was unable to find " +
-                                        $"corresponding player inside Player.s_players ({Player.s_players?.Count}).");
+                        Logger.LogInfo("no phylactery found for player.");
                     }
                 }
                 else if (payloadDecoded.StartsWith(PhylacteryConsumeFuelString1))
@@ -391,28 +377,18 @@ namespace ChebsNecromancy.Structures
                         Logger.LogError($"Failed to parse playerCreatorID out of payload ({split.Length})");
                     }
                     
-                    var peer = ZNet.instance.m_peers
-                        .Find(peer => peer.m_characterID.UserID == sender);
-                    if (peer != null)
+                    var phylacteryBelongingToPlayer = ZDOMan.instance.m_objectsByID
+                        .Values
+                        .ToList()
+                        .FindAll(zdo => zdo.GetPrefab() == PhylacteryHash)
+                        .Where(zdo => zdo.GetLong(ZDOVars.s_creator) == playerCreatorID)
+                        .ToList()
+                        .FirstOrDefault();
+                    if (phylacteryBelongingToPlayer != null)
                     {
-                        var phylacteryBelongingToPeer = ZDOMan.instance.m_objectsByID
-                            .Values
-                            .ToList()
-                            .FindAll(zdo => zdo.GetPrefab() == PhylacteryHash)
-                            //.Where(zdo => zdo.GetString(ZDOVars.s_creatorName) == peer.m_playerName)
-                            .Where(zdo => zdo.GetLong(ZDOVars.s_creator) == playerCreatorID)
-                            .ToList()
-                            .FirstOrDefault();
-                        if (phylacteryBelongingToPeer != null)
-                        {
-                            RemoveFuelFromPhylactery(phylacteryBelongingToPeer);
-                        }
+                        RemoveFuelFromPhylactery(phylacteryBelongingToPlayer);
                     }
-                    else
-                    {
-                        Logger.LogError($"Received request from {sender} to consume fuel, but was unable to do " +
-                                        $"so. Player.s_players {Player.s_players?.Count}");
-                    }
+                    
                 }
                 else if (payloadDecoded.StartsWith(PhylacteryCheckString2))
                 {
