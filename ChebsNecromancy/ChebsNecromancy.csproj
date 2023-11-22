@@ -136,28 +136,28 @@
       <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.Physics2DModule.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\UnityEngine.UI.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\unstripped_corlib\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
   </ItemGroup>

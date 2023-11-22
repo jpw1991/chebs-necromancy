@@ -1,4 +1,3 @@
-using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
@@ -6,6 +5,7 @@ using ChebsNecromancy.Minions.Skeletons;
 using ChebsNecromancy.Structures;
 using HarmonyLib;
 using UnityEngine;
+using Logger = Jotunn.Logger;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedParameter.Local
@@ -63,14 +63,14 @@ namespace ChebsNecromancy.Patches
 
                 if (player == null)
                 {
-                    Jotunn.Logger.LogError($"player is null");
+                    Logger.LogError($"player is null");
                     return;
                 }
 
                 var incomingDamage = hit?.Clone();
                 if (incomingDamage == null)
                 {
-                    Jotunn.Logger.LogError($"hit is null");
+                    Logger.LogError($"hit is null");
                     return;
                 }
                 
@@ -102,19 +102,17 @@ namespace ChebsNecromancy.Patches
 
                 if (player.IsTeleporting())
                 {
-                    Jotunn.Logger.LogInfo($"player is teleporting; ignore damage");
+                    Logger.LogInfo($"player is teleporting; ignore damage");
                     hit.m_damage = noDamage;
                     return;
                 }
                 
-                var playerPhylactery = Phylactery.Phylacteries.Find(phylactery =>
-                    phylactery.TryGetComponent(out Piece piece)
-                    && piece.m_creator == player.GetPlayerID());
-                if (playerPhylactery != null && playerPhylactery.ConsumeFuel())
+                if (Phylactery.HasPhylactery)
                 {
                     hit.m_damage = noDamage;
-                    player.TeleportTo(playerPhylactery.transform.position + Vector3.forward,
+                    player.TeleportTo(Phylactery.PhylacteryLocation + Vector3.forward,
                         Quaternion.identity, true);
+                    Phylactery.RequestConsumptionOfFuelForPlayerPhylactery();
                 }
             }
         }
