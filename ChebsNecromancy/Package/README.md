@@ -102,7 +102,6 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 ## Known issues
 
 - Players with Radeon cards may experience weird issues. I don't know what's causing it, but it's linked to the particle effects. You can switch them off by turning `RadeonFriendly = true` in the config.
-- Phylactery won't save you from falling to your death
 
 ## Known Incompatibilities
 
@@ -151,6 +150,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+22/11/2023 | 4.4.1 | Fix issue of configs not syncing reliably
 22/11/2023 | 4.4.0 | Fix problem of phylactery not reliably working by overhauling its checking mechanism to be done via RPCs between server and client.
 10/10/2023 | 4.3.2 | hildr's request changed Text to TextMeshProUGUI (the new Unity UI text), which broke the wand keyhints. This is now fixed
 07/10/2023 | 4.3.1 | add custom two-sided shader that was missing from chebgonaz bundle which caused a pink wand
