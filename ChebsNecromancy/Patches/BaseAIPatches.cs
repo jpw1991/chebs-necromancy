@@ -74,11 +74,21 @@ namespace ChebsNecromancy.Patches
                 var minionB = b.GetComponent<ChebGonazMinion>();
 
                 // var pvpFriendsList = BasePlugin.PvPFriendsList.Value;
+                var minionMasterA = minionA != null ? minionA.UndeadMinionMaster : null;
+                var minionMasterB = minionB != null ? minionB.UndeadMinionMaster : null;
 
                 if (minionA != null && minionB != null)
                 {
                     // pvp between two minions
-                    if (minionA.UndeadMinionMaster != minionB.UndeadMinionMaster)
+                    var isUnclaimedMercenary = minionMasterA == "";
+                    var targetingUnclaimedMercenary = minionMasterB == "";
+                    if (isUnclaimedMercenary || targetingUnclaimedMercenary)
+                    {
+                        __result = false;
+                        return;
+                    }
+                    
+                    if (minionMasterA != minionMasterB)
                     {
                         __result = true;
                     }
@@ -86,7 +96,8 @@ namespace ChebsNecromancy.Patches
                 else if (minionB != null)
                 {
                     if (a.TryGetComponent(out Player player)
-                        && minionB.UndeadMinionMaster != player.GetPlayerName())
+                        && minionMasterB != "" // do nothing if unclaimed minion
+                        && minionMasterB != player.GetPlayerName())
                     {
                         __result = true;
                     }
@@ -96,7 +107,8 @@ namespace ChebsNecromancy.Patches
                 else if (minionA != null)
                 {
                     if (b.TryGetComponent(out Player player)
-                        && minionA.UndeadMinionMaster != player.GetPlayerName())
+                        && minionMasterA != "" // do nothing if unclaimed minion
+                        && minionMasterA != player.GetPlayerName())
                     {
                         __result = true;
                     }
