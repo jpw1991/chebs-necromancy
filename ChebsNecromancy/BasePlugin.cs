@@ -39,7 +39,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.4.1";
+        public const string PluginVersion = "4.4.2";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -70,6 +70,9 @@ namespace ChebsNecromancy
         public AcceptableValueList<bool> BoolValue = new(true, false);
         public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
         public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
+        
+        public static ConfigEntry<bool> PvPAllowed;
+        // public static MemoryConfigEntry<string, List<string>> PvPFriendsList;
 
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
@@ -211,6 +214,15 @@ namespace ChebsNecromancy
         private void CreateConfigValues()
         {
             Config.SaveOnConfigSet = true;
+            
+            PvPAllowed = Config.Bind("General (Server Synced)", "PvPAllowed",
+                false, new ConfigDescription("Whether minions will target and attack other players and their minions.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            // var pvpFriendsListConf = Config.Bind("General (Client)", "PvPFriendsList",
+            //     "", new ConfigDescription("A comma delimited list of player names who your minions are friendly to eg. Jane,Bob,Istvan"));
+            // PvPFriendsList = new MemoryConfigEntry<string, List<string>>(pvpFriendsListConf, 
+            //     s => s != null ? s.Split(',').ToList() : new List<string>());
 
             RadeonFriendly = Config.Bind("General (Client)", "RadeonFriendly",
                 false, new ConfigDescription("ONLY set this to true if you have graphical issues with " +

@@ -8,11 +8,11 @@ This mod was formerly called Friendly Skeleton Wand, but was renamed since it as
 
 ##  About Me
 
-[![image1](https://imgur.com/Fahi6sP.png)](https://chebgonaz.pythonanywhere.com)
+[![image1](https://imgur.com/Fahi6sP.png)](https://necrobase.chebgonaz.com)
 [![image2](https://imgur.com/X18OyQs.png)](https://ko-fi.com/chebgonaz)
 [![image3](https://imgur.com/4e64jQ8.png)](https://www.patreon.com/chebgonaz?fan_landing=true)
 
-I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
+I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://necrobase.chebgonaz.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
 Thank you and I hope you enjoy the mod! If you have questions or need help please join my [Discord](https://discord.com/invite/EB96ASQ).
 
@@ -150,6 +150,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+22/12/2023 | 4.4.2 | Permit PvP - if enabled, minions will attack players and creatures that are not their owner.
 29/11/2023 | 4.4.1 | Fix issue of configs not syncing reliably
 22/11/2023 | 4.4.0 | Fix problem of phylactery not reliably working by overhauling its checking mechanism to be done via RPCs between server and client.
 10/10/2023 | 4.3.2 | hildr's request changed Text to TextMeshProUGUI (the new Unity UI text), which broke the wand keyhints. This is now fixed
