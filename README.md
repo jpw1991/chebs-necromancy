@@ -4,6 +4,8 @@ Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures.
 
 This mod was formerly called Friendly Skeleton Wand, but was renamed since it as grown into something so much more.
 
+**Attention:** PvP is a new feature in 4.4.2 and needs testing. By default, it is disabled. To turn it on, set `PvPAllowed` to true in the config. Your minions should now be hostile to other players. Please report problems [here](https://github.com/jpw1991/chebs-necromancy/pull/250).
+
 ## Confused? Try the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki).
 
 ##  About Me

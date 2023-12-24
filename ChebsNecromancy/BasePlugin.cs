@@ -18,6 +18,7 @@ using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
+using ChebsNecromancy.PvP;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
@@ -28,6 +29,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Paths = BepInEx.Paths;
 
 namespace ChebsNecromancy
@@ -71,8 +73,10 @@ namespace ChebsNecromancy
         public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
         public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
         
+        public static ConfigEntry<bool> HeavyLogging;
+        
         public static ConfigEntry<bool> PvPAllowed;
-        // public static MemoryConfigEntry<string, List<string>> PvPFriendsList;
+        public static ConfigEntry<string> PvPFriendsList;
 
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
@@ -109,6 +113,7 @@ namespace ChebsNecromancy
             CreateConfigValues();
 
             Phylactery.ConfigureRPC();
+            PvPManager.ConfigureRPC();
 
             LoadChebGonazAssetBundle();
 
@@ -128,6 +133,9 @@ namespace ChebsNecromancy
                     ? "Syncing configuration changes from server..."
                     : "Syncing initial configuration...");
                 UpdateAllRecipes();
+                // send own friends list which will trigger the dict to be updated and sent back to all peers,
+                // including you
+                StartCoroutine(PvPManager.UpdatePlayerFriendsDictWhenPossible(PvPFriendsList.Value));
             };
 
             StartCoroutine(WatchConfigFile());
@@ -215,14 +223,21 @@ namespace ChebsNecromancy
         {
             Config.SaveOnConfigSet = true;
             
+            HeavyLogging = Config.Bind("General (Client)", "HeavyLogging",
+                false, new ConfigDescription("Switch on to fill the logs with excessive " +
+                                             "logging to assist with debugging."));
+            
             PvPAllowed = Config.Bind("General (Server Synced)", "PvPAllowed",
                 false, new ConfigDescription("Whether minions will target and attack other players and their minions.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
             
-            // var pvpFriendsListConf = Config.Bind("General (Client)", "PvPFriendsList",
-            //     "", new ConfigDescription("A comma delimited list of player names who your minions are friendly to eg. Jane,Bob,Istvan"));
-            // PvPFriendsList = new MemoryConfigEntry<string, List<string>>(pvpFriendsListConf, 
-            //     s => s != null ? s.Split(',').ToList() : new List<string>());
+            PvPFriendsList = Config.Bind("General (Client)", "PvPFriendsList",
+                "", new ConfigDescription("A comma delimited list of player names who your minions are friendly to eg. Jane,Bob,Istvan"));
+            PvPFriendsList.SettingChanged += ((sender, args) =>
+            {
+                if (HeavyLogging.Value) Logger.LogInfo("PvP Friends list updated");
+                PvPManager.UpdatePlayerFriendsDict(PvPFriendsList.Value);
+            });
 
             RadeonFriendly = Config.Bind("General (Client)", "RadeonFriendly",
                 false, new ConfigDescription("ONLY set this to true if you have graphical issues with " +

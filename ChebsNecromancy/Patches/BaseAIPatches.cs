@@ -2,6 +2,7 @@ using ChebsNecromancy.Items;
 using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Skeletons;
+using ChebsNecromancy.PvP;
 using ChebsValheimLibrary.Minions;
 using HarmonyLib;
 using UnityEngine;
@@ -88,7 +89,8 @@ namespace ChebsNecromancy.Patches
                         return;
                     }
                     
-                    if (minionMasterA != minionMasterB)
+                    if (minionMasterA != minionMasterB
+                        && !PvPManager.Friendly(minionMasterA, minionMasterB))
                     {
                         __result = true;
                     }
@@ -97,7 +99,8 @@ namespace ChebsNecromancy.Patches
                 {
                     if (a.TryGetComponent(out Player player)
                         && minionMasterB != "" // do nothing if unclaimed minion
-                        && minionMasterB != player.GetPlayerName())
+                        && minionMasterB != player.GetPlayerName()
+                        && !PvPManager.Friendly(player.GetPlayerName(), minionMasterB))
                     {
                         __result = true;
                     }
@@ -108,7 +111,8 @@ namespace ChebsNecromancy.Patches
                 {
                     if (b.TryGetComponent(out Player player)
                         && minionMasterA != "" // do nothing if unclaimed minion
-                        && minionMasterA != player.GetPlayerName())
+                        && minionMasterA != player.GetPlayerName()
+                        && !PvPManager.Friendly(player.GetPlayerName(), minionMasterA))
                     {
                         __result = true;
                     }
