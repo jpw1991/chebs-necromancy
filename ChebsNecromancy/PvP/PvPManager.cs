@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Jotunn;
@@ -18,12 +20,34 @@ namespace ChebsNecromancy.PvP
         private static CustomRPC _pvPrpc;
         private const string GetDictString = "CG_PvP_1";
         private const string UpdateDictString = "CG_PvP_2";
-        
-        private static Dictionary<string, List<string>> _playerFriends = new();
+
+        private static string AllyFileName => $"{ZNet.instance.GetWorldName()}.{BasePlugin.PluginName}.PvP.json";
+
+        private static Tuple<string, Dictionary<string, List<string>>> _playerFriends;
+
+        private static Dictionary<string, List<string>> PlayerFriends
+        {
+            // getter logic reloads the file if the world has changed. That way if a player switches worlds the file
+            // will be read again. It also ensures no mismatch can be made
+            get
+            {
+                if (_playerFriends == null)
+                {
+                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo("_playerFriends is null, reading from file.");
+                    _playerFriends =
+                        new Tuple<string, Dictionary<string, List<string>>>(ZNet.instance.GetWorldName(),
+                            ReadAllyFile());
+                }
+
+                return _playerFriends.Item2;
+            }
+            set => _playerFriends =
+                new Tuple<string, Dictionary<string, List<string>>>(ZNet.instance.GetWorldName(), value);
+        }
 
         public static bool Friendly(string minionMasterA, string minionMasterB)
         {
-            return _playerFriends.TryGetValue(minionMasterA, out List<string> friends)
+            return PlayerFriends.TryGetValue(minionMasterA, out List<string> friends)
                    && friends.Contains(minionMasterB);
         }
 
@@ -32,14 +56,82 @@ namespace ChebsNecromancy.PvP
             _pvPrpc = NetworkManager.Instance.AddRPC("PvPrpc",
                 PvP_RPCServerReceive, PvP_RPCClientReceive);
         }
-        
-        public static void RequestPlayerFriendsDict()
+
+        private static void UpdateAllyFile(string content)
         {
-            if (BasePlugin.HeavyLogging.Value) Logger.LogMessage($"RequestPlayerFriendsDict");
-            var package = new ZPackage(Encoding.UTF8.GetBytes(GetDictString));
-            _pvPrpc.SendPackage(ZRoutedRpc.instance.GetServerPeerID(), package);
+            // only used by server, clients just use their in-memory dictionary.
+            var filePath = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), AllyFileName);
+
+            if (!File.Exists(filePath))
+            {
+                try
+                {
+                    using var fs = File.Create(filePath);
+                    fs.Close();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError($"Error creating {filePath}: {ex.Message}");
+                }
+            }
+
+            try
+            {
+                using var writer = new StreamWriter(filePath, false);
+                writer.Write(content);
+                writer.Close();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error writing to {filePath}: {ex.Message}");
+            }
         }
-        
+
+        private static Dictionary<string, List<string>> ReadAllyFile()
+        {
+            // only used by server, clients just use their in-memory dictionary.
+            var filePath = Path.Combine(Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData), AllyFileName);
+
+            if (!File.Exists(filePath))
+            {
+                try
+                {
+                    using var fs = File.Create(filePath);
+                    fs.Close();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError($"Error creating {filePath}: {ex.Message}");
+                }
+            }
+
+            string content = null;
+            try
+            {
+                using var reader = new StreamReader(filePath);
+                content = reader.ReadToEnd();
+                reader.Close();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"Error writing to {filePath}: {ex.Message}");
+            }
+
+            if (content == null)
+            {
+                Logger.LogError($"Error reading {filePath}: content is null!");
+                return new Dictionary<string, List<string>>();
+            }
+
+            if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Read from {filePath}: {content}");
+
+            return content == ""
+                ? new Dictionary<string, List<string>>()
+                : SimpleJson.SimpleJson.DeserializeObject<Dictionary<string, List<string>>>(content);
+        }
+
         public static void UpdatePlayerFriendsDict(string list)
         {
             var content = $"{UpdateDictString};{Player.m_localPlayer.GetPlayerName()};{list}";
@@ -58,8 +150,10 @@ namespace ChebsNecromancy.PvP
                 if (payloadDecoded.StartsWith(GetDictString))
                 {
                     if (BasePlugin.HeavyLogging.Value) Logger.LogMessage($"PvP_RPCServerReceive {GetDictString}");
-                    var serializedDict = SimpleJson.SimpleJson.SerializeObject(_playerFriends);
-                    _pvPrpc.SendPackage(sender, new ZPackage(Encoding.UTF8.GetBytes(GetDictString+";"+serializedDict)));
+                    var serializedDict = SimpleJson.SimpleJson.SerializeObject(PlayerFriends.ToDictionary(
+                        kvp => kvp.Key, kvp => (object)kvp.Value));
+                    _pvPrpc.SendPackage(sender,
+                        new ZPackage(Encoding.UTF8.GetBytes(GetDictString + ";" + serializedDict)));
                 }
                 else if (payloadDecoded.StartsWith(UpdateDictString))
                 {
@@ -74,19 +168,24 @@ namespace ChebsNecromancy.PvP
                     var friendsString = split[2];
 
                     var friendsList = friendsString.Split(',');
-                    _playerFriends[senderNameString] = friendsList.ToList();
-                    
+                    PlayerFriends[senderNameString] = friendsList.ToList();
+
                     // update all connected peers with the new dictionary
-                    var serializedDict = SimpleJson.SimpleJson.SerializeObject(_playerFriends);
+                    var serializedDict = SimpleJson.SimpleJson.SerializeObject(PlayerFriends.ToDictionary(
+                        kvp => kvp.Key, kvp => (object)kvp.Value));
                     var returnPayload = GetDictString + ";" + serializedDict;
-                    if (BasePlugin.HeavyLogging.Value) Logger.LogMessage($"PvP_RPCServerReceive {UpdateDictString} sending to all peers: {returnPayload}");
+                    if (BasePlugin.HeavyLogging.Value)
+                        Logger.LogMessage(
+                            $"PvP_RPCServerReceive {UpdateDictString} sending to all peers: {returnPayload}");
                     _pvPrpc.SendPackage(ZNet.instance.m_peers, new ZPackage(Encoding.UTF8.GetBytes(returnPayload)));
+
+                    UpdateAllyFile(serializedDict);
                 }
             }
 
             yield return null;
         }
-        
+
         public static IEnumerator PvP_RPCClientReceive(long sender, ZPackage package)
         {
             var payload = package.GetArray();
@@ -104,14 +203,14 @@ namespace ChebsNecromancy.PvP
 
                     var data = split[1];
                     var serialized = SimpleJson.SimpleJson.DeserializeObject<Dictionary<string, List<string>>>(data);
-                    _playerFriends = serialized;                    
+                    PlayerFriends = serialized;
                 }
             }
             else if (BasePlugin.HeavyLogging.Value) Logger.LogMessage($"PvP_RPCClientReceive received no data");
 
             yield return null;
         }
-        
+
         public static IEnumerator UpdatePlayerFriendsDictWhenPossible(string list)
         {
             yield return new WaitUntil(() => Player.m_localPlayer != null);
