@@ -29,7 +29,6 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using Jotunn.Utils;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Paths = BepInEx.Paths;
 
 namespace ChebsNecromancy
@@ -41,7 +40,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.4.2";
+        public const string PluginVersion = "4.4.3";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -135,7 +134,9 @@ namespace ChebsNecromancy
                 UpdateAllRecipes();
                 // send own friends list which will trigger the dict to be updated and sent back to all peers,
                 // including you
-                StartCoroutine(PvPManager.UpdatePlayerFriendsDictWhenPossible(PvPFriendsList.Value));
+                // left off on 12:43 January 5th: This is not firing anymore. Jotunn issue? Single player issue?
+                // January 6th: moved into PlayerProfile patches - postfix on LoadPlayerData to monitor for player changes
+                //StartCoroutine(PvPManager.UpdatePlayerFriendsDictWhenPossible(PvPFriendsList.Value));
             };
 
             StartCoroutine(WatchConfigFile());

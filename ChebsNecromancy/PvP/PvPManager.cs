@@ -47,6 +47,10 @@ namespace ChebsNecromancy.PvP
 
         public static bool Friendly(string minionMasterA, string minionMasterB)
         {
+            // var masterAInDict = PlayerFriends.TryGetValue(minionMasterA, out List<string> friends);
+            // var friendsContainsMasterB = friends != null && friends.Contains(minionMasterB);
+            // Logger.LogInfo($"masterA={minionMasterA};masterB={minionMasterB};masterAInDict={masterAInDict};friendsContainsMasterB={friendsContainsMasterB}");
+            // return masterAInDict && friendsContainsMasterB;
             return PlayerFriends.TryGetValue(minionMasterA, out List<string> friends)
                    && friends.Contains(minionMasterB);
         }
@@ -116,7 +120,7 @@ namespace ChebsNecromancy.PvP
             }
             catch (Exception ex)
             {
-                Logger.LogError($"Error writing to {filePath}: {ex.Message}");
+                Logger.LogError($"Error reading from {filePath}: {ex.Message}");
             }
 
             if (content == null)
@@ -134,6 +138,11 @@ namespace ChebsNecromancy.PvP
 
         public static void UpdatePlayerFriendsDict(string list)
         {
+            if (Player.m_localPlayer == null)
+            {
+                if (BasePlugin.HeavyLogging.Value) Logger.LogMessage($"UpdatePlayerFriendsDict m_localPlayer is null");
+                return;
+            }
             var content = $"{UpdateDictString};{Player.m_localPlayer.GetPlayerName()};{list}";
             if (BasePlugin.HeavyLogging.Value) Logger.LogMessage($"UpdatePlayerFriendsDict {content}");
             var package = new ZPackage(Encoding.UTF8.GetBytes(content));
@@ -213,7 +222,9 @@ namespace ChebsNecromancy.PvP
 
         public static IEnumerator UpdatePlayerFriendsDictWhenPossible(string list)
         {
+            if (BasePlugin.HeavyLogging.Value) Logger.LogInfo("Waiting for m_localPlayer...");
             yield return new WaitUntil(() => Player.m_localPlayer != null);
+            if (BasePlugin.HeavyLogging.Value) Logger.LogInfo("m_localPlayer available.");
             UpdatePlayerFriendsDict(list);
         }
     }
