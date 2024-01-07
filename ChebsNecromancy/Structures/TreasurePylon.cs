@@ -69,7 +69,7 @@ namespace ChebsNecromancy.Structures
                 "The containers that are sorted. Please use a comma-delimited list of prefab names.",
                 null, true);
             ContainerWhitelist =
-                new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
+                new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').Select(str => str.Trim()).ToList());
         }
 
         private void Awake()

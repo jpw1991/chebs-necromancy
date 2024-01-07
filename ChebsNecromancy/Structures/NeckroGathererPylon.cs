@@ -53,7 +53,7 @@ namespace ChebsNecromancy.Structures
             var neckroCost = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "NeckroGathererCost", "NeckTail:1",
                 "The items that are consumed when creating a Neckro Gatherer. Please use a comma-delimited list of prefab names with a : and integer for amount.",
                 null, true);
-            NeckroCost = new MemoryConfigEntry<string, List<string>>(neckroCost, s => s?.Split(',').ToList());
+            NeckroCost = new MemoryConfigEntry<string, List<string>>(neckroCost, s => s?.Split(',').Select(str => str.Trim()).ToList());
 
             // Cannot set custom width/height due to https://github.com/jpw1991/chebs-necromancy/issues/100
             // ContainerWidth = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "ContainerWidth", 4,

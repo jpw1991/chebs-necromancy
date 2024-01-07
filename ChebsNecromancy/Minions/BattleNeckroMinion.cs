@@ -85,7 +85,7 @@ namespace ChebsNecromancy.Minions
                 "RawMeat|DeerMeat|WolfMeat|LoxMeat|SerpentMeat|HareMeat|BugMeat|ChickenMeat:50",
                 "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount. Alternative items can be specified with a | eg. Wood|Coal:5 to mean wood and/or coal.",
                 null, true);
-            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
+            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').Select(str => str.Trim()).ToList());
             
             NecromancyLevelIncrease = plugin.Config.Bind(serverSynced, "NecromancyLevelIncrease",
                 5f, new ConfigDescription("The Necromancy level increase factor when creating this minion.", null,

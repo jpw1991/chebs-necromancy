@@ -84,7 +84,7 @@ namespace ChebsNecromancy.Minions
                     new ConfigurationManagerAttributes { IsAdminOnly = true }
                 ));
             ContainerWhitelist =
-                new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').ToList());
+                new MemoryConfigEntry<string, List<string>>(containerWhitelist, s => s?.Split(',').Select(str => str.Trim()).ToList());
         }
 
         public override void Awake()

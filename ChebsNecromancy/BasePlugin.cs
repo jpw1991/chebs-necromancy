@@ -18,10 +18,10 @@ using ChebsNecromancy.Items.Wands;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
-using ChebsNecromancy.PvP;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.PvP;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -44,7 +44,7 @@ namespace ChebsNecromancy
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.4.1");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.0");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -75,7 +75,6 @@ namespace ChebsNecromancy
         public static ConfigEntry<bool> HeavyLogging;
         
         public static ConfigEntry<bool> PvPAllowed;
-        public static ConfigEntry<string> PvPFriendsList;
 
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
@@ -123,6 +122,15 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new KillAllNeckros());
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
+
+            var pvpCommands = new List<ConsoleCommand>()
+                { new PvPAddFriend(), new PvPRemoveFriend(), new PvPListFriends() };
+            foreach (var pvpCommand in pvpCommands)
+            {
+                if (!CommandManager.Instance.CustomCommands
+                        .ToList().Exists(c => c.Name == pvpCommand.Name))
+                    CommandManager.Instance.AddConsoleCommand(pvpCommand);
+            }
 
             StartCoroutine(Phylactery.PhylacteriesCheck());
 
@@ -231,14 +239,6 @@ namespace ChebsNecromancy
             PvPAllowed = Config.Bind("General (Server Synced)", "PvPAllowed",
                 false, new ConfigDescription("Whether minions will target and attack other players and their minions.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            PvPFriendsList = Config.Bind("General (Client)", "PvPFriendsList",
-                "", new ConfigDescription("A comma delimited list of player names who your minions are friendly to eg. Jane,Bob,Istvan"));
-            PvPFriendsList.SettingChanged += ((sender, args) =>
-            {
-                if (HeavyLogging.Value) Logger.LogInfo("PvP Friends list updated");
-                PvPManager.UpdatePlayerFriendsDict(PvPFriendsList.Value);
-            });
 
             RadeonFriendly = Config.Bind("General (Client)", "RadeonFriendly",
                 false, new ConfigDescription("ONLY set this to true if you have graphical issues with " +

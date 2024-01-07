@@ -181,6 +181,9 @@
     <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\PvP\PvPAddFriend.cs" />
+    <Compile Include="Commands\PvP\PvPListFriends.cs" />
+    <Compile Include="Commands\PvP\PvPRemoveFriend.cs" />
     <Compile Include="Commands\SetNeckroHome.cs" />
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
     <Compile Include="Items\Armor\Player\NecromancerCape.cs" />
@@ -223,7 +226,6 @@
     <Compile Include="Patches\BaseAIPatches.cs" />
     <Compile Include="Patches\CharacterDropPatches.cs" />
     <Compile Include="Patches\CharacterPatches.cs" />
-    <Compile Include="Patches\PlayerProfilePatches.cs" />
     <Compile Include="Patches\TameablePatches.cs" />
     <Compile Include="Patches\WearNTearPatches.cs" />
     <Compile Include="Properties\IgnoreAccessModifiers.cs" />
@@ -238,7 +240,6 @@
     <Compile Include="Minions\BatBeaconBatMinion.cs" />
     <Compile Include="Commands\KillNearbyNeckros.cs" />
     <Compile Include="Commands\SetMinionOwnership.cs" />
-    <Compile Include="PvP\PvPManager.cs" />
     <Compile Include="Structures\BatBeacon.cs" />
     <Compile Include="Structures\BatLantern.cs" />
     <Compile Include="Structures\FarmingPylon.cs" />
@@ -256,7 +257,6 @@
   <ItemGroup>
     <Folder Include="Package\plugins\" />
     <Folder Include="Items\" />
-    <Folder Include="Commands\" />
     <Folder Include="CustomPrefabs\" />
   </ItemGroup>
   <ItemGroup>
