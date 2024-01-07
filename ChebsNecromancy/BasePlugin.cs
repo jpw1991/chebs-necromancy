@@ -140,11 +140,6 @@ namespace ChebsNecromancy
                     ? "Syncing configuration changes from server..."
                     : "Syncing initial configuration...");
                 UpdateAllRecipes();
-                // send own friends list which will trigger the dict to be updated and sent back to all peers,
-                // including you
-                // left off on 12:43 January 5th: This is not firing anymore. Jotunn issue? Single player issue?
-                // January 6th: moved into PlayerProfile patches - postfix on LoadPlayerData to monitor for player changes
-                //StartCoroutine(PvPManager.UpdatePlayerFriendsDictWhenPossible(PvPFriendsList.Value));
             };
 
             StartCoroutine(WatchConfigFile());
