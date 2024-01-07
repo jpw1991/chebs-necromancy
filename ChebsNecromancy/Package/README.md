@@ -4,8 +4,6 @@ Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures.
 
 This mod was formerly called Friendly Skeleton Wand, but was renamed since it as grown into something so much more.
 
-**Attention:** PvP is a new feature in 4.4.2 and needs testing. By default, it is disabled. To turn it on, set `PvPAllowed` to true in the config. Your minions should now be hostile to other players. Please report problems [here](https://github.com/jpw1991/chebs-necromancy/pull/250).
-
 ## Confused? Try the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki).
 
 ##  About Me
@@ -30,11 +28,9 @@ If you would like to report a bug or request a feature, the best way to do it (i
 
 a) Create an issue on my [GitHub](https://github.com/jpw1991/chebs-necromancy).
 
-b) Create a bug report on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=bugs).
+b) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
 
-c) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
-
-d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
+c) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
 
 ## Requirements
 
@@ -51,6 +47,7 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). Here's the short version:
 
 - Almost everything is configurable. Minions too weak/overpowered? Tweak them.
+- [Player vs Player (PvP)](https://github.com/jpw1991/chebs-necromancy/wiki/PvP) settings can be configured as of 4.5.0.
 - Craftable items at the workbench and forge:
 	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_skeletonwand): Summons skeleton warriors, archers, miners, and woodcutters.
 	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_draugrwand): Summons draugr warriors and archers.
@@ -111,11 +108,6 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 - Soft incompatibility with [Ward is Love](https://github.com/jpw1991/chebs-necromancy/issues/177) because it will identify workers as enemies and yeet them. As an alternative, you may consider using [Better Wards](https://valheim.thunderstore.io/package/Azumatt/BetterWards/).
 - Soft incompatibility with [Item Drawers Mod](https://github.com/jpw1991/chebs-necromancy/issues/147) because the Neckro Gatherers try to pick the items out of the drawers.
 
-## Future Ideas
-
-- Fully custom undead types.
-- Lichdom
-
 ## Source
 
 You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
@@ -146,6 +138,16 @@ A special thanks to the people who've helped me along the way:
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
 ## Changelog
+
+
+<details>
+<summary>2024</summary>
+
+Date | Version | Notes
+--- | --- | ---
+07/01/2024 | 4.5.0 | PvP with friends as exceptions implemented via console commands.
+
+</details>
 
 <details>
 <summary>2023</summary>
