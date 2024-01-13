@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
@@ -40,11 +41,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.5.1";
+        public const string PluginVersion = "4.5.2";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.1");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.2");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -140,9 +141,17 @@ namespace ChebsNecromancy
                     ? "Syncing configuration changes from server..."
                     : "Syncing initial configuration...");
                 UpdateAllRecipes();
+                StartCoroutine(RequestPvPDict());
+
             };
 
             StartCoroutine(WatchConfigFile());
+        }
+
+        private IEnumerator RequestPvPDict()
+        {
+            yield return new WaitUntil(() => ZNet.instance != null && Player.m_localPlayer != null);
+            PvPManager.InitialFriendsListRequest();
         }
         
         #region ConfigUpdate
