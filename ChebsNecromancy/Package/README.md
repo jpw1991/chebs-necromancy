@@ -8,11 +8,11 @@ This mod was formerly called Friendly Skeleton Wand, but was renamed since it as
 
 ##  About Me
 
-[![image1](https://imgur.com/Fahi6sP.png)](https://chebgonaz.pythonanywhere.com)
+[![image1](https://imgur.com/Fahi6sP.png)](https://necrobase.chebgonaz.com)
 [![image2](https://imgur.com/X18OyQs.png)](https://ko-fi.com/chebgonaz)
 [![image3](https://imgur.com/4e64jQ8.png)](https://www.patreon.com/chebgonaz?fan_landing=true)
 
-I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://chebgonaz.pythonanywhere.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
+I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://necrobase.chebgonaz.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
 Thank you and I hope you enjoy the mod! If you have questions or need help please join my [Discord](https://discord.com/invite/EB96ASQ).
 
@@ -28,11 +28,9 @@ If you would like to report a bug or request a feature, the best way to do it (i
 
 a) Create an issue on my [GitHub](https://github.com/jpw1991/chebs-necromancy).
 
-b) Create a bug report on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=bugs).
+b) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
 
-c) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
-
-d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
+c) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
 
 ## Requirements
 
@@ -44,11 +42,18 @@ d) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 - Drag the contents of the `plugins` folder from inside the archive to your BepInEx plugins folder in the Valheim directory.
 
+### Cheb's Valheim Library
+
+[Cheb's Valheim Library](https://jpw1991.github.io/chebs-valheim-library/index.html) (CVL) is a DLL that contains shared code across my mods. For example, both skeletons from Cheb's Necromancy and mercenaries from Cheb's Mercenaries inherit the `ChebGonazMinion` type from CVL. This permits mercenaries to be commanded by a wand, and vice versa.
+
+My mods are bundled with the latest CVL at the time of their release, but if you want to upgrade, you can get the newest CVL [here](https://github.com/jpw1991/chebs-valheim-library/releases).
+
 ## Features
 
 Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). Here's the short version:
 
 - Almost everything is configurable. Minions too weak/overpowered? Tweak them.
+- [Player vs Player (PvP)](https://github.com/jpw1991/chebs-necromancy/wiki/PvP) settings can be configured as of 4.5.0.
 - Craftable items at the workbench and forge:
 	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_skeletonwand): Summons skeleton warriors, archers, miners, and woodcutters.
 	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_draugrwand): Summons draugr warriors and archers.
@@ -109,11 +114,6 @@ You can also edit the configs manually. Almost everything can be tweaked to your
 - Soft incompatibility with [Ward is Love](https://github.com/jpw1991/chebs-necromancy/issues/177) because it will identify workers as enemies and yeet them. As an alternative, you may consider using [Better Wards](https://valheim.thunderstore.io/package/Azumatt/BetterWards/).
 - Soft incompatibility with [Item Drawers Mod](https://github.com/jpw1991/chebs-necromancy/issues/147) because the Neckro Gatherers try to pick the items out of the drawers.
 
-## Future Ideas
-
-- Fully custom undead types.
-- Lichdom
-
 ## Source
 
 You can find the github [here](https://github.com/jpw1991/chebs-necromancy).
@@ -145,11 +145,22 @@ A special thanks to the people who've helped me along the way:
 
 ## Changelog
 
+
+<details>
+<summary>2024</summary>
+
+Date | Version | Notes
+--- | --- | ---
+07/01/2024 | 4.5.0 | PvP with friends as exceptions implemented via console commands.
+
+</details>
+
 <details>
 <summary>2023</summary>
 
 Date | Version | Notes
 --- | --- | ---
+22/12/2023 | 4.4.2 | Permit PvP - if enabled, minions will attack players and creatures that are not their owner.
 29/11/2023 | 4.4.1 | Fix issue of configs not syncing reliably
 22/11/2023 | 4.4.0 | Fix problem of phylactery not reliably working by overhauling its checking mechanism to be done via RPCs between server and client.
 10/10/2023 | 4.3.2 | hildr's request changed Text to TextMeshProUGUI (the new Unity UI text), which broke the wand keyhints. This is now fixed

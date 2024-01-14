@@ -86,12 +86,12 @@ namespace ChebsNecromancy.Structures
                 "piece_sharpstakes,piece_dvergr_sharpstakes",
                 "These prefabs are always repaired no matter their damage and ignore the RepairWoodWhen/RepairOtherWhen thresholds. This is good for defensive things like stakes which should always be kept at maximum health. Please use a comma-delimited list of prefab names.",
                 null, true);
-            AlwaysRepair = new MemoryConfigEntry<string, List<string>>(alwaysRepair, s => s?.Split(',').ToList());
+            AlwaysRepair = new MemoryConfigEntry<string, List<string>>(alwaysRepair, s => s?.Split(',').Select(str => str.Trim()).ToList());
 
             var fuels = plugin.ModConfig(ChebsRecipeConfig.ObjectName, "Fuels", "Resin,GreydwarfEye,Pukeberries",
                 "The items that are consumed as fuel when repairing. Please use a comma-delimited list of prefab names.",
                 null, true);
-            Fuels = new MemoryConfigEntry<string, List<string>>(fuels, s => s?.Split(',').ToList());
+            Fuels = new MemoryConfigEntry<string, List<string>>(fuels, s => s?.Split(',').Select(str => str.Trim()).ToList());
         }
 
         private void Awake()

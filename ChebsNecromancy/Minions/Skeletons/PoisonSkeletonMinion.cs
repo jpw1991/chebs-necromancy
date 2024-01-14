@@ -18,7 +18,7 @@ namespace ChebsNecromancy.Minions.Skeletons
             var itemsCost = plugin.ModConfig(serverSyncedHeading, "ItemsCost", "BoneFragments:6,Guck:1",
                 "The items that are consumed when creating a minion. Please use a comma-delimited list of prefab names with a : and integer for amount. Alternative items can be specified with a | eg. Wood|Coal:5 to mean wood and/or coal.",
                 null, true);
-            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
+            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').Select(str => str.Trim()).ToList());
             
             LevelRequirementConfig = plugin.Config.Bind(serverSyncedHeading, "LevelRequirement",
                 50, new ConfigDescription("The Necromancy level required to create a poison skeleton.", null,

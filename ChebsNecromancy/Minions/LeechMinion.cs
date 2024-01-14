@@ -72,7 +72,7 @@ namespace ChebsNecromancy.Minions
             var itemsCost = plugin.ModConfig(serverSynced, "ItemsCost", "Entrails|Bloodbag:1",
                 "The items that are consumed when creating a Leech. Please use a comma-delimited list of prefab names with a : and integer for amount.",
                 null, true);
-            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').ToList());
+            ItemsCost = new MemoryConfigEntry<string, List<string>>(itemsCost, s => s?.Split(',').Select(str => str.Trim()).ToList());
 
             LeechTierOneQuality = plugin.Config.Bind(serverSynced, "LeechTierOneQuality",
                 1, new ConfigDescription("Star Quality of tier 1 Leech minions", null,

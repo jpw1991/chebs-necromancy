@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
@@ -21,6 +22,7 @@ using ChebsNecromancy.Minions.Skeletons;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.PvP;
 using HarmonyLib;
 using Jotunn;
 using Jotunn.Configs;
@@ -39,11 +41,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.4.1";
+        public const string PluginVersion = "4.5.2";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.4.0");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.2");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -70,6 +72,10 @@ namespace ChebsNecromancy
         public AcceptableValueList<bool> BoolValue = new(true, false);
         public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
         public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
+        
+        public static ConfigEntry<bool> HeavyLogging;
+        
+        public static ConfigEntry<bool> PvPAllowed;
 
         // if set to true, the particle effects that for some reason hurt radeon are dynamically disabled
         public static ConfigEntry<bool> RadeonFriendly;
@@ -106,6 +112,7 @@ namespace ChebsNecromancy
             CreateConfigValues();
 
             Phylactery.ConfigureRPC();
+            PvPManager.ConfigureRPC();
 
             LoadChebGonazAssetBundle();
 
@@ -117,6 +124,15 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
 
+            var pvpCommands = new List<ConsoleCommand>()
+                { new PvPAddFriend(), new PvPRemoveFriend(), new PvPListFriends() };
+            foreach (var pvpCommand in pvpCommands)
+            {
+                if (!CommandManager.Instance.CustomCommands
+                        .ToList().Exists(c => c.Name == pvpCommand.Name))
+                    CommandManager.Instance.AddConsoleCommand(pvpCommand);
+            }
+
             StartCoroutine(Phylactery.PhylacteriesCheck());
 
             SynchronizationManager.OnConfigurationSynchronized += (obj, attr) =>
@@ -125,9 +141,17 @@ namespace ChebsNecromancy
                     ? "Syncing configuration changes from server..."
                     : "Syncing initial configuration...");
                 UpdateAllRecipes();
+                StartCoroutine(RequestPvPDict());
+
             };
 
             StartCoroutine(WatchConfigFile());
+        }
+
+        private IEnumerator RequestPvPDict()
+        {
+            yield return new WaitUntil(() => ZNet.instance != null && Player.m_localPlayer != null);
+            PvPManager.InitialFriendsListRequest();
         }
         
         #region ConfigUpdate
@@ -211,6 +235,14 @@ namespace ChebsNecromancy
         private void CreateConfigValues()
         {
             Config.SaveOnConfigSet = true;
+            
+            HeavyLogging = Config.Bind("General (Client)", "HeavyLogging",
+                false, new ConfigDescription("Switch on to fill the logs with excessive " +
+                                             "logging to assist with debugging."));
+            
+            PvPAllowed = Config.Bind("General (Server Synced)", "PvPAllowed",
+                false, new ConfigDescription("Whether minions will target and attack other players and their minions.", null,
+                    new ConfigurationManagerAttributes { IsAdminOnly = true }));
 
             RadeonFriendly = Config.Bind("General (Client)", "RadeonFriendly",
                 false, new ConfigDescription("ONLY set this to true if you have graphical issues with " +
