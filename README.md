@@ -42,6 +42,12 @@ c) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/20
 
 - Drag the contents of the `plugins` folder from inside the archive to your BepInEx plugins folder in the Valheim directory.
 
+### Cheb's Valheim Library
+
+[Cheb's Valheim Library](https://jpw1991.github.io/chebs-valheim-library/index.html) (CVL) is a DLL that contains shared code across my mods. For example, both skeletons from Cheb's Necromancy and mercenaries from Cheb's Mercenaries inherit the `ChebGonazMinion` type from CVL. This permits mercenaries to be commanded by a wand, and vice versa.
+
+My mods are bundled with the latest CVL at the time of their release, but if you want to upgrade, you can get the newest CVL [here](https://github.com/jpw1991/chebs-valheim-library/releases).
+
 ## Features
 
 Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). Here's the short version:
