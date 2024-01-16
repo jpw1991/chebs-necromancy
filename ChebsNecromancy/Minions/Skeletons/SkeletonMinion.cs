@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
@@ -10,6 +11,7 @@ using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions.Skeletons
 {
@@ -39,6 +41,22 @@ namespace ChebsNecromancy.Minions.Skeletons
             [InternalName("ChebGonaz_SkeletonMiner")] Miner,
             [InternalName("ChebGonaz_SkeletonWarriorNeedle")] WarriorNeedle,
         };
+
+        private static List<int> _hashList;
+
+        public static bool IsSkeletonHash(int hash)
+        {
+            if (_hashList == null)
+            {
+                _hashList = new List<int>();
+                foreach (SkeletonType value in Enum.GetValues(typeof(SkeletonType)))
+                {
+                    _hashList.Add(InternalName.GetName(value).GetHashCode());
+                }
+            }
+
+            return _hashList.Contains(hash);
+        }
 
         // for limits checking
         private static int _createdOrderIncrementer;
@@ -140,6 +158,31 @@ namespace ChebsNecromancy.Minions.Skeletons
                 }
             });
 
+            LoadEmblemMaterial(humanoid);
+
+            RestoreDrops();
+
+            // wondering what the code below does? Check comments in the
+            // FreshMinion.cs file.
+            var freshMinion = GetComponent<FreshMinion>();
+            var monsterAI = GetComponent<MonsterAI>();
+            monsterAI.m_randomMoveRange = RoamRange.Value;
+            if (!Wand.FollowByDefault.Value || freshMinion == null)
+            {
+                yield return new WaitUntil(() => Player.m_localPlayer != null);
+                
+                RoamFollowOrWait();
+            }
+
+            if (freshMinion != null)
+            {
+                // remove the component
+                Destroy(freshMinion);
+            }
+        }
+
+        public void LoadEmblemMaterial(Humanoid humanoid)
+        {
             var shoulderHash = humanoid.m_visEquipment.m_currentShoulderItemHash;
             var shoulderPrefab = ZNetScene.instance.GetPrefab(shoulderHash);
             if (shoulderPrefab != null
@@ -162,26 +205,6 @@ namespace ChebsNecromancy.Minions.Skeletons
                         })
                     );   
                 }
-            }
-
-            RestoreDrops();
-
-            // wondering what the code below does? Check comments in the
-            // FreshMinion.cs file.
-            var freshMinion = GetComponent<FreshMinion>();
-            var monsterAI = GetComponent<MonsterAI>();
-            monsterAI.m_randomMoveRange = RoamRange.Value;
-            if (!Wand.FollowByDefault.Value || freshMinion == null)
-            {
-                yield return new WaitUntil(() => Player.m_localPlayer != null);
-                
-                RoamFollowOrWait();
-            }
-
-            if (freshMinion != null)
-            {
-                // remove the component
-                Destroy(freshMinion);
             }
         }
 

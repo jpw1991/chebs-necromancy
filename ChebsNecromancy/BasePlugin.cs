@@ -41,11 +41,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.5.2";
+        public const string PluginVersion = "4.5.3";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.2");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.3");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -123,6 +123,7 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new KillAllNeckros());
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
+            CommandManager.Instance.AddConsoleCommand(new TeleportNeckros());
 
             var pvpCommands = new List<ConsoleCommand>()
                 { new PvPAddFriend(), new PvPRemoveFriend(), new PvPListFriends() };

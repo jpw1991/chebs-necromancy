@@ -185,6 +185,7 @@
     <Compile Include="Commands\PvP\PvPListFriends.cs" />
     <Compile Include="Commands\PvP\PvPRemoveFriend.cs" />
     <Compile Include="Commands\SetNeckroHome.cs" />
+    <Compile Include="Commands\TeleportNeckros.cs" />
     <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
     <Compile Include="Items\Armor\Player\NecromancerCape.cs" />
     <Compile Include="Items\Armor\Player\NecromancerHood.cs" />
