@@ -142,8 +142,8 @@ jobs:
         run: |
           mkdir packages
           dotnet restore
-          #nuget restore -PackagesDirectory packages ${{env.name}}/packages.config
-          #dotnet tool restore
+          nuget restore -PackagesDirectory packages ${{env.name}}/packages.config
+          dotnet tool restore
           dotnet build --configuration Release --no-restore
 
       - name: Package
