@@ -3,28 +3,36 @@ name: Publish package
 on:
   release:
     types: [published] # run when a new release is published
+  
+  workflow_run:
+    workflows: ["build"] # run if build.yml is successfully completed
+    types:
+      - completed
 
 env:
   name: ChebsNecromancy
   jsonf: manifest.json
   dlpath: https://github.com/jpw1991/chebs-necromancy/releases/download
-  dependencies: "ValheimModding-Jotunn@2.11.2" # dependencies separated by spaces
+  dependencies: "ValheimModding-Jotunn@2.16.1" # dependencies separated by spaces
   categories: "Mods" # categories separated by spaces
   namespace: ChebGonaz
 
 jobs:
-  verify:
+  verify_manifest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Check that version matches
         run: |
-          if [[ "$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))" != "${{github.event.release.tag_name}}" ]]; then
-            echo "::debug::${{github.event.release.tag_name}}"
-            echo "::debug::$(cat $(find ./ -name ${{env.jsonf}}))"
-            echo "::error::Version in ${{env.jsonf}} does not match tag version"
+          version=$(grep -Po "AssemblyVersion\(\"\K([0-9]+\.[0-9]+\.[0-9]+)" ${{env.name}}/Properties/AssemblyInfo.cs)
+          versionfrommanifest="$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))"
+          [ -z "$version" ] && echo "::error::version is empty!" && exit 1
+          [ -z "$versionfrommanifest" ] && echo "::error::versionfrommanifest is empty!" && exit 1
+          if [[ $versionfrommanifest != $version ]]; then
+            echo "::error::Version in ${{env.jsonf}} does not match assembly version"
             exit 1
           fi
+          echo "VERSION=${version}" >> $GITHUB_ENV
       - name: Get Description
         id: get_description
         run: |
@@ -32,20 +40,20 @@ jobs:
           echo "DESCRIPTION=${description}" >> $GITHUB_ENV
   publish:
     runs-on: ubuntu-latest
-    needs: verify
+    needs: verify_manifest
     steps:
       - uses: actions/checkout@v3
-      - run: wget ${{env.dlpath}}/${{github.ref_name}}/${{env.name}}.${{github.ref_name}}.zip
+      - run: wget ${{env.dlpath}}/v${{env.VERSION}}/${{env.name}}.${{env.VERSION}}.zip
       - name: Upload Thunderstore Package
         uses: GreenTF/upload-thunderstore-package@v4
         with:
           community: valheim
           namespace: ${{env.namespace}}
           name: ${{env.name}}
-          version: ${{github.event.release.tag_name}}
+          version: ${{env.VERSION}}
           description: ${{env.DESCRIPTION}}
           token: ${{secrets.TS_KEY}}
           deps: ${{env.dependencies}}
           categories: ${{env.categories}}
-          file: ${{env.name}}.${{github.event.release.tag_name}}.zip
+          file: ${{env.name}}.${{env.VERSION}}.zip
 
