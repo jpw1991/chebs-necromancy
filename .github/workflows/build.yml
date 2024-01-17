@@ -78,7 +78,7 @@ jobs:
       - name: Install CVL
         run: |
           wget ${{ env.cvldl }}
-          mkdir ../chebs-valheim-library/ChebsValheimLibrary/bin/Release
+          mkdir -p ../chebs-valheim-library/ChebsValheimLibrary/bin/Release
           cp ChebsValheimLibrary.dll ../chebs-valheim-library/ChebsValheimLibrary/bin/Release
           mv ChebsValheimLibrary.dll ${{env.name}}/Package/plugins
       
