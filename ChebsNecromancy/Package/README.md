@@ -54,6 +54,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 
 - Almost everything is configurable. Minions too weak/overpowered? Tweak them.
 - [Player vs Player (PvP)](https://github.com/jpw1991/chebs-necromancy/wiki/PvP) settings can be configured as of 4.5.0.
+- As of 4.6.0, further minion [appearance customization](https://github.com/jpw1991/chebs-necromancy/wiki/Appearance-Customization) options are available. You can change the eye color of your minions and also give them special symbols on their capes.
 - Craftable items at the workbench and forge:
 	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_skeletonwand): Summons skeleton warriors, archers, miners, and woodcutters.
 	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_draugrwand): Summons draugr warriors and archers.
@@ -98,7 +99,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 
 ### Config
 
-**Attention:** To edit the config as described, the [Configuration Manager](https://github.com/BepInEx/BepInEx.ConfigurationManager/releases) is the most user friendly way. This is a separate mod. Please download and install it.
+**Attention:** To edit the config as described, the [Configuration Manager](https://valheim.thunderstore.io/package/Azumatt/Official_BepInEx_ConfigurationManager/) is the most user friendly way. This is a separate mod. Please download and install it.
 
 Press **F1** to open the mod's configuration panel.
 
@@ -140,6 +141,7 @@ A special thanks to the people who've helped me along the way:
 	- **redseiko** for helpful advice on the official Valheim modding Discord.
 	- **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell).
 	- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
+	- The unknown author of this awesome [Lovecraftian chart](https://lovecraftzine.files.wordpress.com/2013/04/lovecraft-bestiary.jpg), from which I took inspiration for a lot of the Lovecraft symbol designs for the minion capes.
 
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
@@ -151,6 +153,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+17/01/2024 | 4.6.0 | Changing minion eye color added; changing minion cape emblems updates dynamically
 07/01/2024 | 4.5.0 | PvP with friends as exceptions implemented via console commands.
 
 </details>
