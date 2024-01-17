@@ -86,6 +86,7 @@ jobs:
           sed -i -E "s/(\.\.\\\.\.\\\chebs-valheim-library\\\ChebsValheimLibrary\\\bin\\\Release)/\\\\home\\\runner/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.local)/\\\\home\\\runner\\\.local/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.config\\\r2modmanPlus-local\\\Valheim\\\profiles\\\cheb-development)/\\\\home\\\runner\\\.local\\\share\\\Steam\\\steamapps\\\common\\\Valheim/g" ${{env.name}}/${{env.name}}.csproj
+          cat ${{env.name}}/${{env.name}}.csproj
       
       - name: Get Valheim version id
         run: |
