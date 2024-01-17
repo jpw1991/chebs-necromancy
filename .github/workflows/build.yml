@@ -5,8 +5,8 @@ permissions:
 
 on:
   push:
-    tag:
-      - v*
+    tags:
+      - 'v*' # Trigger only if the pushed tag starts with v
 
 env:
   name: ChebsNecromancy
