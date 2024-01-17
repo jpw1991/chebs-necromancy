@@ -4,7 +4,7 @@ on:
   release:
     types: [published] # run when a new release is published
     tags:
-      - 'v*' # Trigger only if the tag matches v*
+      - 'v[0-9]*.[0-9]*.[0-9]*' # Trigger only if the tag matches eg. v1.0.0
   
   workflow_run:
     workflows: ["build"] # run if build.yml is successfully completed

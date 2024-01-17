@@ -78,10 +78,11 @@ jobs:
       - name: Install CVL
         run: |
           wget ${{ env.cvldl }}
+          mv ChebsValheimLibrary.dll ${{env.name}}/Package/plugins
       - name: Replace paths inside csproj
         run: |
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.local)/\\\\home\\\runner\\\.local/g" ${{env.name}}/${{env.name}}.csproj
-          sed -i -E "s/(\.\.\\\.\.\\\chebs-valheim-library\\\ChebsValheimLibrary\\\bin\\\Release)/\\\\home\\\runner/g" ${{env.name}}/${{env.name}}.csproj
+          sed -i -E "s/(\.\.\\\.\.\\\chebs-valheim-library\\\ChebsValheimLibrary\\\bin\\\Release)/\\\\home\\\runner\\\${{env.name}}\\\Package\\\plugins/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.config\\\r2modmanPlus-local\\\Valheim\\\profiles\\\cheb-development)/\\\\home\\\runner\\\.local\\\share\\\Steam\\\steamapps\\\common\\\Valheim/g" ${{env.name}}/${{env.name}}.csproj
       
       - name: Get Valheim version id
@@ -114,11 +115,6 @@ jobs:
           unzip BepInEx.zip -d ~/BepInEx
           mv ~/BepInEx/* ${{env.valheiminstalldir}}/
 
-      - name: Replace paths inside csproj
-        run: |
-          sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.local)/\\\\home\\\runner\\\.local/g" ${{env.name}}/${{env.name}}.csproj
-          sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.config\\\r2modmanPlus-local\\\Valheim\\\profiles\\\cheb-development)/\\\\home\\\runner\\\.local\\\share\\\Steam\\\steamapps\\\common\\\Valheim/g" ${{env.name}}/${{env.name}}.csproj
-
       - name: Install NuGet
         uses: nuget/setup-nuget@v1
 
@@ -129,14 +125,6 @@ jobs:
           mv Jotunn.dll /home/runner
           refcontent='<Reference Include="Jotunn"><HintPath>\\home\\runner\\Jotunn.dll</HintPath></Reference>'
           sed -i '/<Reference\sInclude="UnityEngine.PhysicsModule">/i\'"$refcontent" ${{env.name}}/${{env.name}}.csproj
-
-      - name: Confirm existence of critical files
-        run : |
-          for test in "BepInEx/core/BepInEx.dll" "valheim_Data/Managed/assembly_guiutils.dll" "valheim_Data/Managed/assembly_postprocessing.dll" "valheim_Data/Managed/assembly_utils.dll" "valheim_Data/Managed/assembly_valheim.dll" "valheim_Data/Managed/UnityEngine.dll" "valheim_Data/Managed/UnityEngine.AssetBundleModule.dll" "valheim_Data/Managed/UnityEngine.CoreModule.dll" "valheim_Data/Managed/UnityEngine.ParticleSystemModule.dll" "valheim_Data/Managed/UnityEngine.Physics2DModule.dll" "valheim_Data/Managed/UnityEngine.PhysicsModule.dll"; do
-              [ ! -f "${{env.valheiminstalldir}}/$test" ] && echo "$test not found!"
-          done
-          [ ! -f "/home/runner/Jotunn.dll" ] && echo "Jotunn.dll not found!"
-          cat ${{env.name}}/${{env.name}}.csproj
 
       - name: Install dependencies and Build
         run: |
