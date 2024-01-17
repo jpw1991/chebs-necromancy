@@ -78,12 +78,12 @@ jobs:
       - name: Install CVL
         run: |
           wget ${{ env.cvldl }}
-          mkdir -p chebs-valheim-library/ChebsValheimLibrary/bin/Release
-          cp ChebsValheimLibrary.dll chebs-valheim-library/ChebsValheimLibrary/bin/Release
+          cp ChebsValheimLibrary.dll /home/runner
           cp ChebsValheimLibrary.dll ${{env.name}}/Package/plugins
       
       - name: Replace paths inside csproj
         run: |
+          sed -i -E "s/(\.\.\\\.\.\\\chebs-valheim-library\\\ChebsValheimLibrary\\\bin\\\Release)/\\\\home\\\runner/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.local)/\\\\home\\\runner\\\.local/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.config\\\r2modmanPlus-local\\\Valheim\\\profiles\\\cheb-development)/\\\\home\\\runner\\\.local\\\share\\\Steam\\\steamapps\\\common\\\Valheim/g" ${{env.name}}/${{env.name}}.csproj
       
