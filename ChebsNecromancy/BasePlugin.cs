@@ -1,15 +1,9 @@
-// ChebsNecromancy
-// 
-// File:    ChebsNecromancy.cs
-// Project: ChebsNecromancy
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
@@ -41,7 +35,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.5.3";
+        public const string PluginVersion = "4.6.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -473,6 +467,8 @@ namespace ChebsNecromancy
                 #endregion
 
                 #region Creatures
+                
+                UndeadMinion.LoadEyes(chebgonazAssetBundle);
 
                 List<string> prefabNames = new();
 

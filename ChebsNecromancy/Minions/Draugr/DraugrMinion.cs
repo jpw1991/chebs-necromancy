@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
@@ -8,6 +9,7 @@ using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions.Draugr
 {
@@ -29,6 +31,22 @@ namespace ChebsNecromancy.Minions.Draugr
             [InternalName("ChebGonaz_DraugrArcherSilver")] ArcherSilver,
             [InternalName("ChebGonaz_DraugrWarriorNeedle")] WarriorNeedle,
         };
+        
+        private static List<int> _hashList;
+
+        public static bool IsDraugrHash(int hash)
+        {
+            if (_hashList == null)
+            {
+                _hashList = new List<int>();
+                foreach (DraugrType value in Enum.GetValues(typeof(DraugrType)))
+                {
+                    _hashList.Add(InternalName.GetName(value).GetHashCode());
+                }
+            }
+
+            return _hashList.Contains(hash);
+        }
 
         // for limits checking
         private static int _createdOrderIncrementer;
@@ -120,6 +138,8 @@ namespace ChebsNecromancy.Minions.Draugr
             });
 
             RestoreDrops();
+            
+            LoadEyeMaterial();
 
             // wondering what the code below does? Check comments in the
             // FreshMinion.cs file.
@@ -502,6 +522,37 @@ namespace ChebsNecromancy.Minions.Draugr
             // aren't remembered. So we must write what we're dropping into
             // the ZDO as well and then read & restore this on Awake
             minion.RecordDrops(characterDrop);
+        }
+        
+        public override void LoadEyeMaterial()
+        {
+            var eyeColor = Eye;
+            if (Eyes.TryGetValue(eyeColor, out var eye))
+            {
+                var eyeL = transform.Find("Visual/_draugr_base/Armature/Hips/Spine0/Spine1/Spine2/Head/sphere");
+                if (eyeL != null && eyeL.TryGetComponent(out MeshRenderer lMeshRenderer))
+                {
+                    // var mats = lMeshRenderer.materials;
+                    // for (var i = 0; i < mats.Length; i++) mats[i] = eye;
+                    lMeshRenderer.sharedMaterial = eye;
+                }
+                else
+                {
+                    Logger.LogError($"{name} (eyeL={eyeL}) Failed to get mesh renderer for eye_l");
+                }
+                
+                var eyeR = transform.Find("Visual/_draugr_base/Armature/Hips/Spine0/Spine1/Spine2/Head/sphere (1)");
+                if (eyeR != null && eyeR.TryGetComponent(out MeshRenderer rMeshRenderer))
+                {
+                    // var mats = rMeshRenderer.materials;
+                    // for (var i = 0; i < mats.Length; i++) mats[i] = eye;
+                    rMeshRenderer.sharedMaterial = eye;
+                }
+                else
+                {
+                    Logger.LogError($"{name} (eyeR={eyeR}) Failed to get mesh renderer for eye_r");
+                }
+            }
         }
     }
 }

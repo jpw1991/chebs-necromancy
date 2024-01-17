@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items.Armor.Player;
+using ChebsNecromancy.Minions.Draugr;
+using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
@@ -15,6 +18,7 @@ namespace ChebsNecromancy.Minions
     {
         public const string MinionCreatedAtLevelKey = "UndeadMinionCreatedAtLevel";
         public const string MinionEmblemZdoKey = "UndeadMinionEmblem";
+        public const string MinionEyeZdoKey = "UndeadMinionEye";
 
         #region CleanupAfterLogout
 
@@ -30,6 +34,9 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<bool> Commandable;
         public static ConfigEntry<float> RoamRange;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
+        
+        public static ConfigEntry<EyeColor> EyeConfig;
+        public static Dictionary<string, Material> Eyes = new();
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -64,6 +71,56 @@ namespace ChebsNecromancy.Minions
                     "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.",
                     null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            EyeConfig = plugin.Config.Bind(client, "EyeColor", EyeColor.Blue,
+                new ConfigDescription("The eye color of your minions."));
+            EyeConfig.SettingChanged += (sender, args) =>
+            {
+                // update minion capes with new emblem
+                Logger.LogInfo($"Eye color changed to {EyeConfig.Value}, updating minion materials...");
+                var player = Player.m_localPlayer;
+                if (player == null)
+                {
+                    Logger.LogInfo("Failed to update minion eyes: m_localPlayer is null. This is not an " +
+                                   "error unless you're in-game right now & just means that eyes " +
+                                   "couldn't be updated on existing minions at this moment in time.");
+                    return;
+                }
+
+                var matName = InternalName.GetName(EyeConfig.Value);
+                var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID
+                    .Values
+                    .ToList()
+                    .FindAll(zdo =>
+                    {
+                        var zdoPrefab = zdo.GetPrefab();
+                        return SkeletonMinion.IsSkeletonHash(zdoPrefab) ||
+                               DraugrMinion.IsDraugrHash(zdoPrefab);
+                    })
+                    .Where(zdo =>
+                        zdo.GetString(MinionOwnershipZdoKey) ==
+                        player.GetPlayerName())
+                    .ToList();
+                Logger.LogInfo($"Found {minionsBelongingToPlayer.Count} to update...");
+                foreach (var zdo in minionsBelongingToPlayer)
+                {
+                    zdo.Set(MinionEyeZdoKey, matName);
+                }
+
+                // now that ZDOs have been set, update loaded minions
+                var allCharacters = Character.GetAllCharacters();
+                foreach (var character in allCharacters)
+                {
+                    if (character.IsDead())
+                    {
+                        continue;
+                    }
+
+                    var minion = character.GetComponent<UndeadMinion>();
+                    if (minion == null || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
+                    minion.LoadEyeMaterial();
+                }
+            };
         }
 
         public override void Awake()
@@ -194,6 +251,63 @@ namespace ChebsNecromancy.Minions
                     Logger.LogError($"Cannot set emblem to {value} because it has no ZNetView component.");
                 }
             }
+        }
+
+        #endregion
+        
+        #region Eye
+
+        public enum EyeColor
+        {
+            [InternalName("ChebGonaz_SkeletonEyeBlue")]
+            Blue,
+
+            [InternalName("ChebGonaz_SkeletonEyeGreen")]
+            Green,
+            
+            [InternalName("ChebGonaz_SkeletonEyePink")]
+            Pink,
+
+            [InternalName("ChebGonaz_SkeletonEyePurple")]
+            Purple,
+
+            [InternalName("ChebGonaz_SkeletonEyeRed")]
+            Red,
+
+            [InternalName("ChebGonaz_SkeletonEyeTeal")]
+            Teal,
+        }
+
+        public string Eye
+        {
+            get => TryGetComponent(out ZNetView zNetView)
+                ? zNetView.GetZDO().GetString(MinionEyeZdoKey)
+                : InternalName.GetName(EyeColor.Blue);
+            set
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    zNetView.GetZDO().Set(MinionEyeZdoKey, value);
+                }
+                else
+                {
+                    Logger.LogError($"Cannot set eye to {value} because it has no ZNetView component.");
+                }
+            }
+        }
+        
+        public static void LoadEyes(AssetBundle bundle)
+        {
+            foreach (EyeColor eyeColors in Enum.GetValues(typeof(EyeColor)))
+            {
+                var name = InternalName.GetName(eyeColors);
+                Eyes[name] = bundle.LoadAsset<Material>(name + ".mat");
+            }
+        }
+        
+        public virtual void LoadEyeMaterial()
+        {
+            
         }
 
         #endregion

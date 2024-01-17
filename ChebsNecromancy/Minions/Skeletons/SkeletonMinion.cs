@@ -159,6 +159,7 @@ namespace ChebsNecromancy.Minions.Skeletons
             });
 
             LoadEmblemMaterial(humanoid);
+            LoadEyeMaterial();
 
             RestoreDrops();
 
@@ -625,6 +626,37 @@ namespace ChebsNecromancy.Minions.Skeletons
                 case ArmorType.BlackMetal:
                     inventory.RemoveItem("$item_blackmetal", BasePlugin.ArmorBlackIronRequiredConfig.Value);
                     break;
+            }
+        }
+        
+        public override void LoadEyeMaterial()
+        {
+            var eyeColor = Eye;
+            if (Eyes.TryGetValue(eyeColor, out var eye))
+            {
+                var eyeL = transform.Find("Visual/_skeleton_base/Armature/Hips/Spine/Spine1/Spine2/Neck/Head/eye_l");
+                if (eyeL != null && eyeL.TryGetComponent(out MeshRenderer lMeshRenderer))
+                {
+                    //var mats = lMeshRenderer.materials;
+                    //for (var i = 0; i < mats.Length; i++) mats[i] = eye;
+                    lMeshRenderer.sharedMaterial = eye;
+                }
+                else
+                {
+                    Logger.LogError($"{name} (eyeL={eyeL}) Failed to get mesh renderer for eye_l");
+                }
+                
+                var eyeR = transform.Find("Visual/_skeleton_base/Armature/Hips/Spine/Spine1/Spine2/Neck/Head/eye_r");
+                if (eyeR != null && eyeR.TryGetComponent(out MeshRenderer rMeshRenderer))
+                {
+                    // var mats = rMeshRenderer.materials;
+                    // for (var i = 0; i < mats.Length; i++) mats[i] = eye;
+                    rMeshRenderer.sharedMaterial = eye;
+                }
+                else
+                {
+                    Logger.LogError($"{name} (eyeL={eyeR}) Failed to get mesh renderer for eye_r");
+                }
             }
         }
     }
