@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.x'
 
@@ -51,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
       
@@ -125,7 +125,7 @@ jobs:
       - name: Manual install Jotunn
         run: |
           echo "For some reason Jotunn via nuget won't work here, so manual install and link it. Remove this whenever possible"
-          wget https://github.com/Valheim-Modding/Jotunn/releases/download/v2.16.1/Jotunn.dll
+          wget https://github.com/Valheim-Modding/Jotunn/releases/download/v2.16.2/Jotunn.dll
           mv Jotunn.dll /home/runner
           refcontent='<Reference Include="Jotunn"><HintPath>\\home\\runner\\Jotunn.dll</HintPath></Reference>'
           sed -i '/<Reference\sInclude="UnityEngine.PhysicsModule">/i\'"$refcontent" ${{env.name}}/${{env.name}}.csproj
@@ -138,21 +138,19 @@ jobs:
           [ ! -f "/home/runner/Jotunn.dll" ] && echo "Jotunn.dll not found!"
           cat ${{env.name}}/${{env.name}}.csproj
 
-      - name: Install dependencies
+      - name: Install dependencies and Build
         run: |
           mkdir packages
           dotnet restore
           nuget restore -PackagesDirectory packages ${{env.name}}/packages.config
           dotnet tool restore
-
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+          dotnet build --configuration Release --no-restore
 
       - name: Package
         run: |
           cp -f ${{env.name}}/bin/Release/${{env.name}}.dll ${{env.name}}/Package/plugins
           cp -f README.md ${{env.name}}/Package
-          (cd ChebsDemolisherSword/Package && zip -r ../../${{env.name}}.${{env.VERSION}}.zip .)
+          (cd ${{env.name}}/Package && zip -r ../../${{env.name}}.${{env.VERSION}}.zip .)
 
       - name: Create Release
         id: create_release
