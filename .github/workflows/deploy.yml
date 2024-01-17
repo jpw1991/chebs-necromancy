@@ -3,6 +3,8 @@ name: Publish package
 on:
   release:
     types: [published] # run when a new release is published
+    tags:
+      - 'v*' # Trigger only if the tag matches v*
   
   workflow_run:
     workflows: ["build"] # run if build.yml is successfully completed
