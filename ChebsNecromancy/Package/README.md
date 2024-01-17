@@ -153,6 +153,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+18/01/2024 | 4.6.1 | Fix problem of custom eye color not being applied to freshly created minions
 17/01/2024 | 4.6.0 | Changing minion eye color added; changing minion cape emblems updates dynamically
 07/01/2024 | 4.5.0 | PvP with friends as exceptions implemented via console commands.
 

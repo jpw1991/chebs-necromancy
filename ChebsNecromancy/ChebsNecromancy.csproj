@@ -80,8 +80,8 @@
     <Reference Include="assembly_valheim" Publicize="true">
       <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
     </Reference>
-    <Reference Include="ChebsValheimLibrary">
-      <HintPath>..\..\chebs-valheim-library\ChebsValheimLibrary\bin\Release\ChebsValheimLibrary.dll</HintPath>
+    <Reference Include="ChebsValheimLibrary, Version=2.5.3.0, Culture=en, processorArchitecture=MSIL">
+      <HintPath>..\packages\ChebsValheimLibrary.2.5.3\lib\net48\ChebsValheimLibrary.dll</HintPath>
     </Reference>
     <Reference Include="Jotunn, Version=2.16.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\JotunnLib.2.16.2\lib\net462\Jotunn.dll</HintPath>

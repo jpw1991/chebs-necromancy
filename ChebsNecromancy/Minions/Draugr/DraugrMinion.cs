@@ -424,6 +424,8 @@ namespace ChebsNecromancy.Minions.Draugr
             minion.SetCreatedAtLevel(playerNecromancyLevel);
             minion.ScaleEquipment(playerNecromancyLevel, armorType);
             minion.ScaleStats(playerNecromancyLevel);
+            
+            minion.Eye = InternalName.GetName(EyeConfig.Value);
 
             if (Wand.FollowByDefault.Value)
             {

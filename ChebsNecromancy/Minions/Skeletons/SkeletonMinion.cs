@@ -408,6 +408,8 @@ namespace ChebsNecromancy.Minions.Skeletons
             minion.ScaleEquipment(playerNecromancyLevel, skeletonType, armorType);
             minion.ScaleStats(playerNecromancyLevel);
 
+            minion.Eye = InternalName.GetName(EyeConfig.Value);
+
             if (skeletonType != SkeletonType.Woodcutter
                 && skeletonType != SkeletonType.Miner)
             {
