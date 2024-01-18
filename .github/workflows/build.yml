@@ -133,9 +133,10 @@ jobs:
       - name: Manually publicize and build
         run: |
           # as described above in "Install dependencies": remove entire step once that issue is resolved
-          find / -name "assembly_valheim.dll"
           dotnet tool install -g BepInEx.AssemblyPublicizer.Cli
-          assembly-publicizer ${{env.valheiminstalldir}}/valheim_Data/Managed/assembly_valheim.dll
+          # <HintPath>\home\runner\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
+          # /home/runner/.local/share/Steam/steamapps/common/Valheim/valheim_Data/Managed/assembly_valheim.dll
+          assembly-publicizer --overwrite ${{env.valheiminstalldir}}/valheim_Data/Managed/assembly_valheim.dll
           dotnet build --configuration Release --no-restore
 
       - name: Package
