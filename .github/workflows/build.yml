@@ -15,7 +15,6 @@ env:
   valheiminstalldir: /home/runner/.local/share/Steam/steamapps/common/Valheim
   outf: README.bbc
   readmef: README.md
-  cvldl: https://github.com/jpw1991/chebs-valheim-library/releases/tag/2.5.3/ChebsValheimLibrary.dll
 
 jobs:
   convert:
@@ -75,15 +74,8 @@ jobs:
             mv $asset ${{env.name}}/Package/plugins
           done
       
-      - name: Install CVL
-        run: |
-          wget ${{ env.cvldl }}
-          cp ChebsValheimLibrary.dll /home/runner
-          cp ChebsValheimLibrary.dll ${{env.name}}/Package/plugins
-      
       - name: Replace paths inside csproj
         run: |
-          sed -i -E "s/(\.\.\\\.\.\\\chebs-valheim-library\\\ChebsValheimLibrary\\\bin\\\Release)/\\\\home\\\runner/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.local)/\\\\home\\\runner\\\.local/g" ${{env.name}}/${{env.name}}.csproj
           sed -i -E "s/(\.\.\\\.\.\\\.\.\\\.config\\\r2modmanPlus-local\\\Valheim\\\profiles\\\cheb-development)/\\\\home\\\runner\\\.local\\\share\\\Steam\\\steamapps\\\common\\\Valheim/g" ${{env.name}}/${{env.name}}.csproj
           cat ${{env.name}}/${{env.name}}.csproj
@@ -132,13 +124,14 @@ jobs:
       - name: Install dependencies and Build
         run: |
           mkdir packages
-          #dotnet restore
+          dotnet restore
           nuget restore -PackagesDirectory packages ${{env.name}}/packages.config
           #dotnet tool restore
           dotnet build --configuration Release --no-restore
 
       - name: Package
         run: |
+          find packages -name 'ChebsValheimLibrary.dll' -path '*/lib/net48/*' -exec cp -f {} ${{env.name}}/Package/plugins \;
           cp -f ${{env.name}}/bin/Release/${{env.name}}.dll ${{env.name}}/Package/plugins
           cp -f README.md ${{env.name}}/Package
           (cd ${{env.name}}/Package && zip -r ../../${{env.name}}.${{env.VERSION}}.zip .)

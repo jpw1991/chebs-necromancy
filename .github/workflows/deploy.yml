@@ -22,7 +22,7 @@ env:
 jobs:
   verify_manifest:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_run' && github.event.workflow == 'build' && github.event.workflow_run.conclusion == 'success'
+    if: (github.event_name == 'release') || (github.event_name == 'workflow_run' && github.event.workflow == 'build' && github.event.workflow_run.conclusion == 'success')
     steps:
       - uses: actions/checkout@v3
       - name: Check that version matches
