@@ -47,12 +47,12 @@ if __name__ == '__main__':
         sys.exit(1)
 
     file_pattern_replacements = [
-        FilePatternReplacement('ChebsNecromancy/Properties/AssemblyInfo.cs',
-                               'AssemblyVersion\\([".0-9]+\\)',
-                               f'AssemblyVersion("{version}.0")'),
-        FilePatternReplacement('ChebsNecromancy/Properties/AssemblyInfo.cs',
-                               'AssemblyFileVersion\\([".0-9]+\\)',
-                               f'AssemblyFileVersion("{version}.0")'),
+        FilePatternReplacement('ChebsNecromancy/ChebsNecromancy.csproj',
+                               '<Version>[0-9.]+<\/Version>',
+                               f'<Version>{version}.0</Version>'),
+        FilePatternReplacement('ChebsNecromancy/ChebsNecromancy.csproj',
+                               '<FileVersion>[0-9.]+<\/FileVersion>',
+                               f'<FileVersion>{version}.0</FileVersion>'),
         FilePatternReplacement('ChebsNecromancy/BasePlugin.cs',
                                'PluginVersion = [".0-9]+',
                                f'PluginVersion = "{version}"'),
