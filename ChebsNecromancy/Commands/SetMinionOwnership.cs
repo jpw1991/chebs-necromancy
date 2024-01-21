@@ -2,7 +2,6 @@
 // console command to kill all player's minions.
 // attention: only kills THEIR minions
 
-using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;

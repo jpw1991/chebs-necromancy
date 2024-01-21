@@ -1,11 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using ChebsNecromancy.Minions;
-using ChebsNecromancy.Minions.Draugr;
-using ChebsNecromancy.Minions.Skeletons;
-using ChebsValheimLibrary.PvP;
+﻿using ChebsValheimLibrary.PvP;
 using Jotunn.Entities;
-using Jotunn.Managers;
 
 namespace ChebsNecromancy.Commands
 {

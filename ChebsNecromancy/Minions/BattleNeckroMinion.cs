@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
@@ -8,6 +6,7 @@ using ChebsValheimLibrary.Minions;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Object = UnityEngine.Object;
 
 namespace ChebsNecromancy.Minions
 {

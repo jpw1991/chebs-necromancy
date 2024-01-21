@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using ChebsValheimLibrary.Common;
 
 namespace ChebsNecromancy.Minions.Skeletons

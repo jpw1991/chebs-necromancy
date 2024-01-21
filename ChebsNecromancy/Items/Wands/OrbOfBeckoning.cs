@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
@@ -11,7 +10,6 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items.Wands

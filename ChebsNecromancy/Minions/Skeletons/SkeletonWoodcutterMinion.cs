@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions.Skeletons.WorkerAI;
 using ChebsValheimLibrary.Common;
-using ChebsValheimLibrary.Minions.AI;
 
 namespace ChebsNecromancy.Minions.Skeletons
 {
