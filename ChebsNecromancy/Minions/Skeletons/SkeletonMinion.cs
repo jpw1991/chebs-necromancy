@@ -71,9 +71,14 @@ namespace ChebsNecromancy.Minions.Skeletons
         
         public static ConfigEntry<int> MaxSkeletons;
         public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
+        
+        public const string BoneColorZdoKey = "SkeletonMinionBoneColor";
+        public static ConfigEntry<BoneColor> BoneColorConfig;
+        public static Dictionary<string, Material> Bones = new();
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
+            const string client = "SkeletonMinion (Client)";
             const string serverSynced = "SkeletonMinion (Server Synced)";
             SkeletonBaseHealth = plugin.Config.Bind(serverSynced, "SkeletonBaseHealth",
                 20f, new ConfigDescription("HP = BaseHealth + NecromancyLevel * HealthMultiplier", null,
@@ -116,7 +121,132 @@ namespace ChebsNecromancy.Minions.Skeletons
                 10, new ConfigDescription(
                     "Attention: has no effect if minion limits are off. Increases player's maximum minion count by 1 every X levels. For example, if the limit is 3 skeletons and this is set to 10, then at level 10 Necromancy the player can have 4 minions. Then 5 at level 20, and so on.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
+            
+            BoneColorConfig = plugin.Config.Bind(client, "BoneColor", BoneColor.White,
+                new ConfigDescription("The bone color of your minions."));
+            BoneColorConfig.SettingChanged += (sender, args) =>
+            {
+                Logger.LogInfo($"Bone color changed to {BoneColorConfig.Value}, updating minion materials...");
+                var player = Player.m_localPlayer;
+                if (player == null)
+                {
+                    Logger.LogInfo("Failed to update minion bones: m_localPlayer is null. This is not an " +
+                                   "error unless you're in-game right now & just means that bones " +
+                                   "couldn't be updated on existing minions at this moment in time.");
+                    return;
+                }
+
+                var matName = InternalName.GetName(BoneColorConfig.Value);
+                var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID
+                    .Values
+                    .ToList()
+                    .FindAll(zdo =>
+                    {
+                        var zdoPrefab = zdo.GetPrefab();
+                        return SkeletonMinion.IsSkeletonHash(zdoPrefab);
+                    })
+                    .Where(zdo =>
+                        zdo.GetString(MinionOwnershipZdoKey) ==
+                        player.GetPlayerName())
+                    .ToList();
+                Logger.LogInfo($"Found {minionsBelongingToPlayer.Count} to update...");
+                foreach (var zdo in minionsBelongingToPlayer)
+                {
+                    zdo.Set(BoneColorZdoKey, matName);
+                }
+
+                // now that ZDOs have been set, update loaded minions
+                var allCharacters = Character.GetAllCharacters();
+                foreach (var character in allCharacters)
+                {
+                    if (character.IsDead())
+                    {
+                        continue;
+                    }
+
+                    var minion = character.GetComponent<SkeletonMinion>();
+                    if (minion == null || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
+                    minion.LoadBoneColorMaterial();
+                }
+            };
         }
+        
+        #region BoneColor
+
+        public enum BoneColor
+        {
+            [InternalName("ChebGonaz_SkeletonWhite")]
+            White,
+
+            [InternalName("ChebGonaz_SkeletonRed")]
+            Red,
+            
+            [InternalName("ChebGonaz_SkeletonBlue")]
+            Blue,
+
+            [InternalName("ChebGonaz_SkeletonGreen")]
+            Green,
+            
+            [InternalName("ChebGonaz_SkeletonBlack")]
+            Black,
+            
+            [InternalName("ChebGonaz_SkeletonDark")]
+            Dark,
+        }
+
+        public string SkeletonBoneColor
+        {
+            get => TryGetComponent(out ZNetView zNetView)
+                ? zNetView.GetZDO().GetString(BoneColorZdoKey)
+                : InternalName.GetName(BoneColor.White);
+            set
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    zNetView.GetZDO().Set(BoneColorZdoKey, value);
+                }
+                else
+                {
+                    Logger.LogError($"Cannot set bone color to {value} because it has no ZNetView component.");
+                }
+            }
+        }
+        
+        public static void LoadBoneColors(AssetBundle bundle)
+        {
+            foreach (BoneColor boneColor in Enum.GetValues(typeof(BoneColor)))
+            {
+                var name = InternalName.GetName(boneColor);
+                var mat = bundle.LoadAsset<Material>(name + ".mat");
+                if (mat == null) Logger.LogError($"mat for {name} is null!");
+                Bones[name] = mat;
+            }
+        }
+        
+        public void LoadBoneColorMaterial()
+        {
+            var boneColor = SkeletonBoneColor;
+            if (Bones.TryGetValue(boneColor, out var boneMat))
+            {
+                var visualSkeleton = transform.Find("Visual/_skeleton_base/Skeleton");
+                if (visualSkeleton != null && visualSkeleton.TryGetComponent(out SkinnedMeshRenderer skinnedMeshRenderer))
+                {
+                    //var mats = skinnedMeshRenderer.materials;
+                    //for (var i = 0; i < mats.Length; i++) mats[i] = boneMat;
+                    skinnedMeshRenderer.sharedMaterial = boneMat;
+                }
+                else
+                {
+                    Logger.LogError($"{name} (visualSkeleton={visualSkeleton}) Failed to get SkinnedMeshRenderer");
+                }
+            }
+            else
+            {
+                Logger.LogError($"Failed to load bone color material: Bones has no key {boneColor}");
+            }
+        }
+
+        #endregion
 
         public override void Awake()
         {
@@ -160,6 +290,7 @@ namespace ChebsNecromancy.Minions.Skeletons
 
             LoadEmblemMaterial(humanoid);
             LoadEyeMaterial();
+            LoadBoneColorMaterial();
 
             RestoreDrops();
 

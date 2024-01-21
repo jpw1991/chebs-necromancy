@@ -35,7 +35,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.6.1";
+        public const string PluginVersion = "4.7.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -469,6 +469,7 @@ namespace ChebsNecromancy
                 #region Creatures
                 
                 UndeadMinion.LoadEyes(chebgonazAssetBundle);
+                SkeletonMinion.LoadBoneColors(chebgonazAssetBundle);
 
                 List<string> prefabNames = new();
 
