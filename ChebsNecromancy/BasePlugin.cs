@@ -1,8 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using BepInEx;
 using BepInEx.Configuration;
@@ -35,7 +31,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.7.0";
+        public const string PluginVersion = "4.7.1";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -63,9 +59,9 @@ namespace ChebsNecromancy
         public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
 
         // Global Config Acceptable Values
-        public AcceptableValueList<bool> BoolValue = new(true, false);
-        public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
-        public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
+        public AcceptableValueList<bool>? BoolValue = new(true, false);
+        public AcceptableValueRange<float>? FloatQuantityValue = new(1f, 1000f);
+        public AcceptableValueRange<int>? IntQuantityValue = new(1, 1000);
         
         public static ConfigEntry<bool> HeavyLogging;
         
@@ -207,9 +203,9 @@ namespace ChebsNecromancy
         public ConfigEntry<T> ModConfig<T>(
             string group,
             string name,
-            T default_value,
+            T defaultValue,
             string description = "",
-            AcceptableValueBase acceptableValues = null,
+            AcceptableValueBase? acceptableValues = null,
             bool serverSync = false,
             params object[] tags)
         {
@@ -222,7 +218,7 @@ namespace ChebsNecromancy
                 new ConfigurationManagerAttributes { IsAdminOnly = serverSync },
                 tags);
 
-            var configEntry = Config.Bind(group, name, default_value, extendedDescription);
+            var configEntry = Config.Bind(group, name, defaultValue, extendedDescription);
 
             return configEntry;
         }
