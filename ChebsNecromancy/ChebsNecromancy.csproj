@@ -4,7 +4,7 @@
         <TargetFramework>net48</TargetFramework>
         <RootNamespace>ChebsNecromancy</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
 
         <!-- Assembly Attributes -->
         <AssemblyTitle>Cheb's Necromancy</AssemblyTitle>

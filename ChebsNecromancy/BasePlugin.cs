@@ -59,9 +59,9 @@ namespace ChebsNecromancy
         public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
 
         // Global Config Acceptable Values
-        public AcceptableValueList<bool>? BoolValue = new(true, false);
-        public AcceptableValueRange<float>? FloatQuantityValue = new(1f, 1000f);
-        public AcceptableValueRange<int>? IntQuantityValue = new(1, 1000);
+        public AcceptableValueList<bool> BoolValue = new(true, false);
+        public AcceptableValueRange<float> FloatQuantityValue = new(1f, 1000f);
+        public AcceptableValueRange<int> IntQuantityValue = new(1, 1000);
         
         public static ConfigEntry<bool> HeavyLogging;
         
@@ -205,7 +205,7 @@ namespace ChebsNecromancy
             string name,
             T defaultValue,
             string description = "",
-            AcceptableValueBase? acceptableValues = null,
+            AcceptableValueBase acceptableValues = null,
             bool serverSync = false,
             params object[] tags)
         {
