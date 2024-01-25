@@ -22,12 +22,11 @@ env:
 jobs:
   verify_manifest:
     runs-on: ubuntu-latest
-    if: (github.event_name == 'release') || (github.event_name == 'workflow_run' && github.event.workflow == 'build' && github.event.workflow_run.conclusion == 'success')
     steps:
       - uses: actions/checkout@v3
       - name: Check that version matches
         run: |
-          version=$(grep -Po "AssemblyVersion\(\"\K([0-9]+\.[0-9]+\.[0-9]+)" ${{env.name}}/Properties/AssemblyInfo.cs)
+          version=$(grep -Po "<Version>([0-9]+\.[0-9]+\.[0-9]+.[0-9]+)<\/Version>" ${{env.name}}/${{env.name}}.csproj | sed 's/<\/\?Version>//g' )
           versionfrommanifest="$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))"
           [ -z "$version" ] && echo "::error::version is empty!" && exit 1
           [ -z "$versionfrommanifest" ] && echo "::error::versionfrommanifest is empty!" && exit 1
