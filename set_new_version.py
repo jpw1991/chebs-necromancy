@@ -1,16 +1,5 @@
 #!/usr/bin/env python3
 # There's too many places where the version has to be set, so I've made a little script to do it for me each time.
-#
-# Locations (why):
-# - AssemblyInfo.cs (for assembly versioning):
-#   + AssemblyVersion("2.0.0.0")
-#   + AssemblyFileVersion("2.0.0.0")
-#
-# - manifest.json (for Thunderstore):
-#   + "version_number": "2.0.0"
-#
-# - BasePlugin.cs (plugin version)
-#   + PluginVersion = "2.0.0"
 
 import argparse
 import os.path
@@ -50,9 +39,6 @@ if __name__ == '__main__':
         FilePatternReplacement('ChebsNecromancy/ChebsNecromancy.csproj',
                                '<Version>[0-9.]+<\/Version>',
                                f'<Version>{version}.0</Version>'),
-        FilePatternReplacement('ChebsNecromancy/ChebsNecromancy.csproj',
-                               '<FileVersion>[0-9.]+<\/FileVersion>',
-                               f'<FileVersion>{version}.0</FileVersion>'),
         FilePatternReplacement('ChebsNecromancy/BasePlugin.cs',
                                'PluginVersion = [".0-9]+',
                                f'PluginVersion = "{version}"'),
