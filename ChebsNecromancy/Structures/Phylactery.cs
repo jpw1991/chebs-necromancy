@@ -41,7 +41,7 @@ namespace ChebsNecromancy.Structures
             PieceName = "$chebgonaz_phylactery_name",
             PieceDescription = "$chebgonaz_phylactery_desc",
             PrefabName = "ChebGonaz_Phylactery.prefab",
-            ObjectName = MethodBase.GetCurrentMethod().DeclaringType.Name
+            ObjectName = MethodBase.GetCurrentMethod()?.DeclaringType?.Name
         };
 
         public new static void UpdateRecipe()

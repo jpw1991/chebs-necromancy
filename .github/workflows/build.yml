@@ -127,18 +127,8 @@ jobs:
           dotnet restore
           nuget restore -PackagesDirectory packages ${{env.name}}/packages.config
           dotnet tool restore
-          # uncomment below and remove "Manually publicize" step once this is resolved: https://github.com/BepInEx/BepInEx.AssemblyPublicizer/issues/11
-          #dotnet build --configuration Release --no-restore
-      
-      - name: Manually publicize and build
-        run: |
-          # as described above in "Install dependencies": remove entire step once that issue is resolved
-          dotnet tool install -g BepInEx.AssemblyPublicizer.Cli
-          # <HintPath>\home\runner\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
-          # /home/runner/.local/share/Steam/steamapps/common/Valheim/valheim_Data/Managed/assembly_valheim.dll
-          assembly-publicizer --overwrite ${{env.valheiminstalldir}}/valheim_Data/Managed/assembly_valheim.dll
           dotnet build --configuration Release --no-restore
-
+      
       - name: Package
         run: |
           find packages -name 'ChebsValheimLibrary.dll' -path '*/lib/net48/*' -exec cp -f {} ${{env.name}}/Package/plugins \;

@@ -1,7 +1,4 @@
-﻿using BepInEx;
-using BepInEx.Configuration;
-
-namespace ChebsNecromancy.CustomPrefabs
+﻿namespace ChebsNecromancy.CustomPrefabs
 {
     internal class LargeCargoCrate
     {

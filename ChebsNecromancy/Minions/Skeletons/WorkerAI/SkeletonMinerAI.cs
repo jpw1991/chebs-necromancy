@@ -1,7 +1,4 @@
-using System;
-using ChebsValheimLibrary.Minions;
 using ChebsValheimLibrary.Minions.AI;
-using UnityEngine;
 
 namespace ChebsNecromancy.Minions.Skeletons.WorkerAI
 {

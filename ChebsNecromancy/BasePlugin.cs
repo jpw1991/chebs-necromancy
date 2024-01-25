@@ -1,8 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using BepInEx;
 using BepInEx.Configuration;
@@ -35,11 +31,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.7.0";
+        public const string PluginVersion = "4.7.2";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.3");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.5.4");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -207,7 +203,7 @@ namespace ChebsNecromancy
         public ConfigEntry<T> ModConfig<T>(
             string group,
             string name,
-            T default_value,
+            T defaultValue,
             string description = "",
             AcceptableValueBase acceptableValues = null,
             bool serverSync = false,
@@ -222,7 +218,7 @@ namespace ChebsNecromancy
                 new ConfigurationManagerAttributes { IsAdminOnly = serverSync },
                 tags);
 
-            var configEntry = Config.Bind(group, name, default_value, extendedDescription);
+            var configEntry = Config.Bind(group, name, defaultValue, extendedDescription);
 
             return configEntry;
         }

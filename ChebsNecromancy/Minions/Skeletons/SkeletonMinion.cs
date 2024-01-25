@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Items.Armor.Player;
@@ -143,7 +140,7 @@ namespace ChebsNecromancy.Minions.Skeletons
                     .FindAll(zdo =>
                     {
                         var zdoPrefab = zdo.GetPrefab();
-                        return SkeletonMinion.IsSkeletonHash(zdoPrefab);
+                        return IsSkeletonHash(zdoPrefab);
                     })
                     .Where(zdo =>
                         zdo.GetString(MinionOwnershipZdoKey) ==

@@ -2,8 +2,6 @@
 // console command to summon player's minions.
 // attention: only summons THEIR minions
 
-using System;
-using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using Jotunn.Entities;
 

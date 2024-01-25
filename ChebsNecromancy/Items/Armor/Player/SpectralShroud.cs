@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
 using ChebsValheimLibrary.Items;
@@ -10,6 +8,7 @@ using Jotunn.Entities;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
+using Object = UnityEngine.Object;
 
 namespace ChebsNecromancy.Items.Armor.Player
 {

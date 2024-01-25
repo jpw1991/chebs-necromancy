@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ChebsNecromancy.Minions;
 using Jotunn.Entities;
 using Jotunn.Managers;

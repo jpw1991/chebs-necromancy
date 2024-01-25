@@ -7,6 +7,7 @@ using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
 using ChebsValheimLibrary.Structures;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Structures
 {

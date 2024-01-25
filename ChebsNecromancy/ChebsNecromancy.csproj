@@ -1,288 +1,107 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\JotunnLib.2.16.2\build\JotunnLib.props" Condition="Exists('..\packages\JotunnLib.2.16.2\build\JotunnLib.props')" />
-  <Import Project="packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props" Condition="Exists('packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DEAF4438-8089-40ED-8175-398E1261D45B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ChebsNecromancy</RootNamespace>
-    <AssemblyName>ChebsNecromancy</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <LangVersion>latest</LangVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
-    <StartAction>Program</StartAction>
-    <StartProgram>$(VALHEIM_INSTALL)\valheim.exe</StartProgram>
-    <StartArguments>-console</StartArguments>
-    <StartWorkingDirectory>$(VALHEIM_INSTALL)</StartWorkingDirectory>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony, Version=2.10.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HarmonyX.2.10.2\lib\net45\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="AsmResolver, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.dll</HintPath>
-    </Reference>
-    <Reference Include="AsmResolver.DotNet, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.DotNet.dll</HintPath>
-    </Reference>
-    <Reference Include="AsmResolver.PE, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.PE.dll</HintPath>
-    </Reference>
-    <Reference Include="AsmResolver.PE.File, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\AsmResolver.PE.File.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.AssemblyPublicizer, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\BepInEx.AssemblyPublicizer.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx.AssemblyPublicizer.MSBuild, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\lib\net472\BepInEx.AssemblyPublicizer.MSBuild.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_guiutils" Publicize="true">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_guiutils.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_postprocessing" Publicize="true">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_postprocessing.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_utils" Publicize="true">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_utils.dll</HintPath>
-    </Reference>
-    <Reference Include="assembly_valheim" Publicize="true">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
-    </Reference>
-    <Reference Include="ChebsValheimLibrary, Version=2.5.3.0, Culture=en, processorArchitecture=MSIL">
-      <HintPath>..\packages\ChebsValheimLibrary.2.5.3\lib\net48\ChebsValheimLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="Jotunn, Version=2.16.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\JotunnLib.2.16.2\lib\net462\Jotunn.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Mdb, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Pdb, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Cecil.Rocks, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Backports, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoMod.Backports.1.0.1\lib\net452\MonoMod.Backports.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Core, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoMod.Core.1.0.1\lib\net452\MonoMod.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Iced, Version=1.17.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoMod.Core.1.0.1\lib\net452\MonoMod.Iced.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.ILHelpers, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoMod.ILHelpers.1.0.0\lib\net452\MonoMod.ILHelpers.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.RuntimeDetour, Version=25.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoMod.RuntimeDetour.25.0.2\lib\net452\MonoMod.RuntimeDetour.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Utils, Version=25.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoMod.Utils.25.0.3\lib\net452\MonoMod.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.7.0.0-preview.2.22152.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encodings.Web, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.8.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="MonoMod">
-      <HintPath>..\packages\MonoMod.22.7.31.1\lib\net452\MonoMod.exe</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\BepInEx\core\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Physics2DModule">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Commands\PvP\PvPAddFriend.cs" />
-    <Compile Include="Commands\PvP\PvPListFriends.cs" />
-    <Compile Include="Commands\PvP\PvPRemoveFriend.cs" />
-    <Compile Include="Commands\SetNeckroHome.cs" />
-    <Compile Include="Commands\TeleportNeckros.cs" />
-    <Compile Include="CustomPrefabs\OrbOfBeckoningProjectile.cs" />
-    <Compile Include="Items\Armor\Player\NecromancerCape.cs" />
-    <Compile Include="Items\Armor\Player\NecromancerHood.cs" />
-    <Compile Include="Items\Armor\Player\SpectralShroud.cs" />
-    <Compile Include="Items\Wands\DraugrWand.cs" />
-    <Compile Include="Items\Wands\OrbOfBeckoning.cs" />
-    <Compile Include="Items\Wands\SkeletonWand.cs" />
-    <Compile Include="Items\Wands\Wand.cs" />
-    <Compile Include="Minions\BattleNeckroMinion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherFireMinion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherFrostMinion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherPoisonMinion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherSilverMinion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherTier1Minion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherTier2Minion.cs" />
-    <Compile Include="Minions\Draugr\DraugrArcherTier3Minion.cs" />
-    <Compile Include="Minions\Draugr\DraugrMinion.cs" />
-    <Compile Include="Minions\Draugr\DraugrWarriorMinion.cs" />
-    <Compile Include="Minions\LeechMinion.cs" />
-    <Compile Include="Minions\Skeletons\PoisonSkeletonMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherFireMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherFrostMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherPoisonMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherSilverMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherTier1Minion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherTier2Minion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonArcherTier3Minion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonMageMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonMinerMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonWarriorMinion.cs" />
-    <Compile Include="Minions\Skeletons\SkeletonWoodcutterMinion.cs" />
-    <Compile Include="Minions\Skeletons\WorkerAI\SkeletonMinerAI.cs" />
-    <Compile Include="Minions\Skeletons\WorkerAI\SkeletonWoodcutterAI.cs" />
-    <Compile Include="Minions\UndeadMinion.cs" />
-    <Compile Include="Patches\AoePatches.cs" />
-    <Compile Include="Patches\ImpactEffectPatches.cs" />
-    <Compile Include="Patches\PlayerPatches.cs" />
-    <Compile Include="Patches\BaseAIPatches.cs" />
-    <Compile Include="Patches\CharacterDropPatches.cs" />
-    <Compile Include="Patches\CharacterPatches.cs" />
-    <Compile Include="Patches\TameablePatches.cs" />
-    <Compile Include="Patches\WearNTearPatches.cs" />
-    <Compile Include="Properties\IgnoreAccessModifiers.cs" />
-    <Compile Include="BasePlugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Minions\GuardianWraithMinion.cs" />
-    <Compile Include="Minions\SpiritPylonGhostMinion.cs" />
-    <Compile Include="Commands\KillAllMinions.cs" />
-    <Compile Include="Commands\SummonAllMinions.cs" />
-    <Compile Include="Minions\NeckroGathererMinion.cs" />
-    <Compile Include="CustomPrefabs\LargeCargoCrate.cs" />
-    <Compile Include="Minions\BatBeaconBatMinion.cs" />
-    <Compile Include="Commands\KillNearbyNeckros.cs" />
-    <Compile Include="Commands\SetMinionOwnership.cs" />
-    <Compile Include="Structures\BatBeacon.cs" />
-    <Compile Include="Structures\BatLantern.cs" />
-    <Compile Include="Structures\FarmingPylon.cs" />
-    <Compile Include="Structures\NeckroGathererPylon.cs" />
-    <Compile Include="Structures\Phylactery.cs" />
-    <Compile Include="Structures\RefuelerPylon.cs" />
-    <Compile Include="Structures\RepairPylon.cs" />
-    <Compile Include="Structures\SpiritPylon.cs" />
-    <Compile Include="Structures\TreasurePylon.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Package\plugins\" />
-    <Folder Include="Items\" />
-    <Folder Include="CustomPrefabs\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Package\manifest.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Package\icon.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="JotunnPostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'">
-    <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;$(SolutionDir)publish.ps1&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -ValheimPath &quot;$(VALHEIM_INSTALL.TrimEnd('\'))&quot; -DeployPath &quot;$(MOD_DEPLOYPATH.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot; " />
-  </Target>
-  <PropertyGroup>
-    <BuildDependsOn>
-      $(BuildDependsOn);
-      JotunnPostBuildTaskWin
-    </BuildDependsOn>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+        <TargetFramework>net48</TargetFramework>
+        <RootNamespace>ChebsNecromancy</RootNamespace>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+
+        <Company>Cheb Gonaz</Company>
+        <Product>Cheb's Necromancy</Product>
+        <NeutralLanguage>en</NeutralLanguage>
+        
+        <!-- Assembly Attributes -->
+        <AssemblyTitle>$(Product)</AssemblyTitle>
+        <AssemblyDescription>Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.</AssemblyDescription>
+        <AssemblyConfiguration>Release</AssemblyConfiguration>
+        <AssemblyCompany>$(Company)</AssemblyCompany>
+        <AssemblyProduct>$(Product)</AssemblyProduct>
+        <AssemblyCopyright>Copyright © 2022</AssemblyCopyright>
+        <AssemblyCulture>$(NeutralLanguage)</AssemblyCulture>
+
+        <!-- ComVisible and Guid -->
+        <ComVisible>false</ComVisible>
+        <Guid>e3243d22-4307-4008-ba36-9f326008cde5</Guid>
+
+        <!-- Version Information -->
+        <Version>4.7.2.0</Version>
+        <FileVersion>$(Version)</FileVersion>
+        <AssemblyVersion>$(Version)</AssemblyVersion>
+
+        <!-- Custom IgnoresAccessChecksToAttribute -->
+        <IgnoresAccessChecksToAttributes>
+            assembly_guiutils;assembly_utils;assembly_valheim
+        </IgnoresAccessChecksToAttributes>
+        <LangVersion>default</LangVersion>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\BepInEx.AssemblyPublicizer.MSBuild.0.4.1\build\BepInEx.AssemblyPublicizer.MSBuild.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets'))" />
-    <Error Condition="!Exists('..\packages\JotunnLib.2.16.2\build\JotunnLib.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JotunnLib.2.16.2\build\JotunnLib.props'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets" Condition="Exists('..\packages\Microsoft.NETFramework.ReferenceAssemblies.net48.1.0.3\build\Microsoft.NETFramework.ReferenceAssemblies.net48.targets')" />
+
+    <ItemGroup>
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="ChebsValheimLibrary" Version="2.5.4"/>
+        <PackageReference Include="HarmonyX" Version="2.10.2"/>
+        <PackageReference Include="JotunnLib" Version="2.16.2"/>
+        <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="System.ValueTuple" Version="4.5.0"/>
+
+        <Reference Include="BepInEx">
+            <HintPath>..\..\..\.config\r2modmanPlus-local\Valheim\profiles\cheb-development\BepInEx\core\BepInEx.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.ParticleSystemModule">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.Physics2DModule">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UI">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\UnityEngine.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+        </Reference>
+
+        <Reference Include="assembly_valheim" Publicize="true">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_valheim.dll</HintPath>
+        </Reference>
+        <Reference Include="assembly_utils" Publicize="true">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_utils.dll</HintPath>
+        </Reference>
+        <Reference Include="assembly_guiutils" Publicize="true">
+            <HintPath>..\..\..\.local\share\Steam\steamapps\common\Valheim\valheim_Data\Managed\assembly_guiutils.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <!-- Custom target to generate AssemblyInfo.cs during build -->
+<!--    <Target Name="GenerateAssemblyInfo" BeforeTargets="BeforeBuild">-->
+<!--        <PropertyGroup>-->
+<!--            <Lines>-->
+<!--                [assembly: AssemblyTitle("$(AssemblyTitle)")]-->
+<!--                [assembly: AssemblyDescription("$(AssemblyDescription)")]-->
+<!--                [assembly: AssemblyConfiguration("$(AssemblyConfiguration)")]-->
+<!--                [assembly: AssemblyCompany("$(AssemblyCompany)")]-->
+<!--                [assembly: AssemblyProduct("$(AssemblyProduct)")]-->
+<!--                [assembly: AssemblyCopyright("$(AssemblyCopyright)")]-->
+<!--                [assembly: AssemblyCulture("$(AssemblyCulture)")]-->
+<!--            </Lines>-->
+<!--        </PropertyGroup>-->
+<!--        <WriteLinesToFile File="$(IntermediateOutputPath)AssemblyInfo.cs" Lines="$(Lines)" Overwrite="true" Encoding="UTF-8"/>-->
+<!--    </Target>-->
+
 </Project>

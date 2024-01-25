@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using ChebsValheimLibrary.Common;
 using Jotunn;
 
