@@ -132,7 +132,7 @@ jobs:
       - name: Package
         run: |
           find packages -name 'ChebsValheimLibrary.dll' -path '*/lib/net48/*' -exec cp -f {} ${{env.name}}/Package/plugins \;
-          cp -f ${{env.name}}/bin/Release/${{env.name}}.dll ${{env.name}}/Package/plugins
+          cp -f ${{env.name}}/bin/Release/net48/${{env.name}}.dll ${{env.name}}/Package/plugins
           cp -f README.md ${{env.name}}/Package
           (cd ${{env.name}}/Package && zip -r ../../${{env.name}}.${{env.VERSION}}.zip .)
 
