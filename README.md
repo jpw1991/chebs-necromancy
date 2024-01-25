@@ -54,7 +54,7 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 
 - Almost everything is configurable. Minions too weak/overpowered? Tweak them.
 - [Player vs Player (PvP)](https://github.com/jpw1991/chebs-necromancy/wiki/PvP) settings can be configured as of 4.5.0.
-- As of 4.6.0, further minion [appearance customization](https://github.com/jpw1991/chebs-necromancy/wiki/Appearance-Customization) options are available. You can change the eye color of your minions and also give them special symbols on their capes.
+- As of 4.6.0, further minion [appearance customization](https://github.com/jpw1991/chebs-necromancy/wiki/Appearance-Customization) options are available. You can change the eye color of your minions and also give them special symbols on their capes. And in 4.7.0 you can change the bone color of skeletons too.
 - Craftable items at the workbench and forge:
 	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_skeletonwand): Summons skeleton warriors, archers, miners, and woodcutters.
 	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_draugrwand): Summons draugr warriors and archers.
@@ -153,6 +153,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+25/01/2024 | 4.7.2 | Add tweakable skeleton bone colors
 18/01/2024 | 4.6.1 | Fix problem of custom eye color not being applied to freshly created minions
 17/01/2024 | 4.6.0 | Changing minion eye color added; changing minion cape emblems updates dynamically
 07/01/2024 | 4.5.0 | PvP with friends as exceptions implemented via console commands.
