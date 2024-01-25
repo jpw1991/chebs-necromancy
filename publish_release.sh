@@ -1,13 +1,12 @@
 #!/bin/bash
 
-RELEASEDIR=ChebsNecromancy/bin/Release
+RELEASEDIR=ChebsNecromancy/bin/Release/net48
 DLL=$RELEASEDIR/ChebsNecromancy.dll
-LIB=../chebs-valheim-library/ChebsValheimLibrary/bin/Release/ChebsValheimLibrary.dll
+LIB=$RELEASEDIR/ChebsValheimLibrary.dll
 BUN=ChebsNecromancyUnity/Assets/AssetBundles/chebgonaz
 PLUGINS=ChebsNecromancy/Package/plugins
 README=README.md
 TRANSLATIONS=Translations
-BEPINEX=ChebsNecromancy/libs/BepInEx.dll
 
 VERSION=$1
 
@@ -40,11 +39,6 @@ fi
 
 if [ ! -f "$README" ]; then
     echo "Error: $README does not exist or is not readable."
-    exit 1
-fi
-
-if [ ! -f "$BEPINEX" ]; then
-    echo "Error: $BEPINEX does not exist or is not readable."
     exit 1
 fi
 
