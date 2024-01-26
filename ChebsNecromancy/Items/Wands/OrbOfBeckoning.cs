@@ -160,6 +160,7 @@ namespace ChebsNecromancy.Items.Wands
                     {
                         MinionOption.Leech => "$chebgonaz_miniontype_leech",
                         MinionOption.Mage => "$chebgonaz_miniontype_mage",
+                        MinionOption.Priest => "$chebgonaz_miniontype_priest",
                         _ => "Error"
                     });
                     _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";
@@ -194,6 +195,7 @@ namespace ChebsNecromancy.Items.Wands
                     {
                         MinionOption.Leech => "$chebgonaz_miniontype_leech",
                         MinionOption.Mage => "$chebgonaz_miniontype_mage",
+                        MinionOption.Priest => "$chebgonaz_miniontype_priest",
                         _ => "Error"
                     });
                     _createMinionButtonText.text = $"{createLocalized} {minionLocalized}";

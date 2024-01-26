@@ -154,6 +154,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+25/01/2024 | 4.8.0 | Add skeleton priest to heal other minions
 25/01/2024 | 4.7.2 | Add tweakable skeleton bone colors
 18/01/2024 | 4.6.1 | Fix problem of custom eye color not being applied to freshly created minions
 17/01/2024 | 4.6.0 | Changing minion eye color added; changing minion cape emblems updates dynamically
