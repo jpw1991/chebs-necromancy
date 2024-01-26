@@ -34,12 +34,14 @@ namespace ChebsNecromancy.Items.Wands
         {
             Mage,
             Leech,
+            Priest,
         }
 
         private List<MinionOption> _minionOptions = new()
         {
             MinionOption.Mage,
             MinionOption.Leech,
+            MinionOption.Priest,
         };
 
         private int _selectedMinionOptionIndex;
@@ -168,10 +170,13 @@ namespace ChebsNecromancy.Items.Wands
                     switch (SelectedMinionOption)
                     {
                         case MinionOption.Mage:
-                            SpawnSkeleton();
+                            SpawnSkeletonMage();
                             break;
                         case MinionOption.Leech:
                             SpawnLeech();
+                            break;
+                        case MinionOption.Priest:
+                            SpawnSkeletonPriest();
                             break;
                     }
                     return true;   
@@ -258,9 +263,82 @@ namespace ChebsNecromancy.Items.Wands
             };
         }
         
-        private void SpawnSkeleton()
+        private SkeletonMinion.SkeletonType SpawnSkeletonPriestMinion(ChebGonazMinion.ArmorType armorType)
+        {
+            // Determine type of minion to spawn and consume resources.
+            // Return None if unable to determine minion type, or if necessary resources are missing.
+
+            var inventory = Player.m_localPlayer.GetInventory();
+            
+            if (!ChebGonazMinion.CanSpawn(SkeletonPriestMinion.ItemsCost, inventory, out var message))
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center, message);
+                return SkeletonMinion.SkeletonType.None;
+            }
+
+            // determine quality
+
+            if (armorType is not ChebGonazMinion.ArmorType.Bronze
+                and not ChebGonazMinion.ArmorType.Iron
+                and not ChebGonazMinion.ArmorType.BlackMetal)
+            {
+                MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
+                    "$chebgonaz_magesrequirearmor");
+            }
+
+            // mages require bronze or better to be created
+            return armorType switch
+            {
+                ChebGonazMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.PriestTier1,
+                ChebGonazMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.PriestTier1,
+                ChebGonazMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.PriestTier1,
+                _ => SkeletonMinion.SkeletonType.None
+            };
+        }
+
+        private void SpawnSkeletonMage()
+        {
+            var armorType = ChebGonazMinion.DetermineArmorType(
+                Player.m_localPlayer.GetInventory(),
+                BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                BasePlugin.ArmorIronRequiredConfig.Value,
+                BasePlugin.ArmorBronzeRequiredConfig.Value,
+                BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+            var skeletonType = SpawnSkeletonMageMinion(armorType);
+
+            if (skeletonType is SkeletonMinion.SkeletonType.None)
+            {
+                return;
+            }
+            
+            SpawnSkeleton(skeletonType);
+        }
+
+        private void SpawnSkeletonPriest()
+        {
+            var armorType = ChebGonazMinion.DetermineArmorType(
+                Player.m_localPlayer.GetInventory(),
+                BasePlugin.ArmorBlackIronRequiredConfig.Value,
+                BasePlugin.ArmorIronRequiredConfig.Value,
+                BasePlugin.ArmorBronzeRequiredConfig.Value,
+                BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
+            var skeletonType = SpawnSkeletonPriestMinion(armorType);
+
+            if (skeletonType is SkeletonMinion.SkeletonType.None)
+            {
+                return;
+            }
+            
+            SpawnSkeleton(skeletonType);
+        }
+        
+        private void SpawnSkeleton(SkeletonMinion.SkeletonType skeletonType)
         {
             if (!SkeletonWand.SkeletonsAllowed.Value) return;
+            if (skeletonType is SkeletonMinion.SkeletonType.None)
+            {
+                return;
+            }
 
             var player = Player.m_localPlayer;
             var playerNecromancyLevel =
@@ -271,13 +349,6 @@ namespace ChebsNecromancy.Items.Wands
                 BasePlugin.ArmorIronRequiredConfig.Value,
                 BasePlugin.ArmorBronzeRequiredConfig.Value,
                 BasePlugin.ArmorLeatherScrapsRequiredConfig.Value);
-
-            var skeletonType = SpawnSkeletonMageMinion(armorType);
-
-            if (skeletonType is SkeletonMinion.SkeletonType.None)
-            {
-                return;
-            }
 
             // if players have decided to foolishly restrict their power and
             // create a *cough* LIMIT *spits*... check that here
