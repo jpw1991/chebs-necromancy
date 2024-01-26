@@ -131,6 +131,7 @@ A special thanks to the people who've helped me along the way:
 - Artists
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
 	+ [**piacenti**](https://opengameart.org/users/piacenti) for the [skull prop](https://opengameart.org/content/skull-prop) that I use as part of the phylactery.
+	+ [Pentagram](https://en.wikipedia.org/wiki/Pentagram#/media/File:Hugieia-pentagram.svg) for priest particle effect.
 - Translations
 	+ **S970X** - German language localization.
 	+ [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) - Korean language localization.
@@ -139,7 +140,7 @@ A special thanks to the people who've helped me along the way:
     - **Hugo the Dwarf** and **Pfhoenix** for advice and help for fixing the frozen minions problem.
 	- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
 	- **redseiko** for helpful advice on the official Valheim modding Discord.
-	- **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell).
+	- **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell) and [priest heal](https://opengameart.org/content/dark-ambiences) effect sound.
 	- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
 	- The unknown author of this awesome [Lovecraftian chart](https://lovecraftzine.files.wordpress.com/2013/04/lovecraft-bestiary.jpg), from which I took inspiration for a lot of the Lovecraft symbol designs for the minion capes.
 
@@ -153,6 +154,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+25/01/2024 | 4.8.0 | Add skeleton priest to heal other minions
 25/01/2024 | 4.7.2 | Add tweakable skeleton bone colors
 18/01/2024 | 4.6.1 | Fix problem of custom eye color not being applied to freshly created minions
 17/01/2024 | 4.6.0 | Changing minion eye color added; changing minion cape emblems updates dynamically

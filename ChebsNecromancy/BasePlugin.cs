@@ -4,8 +4,10 @@ using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.CustomPrefabs;
+using ChebsNecromancy.Items.Armor.Minions;
 using ChebsNecromancy.Items.Armor.Player;
 using ChebsNecromancy.Items.Wands;
+using ChebsNecromancy.Items.Weapons.Minions;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
@@ -31,7 +33,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.7.2";
+        public const string PluginVersion = "4.8.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -56,7 +58,7 @@ namespace ChebsNecromancy
 
         private float inputDelay = 0;
 
-        public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
+        public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2, SetEffectPriestHeal;
 
         // Global Config Acceptable Values
         public AcceptableValueList<bool> BoolValue = new(true, false);
@@ -350,6 +352,7 @@ namespace ChebsNecromancy
             SkeletonWarriorMinion.CreateConfigs(this);
             SkeletonWoodcutterMinion.CreateConfigs(this);
             SkeletonMinerMinion.CreateConfigs(this);
+            SkeletonPriestMinion.CreateConfigs(this);
 
             DraugrMinion.CreateConfigs(this);
             DraugrWarriorMinion.CreateConfigs(this);
@@ -409,6 +412,7 @@ namespace ChebsNecromancy
 
                 SetEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
                 SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
+                SetEffectPriestHeal = LoadSetEffectFromBundle("SE_ChebGonaz_SkeletonPriestHeal", chebgonazAssetBundle);
 
                 #endregion
 
@@ -417,10 +421,20 @@ namespace ChebsNecromancy
                 var spectralShroudPrefab = Base.LoadPrefabFromBundle(spectralShroudItem.PrefabName,
                     chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
-
+                
                 var necromancersHoodPrefab = Base.LoadPrefabFromBundle(necromancersHoodItem.PrefabName,
                     chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(necromancersHoodItem.GetCustomItemFromPrefab(necromancersHoodPrefab));
+
+                var skeletonPriestHoodItem = new SkeletonPriestHoodItem();
+                var skeletonPriestHoodPrefab = Base.LoadPrefabFromBundle(skeletonPriestHoodItem.PrefabName,
+                    chebgonazAssetBundle, RadeonFriendly.Value);
+                ItemManager.Instance.AddItem(skeletonPriestHoodItem.GetCustomItemFromPrefab(skeletonPriestHoodPrefab));
+                
+                var skeletonPriestHealLevel1Item = new SkeletonPriestHealLevel1Item();
+                var skeletonPriestHealLevel1Prefab = Base.LoadPrefabFromBundle(skeletonPriestHealLevel1Item.PrefabName,
+                    chebgonazAssetBundle, RadeonFriendly.Value);
+                ItemManager.Instance.AddItem(skeletonPriestHealLevel1Item.GetCustomItemFromPrefab(skeletonPriestHealLevel1Prefab));
 
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
 
@@ -592,6 +606,9 @@ namespace ChebsNecromancy
                             break;
                         case "ChebGonaz_Leech.prefab":
                             prefab.AddComponent<LeechMinion>();
+                            break;
+                        case "ChebGonaz_SkeletonPriest.prefab":
+                            prefab.AddComponent<SkeletonPriestMinion>();
                             break;
                         default:
                             Logger.LogError($"Unknown prefab {prefabName}");

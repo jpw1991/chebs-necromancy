@@ -308,5 +308,25 @@ namespace ChebsNecromancy.Minions
         }
 
         #endregion
+
+        private void OnParticleCollision(GameObject other)
+        {
+            var particleSystem = other.GetComponent<ParticleSystem>();
+            var customData = new List<Vector4>();
+            if (particleSystem.GetCustomParticleData(customData, ParticleSystemCustomData.Custom1) > 0)
+            {
+                var firstData = customData[0];
+                if (firstData is { x: 666f, y: 666f, z: 666f, w: 666f })
+                {
+                    // probably a priest heal
+                    if (!TryGetComponent(out Humanoid humanoid))
+                    {
+                        //Logger.LogError("Failed to get humanoid");
+                        return;
+                    }
+                    humanoid.Heal(SkeletonPriestMinion.HealingPerParticle.Value);
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿{
   "name": "ChebsNecromancy",
   "description": "Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks.",
-  "version_number": "4.7.2",
+  "version_number": "4.8.0",
   "website_url": "https://github.com/jpw1991/chebs-necromancy",
   "dependencies": [
     "ValheimModding-Jotunn-2.16.2"
