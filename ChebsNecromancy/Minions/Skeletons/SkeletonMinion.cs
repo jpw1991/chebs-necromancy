@@ -38,6 +38,8 @@ namespace ChebsNecromancy.Minions.Skeletons
             [InternalName("ChebGonaz_SkeletonMiner")] Miner,
             [InternalName("ChebGonaz_SkeletonWarriorNeedle")] WarriorNeedle,
             [InternalName("ChebGonaz_SkeletonPriest")] PriestTier1,
+            [InternalName("ChebGonaz_SkeletonPriestTier2")] PriestTier2,
+            [InternalName("ChebGonaz_SkeletonPriestTier3")] PriestTier3,
         };
 
         private static List<int> _hashList;
@@ -370,7 +372,7 @@ namespace ChebsNecromancy.Minions.Skeletons
                     return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonMageCirclet");
                 }
 
-                if (skeletonType is SkeletonType.PriestTier1)
+                if (skeletonType is SkeletonType.PriestTier1 or SkeletonType.PriestTier2 or SkeletonType.PriestTier3)
                 {
                     return ZNetScene.instance.GetPrefab("ChebGonaz_SkeletonPriestHood");
                 }
@@ -566,7 +568,9 @@ namespace ChebsNecromancy.Minions.Skeletons
                 SkeletonType.MageTier1
                     or SkeletonType.MageTier2
                     or SkeletonType.MageTier3
-                    or SkeletonType.PriestTier1 => MageNecromancyLevelIncrease.Value,
+                    or SkeletonType.PriestTier1
+                    or SkeletonType.PriestTier2
+                    or SkeletonType.PriestTier3 => MageNecromancyLevelIncrease.Value,
                 SkeletonType.PoisonTier1
                     or SkeletonType.PoisonTier2
                     or SkeletonType.PoisonTier3 => PoisonNecromancyLevelIncrease.Value,
@@ -620,6 +624,8 @@ namespace ChebsNecromancy.Minions.Skeletons
                         GenerateDeathDrops(characterDrop, SkeletonMageMinion.ItemsCost);
                         break;
                     case SkeletonType.PriestTier1:
+                    case SkeletonType.PriestTier2:
+                    case SkeletonType.PriestTier3:
                         GenerateDeathDrops(characterDrop, SkeletonPriestMinion.ItemsCost);
                         break;
                     case SkeletonType.PoisonTier1:
@@ -717,6 +723,8 @@ namespace ChebsNecromancy.Minions.Skeletons
                     break;
                 
                 case SkeletonType.PriestTier1:
+                case SkeletonType.PriestTier2:
+                case SkeletonType.PriestTier3:
                     ConsumeRequirements(SkeletonPriestMinion.ItemsCost, inventory);
                     break;
         

@@ -292,8 +292,8 @@ namespace ChebsNecromancy.Items.Wands
             return armorType switch
             {
                 ChebGonazMinion.ArmorType.Bronze => SkeletonMinion.SkeletonType.PriestTier1,
-                ChebGonazMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.PriestTier1,
-                ChebGonazMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.PriestTier1,
+                ChebGonazMinion.ArmorType.Iron => SkeletonMinion.SkeletonType.PriestTier2,
+                ChebGonazMinion.ArmorType.BlackMetal => SkeletonMinion.SkeletonType.PriestTier3,
                 _ => SkeletonMinion.SkeletonType.None
             };
         }
