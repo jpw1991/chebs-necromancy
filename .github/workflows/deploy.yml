@@ -20,31 +20,40 @@ env:
   namespace: ChebGonaz
 
 jobs:
-  verify_manifest:
+  verify-tag:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Check that version matches
+      - name: Check tag
         run: |
-          version=$(grep -Po "<Version>([0-9]+\.[0-9]+\.[0-9]+.[0-9]+)<\/Version>" ${{env.name}}/${{env.name}}.csproj | sed -E 's/<\/?Version>//g; s/^([0-9]+\.[0-9]+\.[0-9]+).*$/\1/' )
-          versionfrommanifest="$(jq -r '.version_number' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))"
-          [ -z "$version" ] && echo "::error::version is empty!" && exit 1
-          [ -z "$versionfrommanifest" ] && echo "::error::versionfrommanifest is empty!" && exit 1
-          if [[ $versionfrommanifest != $version ]]; then
-            echo "::error::Version in ${{env.jsonf}} does not match assembly version"
+          # the tags check above doesn't seem to work properly, so a more rigorous check here
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "This workflow was triggered by a release."
+            release_tag="${{ github.event.release.tag_name }}" 
+            # Check if the tag matches semantic versioning pattern
+            if ! [[ $release_tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+)?$ ]]; then
+              echo "Error: Release tag ($release_tag) does not match semantic versioning pattern."
+              exit 1
+            fi
+            exit 0
+          elif [ "${{ github.event_name }}" == "workflow_run" ]; then
+            echo "This workflow was triggered by a workflow run."
+            exit 0
+          else
+            echo "This workflow was triggered by an unknown event: ${{ github.event_name }}"
             exit 1
           fi
-          echo "VERSION=${version}" >> $GITHUB_ENV
-      - name: Get Description
-        id: get_description
-        run: |
-          description=$(jq -r '.description' $(find ./${{env.name}}/Package -name ${{env.jsonf}}))
-          echo "DESCRIPTION=${description}" >> $GITHUB_ENV
   publish:
+    needs: verify-tag
     runs-on: ubuntu-latest
-    needs: verify_manifest
     steps:
       - uses: actions/checkout@v3
+      - name: Read manifest
+        run: |
+          version="$(jq -r '.version_number' ${{env.name}}/Package/${{env.jsonf}})"
+          description="$(jq -r '.description' ${{env.name}}/Package/${{env.jsonf}})"
+          echo "VERSION=${version}" >> $GITHUB_ENV
+          echo "DESCRIPTION=${description}" >> $GITHUB_ENV
       - run: wget ${{env.dlpath}}/v${{env.VERSION}}/${{env.name}}.${{env.VERSION}}.zip
       - name: Upload Thunderstore Package
         uses: GreenTF/upload-thunderstore-package@v4
