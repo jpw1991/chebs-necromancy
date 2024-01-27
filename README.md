@@ -154,7 +154,8 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
-25/01/2024 | 4.9.0 | Add different healing levels & spells to the priests; fix a bug that erased some default equipment set in Unity
+28/01/2024 | 4.9.1 | Reduce logging in case of missing bone color data
+27/01/2024 | 4.9.0 | Add different healing levels & spells to the priests; fix a bug that erased some default equipment set in Unity
 25/01/2024 | 4.8.0 | Add skeleton priest to heal other minions
 25/01/2024 | 4.7.2 | Add tweakable skeleton bone colors
 18/01/2024 | 4.6.1 | Fix problem of custom eye color not being applied to freshly created minions

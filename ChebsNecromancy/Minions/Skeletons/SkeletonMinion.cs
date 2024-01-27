@@ -231,18 +231,12 @@ namespace ChebsNecromancy.Minions.Skeletons
                 var visualSkeleton = transform.Find("Visual/_skeleton_base/Skeleton");
                 if (visualSkeleton != null && visualSkeleton.TryGetComponent(out SkinnedMeshRenderer skinnedMeshRenderer))
                 {
-                    //var mats = skinnedMeshRenderer.materials;
-                    //for (var i = 0; i < mats.Length; i++) mats[i] = boneMat;
                     skinnedMeshRenderer.sharedMaterial = boneMat;
                 }
                 else
                 {
                     Logger.LogError($"{name} (visualSkeleton={visualSkeleton}) Failed to get SkinnedMeshRenderer");
                 }
-            }
-            else
-            {
-                Logger.LogError($"Failed to load bone color material: Bones has no key {boneColor}");
             }
         }
 
