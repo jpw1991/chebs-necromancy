@@ -477,8 +477,8 @@ namespace ChebsNecromancy.Minions.Skeletons
                     Emblem = InternalName.GetName(NecromancerCape.EmblemConfig.Value);
                     break;
             }
-
-            humanoid.m_defaultItems = defaultItems.ToArray();
+            
+            humanoid.m_defaultItems = humanoid.m_defaultItems.Union(defaultItems).ToArray();
 
             humanoid.GiveDefaultItems();
 

@@ -14,6 +14,7 @@ using ChebsNecromancy.Minions.Skeletons;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
+using ChebsValheimLibrary.Items;
 using ChebsValheimLibrary.PvP;
 using HarmonyLib;
 using Jotunn;
@@ -33,7 +34,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.8.1";
+        public const string PluginVersion = "4.9.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -58,7 +59,7 @@ namespace ChebsNecromancy
 
         private float inputDelay = 0;
 
-        public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2, SetEffectPriestHeal;
+        public static SE_Stats SetEffectNecromancyArmor, SetEffectNecromancyArmor2;
 
         // Global Config Acceptable Values
         public AcceptableValueList<bool> BoolValue = new(true, false);
@@ -412,7 +413,6 @@ namespace ChebsNecromancy
 
                 SetEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
                 SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
-                SetEffectPriestHeal = LoadSetEffectFromBundle("SE_ChebGonaz_SkeletonPriestHeal", chebgonazAssetBundle);
 
                 #endregion
 
@@ -430,11 +430,19 @@ namespace ChebsNecromancy
                 var skeletonPriestHoodPrefab = Base.LoadPrefabFromBundle(skeletonPriestHoodItem.PrefabName,
                     chebgonazAssetBundle, RadeonFriendly.Value);
                 ItemManager.Instance.AddItem(skeletonPriestHoodItem.GetCustomItemFromPrefab(skeletonPriestHoodPrefab));
-                
-                var skeletonPriestHealLevel1Item = new SkeletonPriestHealLevel1Item();
-                var skeletonPriestHealLevel1Prefab = Base.LoadPrefabFromBundle(skeletonPriestHealLevel1Item.PrefabName,
-                    chebgonazAssetBundle, RadeonFriendly.Value);
-                ItemManager.Instance.AddItem(skeletonPriestHealLevel1Item.GetCustomItemFromPrefab(skeletonPriestHealLevel1Prefab));
+
+                var skeletonPriestHealItems = new List<Item>()
+                {
+                    new SkeletonPriestHealLevel1Item(),
+                    new SkeletonPriestHealLevel2Item(),
+                    new SkeletonPriestHealLevel3Item()
+                };
+                skeletonPriestHealItems.ForEach(healItem =>
+                {
+                    var healItemPrefab = Base.LoadPrefabFromBundle(healItem.PrefabName,
+                        chebgonazAssetBundle, RadeonFriendly.Value);
+                    ItemManager.Instance.AddItem(healItem.GetCustomItemFromPrefab(healItemPrefab));
+                });
 
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
 
@@ -608,6 +616,8 @@ namespace ChebsNecromancy
                             prefab.AddComponent<LeechMinion>();
                             break;
                         case "ChebGonaz_SkeletonPriest.prefab":
+                        case "ChebGonaz_SkeletonPriestTier2.prefab":
+                        case "ChebGonaz_SkeletonPriestTier3.prefab":
                             prefab.AddComponent<SkeletonPriestMinion>();
                             break;
                         default:
