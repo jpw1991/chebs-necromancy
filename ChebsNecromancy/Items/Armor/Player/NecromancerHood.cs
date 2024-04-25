@@ -51,7 +51,7 @@ namespace ChebsNecromancy.Items.Armor.Player
             UpdateRecipe(CraftingStationRequired, CraftingCost, CraftingStationLevel);
         }
 
-        public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
+        public override CustomItem GetCustomItemFromPrefab(GameObject prefab, bool fixReference = true)
         {
             ItemConfig config = new ItemConfig();
             config.Name = "$item_chebgonaz_necromancerhood";
