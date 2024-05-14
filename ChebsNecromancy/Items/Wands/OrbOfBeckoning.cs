@@ -77,7 +77,7 @@ namespace ChebsNecromancy.Items.Wands
             UpdateRecipe(CraftingStationRequired, CraftingCost, CraftingStationLevel);
         }
         
-        public override CustomItem GetCustomItemFromPrefab(GameObject prefab)
+        public override CustomItem GetCustomItemFromPrefab(GameObject prefab, bool fixReference = true)
         {
             ItemConfig config = new();
             config.Name = NameLocalization;

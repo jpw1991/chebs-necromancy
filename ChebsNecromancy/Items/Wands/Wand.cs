@@ -148,7 +148,7 @@ namespace ChebsNecromancy.Items.Wands
                     Name = ItemName + "Follow",
                     Config = FollowConfig,
                     GamepadConfig = FollowGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_follow",
+                    HintToken = "$chebgonaz_follow",
                     BlockOtherInputs = true
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, FollowButton);
@@ -161,7 +161,7 @@ namespace ChebsNecromancy.Items.Wands
                     Name = ItemName + "Wait",
                     Config = WaitConfig,
                     GamepadConfig = WaitGamepadConfig,
-                    HintToken = "$friendlyskeletonwand_wait",
+                    HintToken = "$chebgonaz_wait",
                     BlockOtherInputs = true
                 };
                 InputManager.Instance.AddButton(BasePlugin.PluginGuid, WaitButton);
@@ -263,7 +263,7 @@ namespace ChebsNecromancy.Items.Wands
                 if (distance > radius && !minionFollowingOrb) continue;
                 
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    follow ? "$friendlyskeletonwand_skeletonfollowing" : "$friendlyskeletonwand_skeletonwaiting");
+                    follow ? "$chebgonaz_skeletonfollowing" : "$chebgonaz_skeletonwaiting");
                 if (follow)
                 {
                     minion.Follow(player.gameObject);

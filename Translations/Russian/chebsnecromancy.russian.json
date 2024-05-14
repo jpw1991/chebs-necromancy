@@ -83,5 +83,10 @@
     "chebgonaz_miniontype_poison": "Ядовитого скелета",
     "chebgonaz_miniontype_mage": "Мага",
     "chebgonaz_miniontype_leech": "Пиявку",
-    "chebgonaz_miniontype_battleneckro": "Боевого никса"
+    "chebgonaz_miniontype_priest": "Жреца",
+    "chebgonaz_miniontype_battleneckro": "Боевого никса",
+    "chebgonaz_worker_target": "Цель",
+    "chebgonaz_worker_cantfindtarget": "Не могу найти цель.",
+    "chebgonaz_phylactery_name": "Филактерий",
+    "chebgonaz_phylactery_desc": "Некроманту не составит труда избежать смерти. Все что требуется, это другая душа, которую нужно принести в жертву богам вместо своей собственной."
 }

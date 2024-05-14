@@ -88,8 +88,8 @@ namespace ChebsNecromancy.Structures
             while (true)
             {
                 yield return new WaitForSeconds(UpdateInterval.Value + Random.value);
-
-                if (!piece.m_nview.IsOwner()) continue;
+                
+                if (!piece || !piece.m_nview.IsOwner()) continue;
 
                 var playersInRange = new List<Player>();
                 Player.GetPlayersInRange(transform.position, PlayerDetectionDistance, playersInRange);
@@ -102,7 +102,7 @@ namespace ChebsNecromancy.Structures
                     c => c.m_piece != null && c.m_piece.IsPlacedByPlayer() 
                                            && allowedContainers.Contains(c.m_piece.m_nview.GetPrefabName()), true);
 
-                for (int i = 0; i < nearbyContainers.Count; i++)
+                for (var i = 0; i < nearbyContainers.Count; i++)
                 {
                     yield return new WaitWhile(() => playersInRange[0].IsSleeping());
 
@@ -123,19 +123,19 @@ namespace ChebsNecromancy.Structures
                     var currentContainerInventory = nearbyContainers[i].GetInventory();
                     //var currentContainerItems = currentContainerInventory.GetAllItems();
 
-                    for (int j = 0; j < nearbyContainers.Count; j++)
+                    for (var j = 0; j < nearbyContainers.Count; j++)
                     {
                         if (j == i) continue; // skip over self
 
                         var otherInventory = nearbyContainers[j].GetInventory();
                         var otherItems = otherInventory.GetAllItems();
 
-                        for (int k = otherItems.Count - 1; k > -1; k--)
+                        for (var k = otherItems.Count - 1; k > -1; k--)
                         {
-                            ItemDrop.ItemData jItem = otherItems[k];
+                            var jItem = otherItems[k];
 
-                            int currentContainerItemCount = currentContainerInventory.CountItems(jItem.m_shared.m_name);
-                            int otherContainerItemCount = otherInventory.CountItems(jItem.m_shared.m_name);
+                            var currentContainerItemCount = currentContainerInventory.CountItems(jItem.m_shared.m_name);
+                            var otherContainerItemCount = otherInventory.CountItems(jItem.m_shared.m_name);
 
                             if (currentContainerItemCount > otherContainerItemCount)
                             {
