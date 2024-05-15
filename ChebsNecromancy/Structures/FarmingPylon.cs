@@ -114,7 +114,7 @@ namespace ChebsNecromancy.Structures
                 var pickable = col.GetComponentInParent<Pickable>();
                 if (pickable != null && PickableList.Value.Exists(item => pickable.name.Contains(item)))
                 {
-                    pickable.m_nview.InvokeRPC("Pick");
+                    pickable.m_nview.InvokeRPC("RPC_Pick");
                 }
             }
         }
