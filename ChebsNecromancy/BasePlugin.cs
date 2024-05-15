@@ -30,11 +30,12 @@ namespace ChebsNecromancy
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     [BepInDependency(Main.ModGuid)]
     [NetworkCompatibility(CompatibilityLevel.EveryoneMustHaveMod, VersionStrictness.Minor)]
+    //[NetworkCompatibility(CompatibilityLevel.NotEnforced, VersionStrictness.None)]
     internal class BasePlugin : BaseUnityPlugin
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.10.0";
+        public const string PluginVersion = "4.10.1";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 

@@ -228,7 +228,7 @@ namespace ChebsNecromancy.Structures
                 }
 
                 _inventory.RemoveItem(itemData, 1);
-                smelter.m_nview.InvokeRPC("AddOre", itemData.m_dropPrefab.name);
+                smelter.m_nview.InvokeRPC("RPC_AddOre", itemData.m_dropPrefab.name);
                 smelter.m_addedOreTime = Time.time;
                 if (smelter.m_addOreAnimationDuration > 0f)
                 {
@@ -247,7 +247,7 @@ namespace ChebsNecromancy.Structures
 
             if (_inventory.HaveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name))
             {
-                fireplace.m_nview.InvokeRPC("AddFuel");
+                fireplace.m_nview.InvokeRPC("RPC_AddFuel");
                 _inventory.RemoveItem(fireplace.m_fuelItem.m_itemData.m_shared.m_name, 1);
             }
         }
@@ -257,7 +257,7 @@ namespace ChebsNecromancy.Structures
             //remove cooked items
             if (cookingStation.HaveDoneItem())
             {
-                cookingStation.m_nview.InvokeRPC("RemoveDoneItem", transform.position);
+                cookingStation.m_nview.InvokeRPC("RPC_RemoveDoneItem", transform.position);
             }
 
             // add cookable items
@@ -268,7 +268,7 @@ namespace ChebsNecromancy.Structures
             if (cookableItem != null)
             {
                 var cookableItemName = cookableItem.m_dropPrefab.name;
-                cookingStation.m_nview.InvokeRPC("AddItem", cookableItemName);
+                cookingStation.m_nview.InvokeRPC("RPC_AddItem", cookableItemName);
                 _inventory.RemoveOneItem(cookableItem);
             }
         }

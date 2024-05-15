@@ -154,6 +154,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+25/04/2024 | 4.10.0 | Prepare for ashlands; upgrade CVL
 28/01/2024 | 4.9.1 | Reduce logging in case of missing bone color data
 27/01/2024 | 4.9.0 | Add different healing levels & spells to the priests; fix a bug that erased some default equipment set in Unity
 25/01/2024 | 4.8.0 | Add skeleton priest to heal other minions
