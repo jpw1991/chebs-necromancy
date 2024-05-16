@@ -154,6 +154,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+16/05/2024 | 4.10.2 | Fix problem of spirit pylon ghost not spawning
 15/05/2024 | 4.10.1 | Fix incorrect RPC names eg. AddFuel -> RPC_AddFuel
 25/04/2024 | 4.10.0 | Prepare for ashlands; upgrade CVL
 28/01/2024 | 4.9.1 | Reduce logging in case of missing bone color data

@@ -5,6 +5,7 @@ namespace ChebsNecromancy.Minions
 {
     internal class SpiritPylonGhostMinion : UndeadMinion
     {
+        public const string PrefabName = "ChebGonaz_SpiritPylonGhost";
         private float killAt;
 
         public override void Awake()

@@ -35,11 +35,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.10.1";
+        public const string PluginVersion = "4.10.2";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.6.1");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.6.2");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -508,7 +508,7 @@ namespace ChebsNecromancy
                 }
 
                 prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
-                prefabNames.Add("ChebGonaz_SpiritPylonGhost.prefab");
+                prefabNames.Add(SpiritPylonGhostMinion.PrefabName + ".prefab");
                 prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 prefabNames.Add("ChebGonaz_Bat.prefab");
                 prefabNames.Add(BattleNeckroMinion.PrefabName + ".prefab");
@@ -521,9 +521,15 @@ namespace ChebsNecromancy
 
                 prefabNames.ForEach(prefabName =>
                 {
+                    if (HeavyLogging.Value) Logger.LogInfo($"Loading {prefabName} from asset bundle...");
                     var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, 
                         RadeonFriendly.Value
                         || NoWraithSmoke.Value && prefabName.Equals("ChebGonaz_GuardianWraith.prefab"));
+                    // We don't always want to fix the reference, eg. in the case of the ChebGonaz_SpiritPylonGhost
+                    // because it's old pre-Ashlands and its mocks are no longer available.
+                    // More info in issue: https://github.com/jpw1991/chebs-necromancy/issues/267
+                    // todo: Resolve mock when someday creating a brand new bundle from a new rip etc.
+                    var fixReference = true;
                     switch (prefabName)
                     {
                         case "ChebGonaz_DraugrWarrior.prefab":
@@ -603,6 +609,7 @@ namespace ChebsNecromancy
                             break;
                         case "ChebGonaz_SpiritPylonGhost.prefab":
                             prefab.AddComponent<SpiritPylonGhostMinion>();
+                            fixReference = false;
                             break;
                         case "ChebGonaz_NeckroGatherer.prefab":
                             prefab.AddComponent<NeckroGathererMinion>();
@@ -626,7 +633,7 @@ namespace ChebsNecromancy
                             break;
                     }
 
-                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
+                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, fixReference));
                 });
 
                 #endregion

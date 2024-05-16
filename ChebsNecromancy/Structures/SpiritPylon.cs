@@ -1,7 +1,7 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
 using BepInEx.Configuration;
+using ChebsNecromancy.Minions;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Structures;
 using UnityEngine;
@@ -98,8 +98,11 @@ namespace ChebsNecromancy.Structures
                         ghostLastSpawnedAt = Time.time;
 
                         var friendlyGhost = SpawnFriendlyGhost();
-                        friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
-                        SpawnedGhosts.Add(friendlyGhost);
+                        if (friendlyGhost != null)
+                        {
+                            friendlyGhost.GetComponent<MonsterAI>().SetTarget(characterInRange);
+                            SpawnedGhosts.Add(friendlyGhost);
+                        }
                     }
                 }
             }
@@ -108,12 +111,11 @@ namespace ChebsNecromancy.Structures
         protected GameObject SpawnFriendlyGhost()
         {
             var quality = 1;
-
-            var prefabName = "ChebGonaz_SpiritPylonGhost";
-            var prefab = ZNetScene.instance.GetPrefab(prefabName);
+            
+            var prefab = ZNetScene.instance.GetPrefab(SpiritPylonGhostMinion.PrefabName);
             if (!prefab)
             {
-                Logger.LogError($"SpawnFriendlyGhost: spawning {prefabName} failed!");
+                Logger.LogError($"SpawnFriendlyGhost: spawning {SpiritPylonGhostMinion.PrefabName} failed!");
                 return null;
             }
 
