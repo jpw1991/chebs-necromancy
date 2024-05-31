@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
+        <!-- If you've cloned/forked this and want to change it, copy the entire file and rename its extension to
+         to csproj.user and then set your own paths. This user file will take precedence over what's set here -->
+        <VALHEIM_INSTALL>/home/joshua/.local/share/Steam/steamapps/common/Valheim</VALHEIM_INSTALL>
+        <BEPINEX_PATH>/home/joshua/.config/r2modmanPlus-local/Valheim/profiles/cheb-development/BepInEx/</BEPINEX_PATH>
+        
         <TargetFramework>net48</TargetFramework>
         <RootNamespace>ChebsNecromancy</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -24,7 +28,7 @@
         <Guid>e3243d22-4307-4008-ba36-9f326008cde5</Guid>
 
         <!-- Version Information -->
-        <Version>4.10.1.0</Version>
+        <Version>4.10.2.0</Version>
         <FileVersion>$(Version)</FileVersion>
         <AssemblyVersion>$(Version)</AssemblyVersion>
 
@@ -40,8 +44,8 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="ChebsValheimLibrary" Version="2.6.1" />
-        <PackageReference Include="JotunnLib" Version="2.19.3" />
+        <PackageReference Include="ChebsValheimLibrary" Version="2.6.2" />
+        <PackageReference Include="JotunnLib" Version="2.20.0" />
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
