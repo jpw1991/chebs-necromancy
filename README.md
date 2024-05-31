@@ -136,6 +136,7 @@ A special thanks to the people who've helped me along the way:
 	+ **S970X** - German language localization.
 	+ [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) - Korean language localization.
 	+ **007LEXX** - Russian language localization.
+	+ [**JamDad**](https://forums.nexusmods.com/profile/43549747-jamdad/) - French language localization.
 - Other
     - **Hugo the Dwarf** and **Pfhoenix** for advice and help for fixing the frozen minions problem.
 	- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
