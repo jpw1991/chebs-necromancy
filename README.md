@@ -155,6 +155,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+10/06/2024 | 4.10.3 | Update Jotunn; Add soft dependency on Cheb's Mercenaries to ensure that mercenaries is always loaded before Necromancy. This fixes odd errors related to wrong load orders
 16/05/2024 | 4.10.2 | Fix problem of spirit pylon ghost not spawning
 15/05/2024 | 4.10.1 | Fix incorrect RPC names eg. AddFuel -> RPC_AddFuel
 25/04/2024 | 4.10.0 | Prepare for ashlands; upgrade CVL
