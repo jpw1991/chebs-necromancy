@@ -5,7 +5,7 @@ on:
     types: [published] # run when a new release is published
     tags:
       - 'v*' # Trigger only if the tag matches eg. v1.0.0
-  
+
   workflow_run:
     workflows: ["build"] # run if build.yml is successfully completed
     types:
@@ -15,7 +15,7 @@ env:
   name: ChebsNecromancy
   jsonf: manifest.json
   dlpath: https://github.com/jpw1991/chebs-necromancy/releases/download
-  dependencies: "ValheimModding-Jotunn@2.16.2" # dependencies separated by spaces
+  dependencies: "ValheimModding-Jotunn@2.20.1" # dependencies separated by spaces
   categories: "Mods" # categories separated by spaces
   namespace: ChebGonaz
 
