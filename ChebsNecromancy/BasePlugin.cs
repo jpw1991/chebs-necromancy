@@ -38,7 +38,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.10.3";
+        public const string PluginVersion = "4.11.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -98,6 +98,8 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> DurabilityDamageBronze;
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
+        
+        private Material _testBowMaterial;
 
         private void Awake()
         {
@@ -140,8 +142,14 @@ namespace ChebsNecromancy
                     : "Syncing initial configuration...");
                 UpdateAllRecipes();
                 StartCoroutine(RequestPvPDict());
-
             };
+
+            // PrefabManager.OnVanillaPrefabsAvailable += () =>
+            // {
+            //     var testBow = new CustomItem("ChebGonaz_TestBow", "skeleton_bow");
+            //     testBow.ItemPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial = _testBowMaterial;
+            //     ItemManager.Instance.AddItem(testBow);
+            // };
 
             StartCoroutine(WatchConfigFile());
         }
@@ -419,6 +427,20 @@ namespace ChebsNecromancy
                 SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
 
                 #endregion
+                
+                #region Effects
+
+                var effectNames = new List<string>()
+                {
+                    "sfx_orbofbeckoning_launch"
+                };
+                foreach (var effectName in effectNames)
+                {
+                    var prefab = Base.LoadPrefabFromBundle(effectName, chebgonazAssetBundle, RadeonFriendly.Value);
+                    PrefabManager.Instance.AddPrefab(prefab);
+                }
+
+                #endregion
 
                 #region Items
 
@@ -449,6 +471,8 @@ namespace ChebsNecromancy
                 });
 
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
+                
+                // _testBowMaterial = chebgonazAssetBundle.LoadAsset<Material>("ChebGonaz_SkeletonBow.mat");
 
                 // Orb of Beckoning
                 var orbOfBeckoningProjectilePrefab =
@@ -528,11 +552,6 @@ namespace ChebsNecromancy
                     var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, 
                         RadeonFriendly.Value
                         || NoWraithSmoke.Value && prefabName.Equals("ChebGonaz_GuardianWraith.prefab"));
-                    // We don't always want to fix the reference, eg. in the case of the ChebGonaz_SpiritPylonGhost
-                    // because it's old pre-Ashlands and its mocks are no longer available.
-                    // More info in issue: https://github.com/jpw1991/chebs-necromancy/issues/267
-                    // todo: Resolve mock when someday creating a brand new bundle from a new rip etc.
-                    var fixReference = true;
                     switch (prefabName)
                     {
                         case "ChebGonaz_DraugrWarrior.prefab":
@@ -612,7 +631,6 @@ namespace ChebsNecromancy
                             break;
                         case "ChebGonaz_SpiritPylonGhost.prefab":
                             prefab.AddComponent<SpiritPylonGhostMinion>();
-                            fixReference = false;
                             break;
                         case "ChebGonaz_NeckroGatherer.prefab":
                             prefab.AddComponent<NeckroGathererMinion>();
@@ -636,7 +654,7 @@ namespace ChebsNecromancy
                             break;
                     }
 
-                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, fixReference));
+                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 });
 
                 #endregion

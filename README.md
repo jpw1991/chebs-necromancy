@@ -2,8 +2,6 @@
 
 Cheb's Necromancy adds Necromancy to Valheim via craftable wands and structures. Minions will follow you, guard your base, and perform menial tasks like woodcutting, farming, mining.
 
-This mod was formerly called Friendly Skeleton Wand, but was renamed since it as grown into something so much more.
-
 ## Confused? Try the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki).
 
 ##  About Me
@@ -14,7 +12,7 @@ This mod was formerly called Friendly Skeleton Wand, but was renamed since it as
 
 I'm a YouTuber/Game Developer/Modder who is interested in all things necromancy and minion-related. Please check out my [YouTube channel](https://www.youtube.com/channel/UCPlZ1XnekiJxKymXbXyvkCg) and if you like the work I do and want to give back, please consider supporting me on [Patreon](https://www.patreon.com/chebgonaz?fan_landing=true) or throwing me a dime on [Ko-fi](https://ko-fi.com/chebgonaz). You can also check out my [website](https://necrobase.chebgonaz.com) where I host information on all known necromancy mods, games, books, videos and also some written reviews/guides.
 
-Thank you and I hope you enjoy the mod! If you have questions or need help please join my [Discord](https://discord.com/invite/EB96ASQ).
+Thank you and I hope you enjoy the mod! If you have questions or need help ask me on [Discord](https://discord.gg/BweDFym6sc).
 
 ### Bisect Hosting
 
@@ -28,7 +26,7 @@ If you would like to report a bug or request a feature, the best way to do it (i
 
 a) Create an issue on my [GitHub](https://github.com/jpw1991/chebs-necromancy).
 
-b) Write to me on [Discord](https://discord.com/invite/EB96ASQ).
+b) Write to me on [Discord](https://discord.gg/BweDFym6sc).
 
 c) Write a comment on the [Nexus page](https://www.nexusmods.com/valheim/mods/2040?tab=posts).
 
@@ -131,7 +129,10 @@ A special thanks to the people who've helped me along the way:
 - Artists
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
 	+ [**piacenti**](https://opengameart.org/users/piacenti) for the [skull prop](https://opengameart.org/content/skull-prop) that I use as part of the phylactery.
-	+ [Pentagram](https://en.wikipedia.org/wiki/Pentagram#/media/File:Hugieia-pentagram.svg) for priest particle effect.
+	+ [**Pentagram**](https://en.wikipedia.org/wiki/Pentagram#/media/File:Hugieia-pentagram.svg) for priest particle effect.
+	+ The unknown author of this awesome [Lovecraftian chart](https://lovecraftzine.files.wordpress.com/2013/04/lovecraft-bestiary.jpg), from which I took inspiration for a lot of the Lovecraft symbol designs for the minion capes.
+	+ **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell) and [priest heal](https://opengameart.org/content/dark-ambiences) effect sound.
+	+ [**Kutejnikov**](https://opengameart.org/content/crate-5) for a crate texture I used on the Neckro Gatherer's back.
 - Translations
 	+ **S970X** - German language localization.
 	+ [**hanawa07**](https://forums.nexusmods.com/index.php?/user/134678658-hanawa07/) - Korean language localization.
@@ -141,9 +142,7 @@ A special thanks to the people who've helped me along the way:
     - **Hugo the Dwarf** and **Pfhoenix** for advice and help for fixing the frozen minions problem.
 	- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
 	- **redseiko** for helpful advice on the official Valheim modding Discord.
-	- **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell) and [priest heal](https://opengameart.org/content/dark-ambiences) effect sound.
 	- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
-	- The unknown author of this awesome [Lovecraftian chart](https://lovecraftzine.files.wordpress.com/2013/04/lovecraft-bestiary.jpg), from which I took inspiration for a lot of the Lovecraft symbol designs for the minion capes.
 
 <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
@@ -155,6 +154,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+28/06/2024 | 4.11.0 | Go through the bundle with a fine toothed comb and optimize everything; replace Neckro Gatherer crate texture; add message to Neckro pylon informing player of what it's currently doing
 10/06/2024 | 4.10.3 | Update Jotunn; Add soft dependency on Cheb's Mercenaries to ensure that mercenaries is always loaded before Necromancy. This fixes odd errors related to wrong load orders
 16/05/2024 | 4.10.2 | Fix problem of spirit pylon ghost not spawning
 15/05/2024 | 4.10.1 | Fix incorrect RPC names eg. AddFuel -> RPC_AddFuel
