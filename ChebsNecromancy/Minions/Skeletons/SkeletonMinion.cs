@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using BepInEx;
 using BepInEx.Configuration;
+using ChebsNecromancy.Commands.Appearance;
 using ChebsNecromancy.Items.Armor.Player;
 using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
@@ -73,8 +74,9 @@ namespace ChebsNecromancy.Minions.Skeletons
         public static ConfigEntry<int> MinionLimitIncrementsEveryXLevels;
         
         public const string BoneColorZdoKey = "SkeletonMinionBoneColor";
-        public static ConfigEntry<BoneColor> BoneColorConfig;
         public static Dictionary<string, Material> Bones = new();
+
+        public static int PlayerBoneColorZdoKeyHash => "ChebGonazBoneColorSetting".GetHashCode();
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -121,54 +123,6 @@ namespace ChebsNecromancy.Minions.Skeletons
                 10, new ConfigDescription(
                     "Attention: has no effect if minion limits are off. Increases player's maximum minion count by 1 every X levels. For example, if the limit is 3 skeletons and this is set to 10, then at level 10 Necromancy the player can have 4 minions. Then 5 at level 20, and so on.", null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            BoneColorConfig = plugin.Config.Bind(client, "BoneColor", BoneColor.White,
-                new ConfigDescription("The bone color of your minions."));
-            BoneColorConfig.SettingChanged += (sender, args) =>
-            {
-                Logger.LogInfo($"Bone color changed to {BoneColorConfig.Value}, updating minion materials...");
-                var player = Player.m_localPlayer;
-                if (player == null)
-                {
-                    Logger.LogInfo("Failed to update minion bones: m_localPlayer is null. This is not an " +
-                                   "error unless you're in-game right now & just means that bones " +
-                                   "couldn't be updated on existing minions at this moment in time.");
-                    return;
-                }
-
-                var matName = InternalName.GetName(BoneColorConfig.Value);
-                var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID
-                    .Values
-                    .ToList()
-                    .FindAll(zdo =>
-                    {
-                        var zdoPrefab = zdo.GetPrefab();
-                        return IsSkeletonHash(zdoPrefab);
-                    })
-                    .Where(zdo =>
-                        zdo.GetString(MinionOwnershipZdoKey) ==
-                        player.GetPlayerName())
-                    .ToList();
-                Logger.LogInfo($"Found {minionsBelongingToPlayer.Count} to update...");
-                foreach (var zdo in minionsBelongingToPlayer)
-                {
-                    zdo.Set(BoneColorZdoKey, matName);
-                }
-
-                // now that ZDOs have been set, update loaded minions
-                var allCharacters = Character.GetAllCharacters();
-                foreach (var character in allCharacters)
-                {
-                    if (character.IsDead())
-                    {
-                        continue;
-                    }
-
-                    var minion = character.GetComponent<SkeletonMinion>();
-                    if (minion == null || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
-                    minion.LoadBoneColorMaterial();
-                }
-            };
         }
         
         #region BoneColor
@@ -238,8 +192,60 @@ namespace ChebsNecromancy.Minions.Skeletons
                     Logger.LogError($"{name} (visualSkeleton={visualSkeleton}) Failed to get SkinnedMeshRenderer");
                 }
             }
+            else
+            {
+                Logger.LogError($"{name} failed to load bone color: {boneColor} not in list");
+            }
         }
 
+        public static void SetBoneColor(BoneColor boneColor)
+        {
+            Logger.LogInfo($"Changing bone color to {boneColor}, updating minion materials...");
+            var player = Player.m_localPlayer;
+            if (player == null)
+            {
+                Logger.LogInfo("Failed to update minion bones: m_localPlayer is null. This is not an " +
+                               "error unless you're in-game right now & just means that bones " +
+                               "couldn't be updated on existing minions at this moment in time.");
+                return;
+            }
+            
+            player.m_nview.GetZDO().Set(PlayerBoneColorZdoKeyHash, (int)boneColor);
+
+            var matName = InternalName.GetName(boneColor);
+            var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID
+                .Values
+                .ToList()
+                .FindAll(zdo =>
+                {
+                    var zdoPrefab = zdo.GetPrefab();
+                    return IsSkeletonHash(zdoPrefab);
+                })
+                .Where(zdo =>
+                    zdo.GetString(MinionOwnershipZdoKey) ==
+                    player.GetPlayerName())
+                .ToList();
+            Logger.LogInfo($"Found {minionsBelongingToPlayer.Count} to update...");
+            foreach (var zdo in minionsBelongingToPlayer)
+            {
+                zdo.Set(BoneColorZdoKey, matName);
+            }
+
+            // now that ZDOs have been set, update loaded minions
+            var allCharacters = Character.GetAllCharacters();
+            foreach (var character in allCharacters)
+            {
+                if (character.IsDead())
+                {
+                    continue;
+                }
+
+                var minion = character.GetComponent<SkeletonMinion>();
+                if (minion == null || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
+                minion.LoadBoneColorMaterial();
+            }
+        }
+        
         #endregion
 
         public override void Awake()
@@ -537,9 +543,12 @@ namespace ChebsNecromancy.Minions.Skeletons
             minion.SetCreatedAtLevel(playerNecromancyLevel);
             minion.ScaleEquipment(playerNecromancyLevel, skeletonType, armorType);
             minion.ScaleStats(playerNecromancyLevel);
+            
+            var eyeColor = player.m_nview.GetZDO().GetInt(PlayerEyeColorZdoKeyHash);
+            var boneColor = player.m_nview.GetZDO().GetInt(PlayerBoneColorZdoKeyHash);
 
-            minion.Eye = InternalName.GetName(EyeConfig.Value);
-            minion.SkeletonBoneColor = InternalName.GetName(BoneColorConfig.Value);
+            minion.Eye = InternalName.GetName((EyeColor)eyeColor);
+            minion.SkeletonBoneColor = InternalName.GetName((BoneColor)boneColor);
 
             if (skeletonType != SkeletonType.Woodcutter
                 && skeletonType != SkeletonType.Miner)

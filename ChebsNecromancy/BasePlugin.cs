@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using BepInEx;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
+using ChebsNecromancy.Commands.Appearance;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items.Armor.Minions;
 using ChebsNecromancy.Items.Armor.Player;
@@ -98,8 +99,6 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> DurabilityDamageBronze;
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
-        
-        private Material _testBowMaterial;
 
         private void Awake()
         {
@@ -123,7 +122,12 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
             CommandManager.Instance.AddConsoleCommand(new TeleportNeckros());
+            
+            CommandManager.Instance.AddConsoleCommand(new SetBoneColor());
+            CommandManager.Instance.AddConsoleCommand(new SetEyeColor());
+            CommandManager.Instance.AddConsoleCommand(new ShowOptions());
 
+            // PvP commands could've already been added by Cheb's Mercenaries, so check first
             var pvpCommands = new List<ConsoleCommand>()
                 { new PvPAddFriend(), new PvPRemoveFriend(), new PvPListFriends() };
             foreach (var pvpCommand in pvpCommands)
@@ -143,13 +147,6 @@ namespace ChebsNecromancy
                 UpdateAllRecipes();
                 StartCoroutine(RequestPvPDict());
             };
-
-            // PrefabManager.OnVanillaPrefabsAvailable += () =>
-            // {
-            //     var testBow = new CustomItem("ChebGonaz_TestBow", "skeleton_bow");
-            //     testBow.ItemPrefab.GetComponentInChildren<MeshRenderer>().sharedMaterial = _testBowMaterial;
-            //     ItemManager.Instance.AddItem(testBow);
-            // };
 
             StartCoroutine(WatchConfigFile());
         }

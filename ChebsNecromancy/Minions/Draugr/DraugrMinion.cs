@@ -423,7 +423,8 @@ namespace ChebsNecromancy.Minions.Draugr
             minion.ScaleEquipment(playerNecromancyLevel, armorType);
             minion.ScaleStats(playerNecromancyLevel);
             
-            minion.Eye = InternalName.GetName(EyeConfig.Value);
+            var eyeColor = player.m_nview.GetZDO().GetInt("chebgonaz_eyecolor".GetHashCode());
+            minion.Eye = InternalName.GetName((EyeColor)eyeColor);
 
             if (Wand.FollowByDefault.Value)
             {
