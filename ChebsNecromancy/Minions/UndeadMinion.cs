@@ -34,8 +34,6 @@ namespace ChebsNecromancy.Minions
         
         public static Dictionary<string, Material> Eyes = new();
 
-        public static int PlayerEyeColorZdoKeyHash => "ChebGonazEyeColorSetting".GetHashCode();
-
         public static void CreateConfigs(BaseUnityPlugin plugin)
         {
             const string client = "UndeadMinion (Client)";
@@ -269,8 +267,8 @@ namespace ChebsNecromancy.Minions
                                "couldn't be updated on existing minions at this moment in time.");
                 return;
             }
-            
-            player.m_nview.GetZDO().Set(PlayerEyeColorZdoKeyHash, (int)eyeColor);
+
+            Options.Options.EyeColor = eyeColor;
 
             var matName = InternalName.GetName(eyeColor);
             var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID

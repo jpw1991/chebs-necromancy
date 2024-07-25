@@ -39,7 +39,7 @@ namespace ChebsNecromancy.Minions.Draugr
                 _hashList = new List<int>();
                 foreach (DraugrType value in Enum.GetValues(typeof(DraugrType)))
                 {
-                    _hashList.Add(InternalName.GetName(value).GetHashCode());
+                    _hashList.Add(InternalName.GetName(value).GetStableHashCode());
                 }
             }
 
@@ -422,9 +422,9 @@ namespace ChebsNecromancy.Minions.Draugr
             minion.SetCreatedAtLevel(playerNecromancyLevel);
             minion.ScaleEquipment(playerNecromancyLevel, armorType);
             minion.ScaleStats(playerNecromancyLevel);
-            
-            var eyeColor = player.m_nview.GetZDO().GetInt("chebgonaz_eyecolor".GetHashCode());
-            minion.Eye = InternalName.GetName((EyeColor)eyeColor);
+
+            var eyeColor = Options.Options.EyeColor;
+            minion.Eye = InternalName.GetName(eyeColor);
 
             if (Wand.FollowByDefault.Value)
             {

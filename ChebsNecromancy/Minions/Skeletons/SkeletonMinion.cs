@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace ChebsNecromancy.Minions.Skeletons
 {
-    internal class SkeletonMinion : UndeadMinion
+    public class SkeletonMinion : UndeadMinion
     {
         public enum SkeletonType
         {
@@ -52,7 +52,7 @@ namespace ChebsNecromancy.Minions.Skeletons
                 _hashList = new List<int>();
                 foreach (SkeletonType value in Enum.GetValues(typeof(SkeletonType)))
                 {
-                    _hashList.Add(InternalName.GetName(value).GetHashCode());
+                    _hashList.Add(InternalName.GetName(value).GetStableHashCode());
                 }
             }
 
@@ -76,7 +76,7 @@ namespace ChebsNecromancy.Minions.Skeletons
         public const string BoneColorZdoKey = "SkeletonMinionBoneColor";
         public static Dictionary<string, Material> Bones = new();
 
-        public static int PlayerBoneColorZdoKeyHash => "ChebGonazBoneColorSetting".GetHashCode();
+        public static int PlayerBoneColorZdoKeyHash => "ChebGonazBoneColorSetting".GetStableHashCode();
 
         public new static void CreateConfigs(BaseUnityPlugin plugin)
         {
@@ -543,12 +543,12 @@ namespace ChebsNecromancy.Minions.Skeletons
             minion.SetCreatedAtLevel(playerNecromancyLevel);
             minion.ScaleEquipment(playerNecromancyLevel, skeletonType, armorType);
             minion.ScaleStats(playerNecromancyLevel);
-            
-            var eyeColor = player.m_nview.GetZDO().GetInt(PlayerEyeColorZdoKeyHash);
-            var boneColor = player.m_nview.GetZDO().GetInt(PlayerBoneColorZdoKeyHash);
 
-            minion.Eye = InternalName.GetName((EyeColor)eyeColor);
-            minion.SkeletonBoneColor = InternalName.GetName((BoneColor)boneColor);
+            var eyeColor = Options.Options.EyeColor;
+            var boneColor = Options.Options.BoneColor;
+
+            minion.Eye = InternalName.GetName(eyeColor);
+            minion.SkeletonBoneColor = InternalName.GetName(boneColor);
 
             if (skeletonType != SkeletonType.Woodcutter
                 && skeletonType != SkeletonType.Miner)

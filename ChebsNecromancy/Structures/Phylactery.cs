@@ -16,7 +16,7 @@ namespace ChebsNecromancy.Structures
 {
     internal class Phylactery : Structure
     {
-        public static readonly int PhylacteryHash = "ChebGonaz_Phylactery".GetHashCode();
+        public static readonly int PhylacteryHash = "ChebGonaz_Phylactery".GetStableHashCode();
 
         public static ConfigEntry<string> FuelPrefab;
 

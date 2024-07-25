@@ -9,7 +9,7 @@ using Logger = Jotunn.Logger;
 
 namespace ChebsNecromancy.Items.Armor.Player
 {
-    internal class NecromancerCape
+    public class NecromancerCape
     {
         public enum Emblem
         {
@@ -85,22 +85,9 @@ namespace ChebsNecromancy.Items.Armor.Player
             [InternalName("ChebGonaz_NecromancerCapeZhar")]
             Zhar,
         }
-
-        private static int PlayerEmblemZdoKeyHash => "ChebGonazEmblemSetting".GetHashCode();
         
         public static ConfigEntry<Emblem> EmblemConfig;
         public static Dictionary<string, Material> Emblems = new();
-
-        public void CreateConfigs(BaseUnityPlugin plugin)
-        {
-            EmblemConfig = plugin.Config.Bind($"{GetType().Name} (Client)", "Emblem", Emblem.Blank,
-                new ConfigDescription("The symbol on the cape of your armored minions."));
-            EmblemConfig.SettingChanged += (sender, args) =>
-            {
-                Logger.LogInfo($"Emblem changed to {EmblemConfig.Value} in config");
-                SetEmblem(EmblemConfig.Value);
-            };
-        }
 
         public static void LoadEmblems(AssetBundle bundle)
         {
@@ -124,7 +111,7 @@ namespace ChebsNecromancy.Items.Armor.Player
                 return;
             }
             
-            player.m_nview.GetZDO().Set(PlayerEmblemZdoKeyHash, (int)emblem);
+            Options.Options.Emblem = emblem;
 
             var matName = InternalName.GetName(emblem);
             var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID

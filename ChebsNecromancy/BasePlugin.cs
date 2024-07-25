@@ -383,7 +383,6 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
-            necromancerCapeItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
