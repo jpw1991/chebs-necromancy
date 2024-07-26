@@ -12,6 +12,7 @@ using ChebsNecromancy.Items.Weapons.Minions;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
+using ChebsNecromancy.Options;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
@@ -253,6 +254,8 @@ namespace ChebsNecromancy
                                              "which seem to give users with Radeon cards trouble for unknown " +
                                              "reasons. If you have problems with lag it might also help to switch" +
                                              "this setting on."));
+            
+            OptionsGUI.CreateConfigs(this, PluginGuid);
             
             NoWraithSmoke = Config.Bind("General (Client)", "NoWraithSmoke",
                 false, new ConfigDescription("Set this to true if you want to disable smoke on the wraith."));
@@ -783,6 +786,11 @@ namespace ChebsNecromancy
                             inputDelay = Time.time + .5f;
                         }
                     });
+                }
+
+                if (OptionsGUI.OptionsButton != null && ZInput.GetButtonUp(OptionsGUI.OptionsButton.Name))
+                {
+                    OptionsGUI.TogglePanel();
                 }
             }
 
