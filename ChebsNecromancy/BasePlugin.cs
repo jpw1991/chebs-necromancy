@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Security.Cryptography;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
 using ChebsNecromancy.Commands.Appearance;
@@ -13,6 +14,7 @@ using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
 using ChebsNecromancy.Options;
+using ChebsNecromancy.PvPOptions;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
@@ -40,7 +42,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.11.0";
+        public const string PluginVersion = "5.0.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -101,6 +103,8 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
 
+        private bool _chebsMercenariesActive = false;
+
         private void Awake()
         {
             if (!Base.VersionCheck(ChebsValheimLibraryVersion, out var message))
@@ -150,6 +154,8 @@ namespace ChebsNecromancy
             };
 
             StartCoroutine(WatchConfigFile());
+
+            _chebsMercenariesActive = Chainloader.PluginInfos.TryGetValue("com.chebgonaz.chebsmercenaries", out _);
         }
 
         private IEnumerator RequestPvPDict()
@@ -398,6 +404,8 @@ namespace ChebsNecromancy
             Phylactery.CreateConfigs(this);
 
             NeckroGathererMinion.CreateConfigs(this);
+            
+            PvPOptionsGUI.CreateConfigs(this, PluginGuid);
         }
         
 
@@ -791,6 +799,12 @@ namespace ChebsNecromancy
                 if (OptionsGUI.OptionsButton != null && ZInput.GetButtonUp(OptionsGUI.OptionsButton.Name))
                 {
                     OptionsGUI.TogglePanel();
+                }
+                
+                if (!_chebsMercenariesActive && PvPOptionsGUI.OptionsButton != null 
+                                             && ZInput.GetButtonUp(PvPOptionsGUI.OptionsButton.Name))
+                {
+                    PvPOptionsGUI.TogglePanel();
                 }
             }
 

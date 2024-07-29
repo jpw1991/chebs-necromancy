@@ -1,5 +1,3 @@
-using BepInEx;
-using BepInEx.Configuration;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Skeletons;
 using ChebsValheimLibrary.Common;
@@ -86,7 +84,6 @@ namespace ChebsNecromancy.Items.Armor.Player
             Zhar,
         }
         
-        public static ConfigEntry<Emblem> EmblemConfig;
         public static Dictionary<string, Material> Emblems = new();
 
         public static void LoadEmblems(AssetBundle bundle)

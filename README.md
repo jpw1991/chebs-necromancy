@@ -54,11 +54,11 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
 - [Player vs Player (PvP)](https://github.com/jpw1991/chebs-necromancy/wiki/PvP) settings can be configured as of 4.5.0.
 - As of 4.6.0, further minion [appearance customization](https://github.com/jpw1991/chebs-necromancy/wiki/Appearance-Customization) options are available. You can change the eye color of your minions and also give them special symbols on their capes. And in 4.7.0 you can change the bone color of skeletons too.
 - Craftable items at the workbench and forge:
-	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_skeletonwand): Summons skeleton warriors, archers, miners, and woodcutters.
-	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/item_draugrwand): Summons draugr warriors and archers.
+	+ [**Skeleton Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/SkeletonWand): Summons skeleton warriors, archers, miners, and woodcutters.
+	+ [**Draugr Wand**](https://github.com/jpw1991/chebs-necromancy/wiki/DraugrWand): Summons draugr warriors and archers.
 	+ [**Orb of Beckoning**](https://github.com/jpw1991/chebs-necromancy/wiki/OrbOfBeckoning) Summons skeleton mages and can be thrown to direct minions to go somewhere. It also sticks to enemies so that minions will chase after an enemy.
-	+ [**Spectral Shroud**](https://github.com/jpw1991/chebs-necromancy/wiki/item_spectralshroud): A cloak that increases your Necromancy level, looks cool, and attracts spirits to it. If you're powerful enough, they will serve.
-	+ [**Necromancer Hood**](https://github.com/jpw1991/chebs-necromancy/wiki/item_necromancerhood): A cool hood to match the cloak.
+	+ [**Spectral Shroud**](https://github.com/jpw1991/chebs-necromancy/wiki/SpectralShroud): A cloak that increases your Necromancy level, looks cool, and attracts spirits to it. If you're powerful enough, they will serve.
+	+ [**Necromancer Hood**](https://github.com/jpw1991/chebs-necromancy/wiki/NecromancerHood): A cool hood to match the cloak.
 	+ [**Necromancer's Backpack**](https://github.com/jpw1991/chebs-necromancy/wiki/NecromancyBackpack): An optional integration with **AdventureBackpacks** ([Nexus](https://www.nexusmods.com/valheim/mods/2204), [Thunderstore](https://valheim.thunderstore.io/package/Vapok/AdventureBackpacks/)), which offers a Necromancy backpack that doubles as a Spectral Shroud.
 - While holding a Skeleton Wand, Draugr Wand, or Orb of Beckoning you can control the minions:
 	+ **B** will make a minion.
@@ -86,10 +86,10 @@ Detailed info in the [wiki](https://github.com/jpw1991/chebs-necromancy/wiki). H
   - Flint -> skeleton lumberjack
   - Hard Antler -> Skeleton Miner
 - New craftable structures:
-	+ [**Neckro Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_neckropylon): Spawns undead Neckro Gatherers from Neck Tails. These have a container on its back and wander around gathering up items for you. It's like a walking vacuum cleaner. When full, the Neckro will find a nearby container and dump the items inside.
-	+ [**Refueler Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_refueler): Fills your smelters with ores/coal; kilns with wood; fireplaces with wood and meat; and torches etc. with resin, guck, eyeballs, whatever.
-	+ [**Bat Beacon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_batbeacon): Spawns bats to defend your base.
-	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/piece_spiritpylon): Spawns spirits to defend your base.
+	+ [**Neckro Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/NeckroPylon): Spawns undead Neckro Gatherers from Neck Tails. These have a container on its back and wander around gathering up items for you. It's like a walking vacuum cleaner. When full, the Neckro will find a nearby container and dump the items inside.
+	+ [**Refueler Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/RefuelerPylon): Fills your smelters with ores/coal; kilns with wood; fireplaces with wood and meat; and torches etc. with resin, guck, eyeballs, whatever.
+	+ [**Bat Beacon**](https://github.com/jpw1991/chebs-necromancy/wiki/BatBeacon): Spawns bats to defend your base.
+	+ [**Spirit Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/SpiritPylon): Spawns spirits to defend your base.
 	+ [**Farming Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/FarmingPylon): Automatically harvests your crops. Combine with **Seed Totem** ([Nexus](https://www.nexusmods.com/valheim/mods/876), [Thunderstore](https://valheim.thunderstore.io/package/MathiasDecrock/SeedTotem/)) to then automatically replant those seeds for an automated base.
 	+ [**Repair Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/RepairPylon): Consumes resin to repair your structures.
 	+ [**Treasure Pylon**](https://github.com/jpw1991/chebs-necromancy/wiki/TreasurePylon): Organizes your chests in a rather chaotic way. By default only works on the basic wooden boxes but can be told to sort other things too via config. The idea is that Neckros haul all this stuff back, then the Treasure Pylon organizes it.
@@ -130,6 +130,7 @@ A special thanks to the people who've helped me along the way:
 	+ **Ramblez** (aka **[Thorngor](https://www.nexusmods.com/users/21532784)** on the Nexus) - Most of custom textures and icons.
 	+ [**piacenti**](https://opengameart.org/users/piacenti) for the [skull prop](https://opengameart.org/content/skull-prop) that I use as part of the phylactery.
 	+ [**Pentagram**](https://en.wikipedia.org/wiki/Pentagram#/media/File:Hugieia-pentagram.svg) for priest particle effect.
+	+ [**Kenney**](https://opengameart.org/users/kenney) for the Orb of Beckoning [particle effects](https://opengameart.org/content/particle-pack-80-sprites).
 	+ The unknown author of this awesome [Lovecraftian chart](https://lovecraftzine.files.wordpress.com/2013/04/lovecraft-bestiary.jpg), from which I took inspiration for a lot of the Lovecraft symbol designs for the minion capes.
 	+ **Ogrebane** for the [spell effect sound](https://opengameart.org/content/teleport-spell) and [priest heal](https://opengameart.org/content/dark-ambiences) effect sound.
 	+ [**Kutejnikov**](https://opengameart.org/content/crate-5) for a crate texture I used on the Neckro Gatherer's back.
@@ -154,6 +155,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+29/09/2024 | 5.0.0 | Overhaul of asset bundle and aesthetics
 28/06/2024 | 4.11.0 | Go through the bundle with a fine toothed comb and optimize everything; replace Neckro Gatherer crate texture; add message to Neckro pylon informing player of what it's currently doing
 10/06/2024 | 4.10.3 | Update Jotunn; Add soft dependency on Cheb's Mercenaries to ensure that mercenaries is always loaded before Necromancy. This fixes odd errors related to wrong load orders
 16/05/2024 | 4.10.2 | Fix problem of spirit pylon ghost not spawning

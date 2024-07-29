@@ -226,9 +226,18 @@ namespace ChebsNecromancy.Minions
 
         public string Eye
         {
-            get => TryGetComponent(out ZNetView zNetView)
-                ? zNetView.GetZDO().GetString(MinionEyeZdoKey)
-                : InternalName.GetName(EyeColor.Blue);
+            get
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    var matName = zNetView.GetZDO().GetString(MinionEyeZdoKey);
+                    if (string.IsNullOrEmpty(matName) || string.IsNullOrWhiteSpace(matName))
+                        zNetView.GetZDO().Set(MinionEyeZdoKey, matName);
+                    return matName;
+                }
+                Logger.LogError("Cannot get bone color because minion has no ZNetView component.");
+                return InternalName.GetName(EyeColor.Blue);
+            }
             set
             {
                 if (TryGetComponent(out ZNetView zNetView))
