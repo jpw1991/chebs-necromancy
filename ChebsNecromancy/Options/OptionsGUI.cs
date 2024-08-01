@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using ChebsNecromancy.Items.Armor.Player;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Skeletons;
+using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.PvP;
 using Jotunn.Configs;
 using Jotunn.GUI;
@@ -17,10 +18,8 @@ public class OptionsGUI
 {
     private static GameObject _panel;
     private static Dropdown _boneColorDropdown, _eyeColorDropdown, _emblemDropdown;
-    private static Text _alliesText;
-    private static InputField _allyInput;
 
-    private static List<string> _unsavedFriends;
+    private static Image _emblemImage;
 
     public static ConfigEntry<KeyboardShortcut> OptionsKeyConfigEntry;
     public static ButtonConfig OptionsButton;
@@ -141,82 +140,22 @@ public class OptionsGUI
                     .Cast<NecromancerCape.Emblem>()
                     .Select(o => $"{o}")
                     .ToList());
-            }
-
-            {
-                // PvP stuff
-                var allies = PvPManager.GetPlayerFriends();
-                GUIManager.Instance.CreateText("PvP Allies:", parent: _panel.transform,
-                    anchorMin: new Vector2(0.5f, 1f), anchorMax: new Vector2(0.5f, 1f),
-                    position: new Vector2(-250f, -210f),
-                    font: GUIManager.Instance.AveriaSerifBold, fontSize: 16, color: GUIManager.Instance.ValheimOrange,
-                    outline: true, outlineColor: Color.black,
-                    width: 200f, height: 30f, addContentSizeFitter: false);
-
-                var textObject = GUIManager.Instance.CreateText(string.Join(", ", allies), parent: _panel.transform,
-                    anchorMin: new Vector2(0.5f, 1f), anchorMax: new Vector2(0.5f, 1f),
-                    position: new Vector2(0f, -210f),
-                    font: GUIManager.Instance.AveriaSerifBold, fontSize: 16, color: GUIManager.Instance.ValheimOrange,
-                    outline: true, outlineColor: Color.black,
-                    width: 400f, height: 30f, addContentSizeFitter: false);
-                _alliesText = textObject.GetComponentInChildren<Text>();
-
-                // add/remove ally
-                GUIManager.Instance.CreateText("Ally (case sensitive):", parent: _panel.transform,
-                    anchorMin: new Vector2(0.5f, 1f), anchorMax: new Vector2(0.5f, 1f),
-                    position: new Vector2(-250f, -240f),
-                    font: GUIManager.Instance.AveriaSerifBold, fontSize: 16, color: GUIManager.Instance.ValheimOrange,
-                    outline: true, outlineColor: Color.black,
-                    width: 200f, height: 30f, addContentSizeFitter: false);
-
-                _allyInput = GUIManager.Instance.CreateInputField(parent: _panel.transform,
-                    anchorMin: new Vector2(0.5f, 0.5f),
-                    anchorMax: new Vector2(0.5f, 0.5f),
-                    position: new Vector2(0f, 60f),
-                    contentType: InputField.ContentType.Standard,
-                    placeholderText: "player",
-                    fontSize: 16,
-                    width: 200f,
-                    height: 30f).GetComponentInChildren<InputField>();
-                _allyInput.characterValidation = InputField.CharacterValidation.Alphanumeric;
-
-                GUIManager.Instance.CreateButton("+", parent: _panel.transform,
-                    anchorMin: new Vector2(0.5f, 0.5f), anchorMax: new Vector2(0.5f, 0.5f),
-                    position: new Vector2(200f, 60f),
-                    width: 30f, height: 30f).GetComponent<Button>().onClick.AddListener(() =>
+                _emblemDropdown.onValueChanged.AddListener(delegate (int i)
                 {
-                    if (_allyInput.text != string.Empty)
-                    {
-                        var newAlly = _allyInput.text;
-                        if (!_unsavedFriends.Contains(newAlly))
-                        {
-                            _unsavedFriends.Add(newAlly);
-                        }
-
-                        _alliesText.text = string.Join(", ", _unsavedFriends);
-
-                        _allyInput.text = string.Empty;
-                    }
+                    var selectedEmblem = (NecromancerCape.Emblem)i;
+                    var internalName = InternalName.GetName(selectedEmblem);
+                    var mat = NecromancerCape.Emblems[internalName];
+                    var texture = mat.mainTexture;
+                    var sprite = Sprite.Create((Texture2D)texture, new Rect(0, 0, texture.width, texture.height), Vector2.zero);
+                    _emblemImage.sprite = sprite;
                 });
 
-                GUIManager.Instance.CreateButton("-", parent: _panel.transform,
-                    anchorMin: new Vector2(0.5f, 0.5f), anchorMax: new Vector2(0.5f, 0.5f),
-                    position: new Vector2(260f, 60f),
-                    width: 30f, height: 30f).GetComponent<Button>().onClick.AddListener(() =>
-                {
-                    if (_allyInput.text != string.Empty)
-                    {
-                        var newAlly = _allyInput.text;
-                        if (_unsavedFriends.Contains(newAlly))
-                        {
-                            _unsavedFriends.Remove(newAlly);
-                        }
-
-                        _alliesText.text = string.Join(", ", _unsavedFriends);
-
-                        _allyInput.text = string.Empty;
-                    }
-                });
+                _emblemImage = CreateImage(GUIManager.Instance.GetSprite("ancientseed"),
+                    parent: _panel.transform,
+                    anchorMin: new Vector2(0.5f, 1f), anchorMax: new Vector2(0.5f, 1f),
+                    position: new Vector2(0f, -250f),
+                    width: 100f, height: 100f, addContentSizeFitter: false)
+                    .GetComponent<Image>();
             }
 
             // close button
@@ -230,9 +169,6 @@ public class OptionsGUI
                 position: new Vector2(250f, -250f),
                 width: 250f, height: 60f).GetComponent<Button>().onClick.AddListener(() =>
             {
-                // save PvP
-                PvPManager.UpdatePlayerFriendsDict(_unsavedFriends);
-
                 // save options
                 Options.BoneColor = (SkeletonMinion.BoneColor)_boneColorDropdown.value;
                 Options.EyeColor = (UndeadMinion.EyeColor)_eyeColorDropdown.value;
@@ -251,10 +187,6 @@ public class OptionsGUI
         var state = !_panel.activeSelf;
         _panel.SetActive(state);
 
-        _unsavedFriends = PvPManager.GetPlayerFriends()
-            .ToList(); // ensure new copy, not byref. Fixed in CVL 2.6.3
-        _alliesText.text = string.Join(", ", _unsavedFriends);
-
         _boneColorDropdown.value = (int)Options.BoneColor;
         _boneColorDropdown.RefreshShownValue();
         _eyeColorDropdown.value = (int)Options.EyeColor;
@@ -269,5 +201,37 @@ public class OptionsGUI
 
         // Toggle input for the player and camera while displaying the GUI
         GUIManager.BlockInput(state);
+    }
+    
+    private static GameObject CreateImage(
+        Sprite sprite,
+        Transform parent,
+        Vector2 anchorMin,
+        Vector2 anchorMax,
+        Vector2 position,
+        float width,
+        float height,
+        bool addContentSizeFitter)
+    {
+        var result = new GameObject("Image", new System.Type[2]
+        {
+            typeof (RectTransform),
+            typeof (Image)
+        });
+        var component1 = result.GetComponent<RectTransform>();
+        component1.anchorMin = anchorMin;
+        component1.anchorMax = anchorMax;
+        component1.anchoredPosition = position;
+        if (!addContentSizeFitter)
+        {
+            component1.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
+            component1.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+        }
+        else
+            result.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var component2 = result.GetComponent<Image>();
+        component2.sprite = sprite;
+        result.transform.SetParent(parent, false);
+        return result;
     }
 }

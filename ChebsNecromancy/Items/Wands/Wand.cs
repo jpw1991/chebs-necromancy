@@ -121,7 +121,7 @@ namespace ChebsNecromancy.Items.Wands
                 {
                     Name = ItemName + "CreateMinion",
                     Config = CreateMinionConfig,
-                    GamepadConfig = CreateMinionGamepadConfig,
+                    // GamepadConfig = CreateMinionGamepadConfig,
                     HintToken = "$chebgonaz_wand_createminion",
                     BlockOtherInputs = true
                 };
@@ -134,7 +134,7 @@ namespace ChebsNecromancy.Items.Wands
                 {
                     Name = ItemName + "NextMinion",
                     Config = NextMinionConfig,
-                    GamepadConfig = NextMinionGamepadConfig,
+                    // GamepadConfig = NextMinionGamepadConfig,
                     HintToken = "$chebgonaz_wand_nextminion",
                     BlockOtherInputs = true
                 };
@@ -147,7 +147,7 @@ namespace ChebsNecromancy.Items.Wands
                 {
                     Name = ItemName + "Follow",
                     Config = FollowConfig,
-                    GamepadConfig = FollowGamepadConfig,
+                    // GamepadConfig = FollowGamepadConfig,
                     HintToken = "$chebgonaz_follow",
                     BlockOtherInputs = true
                 };
@@ -160,7 +160,7 @@ namespace ChebsNecromancy.Items.Wands
                 {
                     Name = ItemName + "Wait",
                     Config = WaitConfig,
-                    GamepadConfig = WaitGamepadConfig,
+                    // GamepadConfig = WaitGamepadConfig,
                     HintToken = "$chebgonaz_wait",
                     BlockOtherInputs = true
                 };
@@ -173,7 +173,7 @@ namespace ChebsNecromancy.Items.Wands
                 {
                     Name = ItemName + "Teleport",
                     Config = TeleportConfig,
-                    GamepadConfig = TeleportGamepadConfig,
+                    // GamepadConfig = TeleportGamepadConfig,
                     HintToken = "$friendlyskeletonwand_teleport",
                     BlockOtherInputs = true
                 };
