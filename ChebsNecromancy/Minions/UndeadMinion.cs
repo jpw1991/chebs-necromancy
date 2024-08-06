@@ -32,7 +32,6 @@ namespace ChebsNecromancy.Minions
         public static ConfigEntry<float> RoamRange;
         public static ConfigEntry<bool> PackDropItemsIntoCargoCrate;
         
-        public static ConfigEntry<EyeColor> EyeConfig;
         public static Dictionary<string, Material> Eyes = new();
 
         public static void CreateConfigs(BaseUnityPlugin plugin)
@@ -68,56 +67,6 @@ namespace ChebsNecromancy.Minions
                     "If set to true, dropped items will be packed into a cargo crate. This means they won't sink in water, which is useful for more valuable drops like Surtling Cores and metal ingots.",
                     null,
                     new ConfigurationManagerAttributes { IsAdminOnly = true }));
-            
-            EyeConfig = plugin.Config.Bind(client, "EyeColor", EyeColor.Blue,
-                new ConfigDescription("The eye color of your minions."));
-            EyeConfig.SettingChanged += (sender, args) =>
-            {
-                // update minion capes with new emblem
-                Logger.LogInfo($"Eye color changed to {EyeConfig.Value}, updating minion materials...");
-                var player = Player.m_localPlayer;
-                if (player == null)
-                {
-                    Logger.LogInfo("Failed to update minion eyes: m_localPlayer is null. This is not an " +
-                                   "error unless you're in-game right now & just means that eyes " +
-                                   "couldn't be updated on existing minions at this moment in time.");
-                    return;
-                }
-
-                var matName = InternalName.GetName(EyeConfig.Value);
-                var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID
-                    .Values
-                    .ToList()
-                    .FindAll(zdo =>
-                    {
-                        var zdoPrefab = zdo.GetPrefab();
-                        return SkeletonMinion.IsSkeletonHash(zdoPrefab) ||
-                               DraugrMinion.IsDraugrHash(zdoPrefab);
-                    })
-                    .Where(zdo =>
-                        zdo.GetString(MinionOwnershipZdoKey) ==
-                        player.GetPlayerName())
-                    .ToList();
-                Logger.LogInfo($"Found {minionsBelongingToPlayer.Count} to update...");
-                foreach (var zdo in minionsBelongingToPlayer)
-                {
-                    zdo.Set(MinionEyeZdoKey, matName);
-                }
-
-                // now that ZDOs have been set, update loaded minions
-                var allCharacters = Character.GetAllCharacters();
-                foreach (var character in allCharacters)
-                {
-                    if (character.IsDead())
-                    {
-                        continue;
-                    }
-
-                    var minion = character.GetComponent<UndeadMinion>();
-                    if (minion == null || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
-                    minion.LoadEyeMaterial();
-                }
-            };
         }
 
         public override void Awake()
@@ -277,9 +226,18 @@ namespace ChebsNecromancy.Minions
 
         public string Eye
         {
-            get => TryGetComponent(out ZNetView zNetView)
-                ? zNetView.GetZDO().GetString(MinionEyeZdoKey)
-                : InternalName.GetName(EyeColor.Blue);
+            get
+            {
+                if (TryGetComponent(out ZNetView zNetView))
+                {
+                    var matName = zNetView.GetZDO().GetString(MinionEyeZdoKey);
+                    if (string.IsNullOrEmpty(matName) || string.IsNullOrWhiteSpace(matName))
+                        zNetView.GetZDO().Set(MinionEyeZdoKey, matName);
+                    return matName;
+                }
+                Logger.LogError("Cannot get bone color because minion has no ZNetView component.");
+                return InternalName.GetName(EyeColor.Blue);
+            }
             set
             {
                 if (TryGetComponent(out ZNetView zNetView))
@@ -304,7 +262,56 @@ namespace ChebsNecromancy.Minions
         
         public virtual void LoadEyeMaterial()
         {
-            
+            // override in subclass (potentially different eyes per minion)
+        }
+
+        public static void SetEyeColor(EyeColor eyeColor)
+        {
+            Logger.LogInfo($"Changing eye color to {eyeColor}, updating minion materials...");
+            var player = Player.m_localPlayer;
+            if (player == null)
+            {
+                Logger.LogInfo("Failed to update minion eyes: m_localPlayer is null. This is not an " +
+                               "error unless you're in-game right now & just means that eyes " +
+                               "couldn't be updated on existing minions at this moment in time.");
+                return;
+            }
+
+            Options.Options.EyeColor = eyeColor;
+
+            var matName = InternalName.GetName(eyeColor);
+            var minionsBelongingToPlayer = ZDOMan.instance.m_objectsByID
+                .Values
+                .ToList()
+                .FindAll(zdo =>
+                {
+                    var zdoPrefab = zdo.GetPrefab();
+                    return SkeletonMinion.IsSkeletonHash(zdoPrefab) ||
+                           DraugrMinion.IsDraugrHash(zdoPrefab);
+                })
+                .Where(zdo =>
+                    zdo.GetString(MinionOwnershipZdoKey) ==
+                    player.GetPlayerName())
+                .ToList();
+            Logger.LogInfo($"Found {minionsBelongingToPlayer.Count} to update...");
+            foreach (var zdo in minionsBelongingToPlayer)
+            {
+                zdo.Set(MinionEyeZdoKey, matName);
+            }
+
+            // now that ZDOs have been set, update loaded minions
+            var allCharacters = Character.GetAllCharacters();
+            foreach (var character in allCharacters)
+            {
+                if (character.IsDead())
+                {
+                    continue;
+                }
+
+                var minion = character.GetComponent<UndeadMinion>();
+                if (minion == null || !minion.BelongsToPlayer(player.GetPlayerName())) continue;
+                minion.LoadEyeMaterial();
+            }
         }
 
         #endregion

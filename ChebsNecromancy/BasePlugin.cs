@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Security.Cryptography;
 using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using ChebsNecromancy.Commands;
+using ChebsNecromancy.Commands.Appearance;
 using ChebsNecromancy.CustomPrefabs;
 using ChebsNecromancy.Items.Armor.Minions;
 using ChebsNecromancy.Items.Armor.Player;
@@ -11,6 +13,8 @@ using ChebsNecromancy.Items.Weapons.Minions;
 using ChebsNecromancy.Minions;
 using ChebsNecromancy.Minions.Draugr;
 using ChebsNecromancy.Minions.Skeletons;
+using ChebsNecromancy.Options;
+using ChebsNecromancy.PvPOptions;
 using ChebsNecromancy.Structures;
 using ChebsValheimLibrary;
 using ChebsValheimLibrary.Common;
@@ -38,7 +42,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "4.10.3";
+        public const string PluginVersion = "5.0.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -99,6 +103,8 @@ namespace ChebsNecromancy
         public static ConfigEntry<float> DurabilityDamageIron;
         public static ConfigEntry<float> DurabilityDamageBlackIron;
 
+        private bool _chebsMercenariesActive = false;
+
         private void Awake()
         {
             if (!Base.VersionCheck(ChebsValheimLibraryVersion, out var message))
@@ -121,7 +127,12 @@ namespace ChebsNecromancy
             CommandManager.Instance.AddConsoleCommand(new SetMinionOwnership());
             CommandManager.Instance.AddConsoleCommand(new SetNeckroHome());
             CommandManager.Instance.AddConsoleCommand(new TeleportNeckros());
+            
+            CommandManager.Instance.AddConsoleCommand(new SetBoneColor());
+            CommandManager.Instance.AddConsoleCommand(new SetEyeColor());
+            CommandManager.Instance.AddConsoleCommand(new ShowOptions());
 
+            // PvP commands could've already been added by Cheb's Mercenaries, so check first
             var pvpCommands = new List<ConsoleCommand>()
                 { new PvPAddFriend(), new PvPRemoveFriend(), new PvPListFriends() };
             foreach (var pvpCommand in pvpCommands)
@@ -140,10 +151,11 @@ namespace ChebsNecromancy
                     : "Syncing initial configuration...");
                 UpdateAllRecipes();
                 StartCoroutine(RequestPvPDict());
-
             };
 
             StartCoroutine(WatchConfigFile());
+
+            _chebsMercenariesActive = Chainloader.PluginInfos.TryGetValue("com.chebgonaz.chebsmercenaries", out _);
         }
 
         private IEnumerator RequestPvPDict()
@@ -248,6 +260,8 @@ namespace ChebsNecromancy
                                              "which seem to give users with Radeon cards trouble for unknown " +
                                              "reasons. If you have problems with lag it might also help to switch" +
                                              "this setting on."));
+            
+            OptionsGUI.CreateConfigs(this, PluginGuid);
             
             NoWraithSmoke = Config.Bind("General (Client)", "NoWraithSmoke",
                 false, new ConfigDescription("Set this to true if you want to disable smoke on the wraith."));
@@ -378,7 +392,6 @@ namespace ChebsNecromancy
 
             spectralShroudItem.CreateConfigs(this);
             necromancersHoodItem.CreateConfigs(this);
-            necromancerCapeItem.CreateConfigs(this);
 
             SpiritPylon.CreateConfigs(this);
             RefuelerPylon.CreateConfigs(this);
@@ -391,6 +404,8 @@ namespace ChebsNecromancy
             Phylactery.CreateConfigs(this);
 
             NeckroGathererMinion.CreateConfigs(this);
+            
+            PvPOptionsGUI.CreateConfigs(this, PluginGuid);
         }
         
 
@@ -417,6 +432,20 @@ namespace ChebsNecromancy
 
                 SetEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
                 SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
+
+                #endregion
+                
+                #region Effects
+
+                var effectNames = new List<string>()
+                {
+                    "sfx_orbofbeckoning_launch"
+                };
+                foreach (var effectName in effectNames)
+                {
+                    var prefab = Base.LoadPrefabFromBundle(effectName, chebgonazAssetBundle, RadeonFriendly.Value);
+                    PrefabManager.Instance.AddPrefab(prefab);
+                }
 
                 #endregion
 
@@ -449,6 +478,8 @@ namespace ChebsNecromancy
                 });
 
                 NecromancerCape.LoadEmblems(chebgonazAssetBundle);
+                
+                // _testBowMaterial = chebgonazAssetBundle.LoadAsset<Material>("ChebGonaz_SkeletonBow.mat");
 
                 // Orb of Beckoning
                 var orbOfBeckoningProjectilePrefab =
@@ -528,11 +559,6 @@ namespace ChebsNecromancy
                     var prefab = Base.LoadPrefabFromBundle(prefabName, chebgonazAssetBundle, 
                         RadeonFriendly.Value
                         || NoWraithSmoke.Value && prefabName.Equals("ChebGonaz_GuardianWraith.prefab"));
-                    // We don't always want to fix the reference, eg. in the case of the ChebGonaz_SpiritPylonGhost
-                    // because it's old pre-Ashlands and its mocks are no longer available.
-                    // More info in issue: https://github.com/jpw1991/chebs-necromancy/issues/267
-                    // todo: Resolve mock when someday creating a brand new bundle from a new rip etc.
-                    var fixReference = true;
                     switch (prefabName)
                     {
                         case "ChebGonaz_DraugrWarrior.prefab":
@@ -612,7 +638,6 @@ namespace ChebsNecromancy
                             break;
                         case "ChebGonaz_SpiritPylonGhost.prefab":
                             prefab.AddComponent<SpiritPylonGhostMinion>();
-                            fixReference = false;
                             break;
                         case "ChebGonaz_NeckroGatherer.prefab":
                             prefab.AddComponent<NeckroGathererMinion>();
@@ -636,7 +661,7 @@ namespace ChebsNecromancy
                             break;
                     }
 
-                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, fixReference));
+                    CreatureManager.Instance.AddCreature(new CustomCreature(prefab, true));
                 });
 
                 #endregion
@@ -769,6 +794,17 @@ namespace ChebsNecromancy
                             inputDelay = Time.time + .5f;
                         }
                     });
+                }
+
+                if (OptionsGUI.OptionsButton != null && ZInput.GetButtonUp(OptionsGUI.OptionsButton.Name))
+                {
+                    OptionsGUI.TogglePanel();
+                }
+                
+                if (!_chebsMercenariesActive && PvPOptionsGUI.OptionsButton != null 
+                                             && ZInput.GetButtonUp(PvPOptionsGUI.OptionsButton.Name))
+                {
+                    PvPOptionsGUI.TogglePanel();
                 }
             }
 
