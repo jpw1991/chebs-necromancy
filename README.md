@@ -155,6 +155,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+10/08/2024 | 5.0.1 | Fix phylactery error; fix mages having no attack
 29/09/2024 | 5.0.0 | Overhaul of asset bundle and aesthetics
 28/06/2024 | 4.11.0 | Go through the bundle with a fine toothed comb and optimize everything; replace Neckro Gatherer crate texture; add message to Neckro pylon informing player of what it's currently doing
 10/06/2024 | 4.10.3 | Update Jotunn; Add soft dependency on Cheb's Mercenaries to ensure that mercenaries is always loaded before Necromancy. This fixes odd errors related to wrong load orders

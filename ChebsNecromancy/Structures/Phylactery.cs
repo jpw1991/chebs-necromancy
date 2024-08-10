@@ -80,6 +80,11 @@ namespace ChebsNecromancy.Structures
             //
             // Copied from: Container.Load()
             var zdoItemsBase64String = zdo.GetString(ZDOVars.s_items);
+            if (string.IsNullOrEmpty(zdoItemsBase64String))
+            {
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery's s_items appears empty.");
+                return false;
+            }
             var zPackage = new ZPackage(zdoItemsBase64String);
             // Copied from: Inventory.Load(ZPackage pkg)
             var num1 = zPackage.ReadInt();
@@ -200,11 +205,16 @@ namespace ChebsNecromancy.Structures
             // 2. write all items, except for one
             var items = new List<ItemInfoHolder>();
             var fuelConsumed = false;
-
+            
             // read items from ZDO
             //
             // Copied from: Container.Load()
             var zdoItemsBase64String = zdo.GetString(ZDOVars.s_items);
+            if (string.IsNullOrEmpty(zdoItemsBase64String))
+            {
+                Logger.LogError("Trying to remove fuel from phylactery, but s_items is empty.");
+                return;
+            }
             var zPackage = new ZPackage(zdoItemsBase64String);
             // Copied from: Inventory.Load(ZPackage pkg)
             var num1 = zPackage.ReadInt();
