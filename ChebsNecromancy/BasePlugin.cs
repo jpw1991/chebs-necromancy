@@ -42,7 +42,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "5.0.1";
+        public const string PluginVersion = "5.0.2";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -118,6 +118,15 @@ namespace ChebsNecromancy
             PvPManager.ConfigureRPC();
 
             LoadChebGonazAssetBundle();
+            PrefabManager.OnVanillaPrefabsAvailable += () =>
+            {
+                // At this point all the vanilla shaders are loaded, so go and fix references on the custom skeleton
+                // materials.
+                foreach (var material in SkeletonMinion.Bones.Values.ToList())
+                {
+                    material.FixReferences();
+                }
+            };
 
             harmony.PatchAll();
 
@@ -411,11 +420,24 @@ namespace ChebsNecromancy
 
         private void LoadChebGonazAssetBundle()
         {
-            // order is important (I think): items, creatures, structures
-            var assetBundlePath = Path.Combine(Path.GetDirectoryName(Info.Location), "chebgonaz");
+            var modDirectory = Path.GetDirectoryName(Info.Location);
+            if (modDirectory == null)
+            {
+                Logger.LogError("Unable to load asset bundle: Failed to get mod directory");
+                return;
+            }
+            
+            var assetBundlePath = Path.Combine(modDirectory, "chebgonaz");
+            if (!File.Exists(assetBundlePath))
+            {
+                Logger.LogError($"Unable to load asset bundle: File doesn't exist {assetBundlePath}");
+                return;
+            }
+            
             var chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
+                #region SetEffects
                 SE_Stats LoadSetEffectFromBundle(string setEffectName, AssetBundle bundle)
                 {
                     //Jotunn.Logger.LogInfo($"Loading {setEffectName}...");
@@ -428,15 +450,11 @@ namespace ChebsNecromancy
                     return seStat;
                 }
 
-                #region SetEffects
-
                 SetEffectNecromancyArmor = LoadSetEffectFromBundle("SetEffect_NecromancyArmor", chebgonazAssetBundle);
                 SetEffectNecromancyArmor2 = LoadSetEffectFromBundle("SetEffect_NecromancyArmor2", chebgonazAssetBundle);
-
                 #endregion
                 
                 #region Effects
-
                 var effectNames = new List<string>()
                 {
                     "sfx_orbofbeckoning_launch"
@@ -446,7 +464,6 @@ namespace ChebsNecromancy
                     var prefab = Base.LoadPrefabFromBundle(effectName, chebgonazAssetBundle, RadeonFriendly.Value);
                     PrefabManager.Instance.AddPrefab(prefab);
                 }
-
                 #endregion
 
                 #region Items

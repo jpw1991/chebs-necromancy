@@ -5,6 +5,7 @@ using ChebsNecromancy.Items.Armor.Player;
 using ChebsNecromancy.Items.Wands;
 using ChebsValheimLibrary.Common;
 using ChebsValheimLibrary.Minions;
+using Jotunn;
 using Jotunn.Managers;
 using UnityEngine;
 using Logger = Jotunn.Logger;
