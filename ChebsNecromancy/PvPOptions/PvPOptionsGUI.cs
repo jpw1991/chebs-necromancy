@@ -111,7 +111,7 @@ public class PvPOptionsGUI
                     fontSize: 16,
                     width: 200f,
                     height: 30f).GetComponentInChildren<InputField>();
-                _allyInput.characterValidation = InputField.CharacterValidation.Alphanumeric;
+                _allyInput.characterValidation = InputField.CharacterValidation.None;
 
                 GUIManager.Instance.CreateButton("+", parent: _panel.transform,
                     anchorMin: new Vector2(0.5f, 0.5f), anchorMax: new Vector2(0.5f, 0.5f),
