@@ -144,22 +144,20 @@ A special thanks to the people who've helped me along the way:
     - **Hugo the Dwarf** and **Pfhoenix** for advice and help for fixing the frozen minions problem.
 	- [**Vapok**](https://github.com/Vapok) and [**jdalfonso4341**](https://github.com/jdalfonso4341) for help with [Adventure Backpacks](https://github.com/Vapok/AdventureBackpacks) integration.
 	- **redseiko** for helpful advice on the official Valheim modding Discord.
-	- **Jetbrains** for kindly providing me with an [Open Source Development license](https://jb.gg/OpenSourceSupport) for their Rider product which makes development on this project smooth and easy.
-
-<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider.svg" alt="Rider logo." width=50% height=50%>
 
 ## Changelog
 
 
 <details>
+
 <summary>2025</summary>
 
 Date | Version | Notes
 --- | --- | ---
+06/03/2025 | 5.0.4 | Get this stuff back up and running again.
 28/01/2025 | 5.0.3 | Patch up a whole bunch of stuff
 
 </details>
-
 <details>
 <summary>2024</summary>
 
