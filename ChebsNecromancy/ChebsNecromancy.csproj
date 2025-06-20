@@ -28,7 +28,7 @@
         <Guid>e3243d22-4307-4008-ba36-9f326008cde5</Guid>
 
         <!-- Version Information -->
-        <Version>5.0.4.0</Version>
+        <Version>5.0.5.0</Version>
         <FileVersion>$(Version)</FileVersion>
         <AssemblyVersion>$(Version)</AssemblyVersion>
 
@@ -46,7 +46,7 @@
         </PackageReference>
         <PackageReference Include="ChebsValheimLibrary" Version="2.6.2" />
         <PackageReference Include="HarmonyX" Version="2.9.0" />
-        <PackageReference Include="JotunnLib" Version="2.24.1" />
+        <PackageReference Include="JotunnLib" Version="2.25.0" />
         <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

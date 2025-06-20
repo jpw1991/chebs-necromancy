@@ -363,11 +363,15 @@ namespace ChebsNecromancy.Structures
                         .FirstOrDefault();
                     if (phylacteryBelongingToPlayer != null)
                     {
-                        if (BasePlugin.HeavyLogging.Value) Logger.LogInfo("Phylactery found belonging to player.");
-                        var location = PhylacteryZDOHasFuel(phylacteryBelongingToPlayer)
+                        var phylacteryHasFuel = PhylacteryZDOHasFuel(phylacteryBelongingToPlayer);
+                        var location = phylacteryHasFuel
+                            // check string 2 + location = phylactery exists, rescue player
                             ? Encoding.UTF8.GetBytes(PhylacteryCheckString2 + phylacteryBelongingToPlayer.m_position)
+                            // check string 2 without location = no phylactyer, let them die
                             : Encoding.UTF8.GetBytes(PhylacteryCheckString2);
                         PhylacteryCheckRPC.SendPackage(sender, new ZPackage(location));
+                        
+                        if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery found belonging to player: {phylacteryBelongingToPlayer.m_position}, has fuel={phylacteryHasFuel}");
                     }
                     else
                     {
@@ -403,6 +407,10 @@ namespace ChebsNecromancy.Structures
                     if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Received request from {sender} for phylactery location.");
                     ReceivePhylacteryLocation(payloadDecoded, sender);
                 }
+            }
+            else
+            {
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Received request from {sender} for phylactery location, but {sender} is not the host.");
             }
 
             yield return null;
