@@ -77,13 +77,23 @@ namespace ChebsNecromancy.Patches
                 incomingDamage.ApplyArmor(player.GetBodyArmor());
                 incomingDamage.ApplyResistance(player.m_damageModifiers, out _);
 
+                if (BasePlugin.HeavyLogging.Value)
+                {
+                    var attackerPrefabId = ZDOMan.instance?.GetZDO(hit.m_attacker)?.GetPrefab();
+                    var attackerPrefabName = attackerPrefabId != null
+                        ? ZNetScene.instance.GetPrefab(attackerPrefabId.GetHashCode()).name
+                        : "unknown";
+                    Logger.LogInfo($"player receiving damage from {attackerPrefabName}");
+                }
+
                 // check if damage would kill player
-                //Jotunn.Logger.LogInfo($"player health {player.GetHealth()}\ntotal hit damage {incomingDamage.GetTotalDamage()}");
                 if (player.GetHealth() > incomingDamage.GetTotalDamage())
                 {
-                    //Jotunn.Logger.LogInfo($"player health {player.GetHealth()} > total hit damage {incomingDamage.GetTotalDamage()}");
+                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"player health {player.GetHealth()} > total hit damage {incomingDamage.GetTotalDamage()}, no need to activate phylactery");
                     return;
                 }
+                
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"player health {player.GetHealth()} < total hit damage {incomingDamage.GetTotalDamage()}, set damage to 0 if fueled phylactery exists or player is teleporting");
                 
                 var noDamage = new HitData.DamageTypes
                 {
@@ -109,6 +119,7 @@ namespace ChebsNecromancy.Patches
                 
                 if (Phylactery.HasPhylactery)
                 {
+                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo("player has a fueled phylactery, teleport to safety");
                     hit.m_damage = noDamage;
                     player.TeleportTo(Phylactery.PhylacteryLocation + Vector3.forward,
                         Quaternion.identity, true);
