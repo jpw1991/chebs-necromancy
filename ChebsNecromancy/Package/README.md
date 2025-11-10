@@ -154,6 +154,7 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+11/11/2025 | 5.1.1 | Ghosts from pylon no longer drop items; fix spectral shroud appearance
 10/11/2025 | 5.1.0 | Fix ghosts being produced from spirit pylons
 06/03/2025 | 5.0.4 | Get this stuff back up and running again.
 28/01/2025 | 5.0.3 | Patch up a whole bunch of stuff

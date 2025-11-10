@@ -28,7 +28,7 @@
         <Guid>e3243d22-4307-4008-ba36-9f326008cde5</Guid>
 
         <!-- Version Information -->
-        <Version>5.1.0.0</Version>
+        <Version>5.1.1.0</Version>
         <FileVersion>$(Version)</FileVersion>
         <AssemblyVersion>$(Version)</AssemblyVersion>
 

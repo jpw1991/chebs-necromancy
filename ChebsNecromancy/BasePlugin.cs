@@ -42,7 +42,7 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "5.1.0";
+        public const string PluginVersion = "5.1.1";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
@@ -64,6 +64,9 @@ namespace ChebsNecromancy
         private readonly SpectralShroud spectralShroudItem = new();
         private readonly NecromancerHood necromancersHoodItem = new();
         private readonly NecromancerCape necromancerCapeItem = new();
+
+        private Material spectralShroudMaterial;
+        private Sprite spectralShroudSprite;
 
         private float inputDelay = 0;
 
@@ -132,16 +135,52 @@ namespace ChebsNecromancy
                 if (ghostPrefab != null)
                 {
                     var spiritPylonGhostPrefab = PrefabManager.Instance.CreateClonedPrefab(SpiritPylonGhostMinion.PrefabName, ghostPrefab);
+                    
                     var humanoid = spiritPylonGhostPrefab.GetComponent<Humanoid>();
-                    humanoid.m_faction = Character.Faction.Players;
+                    if (humanoid != null) humanoid.m_faction = Character.Faction.Players;
+                    else Jotunn.Logger.LogError($"failed to get Humanoid on {SpiritPylonGhostMinion.PrefabName}");
+                    
                     var monsterAI = spiritPylonGhostPrefab.GetComponent<MonsterAI>();
-                    monsterAI.m_attackPlayerObjects = false;
+                    if (monsterAI != null) monsterAI.m_attackPlayerObjects = false;
+                    else Jotunn.Logger.LogError($"failed to get MonsterAI on {SpiritPylonGhostMinion.PrefabName}");
+                    
                     spiritPylonGhostPrefab.AddComponent<SpiritPylonGhostMinion>();
+                    
+                    // remove any drops eg. ectoplasm
+                    var characterDrop = spiritPylonGhostPrefab.GetComponent<CharacterDrop>();
+                    if (characterDrop != null) Destroy(characterDrop);
+                    
                     CreatureManager.Instance.AddCreature(new CustomCreature(spiritPylonGhostPrefab, false));
                 }
                 else
                 {
                     Jotunn.Logger.LogError($"Failed to establish {SpiritPylonGhostMinion.PrefabName}; Spirit Pylon will not work properly.");
+                }
+                
+                // set spectral shroud up
+                var trollCapePrefab = PrefabManager.Instance.GetPrefab("CapeTrollHide");
+                if (trollCapePrefab != null)
+                {
+                    var spectralShroudPrefab = PrefabManager.Instance.CreateClonedPrefab("ChebGonaz_SpectralShroud", trollCapePrefab);
+                    
+                    var meshRenderer = spectralShroudPrefab.GetComponentInChildren<MeshRenderer>(true);
+                    if (meshRenderer != null) meshRenderer.sharedMaterial = spectralShroudMaterial;
+                    else Jotunn.Logger.LogError($"failed to get mesh renderer on {trollCapePrefab}");
+                    
+                    var skinnedMeshRenderer = spectralShroudPrefab.GetComponentInChildren<SkinnedMeshRenderer>(true);
+                    if (skinnedMeshRenderer != null) skinnedMeshRenderer.sharedMaterial = spectralShroudMaterial;
+                    else Jotunn.Logger.LogError($"failed to get skinned mesh renderer on {trollCapePrefab}");
+                    
+                    var itemDrop = spectralShroudPrefab.GetComponent<ItemDrop>();
+                    if (itemDrop != null)
+                    {
+                        itemDrop.m_itemData.m_shared.m_armorMaterial = spectralShroudMaterial;
+                        itemDrop.m_itemData.m_shared.m_icons = new[] { spectralShroudSprite };
+                    }
+                    else Jotunn.Logger.LogError($"failed to get item drop on {trollCapePrefab}");
+                    
+                    
+                    ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
                 }
             };
 
@@ -485,9 +524,11 @@ namespace ChebsNecromancy
 
                 #region Items
 
-                var spectralShroudPrefab = Base.LoadPrefabFromBundle(spectralShroudItem.PrefabName,
-                    chebgonazAssetBundle, RadeonFriendly.Value);
-                ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
+                // var spectralShroudPrefab = Base.LoadPrefabFromBundle(spectralShroudItem.PrefabName,
+                //     chebgonazAssetBundle, RadeonFriendly.Value);
+                // ItemManager.Instance.AddItem(spectralShroudItem.GetCustomItemFromPrefab(spectralShroudPrefab));
+                spectralShroudMaterial = chebgonazAssetBundle.LoadAsset<Material>("ChebGonaz_SpectralShroud.mat");
+                spectralShroudSprite = chebgonazAssetBundle.LoadAsset<Sprite>("chebgonaz_spectralshroud_icon.png");
                 
                 var necromancersHoodPrefab = Base.LoadPrefabFromBundle(necromancersHoodItem.PrefabName,
                     chebgonazAssetBundle, RadeonFriendly.Value);
