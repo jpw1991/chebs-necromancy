@@ -42,11 +42,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "5.0.5";
+        public const string PluginVersion = "5.1.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.6.2");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.6.3");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -125,6 +125,23 @@ namespace ChebsNecromancy
                 foreach (var material in SkeletonMinion.Bones.Values.ToList())
                 {
                     material.FixReferences();
+                }
+                
+                // clone ghost minion for spirit pylon
+                var ghostPrefab = PrefabManager.Instance.GetPrefab("Ghost");
+                if (ghostPrefab != null)
+                {
+                    var spiritPylonGhostPrefab = PrefabManager.Instance.CreateClonedPrefab(SpiritPylonGhostMinion.PrefabName, ghostPrefab);
+                    var humanoid = spiritPylonGhostPrefab.GetComponent<Humanoid>();
+                    humanoid.m_faction = Character.Faction.Players;
+                    var monsterAI = spiritPylonGhostPrefab.GetComponent<MonsterAI>();
+                    monsterAI.m_attackPlayerObjects = false;
+                    spiritPylonGhostPrefab.AddComponent<SpiritPylonGhostMinion>();
+                    CreatureManager.Instance.AddCreature(new CustomCreature(spiritPylonGhostPrefab, false));
+                }
+                else
+                {
+                    Jotunn.Logger.LogError($"Failed to establish {SpiritPylonGhostMinion.PrefabName}; Spirit Pylon will not work properly.");
                 }
             };
 
@@ -559,7 +576,7 @@ namespace ChebsNecromancy
                 }
 
                 prefabNames.Add("ChebGonaz_GuardianWraith.prefab");
-                prefabNames.Add(SpiritPylonGhostMinion.PrefabName + ".prefab");
+                //prefabNames.Add(SpiritPylonGhostMinion.PrefabName + ".prefab");
                 prefabNames.Add("ChebGonaz_NeckroGatherer.prefab");
                 prefabNames.Add("ChebGonaz_Bat.prefab");
                 prefabNames.Add(BattleNeckroMinion.PrefabName + ".prefab");
