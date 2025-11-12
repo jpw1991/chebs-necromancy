@@ -263,7 +263,7 @@ namespace ChebsNecromancy.Items.Wands
                 if (distance > radius && !minionFollowingOrb) continue;
                 
                 MessageHud.instance.ShowMessage(MessageHud.MessageType.Center,
-                    follow ? "$chebgonaz_skeletonfollowing" : "$chebgonaz_skeletonwaiting");
+                    follow ? "$chebgonaz_following" : "$chebgonaz_waiting");
                 if (follow)
                 {
                     minion.Follow(player.gameObject);
