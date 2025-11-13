@@ -255,7 +255,7 @@ namespace ChebsNecromancy.Structures
             //remove cooked items
             if (cookingStation.HaveDoneItem())
             {
-                cookingStation.m_nview.InvokeRPC("RPC_RemoveDoneItem", transform.position);
+                cookingStation.m_nview.InvokeRPC("RPC_RemoveDoneItem", transform.position, 1);
             }
 
             // add cookable items
