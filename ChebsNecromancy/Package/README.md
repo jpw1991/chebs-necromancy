@@ -154,6 +154,9 @@ A special thanks to the people who've helped me along the way:
 
 Date | Version | Notes
 --- | --- | ---
+16/11/2025 | 5.1.4 | Fix problem of Farming Pylon not picking stuff
+14/11/2025 | 5.1.3 | Fix problem of Refueler Pylon not removing cooked items from cooking stations
+12/11/2025 | 5.1.2 | Fix localisations on follow/wait/roam commands with wand
 11/11/2025 | 5.1.1 | Ghosts from pylon no longer drop items; fix spectral shroud appearance
 10/11/2025 | 5.1.0 | Fix ghosts being produced from spirit pylons
 06/03/2025 | 5.0.4 | Get this stuff back up and running again.
