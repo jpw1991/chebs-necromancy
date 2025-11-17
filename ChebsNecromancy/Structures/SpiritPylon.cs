@@ -126,6 +126,12 @@ namespace ChebsNecromancy.Structures
 
             var character = spawnedChar.GetComponent<Character>();
             character.SetLevel(quality);
+            
+            // set minion master for PvP
+            var undeadMinion = spawnedChar.GetComponent<UndeadMinion>();
+            var piece = GetComponent<Piece>();
+            var pieceMaster = Player.s_players.Find(player => player.GetPlayerID() == piece.GetCreator())?.GetPlayerName();
+            undeadMinion.UndeadMinionMaster = pieceMaster;
 
             return spawnedChar;
         }

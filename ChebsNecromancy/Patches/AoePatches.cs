@@ -1,4 +1,7 @@
+using System.Reflection.Emit;
 using ChebsNecromancy.Minions;
+using ChebsValheimLibrary.Minions;
+using ChebsValheimLibrary.PvP;
 using HarmonyLib;
 using UnityEngine;
 
@@ -17,26 +20,35 @@ using UnityEngine;
 
 namespace ChebsNecromancy.Patches
 {
-    [HarmonyPatch(typeof(Aoe), "OnHit")]
-    class SharpStakesMinionPatch
+    [HarmonyPatch(typeof(Aoe), nameof(Aoe.OnHit))]
+    class OnHitPatch
     {
         [HarmonyPrefix]
         static bool Prefix(Collider collider, Vector3 hitPoint, Aoe __instance)
         {
-            if (collider.TryGetComponent(out UndeadMinion _))
-            {
-                Piece piece = __instance.GetComponentInParent<Piece>();
-                if (piece != null && piece.IsPlacedByPlayer())
-                {
-                    // stop minion from receiving damage from stakes placed
-                    // by a player
-                    __instance.m_damage.m_pierce = 0f;
-                    // also stop minions from damaging the stakes
-                    __instance.m_damageSelf = 0f;
-                }
-            }
+            var undeadMinion = collider.GetComponentInParent<UndeadMinion>();
+            if (!undeadMinion) return true; // permit base method completion
 
-            return true; // permit base method completion
+            var piece = __instance.GetComponentInParent<Piece>();
+            if (piece == null || !piece.IsPlacedByPlayer()) return true; // permit base method completion
+
+            var friendly = FriendlyToMinion(undeadMinion, piece);
+            if (!friendly) return true; // permit base method completion
+
+            // stop minion from receiving damage from stakes placed by an allied player
+            return false; // deny base method completion
+        }
+
+        static bool FriendlyToMinion(UndeadMinion minion, Piece piece)
+        {
+            Jotunn.Logger.LogInfo($"FriendlyToMinion {minion} {piece}");
+            if (!BasePlugin.PvPAllowed.Value) return true;
+
+            var minionMaster = minion.UndeadMinionMaster;
+            var pieceMasterId = piece.GetCreator();
+            var pieceMaster = Player.s_players.Find(player => player.GetPlayerID() == pieceMasterId)?.GetPlayerName();
+
+            return PvPManager.Friendly(minionMaster, pieceMaster);
         }
     }
 }
