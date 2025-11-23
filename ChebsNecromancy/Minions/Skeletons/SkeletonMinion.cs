@@ -324,6 +324,8 @@ namespace ChebsNecromancy.Minions.Skeletons
 
         public void LoadEmblemMaterial(Humanoid humanoid)
         {
+            if (string.IsNullOrEmpty(Emblem)) return;
+            
             var shoulderHash = humanoid.m_visEquipment.m_currentShoulderItemHash;
             var shoulderPrefab = ZNetScene.instance.GetPrefab(shoulderHash);
             if (shoulderPrefab != null

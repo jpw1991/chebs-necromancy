@@ -20,28 +20,27 @@ using UnityEngine;
 
 namespace ChebsNecromancy.Patches
 {
-    [HarmonyPatch(typeof(Aoe), nameof(Aoe.OnHit))]
-    class OnHitPatch
+    [HarmonyPatch(typeof(Aoe), nameof(Aoe.ShouldHit))]
+    class ShouldHitPatch
     {
-        [HarmonyPrefix]
-        static bool Prefix(Collider collider, Vector3 hitPoint, Aoe __instance)
+        [HarmonyPostfix]
+        static void Postfix(Collider collider, Aoe __instance, ref bool __result)
         {
-            var undeadMinion = collider.GetComponentInParent<UndeadMinion>();
-            if (!undeadMinion) return true; // permit base method completion
+            var chebGonazMinion = collider.GetComponentInParent<ChebGonazMinion>();
+            if (!chebGonazMinion) return;
 
             var piece = __instance.GetComponentInParent<Piece>();
-            if (piece == null || !piece.IsPlacedByPlayer()) return true; // permit base method completion
+            if (piece == null || !piece.IsPlacedByPlayer()) return;
 
-            var friendly = FriendlyToMinion(undeadMinion, piece);
-            if (!friendly) return true; // permit base method completion
+            var friendly = FriendlyToMinion(chebGonazMinion, piece);
+            if (!friendly) return;
 
             // stop minion from receiving damage from stakes placed by an allied player
-            return false; // deny base method completion
+            __result = false;
         }
 
-        static bool FriendlyToMinion(UndeadMinion minion, Piece piece)
+        static bool FriendlyToMinion(ChebGonazMinion minion, Piece piece)
         {
-            Jotunn.Logger.LogInfo($"FriendlyToMinion {minion} {piece}");
             if (!BasePlugin.PvPAllowed.Value) return true;
 
             var minionMaster = minion.UndeadMinionMaster;
