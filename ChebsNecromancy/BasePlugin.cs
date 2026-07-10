@@ -42,11 +42,11 @@ namespace ChebsNecromancy
     {
         public const string PluginGuid = "com.chebgonaz.ChebsNecromancy";
         public const string PluginName = "ChebsNecromancy";
-        public const string PluginVersion = "5.1.6";
+        public const string PluginVersion = "5.2.0";
         private const string ConfigFileName = PluginGuid + ".cfg";
         private static readonly string ConfigFileFullPath = Path.Combine(Paths.ConfigPath, ConfigFileName);
 
-        public readonly System.Version ChebsValheimLibraryVersion = new("2.6.3");
+        public readonly System.Version ChebsValheimLibraryVersion = new("2.7.0");
 
         private readonly Harmony harmony = new(PluginGuid);
         
@@ -119,10 +119,15 @@ namespace ChebsNecromancy
 
             Phylactery.ConfigureRPC();
             PvPManager.ConfigureRPC();
-
-            LoadChebGonazAssetBundle();
+            
             PrefabManager.OnVanillaPrefabsAvailable += () =>
             {
+                // As of 5.2.0 and CVL version 2.7.0:
+                // It's important to call this one during OnVanillaPrefabsAvailable because it utilises vanilla materials
+                // when initialising custom items eg. taking the axe material, cloning it, assigning a different texture
+                // then applying it to the custom weapon.
+                LoadChebGonazAssetBundle();
+                
                 // At this point all the vanilla shaders are loaded, so go and fix references on the custom skeleton
                 // materials.
                 foreach (var material in SkeletonMinion.Bones.Values.ToList())

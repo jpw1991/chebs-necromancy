@@ -2,10 +2,13 @@
 
 DEBUGDIR=ChebsNecromancy/bin/Debug/net48
 DLL=$DEBUGDIR/ChebsNecromancy.dll
-LIB=$DEBUGDIR/ChebsValheimLibrary.dll
+#LIB=$DEBUGDIR/ChebsValheimLibrary.dll
+LIB=/home/joshua/repositories/chebs-valheim-library/ChebsValheimLibrary/bin/Release/net48/ChebsValheimLibrary.dll
 BUN=chebs-necromancy-unity/Assets/AssetBundles/chebgonaz
 #PLUGINS=/home/joshua/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins
 PLUGINS=/home/$USER/.config/r2modmanPlus-local/Valheim/profiles/cheb-development/BepInEx/plugins/ChebGonaz-ChebsNecromancy
+TRANSLATIONS=Translations
+TRA=$DEBUGDIR/Translations
 
 # Check that source files exist and are readable
 if [ ! -f "$DLL" ]; then
@@ -23,6 +26,11 @@ if [ ! -f "$BUN" ]; then
     exit 1
 fi
 
+if [ ! -d "$TRANSLATIONS" ]; then
+    echo "Error: $TRANSLATIONS directory does not exist."
+    exit 1
+fi
+
 # Check that target directory exists and is writable
 if [ ! -d "$PLUGINS" ]; then
     echo "Error: $PLUGINS directory does not exist."
@@ -37,6 +45,7 @@ fi
 cp -f "$DLL" "$PLUGINS" || { echo "Error: Failed to copy $DLL"; exit 1; }
 cp -f "$LIB" "$PLUGINS" || { echo "Error: Failed to copy $LIB"; exit 1; }
 cp -f "$BUN" "$PLUGINS" || { echo "Error: Failed to copy $BUN"; exit 1; }
+cp -rf "$TRANSLATIONS" "$TRA" || { echo "Error: Failed to copy $TRA"; exit 1; }
 
 # merging causes problems with the mods when installed together, so I'm disabling this
 #
