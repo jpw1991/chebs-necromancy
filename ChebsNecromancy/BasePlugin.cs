@@ -498,6 +498,13 @@ namespace ChebsNecromancy
             var chebgonazAssetBundle = AssetUtils.LoadAssetBundle(assetBundlePath);
             try
             {
+                #region Images
+                var magic1 =  chebgonazAssetBundle.LoadAsset<Texture2D>("magic_01.png");
+                var magic2 =  chebgonazAssetBundle.LoadAsset<Texture2D>("magic_02.png");
+                OrbOfBeckoning.magic1 = magic1;
+                OrbOfBeckoning.magic2 = magic2;
+                #endregion
+                
                 #region SetEffects
                 SE_Stats LoadSetEffectFromBundle(string setEffectName, AssetBundle bundle)
                 {
@@ -585,7 +592,7 @@ namespace ChebsNecromancy
                         wandPrefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack.m_attackProjectile =
                             orbOfBeckoningProjectilePrefab;
                     }
-
+                    
                     ItemManager.Instance.AddItem(wand.GetCustomItemFromPrefab(wandPrefab));
                 });
 

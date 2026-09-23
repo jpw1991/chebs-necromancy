@@ -28,6 +28,8 @@ namespace ChebsNecromancy.Items.Wands
         public static ConfigEntry<int> CraftingStationLevel;
         
         public static ConfigEntry<string> CraftingCost;
+
+        public static Texture2D magic1, magic2;
         
         #region MinionSelector
         public enum MinionOption
@@ -79,9 +81,11 @@ namespace ChebsNecromancy.Items.Wands
         
         public override CustomItem GetCustomItemFromPrefab(GameObject prefab, bool fixReference = true)
         {
-            ItemConfig config = new();
-            config.Name = NameLocalization;
-            config.Description = DescriptionLocalization;
+            var config = new ItemConfig
+            {
+                Name = NameLocalization,
+                Description = DescriptionLocalization
+            };
 
             if (Allowed.Value)
             {
@@ -102,7 +106,42 @@ namespace ChebsNecromancy.Items.Wands
                 config.Enabled = false;
             }
 
-            CustomItem customItem = new (prefab, false, config);
+            #region FindAndFixMaterials
+            // find and fix materials because for some reason it doesn't work with fixReference=true
+            Material vanillaParticleMaterial = null;
+            var vanillaPrefabName = "fx_Torch_Basic"; //"vfx_HitSparks";
+            var vanillaPrefab = PrefabManager.Instance.GetPrefab(vanillaPrefabName);
+            if (!vanillaPrefab)
+            {
+                Logger.LogInfo("Failed to get " + vanillaPrefabName);
+            }
+            else
+            {
+                vanillaParticleMaterial = vanillaPrefab.GetComponentInChildren<ParticleSystemRenderer>(true)?.sharedMaterial;
+            }
+
+            if (vanillaParticleMaterial)
+            {
+                var particleSystemRenderers = prefab.GetComponentsInChildren<ParticleSystemRenderer>(true);
+                foreach (var particleSystemRenderer in particleSystemRenderers)
+                {
+                    Logger.LogInfo("Fixing " + particleSystemRenderer.gameObject.name);
+                    var particleSystemRendererMaterial = particleSystemRenderer.sharedMaterial;
+                    var clonedFireMaterial = new Material(vanillaParticleMaterial);
+                    //clonedFireMaterial.mainTexture = magic1;
+                    particleSystemRenderer.sharedMaterial = clonedFireMaterial;
+                    //particleSystem.gameObject.FixReferences();
+                    Logger.LogInfo("Shader " + particleSystemRenderer.sharedMaterial.shader.name);
+                }
+            }
+            else
+            {
+                Logger.LogInfo("failed to get vanilla particle system material");
+            }
+            
+            #endregion
+
+            var customItem = new CustomItem(prefab, fixReference, config);
             if (customItem.ItemPrefab == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");

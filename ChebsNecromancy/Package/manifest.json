@@ -4,6 +4,6 @@
   "version_number": "5.2.0",
   "website_url": "https://github.com/jpw1991/chebs-necromancy",
   "dependencies": [
-    "ValheimModding-Jotunn-2.29.1"
+    "ValheimModding-Jotunn-2.30.0"
   ]
 }

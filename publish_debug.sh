@@ -6,7 +6,8 @@ DLL=$DEBUGDIR/ChebsNecromancy.dll
 LIB=/home/joshua/repositories/chebs-valheim-library/ChebsValheimLibrary/bin/Release/net48/ChebsValheimLibrary.dll
 BUN=chebs-necromancy-unity/Assets/AssetBundles/chebgonaz
 #PLUGINS=/home/joshua/.local/share/Steam/steamapps/common/Valheim/BepInEx/plugins
-PLUGINS=/home/$USER/.config/r2modmanPlus-local/Valheim/profiles/cheb-development/BepInEx/plugins/ChebGonaz-ChebsNecromancy
+#PLUGINS=/home/$USER/.config/r2modmanPlus-local/Valheim/profiles/cheb-development/BepInEx/plugins/ChebGonaz-ChebsNecromancy
+PLUGINS=/home/$USER/.local/share/com.kesomannen.gale/valheim/profiles/cheb-dev/BepInEx/plugins/ChebGonaz-ChebsNecromancy
 TRANSLATIONS=Translations
 TRA=$DEBUGDIR/Translations
 

@@ -226,7 +226,7 @@ namespace ChebsNecromancy.Structures
                 }
 
                 _inventory.RemoveItem(itemData, 1);
-                smelter.m_nview.InvokeRPC("RPC_AddOre", itemData.m_dropPrefab.name);
+                smelter.m_nview.InvokeRPC("RPC_AddOre", itemData.m_dropPrefab.name, false);
                 smelter.m_addedOreTime = Time.time;
                 if (smelter.m_addOreAnimationDuration > 0f)
                 {
