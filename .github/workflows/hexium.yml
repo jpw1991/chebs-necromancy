@@ -1,0 +1,77 @@
+name: Publish to Hexium
+
+on:
+  release:
+    types: [published] # run when a new release is published
+    tags:
+      - 'v*' # Trigger only if the tag matches eg. v1.0.0
+
+  workflow_run:
+    workflows: ["build"] # run if build.yml is successfully completed
+    types:
+      - completed
+
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the validated package
+        required: true
+        type: boolean
+        default: false
+
+env:
+  name: ChebsNecromancy
+  jsonf: manifest.json
+  dlpath: https://github.com/jpw1991/chebs-necromancy/releases/download
+  author: ChebGonaz
+
+jobs:
+  verify-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check tag
+        run: |
+          # the tags check above doesn't seem to work properly, so a more rigorous check here
+          if [ "${{ github.event_name }}" == "release" ]; then
+            echo "This workflow was triggered by a release."
+            release_tag="${{ github.event.release.tag_name }}"
+            # Check if the tag matches semantic versioning pattern
+            if ! [[ $release_tag =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+)?$ ]]; then
+              echo "Error: Release tag ($release_tag) does not match semantic versioning pattern."
+              exit 1
+            fi
+            exit 0
+          elif [ "${{ github.event_name }}" == "workflow_run" ]; then
+            echo "This workflow was triggered by a workflow run."
+            exit 0
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "This workflow was triggered manually via workflow_dispatch."
+            exit 0
+          else
+            echo "This workflow was triggered by an unknown event: ${{ github.event_name }}"
+            exit 1
+          fi
+  publish:
+    needs: verify-tag
+    if: github.event_name != 'workflow_dispatch' || inputs.publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Read manifest
+        run: |
+          version="$(jq -r '.version_number' ${{env.name}}/Package/${{env.jsonf}})"
+          echo "VERSION=${version}" >> $GITHUB_ENV
+      - run: wget ${{env.dlpath}}/v${{env.VERSION}}/${{env.name}}.${{env.VERSION}}.zip
+      - name: Publish to Hexium
+        id: hexium
+        uses: Klastic/publish-to-hexium@v1
+        with:
+          token: ${{ secrets.HEXIUM_AUTH_TOKEN }}
+          package: ${{env.name}}.${{env.VERSION}}.zip
+          author-name: ${{env.author}}
+          community-categories: |
+            {
+              "valheim": ["Mods", "Open Source"]
+            }
+      - run: echo "Hexium accepted the package; hidden=${{ steps.hexium.outputs.hidden }}"
