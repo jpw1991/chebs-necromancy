@@ -73,267 +73,128 @@ namespace ChebsNecromancy.Structures
         {
             var fuelPrefab = FuelPrefab.Value;
             var fuelFound = 0;
+            
+            if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery fuelPrefab={fuelPrefab}");
 
             // read items from ZDO
-            //
-            // Copied from: Container.Load()
-            var zdoItemsBase64String = zdo.GetString(ZDOVars.s_items);
-            if (string.IsNullOrEmpty(zdoItemsBase64String))
+            var byteArray = zdo.GetByteArray(ZDOVars.s_items);
+            if (byteArray == null)
             {
-                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery's s_items appears empty.");
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Failed to get phylactery's items: byte array is null");
                 return false;
             }
-            var zPackage = new ZPackage(zdoItemsBase64String);
+            var pkg = new ZPackage(byteArray);
+            
             // Copied from: Inventory.Load(ZPackage pkg)
-            var num1 = zPackage.ReadInt();
-            var num2 = zPackage.ReadInt();
-            if (num1 == 106)
+            var obj = (Version.Item)pkg.ReadInt();
+            if (obj >= Version.Item.Smaller)
             {
-                for (var index1 = 0; index1 < num2; ++index1)
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery zdo's obj version={obj}");
+                var num = (int) pkg.ReadUShort();
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery num={num}");
+                for (var index = 0; index < num; ++index)
                 {
-                    var name = zPackage.ReadString();
-                    var stack = zPackage.ReadInt();
-                    var durability = zPackage.ReadSingle();
-                    var pos = zPackage.ReadVector2i();
-                    var equipped = zPackage.ReadBool();
-                    var quality = zPackage.ReadInt();
-                    var variant = zPackage.ReadInt();
-                    var crafterID = zPackage.ReadLong();
-                    var crafterName = zPackage.ReadString();
-                    var customData = new Dictionary<string, string>();
-                    var num3 = zPackage.ReadInt();
-                    for (var index2 = 0; index2 < num3; ++index2)
-                        customData[zPackage.ReadString()] = zPackage.ReadString();
-                    var worldLevel = zPackage.ReadInt();
-                    var pickedUp = zPackage.ReadBool();
-                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
-                    if (name == fuelPrefab) fuelFound++;
-                }
-            }
-            else
-            {
-                for (var index3 = 0; index3 < num2; ++index3)
-                {
-                    var name = zPackage.ReadString();
-                    var stack = zPackage.ReadInt();
-                    var durability = zPackage.ReadSingle();
-                    var pos = zPackage.ReadVector2i();
-                    var equipped = zPackage.ReadBool();
-                    var quality = 1;
-                    if (num1 >= 101)
-                        quality = zPackage.ReadInt();
-                    var variant = 0;
-                    if (num1 >= 102)
-                        variant = zPackage.ReadInt();
-                    long crafterID = 0;
-                    var crafterName = "";
-                    if (num1 >= 103)
+                    (var prefabHash, var itemData) = ItemDrop.ItemData.Load(pkg, obj);
+                    if (prefabHash != 0)
                     {
-                        crafterID = zPackage.ReadLong();
-                        crafterName = zPackage.ReadString();
-                    }
-
-                    var customData = new Dictionary<string, string>();
-                    if (num1 >= 104)
-                    {
-                        var num4 = zPackage.ReadInt();
-                        for (var index4 = 0; index4 < num4; ++index4)
+                        var prefab = ZNetScene.instance.GetPrefab(prefabHash);
+                        if (prefab == null)
                         {
-                            var key = zPackage.ReadString();
-                            var str = zPackage.ReadString();
-                            customData[key] = str;
+                            Logger.LogError($"Failed to get prefab from hash={prefabHash}");
+                        }
+                        var name = prefab.GetComponent<ItemDrop>().name;
+                        if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
+                        if (name == fuelPrefab)
+                        {
+                            if (name == fuelPrefab) fuelFound++;
                         }
                     }
-
-                    var worldLevel = 0;
-                    if (num1 >= 105)
-                        worldLevel = zPackage.ReadInt();
-                    var pickedUp = false;
-                    if (num1 >= 106)
-                        pickedUp = zPackage.ReadBool();
-                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
-                    if (name == fuelPrefab) fuelFound++;
+                    else if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery prefabHash=0");
                 }
             }
+            else if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery zdo's obj version={obj}");
 
             return fuelFound > 0;
-        }
-
-        private struct ItemInfoHolder
-        {
-            public string Name;
-            public int Stack;
-            public float Durability;
-            public Vector2i GridPosition;
-            public bool Equipped;
-            public int Quality;
-            public int Variant;
-            public long CrafterID;
-            public string CrafterName;
-            public Dictionary<string, string> CustomData;
-            public int WorldLevel;
-            public bool PickedUp;
-
-            public ItemInfoHolder(string name, int stack, float durability, Vector2i gridPosition, bool equipped,
-                int quality,
-                int variant, long crafterID, string crafterName, Dictionary<string, string> customData, int worldLevel,
-                bool pickedUp)
-            {
-                Name = name;
-                Stack = stack;
-                Durability = durability;
-                GridPosition = gridPosition;
-                Equipped = equipped;
-                Quality = quality;
-                Variant = variant;
-                CrafterID = crafterID;
-                CrafterName = crafterName;
-                CustomData = customData;
-                WorldLevel = worldLevel;
-                PickedUp = pickedUp;
-            }
         }
 
         public static void RemoveFuelFromPhylactery(ZDO zdo)
         {
             var fuelPrefab = FuelPrefab.Value;
-
-            // To remove one item:
-            // 1. read all items
-            // 2. write all items, except for one
-            var items = new List<ItemInfoHolder>();
             var fuelConsumed = false;
-            
+
             // read items from ZDO
             //
             // Copied from: Container.Load()
-            var zdoItemsBase64String = zdo.GetString(ZDOVars.s_items);
-            if (string.IsNullOrEmpty(zdoItemsBase64String))
+            var byteArray = zdo.GetByteArray(ZDOVars.s_items);
+            if (byteArray == null)
             {
-                Logger.LogError("Trying to remove fuel from phylactery, but s_items is empty.");
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Failed to get phylactery's items: byte array is null");
                 return;
             }
-            var zPackage = new ZPackage(zdoItemsBase64String);
+            var readPkg = new ZPackage(byteArray);
+
             // Copied from: Inventory.Load(ZPackage pkg)
-            var num1 = zPackage.ReadInt();
-            var num2 = zPackage.ReadInt();
-            if (num1 == 106)
+            var obj = (Version.Item)readPkg.ReadInt();
+            if (obj < Version.Item.Smaller)
             {
-                for (var index1 = 0; index1 < num2; ++index1)
-                {
-                    var name = zPackage.ReadString();
-                    var stack = zPackage.ReadInt();
-                    var durability = zPackage.ReadSingle();
-                    var pos = zPackage.ReadVector2i();
-                    var equipped = zPackage.ReadBool();
-                    var quality = zPackage.ReadInt();
-                    var variant = zPackage.ReadInt();
-                    var crafterID = zPackage.ReadLong();
-                    var crafterName = zPackage.ReadString();
-                    var customData = new Dictionary<string, string>();
-                    var num3 = zPackage.ReadInt();
-                    for (var index2 = 0; index2 < num3; ++index2)
-                        customData[zPackage.ReadString()] = zPackage.ReadString();
-                    var worldLevel = zPackage.ReadInt();
-                    var pickedUp = zPackage.ReadBool();
-                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
-                    if (name == fuelPrefab && !fuelConsumed)
-                    {
-                        // omit
-                        fuelConsumed = true;
-                    }
-                    else
-                    {
-                        // write
-                        items.Add(new ItemInfoHolder(name, stack, durability, pos, equipped, quality, variant,
-                            crafterID, crafterName, customData, worldLevel, pickedUp));
-                    }
-                }
-            }
-            else
-            {
-                for (var index3 = 0; index3 < num2; ++index3)
-                {
-                    var name = zPackage.ReadString();
-                    var stack = zPackage.ReadInt();
-                    var durability = zPackage.ReadSingle();
-                    var pos = zPackage.ReadVector2i();
-                    var equipped = zPackage.ReadBool();
-                    var quality = 1;
-                    if (num1 >= 101)
-                        quality = zPackage.ReadInt();
-                    var variant = 0;
-                    if (num1 >= 102)
-                        variant = zPackage.ReadInt();
-                    long crafterID = 0;
-                    var crafterName = "";
-                    if (num1 >= 103)
-                    {
-                        crafterID = zPackage.ReadLong();
-                        crafterName = zPackage.ReadString();
-                    }
-
-                    var customData = new Dictionary<string, string>();
-                    if (num1 >= 104)
-                    {
-                        var num4 = zPackage.ReadInt();
-                        for (var index4 = 0; index4 < num4; ++index4)
-                        {
-                            var key = zPackage.ReadString();
-                            var str = zPackage.ReadString();
-                            customData[key] = str;
-                        }
-                    }
-
-                    var worldLevel = 0;
-                    if (num1 >= 105)
-                        worldLevel = zPackage.ReadInt();
-                    var pickedUp = false;
-                    if (num1 >= 106)
-                        pickedUp = zPackage.ReadBool();
-                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
-                    if (name == fuelPrefab && !fuelConsumed)
-                    {
-                        // omit
-                        fuelConsumed = true;
-                    }
-                    else
-                    {
-                        // write
-                        items.Add(new ItemInfoHolder(name, stack, durability, pos, equipped, quality, variant,
-                            crafterID, crafterName, customData, worldLevel, pickedUp));
-                    }
-                }
+                Logger.LogError($"Phylactery items are stored in an unsupported old format (version={obj}), unable to remove fuel.");
+                return;
             }
 
-            // write all items
-            var zPackageWrite = new ZPackage();
-            zPackageWrite.Write(106);
-            zPackageWrite.Write(items.Count);
-            foreach (var itemInfoHolder in items)
+            var num = (int)readPkg.ReadUShort();
+            if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery num={num}");
+
+            // To remove one item:
+            // 1. read all items
+            // 2. write back all items, except for one matching fuelPrefab
+            var keptItems = new List<ItemDrop.ItemData>();
+            for (var index = 0; index < num; ++index)
             {
-                zPackageWrite.Write(itemInfoHolder.Name);
-                zPackageWrite.Write(itemInfoHolder.Stack);
-                zPackageWrite.Write(itemInfoHolder.Durability);
-                zPackageWrite.Write(itemInfoHolder.GridPosition);
-                zPackageWrite.Write(itemInfoHolder.Equipped);
-                zPackageWrite.Write(itemInfoHolder.Quality);
-                zPackageWrite.Write(itemInfoHolder.Variant);
-                zPackageWrite.Write(itemInfoHolder.CrafterID);
-                zPackageWrite.Write(itemInfoHolder.CrafterName);
-                zPackageWrite.Write(itemInfoHolder.CustomData.Count);
-                foreach (KeyValuePair<string, string> keyValuePair in itemInfoHolder.CustomData)
+                (var prefabHash, var itemData) = ItemDrop.ItemData.Load(readPkg, obj);
+                if (prefabHash == 0)
                 {
-                    zPackageWrite.Write(keyValuePair.Key);
-                    zPackageWrite.Write(keyValuePair.Value);
+                    if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Phylactery prefabHash=0");
+                    continue;
                 }
 
-                zPackageWrite.Write(itemInfoHolder.WorldLevel);
-                zPackageWrite.Write(itemInfoHolder.PickedUp);
+                var prefab = ZNetScene.instance.GetPrefab(prefabHash);
+                if (prefab == null)
+                {
+                    Logger.LogError($"Failed to get prefab from hash={prefabHash}");
+                    continue;
+                }
+
+                var name = prefab.GetComponent<ItemDrop>().name;
+                if (BasePlugin.HeavyLogging.Value) Logger.LogInfo($"Found {name} in phylactery's inventory");
+                if (!fuelConsumed && name == fuelPrefab)
+                {
+                    // omit
+                    fuelConsumed = true;
+                    continue;
+                }
+
+                // write: ItemData.Save() only serializes the prefab hash if m_dropPrefab is set
+                itemData.m_dropPrefab = prefab;
+                keptItems.Add(itemData);
             }
 
-            var writeItemsBase64String = zPackageWrite.GetBase64();
-            zdo.Set(ZDOVars.s_items, writeItemsBase64String);
+            if (!fuelConsumed)
+            {
+                Logger.LogWarning("RemoveFuelFromPhylactery: no fuel item was found in the phylactery's inventory to consume.");
+            }
+
+            // write all items back
+            //
+            // Copied from: Inventory.Save(ZPackage pkg) / Container.Save()
+            var writePkg = new ZPackage();
+            writePkg.Write((int)Version.Item.ChunksNCheats);
+            writePkg.Write((ushort)keptItems.Count);
+            foreach (var itemData in keptItems)
+            {
+                itemData.Save(writePkg);
+            }
+
+            zdo.Set(ZDOVars.s_items, writePkg.GetArray());
         }
 
         private static IEnumerator PhylacteryCheckRPCServerReceive(long sender, ZPackage package)

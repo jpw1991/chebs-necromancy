@@ -154,7 +154,7 @@ namespace ChebsNecromancy.Items.Wands
                 config.Enabled = false;
             }
 
-            CustomItem customItem = new CustomItem(prefab, true, config);
+            CustomItem customItem = new CustomItem(prefab, fixReference, config);
             if (customItem.ItemPrefab == null)
             {
                 Logger.LogError($"AddCustomItems: {PrefabName}'s ItemPrefab is null!");
